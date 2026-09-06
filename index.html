@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ElectroIA</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;background:#000;color:#fff;font-family:"Segoe UI",Arial,sans-serif}body{padding-bottom:78px}
+.top{padding:20px 18px 15px;background:#000}.brand{font-size:35px;font-weight:300}.tag{font-size:15px;color:#ddd}.ver{color:#999;font-size:13px}
+.row{display:flex;justify-content:space-between;align-items:center}.wrap{max-width:760px;margin:auto;padding:8px 12px}.tiles{display:grid;grid-template-columns:1fr 1fr;gap:5px}.tile{border:0;color:#fff;min-height:150px;padding:18px;text-align:left;cursor:pointer;font-family:inherit}.large{min-height:270px}.blue{background:#0879e8}.green{background:#10a84f}.orange{background:#f36b21}.yellow{background:#ffc107;color:#111}.red{background:#e51c3a}.purple{background:#6538c5}.teal{background:#08a7a7}.tile .ico{font-size:50px}.tile b{display:block;font-size:23px;font-weight:400;margin-top:10px}.tile span{display:block;font-size:15px;margin-top:7px;line-height:1.3}.arrow{float:right;font-size:30px;font-weight:200}
+.page{padding-bottom:20px}.page h1{font-size:30px;font-weight:300}.panel{background:#111;padding:16px;margin-bottom:8px}.panel input,.panel textarea{width:100%;background:#000;color:#fff;border:1px solid #555;padding:12px;font:inherit}.btn{border:0;padding:12px 16px;background:#0879e8;color:#fff;font:inherit;cursor:pointer}.btn.alt{background:#333}.chat{height:390px;overflow:auto;background:#0d0d0d;padding:12px}.msg{padding:11px;margin:7px 0;background:#222;max-width:90%;line-height:1.4}.msg.user{background:#0879e8;margin-left:auto}.chatrow{display:flex;gap:5px;margin-top:7px}.chatrow input{flex:1}.bottom{position:fixed;bottom:0;left:0;right:0;height:78px;background:#000;border-top:1px solid #333;display:grid;grid-template-columns:repeat(4,1fr);z-index:10}.nav{border:0;background:#000;color:#aaa;font:inherit}.nav.active{color:#0879e8}.nav .i{font-size:24px;display:block}.photo{max-width:100%;max-height:280px;display:block}.hidden{display:none}
+@media(max-width:450px){.large{min-height:245px}.tile b{font-size:21px}.brand{font-size:31px}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav class="bottom">
+<button class="nav active" id="nHome" onclick="home()">🏠<span>Inicio</span></button>
+<button class="nav" id="nProjects" onclick="projects()">📁<span>Proyectos</span></button>
+<button class="nav" id="nFav" onclick="favorites()">⭐<span>Favoritos</span></button>
+<button class="nav" id="nSettings" onclick="settings()">⚙️<span>Ajustes</span></button>
+</nav>
+<script>
+const API="/api";
+function head(back=false){return `<header class="top">${back?'<button class="btn alt" onclick="home()">← Volver</button>':''}<div class="row"><div><div class="brand">⚡ ElectroIA</div><div class="tag">Tu asistente eléctrico inteligente</div></div><div style="text-align:right">⚙️ ⓘ<div class="ver">IA · v2.0</div></div></div></header>`}
+function nav(id){document.querySelectorAll(".nav").forEach(x=>x.classList.remove("active"));document.getElementById(id)?.classList.add("active")}
+function home(){nav("nHome");app.innerHTML=head()+`<main class="wrap"><div class="tiles">
+<button class="tile blue large" onclick="hogar()"><div class="ico">🏠</div><b>Modo Hogar</b><span>Diagnostica problemas y obtené soluciones paso a paso.</span><div class="arrow">→</div></button>
+<button class="tile green large" onclick="prof()"><div class="ico">🧰</div><b>Modo Profesional</b><span>Herramientas, cálculos, proyectos y normativa.</span><div class="arrow">→</div></button>
+<button class="tile orange" onclick="chat('profesional')"><div class="ico">🧮</div><b>Cálculos rápidos</b><span>Preguntale a ElectroIA.</span></button>
+<button class="tile yellow" onclick="chat('hogar')"><div class="ico">💡</div><b>Consejos útiles</b></button>
+<button class="tile red" onclick="chat('profesional')"><div class="ico">📄</div><b>Normativa</b></button>
+<button class="tile purple" onclick="safety()"><div class="ico">⚠️</div><b>Seguridad eléctrica</b></button>
+</div><div class="panel" style="margin-top:5px;font-size:20px">💡 Pequeñas decisiones hoy.<br>Instalaciones más seguras mañana.</div></main>`}
+function hogar(){nav("nHome");app.innerHTML=head(true)+`<main class="wrap page"><h1>🏠 Modo Hogar</h1><div class="tiles">
+<button class="tile blue" onclick="chat('hogar')"><div class="ico">🤖</div><b>Asistente IA</b><span>Escribí, hablá o mandá una foto.</span></button>
+<button class="tile yellow" onclick="photoOnly('hogar')"><div class="ico">📷</div><b>Analizar foto</b></button>
+<button class="tile red" onclick="safety()"><div class="ico">🛡️</div><b>Seguridad</b></button>
+<button class="tile orange" onclick="chat('hogar')"><div class="ico">💬</div><b>Consulta</b></button>
+</div></main>`}
+function prof(){nav("nHome");app.innerHTML=head(true)+`<main class="wrap page"><h1>🧰 Modo Profesional</h1><div class="tiles">
+<button class="tile blue" onclick="chat('profesional')"><div class="ico">💬</div><b>Consulta técnica</b><span>IA especializada.</span></button>
+<button class="tile green" onclick="pv()"><div class="ico">☀️</div><b>Fotovoltaica</b><span>IA + herramientas FV.</span></button>
+<button class="tile orange" onclick="chat('profesional')"><div class="ico">🧮</div><b>Cálculos</b></button>
+<button class="tile red" onclick="chat('profesional')"><div class="ico">📚</div><b>Normativa</b></button>
+<button class="tile purple" onclick="projects()"><div class="ico">📁</div><b>Proyectos</b></button>
+</div></main>`}
+let currentMode="hogar";
+function chat(mode="hogar",initial=""){currentMode=mode;nav("nHome");app.innerHTML=head(true)+`<main class="wrap page"><h1>🤖 ElectroIA IA</h1><div class="panel"><div class="chat" id="chat"><div class="msg">Hola. Soy ElectroIA. Podés escribirme, hablarme o mandarme una foto. Contame qué necesitás.</div></div><div class="chatrow"><input id="msg" placeholder="Ej.: ¿por qué salta el diferencial?"><button class="btn" onclick="send()">Enviar</button></div><div style="display:flex;gap:5px;margin-top:6px"><button class="btn alt" onclick="voice()">🎙️ Hablar</button><button class="btn alt" onclick="pickPhoto()">📷 Foto</button><input id="photo" class="hidden" type="file" accept="image/*" capture="environment" onchange="sendPhoto(event)"></div></div></main>`}
+function add(text,user=false){let c=document.getElementById("chat");if(!c)return;c.innerHTML+=`<div class="msg ${user?'user':''}">${text}</div>`;c.scrollTop=c.scrollHeight}
+async function send(){let x=document.getElementById("msg"),t=x.value.trim();if(!t)return;x.value="";add(esc(t),true);add("ElectroIA está pensando…");let c=document.getElementById("chat");try{let r=await fetch(API+"/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:t,mode:currentMode})});let j=await r.json();c.lastElementChild.innerHTML=esc(j.answer||j.error||"No pude responder.")}catch(e){c.lastElementChild.innerHTML="No se pudo conectar con la IA. Revisá que el servidor esté activo."}}
+function pickPhoto(){document.getElementById("photo").click()}
+async function sendPhoto(e){let f=e.target.files?.[0];if(!f)return;let u=URL.createObjectURL(f);add(`<img class="photo" src="${u}">`,true);add("Analizando la imagen…");let fd=new FormData();fd.append("image",f);fd.append("mode",currentMode);let c=document.getElementById("chat");try{let r=await fetch(API+"/vision",{method:"POST",body:fd});let j=await r.json();c.lastElementChild.innerHTML=esc(j.answer||j.error||"No pude analizar la foto.")}catch(err){c.lastElementChild.innerHTML="No se pudo conectar con el análisis de imagen."}}
+async function voice(){let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){add("El navegador no ofrece reconocimiento de voz en esta página. Podés usar el micrófono del teclado.");return}let r=new SR();r.lang="es-ES";r.interimResults=false;r.onstart=()=>add("🎙️ Escuchando…");r.onresult=e=>{document.getElementById("msg").value=e.results[0][0].transcript;send()};r.onerror=()=>add("No pude captar el audio. Revisá el permiso del micrófono.");r.start()}
+function photoOnly(mode){chat(mode)}
+function safety(){chat("hogar","")}
+function pv(){currentMode="profesional";nav("nHome");app.innerHTML=head(true)+`<main class="wrap page"><h1>☀️ Fotovoltaica PRO</h1><div class="panel"><p>Este apartado reúne la IA especializada y las herramientas fotovoltaicas.</p><button class="btn" onclick="chat('profesional')">🤖 Consultar a la IA sobre FV</button></div><div class="tiles"><button class="tile green" onclick="chat('profesional')"><div class="ico">🔋</div><b>Baterías</b></button><button class="tile blue" onclick="chat('profesional')"><div class="ico">⚡</div><b>Strings / MPPT</b></button><button class="tile orange" onclick="chat('profesional')"><div class="ico">☀️</div><b>Producción</b></button><button class="tile purple" onclick="chat('profesional')"><div class="ico">🏠</div><b>Autoconsumo</b></button></div></main>`}
+function projects(){nav("nProjects");app.innerHTML=head(true)+`<main class="wrap page"><h1>📁 Proyectos</h1><div class="panel">La IA podrá mantener el contexto de cada proyecto, fotos, cálculos y conversaciones.</div></main>`}
+function favorites(){nav("nFav");app.innerHTML=head(true)+`<main class="wrap page"><h1>⭐ Favoritos</h1><div class="panel">Todavía no hay favoritos.</div></main>`}
+function settings(){nav("nSettings");app.innerHTML=head(true)+`<main class="wrap page"><h1>⚙️ Ajustes</h1><div class="panel"><b>Conexión IA</b><p>La aplicación utiliza un servidor seguro para comunicarse con el modelo de IA.</p></div></main>`}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+home();
+</script>
+</body></html>
