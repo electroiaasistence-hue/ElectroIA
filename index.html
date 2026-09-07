@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ElectroIA · Tu aliado eléctrico · Hogar v5.3</title>
+<title>ElectroIA · Tu aliado eléctrico · Hogar v5.5</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#000;color:#fff;font-family:"Segoe UI",Arial,sans-serif}body{padding-bottom:78px}.top{padding:18px 16px 14px;background:#000}.brand{font-size:34px;font-weight:300}.tag{font-size:14px;color:#ddd}.ver{color:#888;font-size:12px}.row{display:flex;justify-content:space-between;align-items:center}.wrap{max-width:760px;margin:auto;padding:8px 10px}.tiles{display:grid;grid-template-columns:1fr 1fr;gap:5px}.tile{border:0;color:#fff;min-height:142px;padding:16px;text-align:left;cursor:pointer;font-family:inherit}.tile.full{grid-column:1/-1}.tile.large{min-height:235px}.blue{background:#0879e8}.green{background:#10a84f}.orange{background:#f36b21}.yellow{background:#ffc107;color:#111}.red{background:#e51c3a}.purple{background:#6538c5}.teal{background:#08a7a7}.cyan{background:#00a8c6}.dark{background:#171717}.tile .ico{font-size:42px}.tile b{display:block;font-size:21px;font-weight:400;margin-top:8px}.tile span{display:block;font-size:14px;margin-top:6px;line-height:1.35}.arrow{float:right;font-size:28px;font-weight:200}.page{padding-bottom:20px}.page h1{font-size:29px;font-weight:300;margin:10px 4px 14px}.subtitle{color:#bbb;margin:0 4px 14px;line-height:1.45}.panel{background:#111;padding:15px;margin-bottom:7px}.panel h2{font-size:20px;font-weight:400;margin:0 0 7px}.panel p{color:#ccc;line-height:1.45}.btn{border:0;padding:12px 15px;background:#0879e8;color:#fff;font:inherit;cursor:pointer}.btn.alt{background:#333}.btn.warn{background:#e51c3a}.btn.light{background:#ffc107;color:#111}.choice{width:100%;border:0;background:#222;color:#fff;padding:14px;text-align:left;margin:4px 0;font:inherit;cursor:pointer}.choice strong{display:block;font-weight:400;font-size:17px}.choice small{display:block;color:#aaa;margin-top:4px}.risk{padding:13px;background:#261014;border-left:4px solid #e51c3a;margin:8px 0;line-height:1.4}.ok{padding:13px;background:#0d2415;border-left:4px solid #10a84f;margin:8px 0;line-height:1.4}.chat{height:410px;overflow:auto;background:#0d0d0d;padding:10px}.msg{padding:11px;margin:7px 0;background:#222;max-width:92%;line-height:1.45;white-space:pre-wrap}.msg.user{background:#0879e8;margin-left:auto}.chatrow{display:flex;gap:5px;margin-top:7px}.chatrow input{flex:1}.photo{max-width:100%;max-height:280px;display:block}.hidden{display:none}.progress{height:5px;background:#333;margin:8px 0}.progress i{display:block;height:100%;background:#0879e8;width:0}.list{padding-left:20px;color:#ccc;line-height:1.7}.bottom{position:fixed;bottom:0;left:0;right:0;height:78px;background:#000;border-top:1px solid #333;display:grid;grid-template-columns:repeat(4,1fr);z-index:10}.nav{border:0;background:#000;color:#aaa;font:inherit}.nav.active{color:#0879e8}.nav .i{font-size:23px;display:block}@media(max-width:450px){.brand{font-size:30px}.tile.large{min-height:220px}.tile b{font-size:20px}}
 </style>
@@ -42,7 +42,7 @@
 </nav>
 <script>
 const API="/api";let currentMode="hogar",diag={step:0,answers:[]};
-function head(back=false){return `<header class="top">${back?'<button class="btn alt" onclick="goBack()">← Volver</button>':''}<div class="row"><div><div class="brand">⚡ ElectroIA</div><div class="tag">Tu aliado eléctrico</div></div><div style="text-align:right">🏠<div class="ver">Hogar · v5.3</div></div></div></header>`}
+function head(back=false){return `<header class="top">${back?'<button class="btn alt" onclick="goBack()">← Volver</button>':''}<div class="row"><div><div class="brand">⚡ ElectroIA</div><div class="tag">Tu aliado eléctrico</div></div><div style="text-align:right">🏠<div class="ver">Hogar · v5.5</div></div></div></header>`}
 function nav(id){document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));document.getElementById(id)?.classList.add('active')}
 function home(){electroStack=[];electroView='home';nav('nHome');app.innerHTML=head()+`<main class="wrap page">
 <div class="panel" style="background:#0879e8;padding:18px 16px">
@@ -171,10 +171,11 @@ function diagnostico(startNode='start', initialProblem=''){enterView('diagnostic
 function renderDiag(){const n=diagTree[diag.node];if(!n){diag.node='tech';return renderDiag()}let body=`<div class="eia-modern"><div class="eia-head"><div class="eia-avatar">⚡</div><div><b>ElectroIA</b><small>Diagnóstico adaptativo · Hogar</small></div><span class="eia-online">● En línea</span></div><div class="eia-messages" id="diagMessages">`;body+=`<div class="eia-msg ai"><div class="eia-bubble">${esc(n.q||'He analizado tus respuestas.')} </div></div>`;body+=`</div><div class="eia-quick">`;
 if(n.result){const danger=n.result[3].startsWith('🔴');body+=`<div class="eia-result ${danger?'danger':''}"><span>${esc(n.result[3])}</span><h2>${esc(n.result[0])}</h2><p><b>Por qué:</b> ${esc(n.result[1])}</p><p><b>Qué hacer ahora:</b> ${esc(n.result[2])}</p>${n.steps?.length?`<div class="solution"><h3>🛠️ Pasos para intentar resolverlo</h3><ol>${n.steps.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>`:''}<small>Resultado orientativo. No sustituye una inspección ni mediciones profesionales.</small><button class="eia-start" onclick="diagReport()">📄 Preparar informe para técnico</button><button class="eia-back" onclick="diagnostico()">Nuevo diagnóstico</button></div>`}
 else if(n.free){body+=`<textarea id="diagFree" class="eia-textarea" placeholder="Ej.: cuando enciendo el horno salta el diferencial…"></textarea><button class="eia-start" onclick="diagFreeNext()">Continuar →</button>`}
-else{body+=`<div class="eia-question-label">Pregunta ${diag.answers.length+1}</div><div class="eia-options">`;n.a.forEach(x=>body+=`<button class="eia-option" onclick="diagChoose(${JSON.stringify(x[0])},${JSON.stringify(x[1])})">${esc(x[0])}</button>`);body+=`</div>`}
+else{body+=`<div class="eia-question-label">Pregunta ${diag.answers.length+1}</div><div class="eia-options">`;n.a.forEach(x=>body+=`<button class="eia-option" onclick='diagChoose(${JSON.stringify(x[0])},${JSON.stringify(x[1])})'>${esc(x[0])}</button>`);body+=`</div>`}
 if(diag.history.length&&!n.result)body+=`<button class="eia-back" onclick="diagBack()">← Volver a la pregunta anterior</button>`;body+=`</div></div>`;app.innerHTML=head(true)+`<main class="wrap page">${body}</main>`}
 function diagFreeNext(){const el=document.getElementById('diagFree');const p=(el?.value||'').trim();if(!p){el?.focus();return}diag.problem=p;diag.answers.push({q:'¿Qué está pasando?',a:p});const low=p.toLowerCase();if(/humo|fuego|chispa|chispas|olor a quemado|olor fuerte a quemado|descarga|me da corriente|agua.*electric|electric.*agua|cable.*expuesto|cable.*pelado|enchufe.*caliente|caliente.*enchufe/.test(low)){diag.node='danger';renderDiag();return}diag.history.push('start');diag.node='classify';diagTree.classify={q:'Para ubicar la avería: ¿afecta a toda la vivienda, a una zona concreta o a un aparato/enchufe?',a:[['Toda la vivienda','wholeHouse'],['Una zona o habitación','zone'],['Un aparato o enchufe','deviceTrip'],['No estoy seguro','tech']]};renderDiag()}
-function diagChoose(label,next){diag.history.push(diag.node);diag.answers.push({q:diagTree[diag.node].q,a:label});if(next==='danger'){diag.node='danger';diag.risk=true;renderDiag();return}diag.node=next;renderDiag()}
+function diagChoose(label,next){try{const current=diagTree[diag.node];if(!current)return;diag.history.push(diag.node);diag.answers.push({q:current.q||'Pregunta',a:label});if(next==='danger'){diag.node='danger';diag.risk=true;renderDiag();return}if(!diagTree[next]){diag.node='tech';renderDiag();return}diag.node=next;renderDiag()}catch(e){console.error('ElectroIA diagnóstico:',e);diag.node='tech';renderDiag()}}
+window.diagChoose=diagChoose;
 function diagBack(){if(!diag.history.length)return;diag.node=diag.history.pop();diag.answers.pop();renderDiag()}
 function diagReport(){const n=diagTree[diag.node]||{};const r=n.result;const lines=['ELECTRO IA — INFORME DE DIAGNÓSTICO ELÉCTRICO','','Problema inicial: '+(diag.problem||'Selección rápida'),'','Preguntas y respuestas:',...diag.answers.map((x,i)=>(i+1)+'. '+x.q+'\n   Respuesta: '+x.a),'',`Diagnóstico probable: ${r?.[0]||'Revisión profesional recomendada'}`,`Nivel: ${r?.[3]||'Técnico recomendado'}`,'','Qué hacer ahora: '+(r?.[2]||'Solicitar revisión profesional.'),...(n.steps?.length?['','Pasos sugeridos:',...n.steps.map((x,i)=>(i+1)+'. '+x)]:[]),'','Nota: resultado orientativo; no sustituye inspección, mediciones ni reparación profesional.'];const box=prompt('Informe listo para copiar y enviar al técnico:',lines.join('\n'));if(box!==null){} }
 
@@ -203,15 +204,70 @@ const inp=document.getElementById('msg');if(inp){inp.addEventListener('input',()
 function quickChat(t){const x=document.getElementById('msg');if(x){x.value=t;x.focus()}send()}
 function clearChat(){chat(currentMode)}
 function add(text,user=false){let c=document.getElementById('chat');if(!c)return;let d=document.createElement('div');d.className='chat-msg '+(user?'user':'ai');d.innerHTML='<div class="chat-msg-bubble">'+text+'</div><div class="chat-msg-meta">Ahora</div>';c.appendChild(d);c.scrollTop=c.scrollHeight}
-async function sendText(t){add(esc(t),true);add('<div class="chat-typing-v3"><i></i><i></i><i></i></div>');let c=document.getElementById('chat');try{let r=await fetch(API+'/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:t,mode:currentMode})});let j=await r.json();let b=c.lastElementChild.querySelector('.chat-msg-bubble');b.innerHTML=esc(j.answer||j.error||'No pude responder.');c.lastElementChild.querySelector('.chat-msg-meta').textContent='ElectroIA · ahora'}catch(e){c.lastElementChild.querySelector('.chat-msg-bubble').innerHTML='No se pudo conectar con la IA. Revisá el servidor.'}c.scrollTop=c.scrollHeight}
+function send(){
+  const el=document.getElementById('msg');
+  if(!el)return;
+  const t=el.value.trim();
+  if(!t)return;
+  el.value='';
+  el.style.height='auto';
+  sendText(t);
+}
+function pickPhoto(){
+  const el=document.getElementById('photo');
+  if(el)el.click();
+}
+function voice(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){add('🎙️ Tu navegador no permite entrada por voz en este dispositivo. Podés escribir el problema.');return}
+  const r=new SR();
+  r.lang='es-ES';r.interimResults=false;r.maxAlternatives=1;
+  r.onresult=e=>{const t=e.results?.[0]?.[0]?.transcript||'';const el=document.getElementById('msg');if(el){el.value=t;el.focus();send()}};
+  r.onerror=()=>add('🎙️ No pude tomar la voz. Probá escribir el problema.');
+  r.start();
+}
+function sendPhoto(ev){
+  const f=ev?.target?.files?.[0];
+  if(!f)return;
+  const c=document.getElementById('chat');
+  if(!c)return;
+  const url=URL.createObjectURL(f);
+  const d=document.createElement('div');d.className='chat-msg user';
+  d.innerHTML='<div class="chat-msg-bubble"><img class="photo" src="'+url+'" alt="Foto de la instalación"></div><div class="chat-msg-meta">Foto seleccionada</div>';
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+  add('📷 Ya veo la foto en la conversación. Para que pueda analizarla con IA, el servidor debe tener habilitado el análisis de imágenes. Mientras tanto, contame qué problema ves y te guío.');
+}
+async function sendText(t){
+  add(esc(t),true);
+  add('<div class="chat-typing-v3"><i></i><i></i><i></i></div>');
+  const c=document.getElementById('chat');
+  try{
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),30000);
+    const r=await fetch(API+'/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:t,mode:currentMode}),signal:controller.signal});
+    clearTimeout(timer);
+    const raw=await r.text();
+    let j={};
+    try{j=JSON.parse(raw)}catch(_){j={error:raw||'Respuesta no válida del servidor.'}}
+    const typing=c?.lastElementChild;
+    const b=typing?.querySelector('.chat-msg-bubble');
+    if(!r.ok)throw new Error(j.error||('HTTP '+r.status));
+    if(b)b.innerHTML=esc(j.answer||j.message||'No pude responder.');
+    if(typing?.querySelector('.chat-msg-meta'))typing.querySelector('.chat-msg-meta').textContent='ElectroIA · ahora';
+  }catch(e){
+    const typing=c?.lastElementChild;
+    const b=typing?.querySelector('.chat-msg-bubble');
+    if(b)b.innerHTML='No pude conectar con la IA en este momento. Podés usar <b>Diagnóstico de averías</b> para que ElectroIA te guíe paso a paso mientras revisamos la conexión del servidor.';
+    if(typing?.querySelector('.chat-msg-meta'))typing.querySelector('.chat-msg-meta').textContent='ElectroIA · conexión';
+  }
+  if(c)c.scrollTop=c.scrollHeight;
+}
 function prof(){enterView('prof');nav('nHome');app.innerHTML=head(true)+`<main class="wrap page"><h1>🧰 Modo Profesional</h1><div class="tiles"><button class="tile blue" onclick="chat('profesional')"><div class="ico">💬</div><b>Consulta técnica</b></button><button class="tile green" onclick="pv()"><div class="ico">☀️</div><b>Fotovoltaica</b></button><button class="tile orange" onclick="chat('profesional')"><div class="ico">🧮</div><b>Cálculos</b></button><button class="tile red" onclick="chat('profesional')"><div class="ico">📚</div><b>Normativa</b></button><button class="tile purple" onclick="projects()"><div class="ico">📁</div><b>Proyectos</b></button></div></main>`}
 function pv(){enterView('pv');currentMode='profesional';app.innerHTML=head(true)+`<main class="wrap page"><h1>☀️ Fotovoltaica PRO</h1><div class="panel"><p>Sección profesional independiente del Modo Hogar.</p><button class="btn" onclick="chat('profesional')">🤖 Consultar IA sobre FV</button></div><div class="tiles"><button class="tile green" onclick="chat('profesional')">🔋<b>Baterías</b></button><button class="tile blue" onclick="chat('profesional')">⚡<b>Strings / MPPT</b></button><button class="tile orange" onclick="chat('profesional')">☀️<b>Producción</b></button><button class="tile purple" onclick="chat('profesional')">🏠<b>Autoconsumo</b></button></div></main>`}
 function projects(){enterView('projects');nav('nProjects');app.innerHTML=head(true)+`<main class="wrap page"><h1>📁 Mis proyectos</h1><div class="panel"><p>Acá vamos a guardar conversaciones, fotos, cálculos, materiales y tareas de cada proyecto.</p><button class="btn" onclick="chat('hogar','Quiero crear un proyecto doméstico. Ayudame a definirlo y organizarlo.')">➕ Crear proyecto con IA</button></div></main>`}
 function favorites(){enterView('favorites');nav('nFav');app.innerHTML=head(true)+`<main class="wrap page"><h1>⭐ Favoritos</h1><div class="panel">Todavía no hay favoritos.</div></main>`}
 function settings(){enterView('settings');nav('nSettings');app.innerHTML=head(true)+`<main class="wrap page"><h1>⚙️ Ajustes</h1><div class="panel"><b>Modo Hogar</b><p>Diagnóstico guiado, consumo, seguridad, aprendizaje y proyectos.</p></div><div class="panel"><b>Conexión IA</b><p>La aplicación utiliza el servidor seguro de ElectroIA para comunicarse con la IA.</p></div></main>`}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-if(typeof electroStack!=='undefined'){electroStack=[];electroView='home';}
-home();
 </script>
 
 
@@ -264,4 +320,8 @@ function goBack(){
     electroGoingBack=false;
   }
 }
+
+// Inicializar la aplicación después de declarar el sistema de navegación.
+window.electroView = electroView;
+home();
 </script></body></html>
