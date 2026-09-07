@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ElectroIA · Tu aliado eléctrico · Hogar v5.9</title>
+<title>ElectroIA · Tu aliado eléctrico · Hogar v6.2</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#000;color:#fff;font-family:"Segoe UI",Arial,sans-serif}body{padding-bottom:78px}.top{padding:18px 16px 14px;background:#000}.brand{font-size:34px;font-weight:300}.tag{font-size:14px;color:#ddd}.ver{color:#888;font-size:12px}.row{display:flex;justify-content:space-between;align-items:center}.wrap{max-width:760px;margin:auto;padding:8px 10px}.tiles{display:grid;grid-template-columns:1fr 1fr;gap:5px}.tile{border:0;color:#fff;min-height:142px;padding:16px;text-align:left;cursor:pointer;font-family:inherit}.tile.full{grid-column:1/-1}.tile.large{min-height:235px}.blue{background:#0879e8}.green{background:#10a84f}.orange{background:#f36b21}.yellow{background:#ffc107;color:#111}.red{background:#e51c3a}.purple{background:#6538c5}.teal{background:#08a7a7}.cyan{background:#00a8c6}.dark{background:#171717}.tile .ico{font-size:42px}.tile b{display:block;font-size:21px;font-weight:400;margin-top:8px}.tile span{display:block;font-size:14px;margin-top:6px;line-height:1.35}.arrow{float:right;font-size:28px;font-weight:200}.page{padding-bottom:20px}.page h1{font-size:29px;font-weight:300;margin:10px 4px 14px}.subtitle{color:#bbb;margin:0 4px 14px;line-height:1.45}.panel{background:#111;padding:15px;margin-bottom:7px}.panel h2{font-size:20px;font-weight:400;margin:0 0 7px}.panel p{color:#ccc;line-height:1.45}.btn{border:0;padding:12px 15px;background:#0879e8;color:#fff;font:inherit;cursor:pointer}.btn.alt{background:#333}.btn.warn{background:#e51c3a}.btn.light{background:#ffc107;color:#111}.choice{width:100%;border:0;background:#222;color:#fff;padding:14px;text-align:left;margin:4px 0;font:inherit;cursor:pointer}.choice strong{display:block;font-weight:400;font-size:17px}.choice small{display:block;color:#aaa;margin-top:4px}.risk{padding:13px;background:#261014;border-left:4px solid #e51c3a;margin:8px 0;line-height:1.4}.ok{padding:13px;background:#0d2415;border-left:4px solid #10a84f;margin:8px 0;line-height:1.4}.chat{height:410px;overflow:auto;background:#0d0d0d;padding:10px}.msg{padding:11px;margin:7px 0;background:#222;max-width:92%;line-height:1.45;white-space:pre-wrap}.msg.user{background:#0879e8;margin-left:auto}.chatrow{display:flex;gap:5px;margin-top:7px}.chatrow input{flex:1}.photo{max-width:100%;max-height:280px;display:block}.hidden{display:none}.progress{height:5px;background:#333;margin:8px 0}.progress i{display:block;height:100%;background:#0879e8;width:0}.list{padding-left:20px;color:#ccc;line-height:1.7}.bottom{position:fixed;bottom:0;left:0;right:0;height:78px;background:#000;border-top:1px solid #333;display:grid;grid-template-columns:repeat(4,1fr);z-index:10}.nav{border:0;background:#000;color:#aaa;font:inherit}.nav.active{color:#0879e8}.nav .i{font-size:23px;display:block}@media(max-width:450px){.brand{font-size:30px}.tile.large{min-height:220px}.tile b{font-size:20px}}
 </style>
@@ -42,7 +42,7 @@
 </nav>
 <script>
 const API="/api";let currentMode="hogar",diag={step:0,answers:[]};
-function head(back=false){return `<header class="top">${back?'<button class="btn alt" onclick="goBack()">← Volver</button>':''}<div class="row"><div><div class="brand">⚡ ElectroIA</div><div class="tag">Tu aliado eléctrico</div></div><div style="text-align:right">🏠<div class="ver">Hogar · v5.9</div></div></div></header>`}
+function head(back=false){return `<header class="top">${back?'<button class="btn alt" onclick="goBack()">← Volver</button>':''}<div class="row"><div><div class="brand">⚡ ElectroIA</div><div class="tag">Tu aliado eléctrico</div></div><div style="text-align:right">🏠<div class="ver">Hogar · v6.4</div></div></div></header>`}
 function nav(id){document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));document.getElementById(id)?.classList.add('active')}
 function home(){electroStack=[];electroView='home';nav('nHome');app.innerHTML=head()+`<main class="wrap page">
 <div class="panel" style="background:#0879e8;padding:18px 16px">
@@ -50,10 +50,16 @@ function home(){electroStack=[];electroView='home';nav('nHome');app.innerHTML=he
 <h1 style="font-size:27px;margin:7px 0 5px;color:#fff">¿Tenés una avería eléctrica ahora?</h1>
 <p style="color:#fff;margin:0 0 13px;line-height:1.45">No necesitás saber nada de electricidad. Elegí lo que más se parezca a lo que está pasando y ElectroIA te irá guiando con preguntas sencillas.</p>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-<button class="btn" style="background:#000" onclick="quickEmergency('⚡ Me salta el automático o diferencial')">⚡ Salta la protección</button>
-<button class="btn" style="background:#000" onclick="quickEmergency('💡 No tengo luz en una zona')">💡 No tengo luz</button>
-<button class="btn" style="background:#000" onclick="quickEmergency('🔌 Un enchufe no funciona')">🔌 Enchufe sin corriente</button>
-<button class="btn" style="background:#000" onclick="quickEmergency('🚨 Hay olor a quemado, chispas o algo caliente')">🚨 Algo es peligroso</button>
+<button class="btn" style="background:#000" onclick="quickEmergency('⚡ Me salta el automático o diferencial')">⚡ Se me va la luz</button>
+<button class="btn" style="background:#000" onclick="quickEmergency('💡 No tengo luz en el hogar')">💡 No tengo luz</button>
+<button class="btn" style="background:#000" onclick="quickEmergency('🔌 Un enchufe no funciona')">🔌 Enchufe / aparato</button>
+<button class="btn" style="background:#000" onclick="quickEmergency('🚨 Hay olor a quemado, chispas o algo caliente')">🔥 Huele / calienta</button>
+<button class="btn" style="background:#000" onclick="quickEmergency('🚿 Hay agua cerca de algo eléctrico')">🚿 Hay agua cerca</button>
+<button class="btn" style="background:#000" onclick="quickEmergency('❓ No sé qué pasa')">❓ No sé qué pasa</button>
+</div>
+<div style="margin-top:9px;display:flex;gap:6px;flex-wrap:wrap">
+<button class="btn alt" style="flex:1" onclick="diagnostico('noTouch','No quiero tocar nada')">🙅 No quiero tocar nada</button>
+<button class="btn alt" style="flex:1" onclick="diagnostico('temporaryHelp','Necesito una solución temporal')">🩹 Necesito apañarlo</button>
 </div>
 </div>
 <div class="panel">
@@ -75,9 +81,11 @@ function home(){electroStack=[];electroView='home';nav('nHome');app.innerHTML=he
 function quickEmergency(t){
   const map={
     '⚡ Me salta el automático o diferencial':'protection',
-    '💡 No tengo luz en una zona':'noPower',
+    '💡 No tengo luz en el hogar':'wholeHouse',
     '🔌 Un enchufe no funciona':'outlet',
-    '🚨 Hay olor a quemado, chispas o algo caliente':'danger'
+    '🚨 Hay olor a quemado, chispas o algo caliente':'danger',
+    '🚿 Hay agua cerca de algo eléctrico':'danger',
+    '❓ No sé qué pasa':'start'
   };
   diagnostico(map[t]||'start',t);
 }
@@ -95,7 +103,7 @@ function hogar(){enterView('hogar');nav('nHome');app.innerHTML=head(true)+`<main
 </div>
 <h2 style="margin:18px 0 9px">🧰 Conocer y cuidar mi instalación</h2>
 <div class="tiles">
-<button class="tile red" onclick="safety()"><div class="ico">⚠️</div><b>Seguridad</b><span>Qué hacer ante agua, calor, olor a quemado, chispas, humo o desconsumo.</span></button>
+<button class="tile red" onclick="safety()"><div class="ico">⚠️</div><b>Seguridad</b><span>Qué hacer ante agua, calor, olor a quemado, chispas, humo o descarga eléctrica.</span></button>
 <button class="tile dark" onclick="cuadro()"><div class="ico">🛡️</div><b>Entender mi cuadro</b><span>Guía sencilla para reconocer general, diferenciales, automáticos y qué mirar sin desmontar nada.</span></button>
 <button class="tile yellow" onclick="consumo()"><div class="ico">💰</div><b>Mi consumo y potencia</b><span>Calculá consumos y entendé por qué puede actuar el control de potencia del contador.</span></button>
 <button class="tile teal" onclick="miCasa()"><div class="ico">🏡</div><b>Ficha de mi casa</b><span>Guardá potencia contratada, tipo de vivienda y observaciones para futuras consultas.</span></button>
@@ -111,6 +119,18 @@ function hogar(){enterView('hogar');nav('nHome');app.innerHTML=head(true)+`<main
 </main>`}
 
 const diagTree={
+ safetyGate:{q:'Antes de seguir, necesito comprobar una cosa por seguridad: ¿hay ahora mismo humo, fuego, chispas, olor fuerte a quemado, algún enchufe/cable muy caliente, agua en contacto con algo eléctrico o alguien recibió una descarga?',a:[['No, nada de eso','safetyClear'],['Sí, hay algo de eso','danger'],['No estoy seguro','danger']]},
+ safetyClear:{q:'Perfecto. Vamos a intentar solucionarlo juntos. No necesitás saber electricidad. ¿Qué preferís hacer?',a:[['Quiero que me guíes paso a paso','continueTarget'],['No quiero tocar nada, solo quiero saber si puedo esperar','noTouch']]},
+ continueTarget:{result:['Vamos a hacerlo paso a paso','Solo te voy a pedir comprobaciones visuales y acciones sencillas. No hace falta desmontar nada ni tocar cables.','Seguimos con el problema que seleccionaste. Si en cualquier momento aparece humo, chispas, calor anormal, agua o una descarga, detené la comprobación y buscá ayuda profesional.','🟢 Diagnóstico guiado'],steps:['No abras enchufes, mecanismos, cajas ni el cuadro.','Solo hacé lo que ElectroIA indique como comprobación segura.']},
+ noTouch:{q:'Está bien. No tenés que tocar nada. ¿Qué necesitás saber ahora?',a:[['Quiero saber si puedo esperar','waitAdvice'],['Quiero saber qué puedo dejar funcionando','temporaryHelp'],['Quiero preparar lo que le diré al electricista','reportOnly']]},
+ waitAdvice:{result:['Podés mantener la situación controlada mientras conseguís ayuda','Si no hay humo, fuego, chispas, olor fuerte a quemado, calor anormal, agua en contacto con electricidad ni descargas, y el problema no empeora, normalmente podés mantener esa zona sin usar y organizar una revisión.','Dejá fuera de uso el aparato o zona que presenta el problema. Si aparece cualquier señal de peligro o el fallo empeora, no esperes y buscá asistencia urgente.','🟠 Conviene revisarlo pronto'],steps:['Dejá sin usar el punto, aparato o zona afectada.','No desmontes nada para investigar.','Anotá cuándo ocurre y qué estaba funcionando antes.','Pedí revisión cuando te resulte posible.']},
+ temporaryHelp:{q:'¿Qué necesitás mantener funcionando hasta que puedas solucionarlo?',a:[['Solo la nevera y lo básico','tempBasic'],['Necesito algunas luces','tempLights'],['Necesito cocinar o usar un aparato concreto','tempDevice'],['Necesito mantener toda la casa funcionando','tempWhole'],['No sé qué puedo dejar funcionando','waitAdvice']]},
+ tempBasic:{result:['Podés intentar mantener solo lo imprescindible','La prioridad es reducir el uso de la instalación afectada y evitar volver a conectar lo que provoca el problema.','Mantené desconectado el aparato o zona sospechosa y usá únicamente puntos que funcionen con normalidad, sin regletas sobrecargadas ni cables dañados.','🟢 Solución temporal prudente'],steps:['Dejá desconectado lo que coincide con el fallo.','Usá solo aparatos y enchufes que funcionen normalmente.','No conectes varios aparatos de alto consumo a la vez.','Si el fallo vuelve, dejá de probar y solicitá revisión.']},
+ tempLights:{result:['Podés reducir la instalación a lo esencial','Si necesitás luz temporalmente, usá únicamente puntos que funcionen con normalidad y no presentan calor, olor, chispas ni daños visibles.','No uses el punto afectado ni hagas puentes o conexiones provisionales.','🟢 Solución temporal prudente'],steps:['Usá solo las luces que funcionan normalmente.','Evitá el circuito o zona que falla.','No manipules mecanismos ni cables.','Si las luces parpadean mucho o el problema se extiende, dejá de usar la zona y pedí revisión.']},
+ tempDevice:{result:['Lo más seguro es dejar fuera de uso el aparato sospechoso','Una solución temporal no debe consistir en forzar la instalación ni en puentear una protección.','Dejá desconectado el aparato que coincide con el problema y, si necesitás el servicio, buscá una alternativa que funcione en una toma normal y sin sobrecargarla.','🟠 Revisión recomendada'],steps:['No vuelvas a conectar repetidamente el aparato sospechoso.','No puentes automáticos ni diferenciales.','No uses cables, enchufes o regletas dañados.','Organizá una revisión si el problema se repite.']},
+ tempWhole:{result:['No conviene intentar mantener toda la instalación si el origen no está claro','Una solución temporal segura consiste en aislar lo sospechoso, no en forzar el suministro ni en anular protecciones.','Si no sabés qué está provocando el problema, mantené fuera de uso la zona afectada y pedí una revisión.','🟠 Revisión recomendada'],steps:['No puentes ninguna protección.','No manipules el contador ni cables.','Dejá fuera de uso los aparatos relacionados con el corte.','Pedí ayuda profesional si necesitás recuperar todo el suministro.']},
+ reportOnly:{result:['Podemos dejar preparado el caso para el profesional','Aunque no quieras tocar nada, podemos registrar lo que pasó para que el electricista llegue con información útil.','Anotá qué dejó de funcionar, cuándo empezó, qué aparatos estaban funcionando y si el resto de la vivienda funciona.','🟠 Revisión recomendada']},
+
  start:{q:'¿Qué está pasando?',a:[['🚨 Hay humo, fuego, chispas, olor a quemado o algo se calienta','danger'],['🏠 No tengo luz en toda la vivienda','wholeHouse'],['💡 No tengo luz en una zona','zone'],['⚡ Me salta el automático o el diferencial','protection'],['🔌 Un enchufe o aparato no funciona','outlet'],['💡 Las luces parpadean o bajan de intensidad','flicker'],['🔧 Es otro problema eléctrico','other']]},
  protection:{q:'¿Qué ocurre justo cuando se dispara la protección?',a:[['Al encender o conectar un aparato concreto','deviceTrip'],['Cuando funcionan varias cosas a la vez','overload'],['Sin un aparato concreto','generalTrip'],['No sé cuál es el interruptor','tech']]},
  deviceTrip:{q:'¿Qué llave baja: el diferencial (suele tener botón TEST) o un automático/automático?',a:[['Diferencial / tiene TEST','deviceDiff'],['Automático o automático','deviceMag'],['No lo sé','tech']]},
@@ -134,7 +154,7 @@ const diagTree={
  generalReset:{q:'Antes de volver a subirlo, ¿hay olor a quemado, humo, agua, chispas o algo caliente?',a:[['Sí','danger'],['No','generalResetSafe']]},
  generalResetSafe:{q:'Apaga o desenchufa los aparatos que estaban funcionando justo antes del corte. ¿Puedes hacerlo sin tocar cables ni abrir equipos?',a:[['Sí','generalResetDo'],['No / no sé','tech']]},
  generalResetDo:{q:'Ahora baja el general, espera unos segundos y vuelve a subirlo. ¿Se mantiene arriba y vuelve la luz?',a:[['Sí','recoveredZone'],['No, vuelve a bajar','circuitFault']]},
- differentialReset:{q:'Antes de volver a subir el diferencial, ¿hay agua/humedad, olor a quemado, chispas, desconsumo o un aparato claramente sospechoso?',a:[['Sí','danger'],['No','differentialResetSafe']]},
+ differentialReset:{q:'Antes de volver a subir el diferencial, ¿hay agua/humedad, olor a quemado, chispas, descarga eléctrica o un aparato claramente sospechoso?',a:[['Sí','danger'],['No','differentialResetSafe']]},
  differentialResetSafe:{q:'Desenchufa los aparatos conectados recientemente o que estaban funcionando cuando ocurrió el corte. ¿Puedes hacerlo sin desmontar nada?',a:[['Sí','differentialResetDo'],['No / no sé','tech']]},
  differentialResetDo:{q:'Rearma el diferencial una sola vez. ¿Se mantiene arriba?',a:[['Sí','recoveredZone'],['No, vuelve a bajar','leak']]},
  zone:{q:'En la zona afectada, ¿funciona alguna cosa o no funciona nada?',a:[['Funcionan algunas cosas','partialZone'],['No funciona nada','zoneAll'],['No estoy seguro','tech']]},
@@ -149,11 +169,11 @@ const diagTree={
  diffImmediate:{result:['Posible fuga de corriente asociada al aparato','El diferencial dispara inmediatamente al conectar ese equipo.','No uses ese aparato. Desenchúfalo solo si puedes hacerlo de forma normal y segura, sin tocar partes dañadas ni húmedas. No lo abras. Si al dejarlo desconectado el suministro se mantiene, el aparato queda identificado como sospechoso.','🔴 Técnico recomendado'],steps:['Deja el aparato sospechoso desconectado.','No lo abras, no cambies cables y no intentes puentear la protección.','Comprueba si la vivienda mantiene la luz con el aparato desconectado.','Si el diferencial sigue disparándose, no continúes rearmándolo: necesita revisión de la instalación.']},
  diffDelayed:{result:['Posible fuga o fallo que aparece durante el funcionamiento','El diferencial dispara después de un tiempo de uso.','Deja de utilizar el aparato cuando vuelva a ocurrir y no hagas pruebas internas. Si el resto de la vivienda funciona, el aparato queda como sospechoso.','🟠 Revisión recomendada'],steps:['Deja desconectado el aparato que coincide con el disparo.','Rearma la protección una sola vez si no existe ninguna señal de peligro.','Si la luz se mantiene, no vuelvas a usar ese aparato hasta revisarlo.','Si vuelve a disparar sin ese aparato conectado, pasa a revisión de la instalación.']},
  short:{result:['Posible cortocircuito o fallo interno del aparato','El automático dispara inmediatamente al encenderlo.','Deja el aparato desconectado. No sigas rearmando la protección con el equipo conectado. Si el circuito funciona sin él, el aparato es el principal sospechoso.','🔴 Técnico recomendado'],steps:['Desconecta el aparato de la toma si hacerlo es normal y seguro.','Rearma la protección una sola vez.','Si vuelve la luz y se mantiene, no conectes de nuevo el aparato.','Si el automático vuelve a bajar sin ese aparato, no sigas rearmándolo y solicita revisión.']},
- overloadDevice:{result:['Posible sobreconsumo o calentamiento del circuito','La protección dispara después de un periodo de funcionamiento.','Reduce la consumo y deja descansar el circuito. Si ocurre con un solo aparato o con una consumo normal, solicita revisión.','🟠 Revisión recomendada'],steps:['Apaga los aparatos de mayor potencia de esa zona.','Rearma la protección una sola vez cuando el circuito esté sin consumo elevado.','Vuelve a conectar los equipos de uno en uno.','Si vuelve a disparar con una consumo normal, deja de usar el circuito y pide revisión.']},
+ overloadDevice:{result:['Posible sobreconsumo o calentamiento del circuito','La protección dispara después de un periodo de funcionamiento.','Reduce la consumo y deja descansar el circuito. Si ocurre con un solo aparato o con un consumo normal, solicita revisión.','🟠 Revisión recomendada'],steps:['Apaga los aparatos de mayor potencia de esa zona.','Rearma la protección una sola vez cuando el circuito esté sin consumo elevado.','Vuelve a conectar los equipos de uno en uno.','Si vuelve a disparar con un consumo normal, deja de usar el circuito y pide revisión.']},
  overloadLikely:{result:['Probable exceso de potencia demandada','El corte coincide con varios consumidores de alta potencia funcionando simultáneamente. En España, el control de potencia del contador puede actuar cuando se supera la potencia contratada.','Primero reduce el consumo y recupera el suministro siguiendo el procedimiento seguro de volver a subir. Si ocurre con frecuencia, revisa la potencia contratada.','🟡 Recuperación guiada'],steps:['Apaga o desenchufa varios equipos de alta potencia.','Baja el interruptor general del cuadro, espera unos segundos y vuelve a subirlo.','Si vuelve la luz, conecta los aparatos de forma gradual y evita simultanear varios consumos altos.','Si vuelve a cortar con poca consumo, no asumas que es potencia: inicia un nuevo diagnóstico.','Si ocurre a menudo, consulta la potencia contratada y la potencia realmente utilizada antes de solicitar un aumento.']},
  leak:{result:['Posible fuga de corriente en la instalación o en algún equipo','El diferencial dispara sin un aparato concreto identificado.','No desmontes nada. Desconecta solo aparatos accesibles y sospechosos; si el diferencial continúa disparándose, deja de volver a subirlo y solicita un electricista cualificado.','🔴 Técnico recomendado'],steps:['Desconecta de forma normal los aparatos que puedas identificar como sospechosos.','Rearma el diferencial una sola vez si no hay ninguna señal de peligro.','Si se mantiene, no conectes de nuevo los aparatos sospechosos hasta revisarlos.','Si vuelve a disparar incluso con los aparatos desconectados, deja de hacer pruebas y solicita revisión profesional.']},
  suspectDevice:{result:['Posible problema relacionado con un aparato','El comportamiento comenzó después de conectar un equipo concreto.','Deja ese equipo desconectado y comprueba si la vivienda recupera estabilidad. No abras el aparato.','🟠 Revisión recomendada'],steps:['Desconecta el aparato sospechoso de la toma.','Rearma la protección una sola vez si no hay riesgo.','Si la instalación funciona, no vuelvas a conectar el aparato hasta revisarlo.','Si la protección vuelve a disparar sin él, revisa el circuito con un profesional.']},
- recoveredZone:{result:['La protección se había disparado y el suministro se recuperó','El interruptor vuelve a mantenerse arriba y la electricidad ha regresado.','Puedes continuar, pero observa si el fallo se repite. Si vuelve a ocurrir, no hagas volver a subirs repetidos: hay que encontrar la causa.','🟢 Suministro recuperado'],steps:['Mantén desconectados durante unos minutos los aparatos que estaban funcionando cuando ocurrió el corte.','Conecta los equipos uno por uno para identificar si alguno provoca el problema.','Si todo funciona, no hace falta desmontar nada.','Si el mismo interruptor vuelve a disparar, inicia otro diagnóstico y no lo fuerces.']},
+ recoveredZone:{result:['La protección se había disparado y el suministro se recuperó','El interruptor vuelve a mantenerse arriba y la electricidad ha regresado.','Puedes continuar, pero observa si el fallo se repite. Si vuelve a ocurrir, no hagas hacerlo repetidamente: hay que encontrar la causa.','🟢 Suministro recuperado'],steps:['Mantén desconectados durante unos minutos los aparatos que estaban funcionando cuando ocurrió el corte.','Conecta los equipos uno por uno para identificar si alguno provoca el problema.','Si todo funciona, no hace falta desmontar nada.','Si el mismo interruptor vuelve a disparar, inicia otro diagnóstico y no lo fuerces.']},
  circuitFault:{result:['Fallo persistente en un circuito','La protección vuelve a dispararse inmediatamente o no se puede recuperar el servicio de forma estable.','No fuerces la protección. Deja desconectados los aparatos de la zona y solicita revisión por un electricista cualificado.','🔴 Técnico recomendado'],steps:['No sigas subiendo el mismo interruptor repetidamente.','Deja apagados/desconectados los equipos de la zona.','No desmontes enchufes, cajas ni cables.','Solicita revisión del circuito y de los aparatos conectados.']},
  zoneFault:{result:['Fallo localizado en una zona de la vivienda','Una zona ha perdido servicio sin una causa externa clara.','Revisa únicamente las protecciones accesibles del cuadro. Si están arriba y la zona sigue sin servicio, el circuito necesita revisión.','🟠 Revisión recomendada'],steps:['Comprueba visualmente si el automático de esa zona está bajado.','Si está bajado y no hay señales de peligro, puedes intentar volver a subirlo una vez.','Si vuelve a bajar, déjalo abajo y solicita revisión.','Si permanece arriba pero la zona sigue sin funcionar, no desmontes mecanismos: pide revisión del circuito.']},
  singleOutlet:{result:['Posible fallo localizado en un enchufe','Otros puntos funcionan y el problema parece concentrado en una sola toma.','No desmontes el enchufe. Comprueba solo si el aparato funciona en otra toma segura; si el problema sigue localizado, solicita revisión.','🟠 Revisión recomendada'],steps:['Desconecta el aparato de ese enchufe.','Si el aparato funciona en otra toma segura, el enchufe original queda como sospechoso.','No desmontes la toma ni toques conductores.','Si el enchufe está caliente, quemado, suelto o huele a quemado, no lo uses y pide asistencia.']},
@@ -162,12 +182,12 @@ const diagTree={
  manyFlicker:{result:['Posible problema de alimentación o conexión','Varias luces presentan el mismo comportamiento, lo que puede apuntar a una causa común.','No desmontes la instalación. Si el parpadeo es intenso, aparece en varias zonas o coincide con otros síntomas, solicita revisión profesional.','🔴 Técnico recomendado'],steps:['Observa si el parpadeo afecta a varias habitaciones.','No manipules el cuadro ni conexiones internas para intentar corregirlo.','Reduce aparatos de consumo alto si el problema aparece al conectar equipos potentes.','Si persiste, solicita revisión de la instalación o del suministro.']},
  lightSudden:{result:['Posible fallo localizado en iluminación','La iluminación dejó de funcionar de forma repentina mientras otros servicios pueden seguir funcionando.','Comprueba el cuadro sin desmontar nada. Si la protección está correcta y la luz sigue sin funcionar, solicita revisión del punto de luz.','🟠 Revisión recomendada'],steps:['Comprueba si otras luces de la vivienda funcionan.','Mira si el automático de iluminación está bajado.','Si está bajado y no hay señales de peligro, intenta volver a subirlo una sola vez.','Si vuelve a bajar o la luz no funciona, no desmontes la instalación.']},
  distributorHelp:{result:['Necesitas comprobar el contador o el suministro','El cuadro no muestra una protección clara y el suministro no se recupera con un procedimiento seguro.','No manipules el contador. Contacta con la distribuidora para que compruebe el estado del suministro y del control de potencia.','🟠 Distribuidora'],steps:['Mantén apagados los consumos altos.','No abras ni manipules el contador.','Contacta con la distribuidora por su canal oficial de averías o atención.','Si la distribuidora confirma que el suministro está correcto, solicita revisión de la instalación interior.']},
- tripUnclear:{result:['No se puede confirmar que sea solo una sobreconsumo','El corte no coincide claramente con varios consumos altos.','No sigas rearmando sin identificar qué protección actúa. Inicia el diagnóstico desde el cuadro o solicita revisión si se repite.','🟠 Revisión recomendada'],steps:['Desconecta aparatos de consumo alto.','Observa qué protección actúa si vuelve a ocurrir, sin tocar cables.','Si el mismo circuito vuelve a disparar, deja de volver a subirlo repetidamente.','Solicita revisión si no se identifica una causa sencilla y segura.']},
+ tripUnclear:{result:['No se puede confirmar que sea solo un sobreconsumo','El corte no coincide claramente con varios consumos altos.','No sigas rearmando sin identificar qué protección actúa. Inicia el diagnóstico desde el cuadro o solicita revisión si se repite.','🟠 Revisión recomendada'],steps:['Desconecta aparatos de consumo alto.','Observa qué protección actúa si vuelve a ocurrir, sin tocar cables.','Si el mismo circuito vuelve a disparar, deja de volver a subirlo repetidamente.','Solicita revisión si no se identifica una causa sencilla y segura.']},
  tech:{result:['No hay información suficiente para una solución segura','Las respuestas no permiten diferenciar la causa sin inspección o mediciones.','No manipules cables, enchufes, el interior del cuadro ni el contador. Te conviene un electricista cualificado.','🔴 Técnico recomendado'],steps:['Deja la zona afectada sin manipular.','Desconecta aparatos sospechosos solo si puedes hacerlo normalmente y sin riesgo.','No puentes protecciones ni desmontes mecanismos.','Solicita revisión profesional y utiliza el informe de ElectroIA para explicar lo ocurrido.']}
 };
-diagTree.danger={result:['Situación de riesgo eléctrico','Hay una señal compatible con desconsumo, incendio o contacto peligroso.','DETENÉ LAS PRUEBAS. Alejate de la zona. Si puedes cortar la alimentación sin exponerte, hazlo; no toques partes mojadas, calientes o dañadas. Solicita asistencia profesional y, si existe fuego o peligro inmediato, llama al servicio de emergencias.','🔴 DETENER · Emergencia'],steps:['No toques cables, enchufes, aparatos dañados ni partes mojadas.','No intentes volver a subir una protección si hay humo, chispas, agua, calor anormal u olor fuerte a quemado.','Aléjate y corta la alimentación solo si el corte puede hacerse desde un lugar seguro.','Si hay incendio, humo importante o riesgo para personas, llama al 112.','Después, un profesional debe revisar la causa antes de volver a utilizar la instalación.']};
+diagTree.danger={result:['Situación de riesgo eléctrico','Hay una señal compatible con descarga eléctrica, incendio o contacto peligroso.','DETENÉ LAS PRUEBAS. Alejate de la zona. Si puedes cortar la alimentación sin exponerte, hazlo; no toques partes mojadas, calientes o dañadas. Solicita asistencia profesional y, si existe fuego o peligro inmediato, llama al servicio de emergencias.','🔴 DETENER · Emergencia'],steps:['No toques cables, enchufes, aparatos dañados ni partes mojadas.','No intentes volver a subir una protección si hay humo, chispas, agua, calor anormal u olor fuerte a quemado.','Aléjate y corta la alimentación solo si el corte puede hacerse desde un lugar seguro.','Si hay incendio, humo importante o riesgo para personas, llama al 112.','Después, un profesional debe revisar la causa antes de volver a utilizar la instalación.']};
 
-/* V5.9 — motor conversacional profundo: cada respuesta cambia el siguiente paso y la app intenta comprobar si la luz volvió. */
+/* V6.2 — motor conversacional profundo: cada respuesta cambia el siguiente paso y la app intenta comprobar si la luz volvió. */
 Object.assign(diagTree,{
   wholeHouse:{q:'Antes de tocar nada: ¿en tu edificio o en una casa cercana tienen luz?',a:[['Sí, los vecinos tienen luz','wholeHouseLocal'],['No, también están sin luz','networkOutage'],['No puedo comprobarlo','wholeHouseLocal']]},
   wholeHouseLocal:{q:'Mirá el cuadro eléctrico sin tocar cables. ¿Ves alguna llave claramente bajada respecto de las demás?',a:[['Sí, hay una bajada','breakerWhole'],['No, están todas arriba','meterPowerCheck'],['No sé reconocerlas','tech']]},
@@ -199,23 +219,51 @@ Object.assign(diagTree,{
 });
 
 let diagAI={};
-function diagnostico(startNode='start', initialProblem=''){enterView('diagnostico');diag={answers:[],history:[],problem:initialProblem||'',node:startNode||'start',risk:(startNode==='danger')};renderDiag()}
-function renderDiag(){const n=diagTree[diag.node];if(!n){diag.node='tech';return renderDiag()}let body=`<div class="eia-modern"><div class="eia-head"><div class="eia-avatar">⚡</div><div><b>ElectroIA</b><small>Diagnóstico adaptativo · Hogar</small></div><span class="eia-online">● En línea</span></div><div class="eia-messages" id="diagMessages">`;body+=`<div class="eia-msg ai"><div class="eia-bubble">${esc(n.q||'He analizado tus respuestas.')} </div></div>`;body+=`</div><div class="eia-quick">`;
-if(n.result){const danger=n.result[3].startsWith('🔴');body+=`<div class="eia-result ${danger?'danger':''}"><span>${esc(n.result[3])}</span><h2>${esc(n.result[0])}</h2><p><b>Por qué:</b> ${esc(n.result[1])}</p><p><b>Qué hacer ahora:</b> ${esc(n.result[2])}</p>${n.steps?.length?`<div class="solution"><h3>🛠️ Qué hacer ahora</h3><ol>${n.steps.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>`:''}${n.result[3].includes('Resuelto')?`<div class="panel"><b>¿La luz quedó funcionando de verdad?</b><div style="margin-top:8px"><button class="eia-start" onclick="diagVerify(true)">✅ Sí, funciona</button><button class="eia-back" onclick="diagVerify(false)">❌ No, sigue igual</button></div></div>`:''}<small>Resultado orientativo. No sustituye una inspección ni mediciones profesionales.</small><button class="eia-start" onclick="diagReport()">📄 Preparar informe para técnico</button><button class="eia-back" onclick="diagnostico()">Nuevo diagnóstico</button></div>`}
-else if(n.free){body+=`<textarea id="diagFree" class="eia-textarea" placeholder="Ej.: cuando enciendo el horno salta el diferencial…"></textarea><button class="eia-start" onclick="diagFreeNext()">Continuar →</button>`}
-else{body+=`<div class="eia-question-label">Pregunta ${diag.answers.length+1}</div><div class="eia-options">`;n.a.forEach(x=>body+=`<button type="button" class="eia-option" onclick='diagChoose(${JSON.stringify(x[0])},${JSON.stringify(x[1])})'>${esc(x[0])}</button>`);body+=`</div><button type="button" class="eia-back" onclick="diagExplain()">💬 No sé / quiero explicártelo con mis palabras</button>`}
-if(diag.history.length&&!n.result)body+=`<button class="eia-back" onclick="diagBack()">← Volver a la pregunta anterior</button>`;body+=`</div></div>`;app.innerHTML=head(true)+`<main class="wrap page">${body}</main>`}
-function diagFreeNext(){const el=document.getElementById('diagFree');const p=(el?.value||'').trim();if(!p){el?.focus();return}diag.problem=p;diag.answers.push({q:'¿Qué está pasando?',a:p});const low=p.toLowerCase();if(/humo|fuego|chispa|chispas|olor a quemado|olor fuerte a quemado|desconsumo|me da corriente|agua.*electric|electric.*agua|cable.*expuesto|cable.*pelado|enchufe.*caliente|caliente.*enchufe/.test(low)){diag.node='danger';renderDiag();return}diag.history.push('start');diag.node='classify';diagTree.classify={q:'Para ubicar la avería: ¿afecta a toda la vivienda, a una zona concreta o a un aparato/enchufe?',a:[['Toda la vivienda','wholeHouse'],['Una zona o habitación','zone'],['Un aparato o enchufe','deviceTrip'],['No estoy seguro','tech']]};renderDiag()}
-function diagChoose(label,next){try{const current=diagTree[diag.node];if(!current)return;diag.history.push(diag.node);diag.answers.push({q:current.q||'Pregunta',a:label});if(next==='danger'){diag.node='danger';diag.risk=true;renderDiag();return}if(!diagTree[next]){diag.node='tech';renderDiag();return}diag.node=next;renderDiag()}catch(e){console.error('ElectroIA diagnóstico:',e);diag.node='tech';renderDiag()}}
+function diagnostico(startNode='start', initialProblem=''){enterView('diagnostico');const target=startNode||'start';diag={answers:[],history:[],problem:initialProblem||'',node:(target==='danger'?'danger':'safetyGate'),targetNode:target,risk:(target==='danger')};renderDiag()}
+function renderDiag(){
+  const n=diagTree[diag.node];
+  if(!n){diag.node='tech';return renderDiag()}
+  let body=`<div class="eia-modern"><div class="eia-head"><div class="eia-avatar">⚡</div><div><b>ElectroIA</b><small>Diagnóstico adaptativo · Hogar</small></div><span class="eia-online">● En línea</span></div><div class="eia-messages" id="diagMessages">`;
+  if(diag.problem){
+    body+=`<div class="eia-msg user"><div class="eia-bubble">${esc(diag.problem)}</div></div>`;
+  }
+  diag.answers.slice(0,-1).forEach(x=>{
+    body+=`<div class="eia-msg ai"><div class="eia-bubble">${esc(x.q)}</div></div>`;
+    body+=`<div class="eia-msg user"><div class="eia-bubble">${esc(x.a)}</div></div>`;
+  });
+  if(n.result){
+    if(diag.answers.length){
+      const last=diag.answers[diag.answers.length-1];
+      if(last && last.q && last.q!=='Situación' && last.q!=='¿Qué está pasando?'){
+        body+=`<div class="eia-msg ai"><div class="eia-bubble">${esc(last.q)}</div></div><div class="eia-msg user"><div class="eia-bubble">${esc(last.a)}</div></div>`;
+      }
+    }
+    const danger=n.result[3].startsWith('🔴');
+    body+=`</div><div class="eia-quick"><div class="eia-result ${danger?'danger':''}"><span>${esc(n.result[3])}</span><h2>${esc(n.result[0])}</h2><p><b>Por qué:</b> ${esc(n.result[1])}</p><p><b>Qué hacer ahora:</b> ${esc(n.result[2])}</p>${n.steps?.length?`<div class="solution"><h3>🛠️ Qué hacer ahora</h3><ol>${n.steps.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>`:''}${n.result[3].includes('Resuelto')?`<div class="panel"><b>¿La luz quedó funcionando de verdad?</b><div style="margin-top:8px"><button class="eia-start" onclick="diagVerify(true)">✅ Sí, funciona</button><button class="eia-back" onclick="diagVerify(false)">❌ No, sigue igual</button></div></div>`:''}<small>Resultado orientativo. No sustituye una inspección ni mediciones profesionales.</small><button class="eia-start" onclick="diagReport()">📄 Preparar informe para técnico</button><button class="eia-start" onclick="diagnostico('temporaryHelp','Necesito una solución temporal')">🩹 ¿Cómo me apaño hasta que venga alguien?</button><button class="eia-back" onclick="diagnostico()">Nuevo diagnóstico</button></div>`;
+  }else if(n.free){
+    body+=`</div><div class="eia-quick"><textarea id="diagFree" class="eia-textarea" placeholder="Ej.: cuando enciendo el horno se apaga todo…"></textarea><button class="eia-start" onclick="diagFreeNext()">Continuar →</button>`;
+  }else{
+    body+=`<div class="eia-msg ai"><div class="eia-bubble">${esc(n.q||'He analizado tus respuestas.')}</div></div></div><div class="eia-quick"><div style="font-size:12px;color:#687480;margin-bottom:7px">🔎 Te hago una sola comprobación cada vez. No hace falta saber electricidad.</div><div class="eia-question-label">Pregunta ${diag.answers.length+1}</div><div class="eia-options">`;
+    n.a.forEach(x=>body+=`<button type="button" class="eia-option" onclick='diagChoose(${JSON.stringify(x[0])},${JSON.stringify(x[1])})'>${esc(x[0])}</button>`);
+    body+=`</div><button type="button" class="eia-back" onclick="diagExplain()">💬 No sé / quiero explicártelo con mis palabras</button>`;
+  }
+  if(diag.history.length&&!n.result)body+=`<button type="button" class="eia-back" onclick="diagBack()">← Volver a la pregunta anterior</button>`;
+  body+=`</div></div>`;
+  app.innerHTML=head(true)+`<main class="wrap page">${body}</main>`;
+  requestAnimationFrame(()=>{const box=document.getElementById('diagMessages');if(box)box.scrollTop=box.scrollHeight});
+}
+function diagFreeNext(){const el=document.getElementById('diagFree');const p=(el?.value||'').trim();if(!p){el?.focus();return}diag.problem=p;diag.answers.push({q:'¿Qué está pasando?',a:p});const low=p.toLowerCase();if(/humo|fuego|chispa|chispas|olor a quemado|olor fuerte a quemado|descarga eléctrica|me da corriente|agua.*electric|electric.*agua|cable.*expuesto|cable.*pelado|enchufe.*caliente|caliente.*enchufe/.test(low)){diag.node='danger';renderDiag();return}diag.history.push('start');diag.node='classify';diagTree.classify={q:'Para ubicar la avería: ¿afecta a toda la vivienda, a una zona concreta o a un aparato/enchufe?',a:[['Toda la vivienda','wholeHouse'],['Una zona o habitación','zone'],['Un aparato o enchufe','deviceTrip'],['No estoy seguro','tech']]};renderDiag()}
+function diagChoose(label,next){try{const current=diagTree[diag.node];if(!current)return;diag.history.push(diag.node);diag.answers.push({q:current.q||'Pregunta',a:label});if(next==='danger'){diag.node='danger';diag.risk=true;renderDiag();return}if(next==='continueTarget'){diag.node=diag.targetNode||'start';renderDiag();return}if(next==='safetyClear'){diag.node='safetyClear';renderDiag();return}if(!diagTree[next]){diag.node='tech';renderDiag();return}diag.node=next;renderDiag()}catch(e){console.error('ElectroIA diagnóstico:',e);diag.node='tech';renderDiag()}}
 window.diagChoose=diagChoose;
 function diagExplain(){
   const text=prompt('Contame con tus palabras qué ves o qué pasó. No hace falta usar términos eléctricos.');
   if(!text||!text.trim())return;
   const t=text.trim();
   const current=diagTree[diag.node];
+  if(current?.q) diag.history.push(diag.node);
   diag.answers.push({q:current?.q||'Situación',a:t});
   const low=t.toLowerCase();
-  if(/humo|fuego|chispa|olor a quemado|me da corriente|desconsumo|agua.*enchufe|enchufe.*agua|cable.*pelado|cable.*expuesto|enchufe.*caliente|caliente.*enchufe/.test(low)){diag.node='danger';diag.risk=true;renderDiag();return;}
+  if(/humo|fuego|chispa|olor a quemado|me da corriente|descarga eléctrica|agua.*enchufe|enchufe.*agua|cable.*pelado|cable.*expuesto|enchufe.*caliente|caliente.*enchufe/.test(low)){diag.node='danger';diag.risk=true;renderDiag();return;}
   if(/vecino|portal|calle.*sin luz|todo el edificio|nadie tiene luz/.test(low)){diag.node='networkOutage';renderDiag();return;}
   if(/todo|toda la casa|toda la vivienda|ninguna luz|nada funciona/.test(low)){diag.node='wholeHouse';renderDiag();return;}
   if(/enchufe|toma de corriente|aparato|electrodoméstico/.test(low)){diag.node='outlet';renderDiag();return;}
@@ -238,10 +286,10 @@ function diagVerify(ok){
   }
 }
 function addDiagConfirmation(text){const m=document.getElementById('diagMessages');if(m)m.innerHTML+=`<div class="eia-msg ai"><div class="eia-bubble">${esc(text)}</div></div>`;}
-function diagReport(){const n=diagTree[diag.node]||{};const r=n.result;const lines=['ELECTRO IA — INFORME DE DIAGNÓSTICO ELÉCTRICO','','Problema inicial: '+(diag.problem||'Selección rápida'),'','Preguntas y respuestas:',...diag.answers.map((x,i)=>(i+1)+'. '+x.q+'\n   Respuesta: '+x.a),'',`Diagnóstico probable: ${r?.[0]||'Revisión profesional recomendada'}`,`Nivel: ${r?.[3]||'Técnico recomendado'}`,'','Qué hacer ahora: '+(r?.[2]||'Solicitar revisión profesional.'),...(n.steps?.length?['','Pasos sugeridos:',...n.steps.map((x,i)=>(i+1)+'. '+x)]:[]),'','Nota: resultado orientativo; no sustituye inspección, mediciones ni reparación profesional.'];const box=prompt('Informe listo para copiar y enviar al técnico:',lines.join('\n'));if(box!==null){} }
+function diagReport(){const n=diagTree[diag.node]||{};const r=n.result;const lines=['ELECTRO IA — INFORME DE DIAGNÓSTICO ELÉCTRICO','','Problema inicial: '+(diag.problem||'Selección rápida'),'','Preguntas y respuestas:',...diag.answers.map((x,i)=>(i+1)+'. '+x.q+'\n   Respuesta: '+x.a),'',`Diagnóstico probable: ${r?.[0]||'Revisión profesional recomendada'}`,`Nivel: ${r?.[3]||'Técnico recomendado'}`,'','Qué hacer ahora: '+(r?.[2]||'Solicitar revisión profesional.'),...(n.steps?.length?['','Pasos sugeridos:',...n.steps.map((x,i)=>(i+1)+'. '+x)]:[]),'','Nota: resultado orientativo; no sustituye inspección, mediciones ni reparación profesional.'];const text=lines.join('\n');if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>alert('✅ Informe copiado. Ya podés pegarlo en WhatsApp o enviárselo al electricista.')).catch(()=>prompt('Informe listo para copiar y enviar al técnico:',text));}else{prompt('Informe listo para copiar y enviar al técnico:',text);} }
 
 function cuadro(){enterView('cuadro');nav('nHome');app.innerHTML=head(true)+`<main class="wrap page"><h1>🛡️ Entender mi cuadro</h1><p class="subtitle">Guía para identificar los mandos principales sin desmontar nada.</p><div class="panel"><h3>⚡ Interruptor general</h3><p>Es uno de los mandos principales de la vivienda. Si está bajado y no hay señales de peligro, ElectroIA puede guiarte para un volver a subir seguro.</p></div><div class="panel"><h3>🛡️ Diferencial</h3><p>Suele tener un botón <b>TEST</b>. Protege frente a fugas de corriente. Si dispara repetidamente, no hay que puentearlo ni forzarlo.</p></div><div class="panel"><h3>🔌 Automáticos / automáticos</h3><p>Protegen circuitos concretos. Uno puede corresponder a enchufes, iluminación, cocina u otra zona según cómo esté hecha la instalación.</p></div><div class="panel"><h3>📟 Contador inteligente e ICP</h3><p>En muchos suministros españoles el contador incorpora el control de potencia. Si se supera la potencia contratada, puede interrumpir el suministro aunque no haya un automático bajado en el cuadro.</p><button class="btn" onclick="diagnostico('wholeHouse','No tengo luz y quiero comprobar si puede ser el control de potencia del contador')">🔋 Comprobar pérdida de suministro</button></div><div class="risk"><b>Importante:</b> no abras el cuadro, no retires tapas, no toques cables ni manipules el contador. ElectroIA solo guía comprobaciones accesibles y seguras.</div></main>`}
-function safety(){enterView('safety');nav('nHome');app.innerHTML=head(true)+`<main class="wrap page"><h1>⚠️ Seguridad eléctrica</h1><div class="risk"><b>Si hay humo, fuego, chispas, olor fuerte a quemado, una desconsumo, agua en contacto con electricidad o partes calientes:</b><br><br>no manipules cables ni desmontes equipos. Alejate y pedí asistencia. Cortá la alimentación solo si podés hacerlo sin exponerte.</div><div class="tiles"><button class="tile red" onclick="safetyAI('Hay humo o fuego')">🔥 Humo / fuego</button><button class="tile orange" onclick="safetyAI('Hay chispas')">⚡ Chispas</button><button class="tile yellow" onclick="safetyAI('Hay olor a quemado o algo caliente')">🌡️ Calor / olor</button><button class="tile blue" onclick="safetyAI('Hay agua cerca de electricidad')">💧 Agua + electricidad</button></div><div class="panel"><button class="btn" onclick="chat('hogar','Tengo una situación potencialmente peligrosa y necesito orientación de seguridad. No quiero manipular nada hasta saber qué hacer.')">🤖 Consultar a ElectroIA</button></div></main>`}
+function safety(){enterView('safety');nav('nHome');app.innerHTML=head(true)+`<main class="wrap page"><h1>⚠️ Seguridad eléctrica</h1><div class="risk"><b>Si hay humo, fuego, chispas, olor fuerte a quemado, una descarga eléctrica, agua en contacto con electricidad o partes calientes:</b><br><br>no manipules cables ni desmontes equipos. Alejate y pedí asistencia. Cortá la alimentación solo si podés hacerlo sin exponerte.</div><div class="tiles"><button class="tile red" onclick="safetyAI('Hay humo o fuego')">🔥 Humo / fuego</button><button class="tile orange" onclick="safetyAI('Hay chispas')">⚡ Chispas</button><button class="tile yellow" onclick="safetyAI('Hay olor a quemado o algo caliente')">🌡️ Calor / olor</button><button class="tile blue" onclick="safetyAI('Hay agua cerca de electricidad')">💧 Agua + electricidad</button></div><div class="panel"><button class="btn" onclick="chat('hogar','Tengo una situación potencialmente peligrosa y necesito orientación de seguridad. No quiero manipular nada hasta saber qué hacer.')">🤖 Consultar a ElectroIA</button></div></main>`}
 function safetyAI(t){chat('hogar','Situación de seguridad: '+t+'. Decime qué hacer de forma segura y qué NO debo tocar.')}
 function acciones(){enterView('acciones');nav('nHome');app.innerHTML=head(true)+`<main class="wrap page"><h1>🔧 Quiero hacer algo</h1><p class="subtitle">Elegí qué querés hacer y ElectroIA te guía. Si la tarea requiere conocimientos o mediciones profesionales, te lo va a indicar.</p><button class="choice" onclick="chat('hogar','Quiero cambiar una lámpara o instalar una luz en casa.')"><strong>💡 Cambiar / instalar una luz</strong></button><button class="choice" onclick="chat('hogar','Quiero cambiar o instalar un interruptor.')"><strong>🔘 Interruptor</strong></button><button class="choice" onclick="chat('hogar','Quiero cambiar o instalar un enchufe.')"><strong>🔌 Enchufe</strong></button><button class="choice" onclick="chat('hogar','Quiero instalar un ventilador o pequeño equipo eléctrico.')"><strong>🌀 Ventilador / equipo</strong></button><button class="choice" onclick="chat('hogar','Quiero hacer otra tarea eléctrica en casa.')"><strong>➕ Otra tarea</strong></button></main>`}
 function consumo(){enterView('consumo');nav('nHome');app.innerHTML=head(true)+`<main class="wrap page"><h1>💰 Mi consumo</h1><p class="subtitle">Podés empezar con una estimación sencilla. Después podemos convertirla en un inventario de tu casa.</p><div class="panel"><label>Aparato</label><input id="dev" placeholder="Ej.: termo eléctrico" style="width:100%;background:#000;color:#fff;border:1px solid #555;padding:12px;margin:6px 0 10px;font:inherit"><label>Potencia aproximada (W)</label><input id="watts" type="number" placeholder="Ej.: 1500" style="width:100%;background:#000;color:#fff;border:1px solid #555;padding:12px;margin:6px 0 10px;font:inherit"><label>Horas de uso al día</label><input id="hours" type="number" step="0.1" placeholder="Ej.: 3" style="width:100%;background:#000;color:#fff;border:1px solid #555;padding:12px;margin:6px 0 10px;font:inherit"><button class="btn" onclick="calcConsumption()">Calcular</button><div id="consResult"></div></div><button class="choice" onclick="chat('hogar','Quiero analizar el consumo eléctrico de mi casa y saber qué aparatos pueden estar gastando más.')"><strong>🤖 Analizar mi consumo con IA</strong><small>Te haré preguntas sobre tu vivienda y tus aparatos.</small></button></main>`}
@@ -332,6 +380,267 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
 </script>
 
 
+
+<script id="electroia-diagnostico-v61">
+/* V6.2 — Diagnóstico profundo adaptativo.
+   Prioridad: seguridad, lenguaje cotidiano y preguntas que realmente cambian la hipótesis. */
+Object.assign(diagTree,{
+  protection:{
+    q:'Quiero localizar qué provoca el corte. ¿Qué estaba pasando justo antes de que bajara la llave?',
+    a:[
+      ['Encendí o conecté un aparato concreto','deviceTrip'],
+      ['Había varios aparatos funcionando','overload'],
+      ['No estaba usando nada nuevo','generalTrip'],
+      ['No estoy seguro','protectionExplain']
+    ]
+  },
+  deviceTrip:{
+    q:'¿Qué aparato estaba usando cuando ocurrió? Elegí el que más se parezca.',
+    a:[
+      ['Horno / vitro / microondas','deviceHighPower'],
+      ['Termo / calefacción / aire acondicionado','deviceHighPower'],
+      ['Lavadora / lavavajillas / secadora','deviceAppliance'],
+      ['Otro aparato pequeño','deviceAppliance'],
+      ['No sé cuál fue','deviceIdentifyPhoto']
+    ]
+  },
+  deviceHighPower:{
+    q:'¿La llave bajó en el mismo momento de encenderlo o después de que funcionara un rato?',
+    a:[
+      ['Justo al encenderlo','highPowerImmediate'],
+      ['Después de funcionar un rato','highPowerDelayed'],
+      ['No me acuerdo','deviceTimingUnknown']
+    ]
+  },
+  highPowerImmediate:{
+    q:'Para separar un problema del aparato de un problema del circuito: ¿si ese aparato queda desconectado, la llave se mantiene arriba?',
+    a:[
+      ['Sí, se mantiene','suspectDeviceStable'],
+      ['No, vuelve a bajar','circuitFault'],
+      ['No puedo comprobarlo con seguridad','tech']
+    ]
+  },
+  highPowerDelayed:{
+    q:'¿También estaban funcionando otros aparatos de consumo alto cuando se cortó?',
+    a:[
+      ['Sí','overloadLikely'],
+      ['No','overloadDevice'],
+      ['No sé','deviceTimingUnknown']
+    ]
+  },
+  deviceTimingUnknown:{
+    q:'¿Había algo que cambiara justo antes del corte: otro aparato encendido, una regleta, una reparación reciente o humedad?',
+    a:[
+      ['Sí, conecté/encendí algo','suspectDevice'],
+      ['Sí, hubo humedad/agua','danger'],
+      ['Sí, hubo una reparación o cambio reciente','recentWork'],
+      ['No','tripUnclear'],
+      ['No sé','tech']
+    ]
+  },
+  deviceAppliance:{
+    q:'¿El aparato funciona normalmente cuando lo usás en otra toma que sabés que tiene corriente?',
+    a:[
+      ['Sí, funciona','applianceOutletSuspect'],
+      ['No, tampoco funciona','deviceFault'],
+      ['No puedo probarlo','suspectDevice']
+    ]
+  },
+  applianceOutletSuspect:{
+    q:'¿Cuando conectás otro aparato seguro en esa misma toma, también se corta o deja de funcionar?',
+    a:[
+      ['Sí, también falla','singleOutlet'],
+      ['No, el otro funciona','deviceFault'],
+      ['No estoy seguro','singleOutlet']
+    ]
+  },
+  recentWork:{
+    q:'¿El problema empezó después de una reparación, cambio de enchufe/luz, obra, taladro o instalación reciente?',
+    a:[
+      ['Sí','recentWorkResult'],
+      ['No','tripUnclear'],
+      ['No sé','tech']
+    ]
+  },
+  recentWorkResult:{
+    result:[
+      'Posible problema relacionado con un cambio reciente',
+      'El fallo apareció después de una modificación o trabajo en la instalación. Eso hace especialmente importante revisar la zona intervenida.',
+      'No desmontes nada ni sigas haciendo pruebas. Dejá la zona afectada sin usar y solicitá revisión profesional, indicando qué se modificó y cuándo empezó el problema.',
+      '🔴 Técnico recomendado'
+    ],
+    steps:[
+      'Dejá sin usar la zona o aparato relacionado con el trabajo reciente.',
+      'No abras enchufes, cajas, mecanismos ni el cuadro.',
+      'Anotá qué se cambió y cuándo empezó el fallo.',
+      'Solicitá revisión de la zona intervenida antes de volver a utilizarla.'
+    ]
+  ],
+  generalTrip:{
+    q:'Antes de que bajara la llave, ¿había ocurrido algo fuera de lo normal?',
+    a:[
+      ['Olor a quemado, calor, humo o chispas','danger'],
+      ['Agua o humedad','danger'],
+      ['Un aparato empezó a comportarse raro','suspectDevice'],
+      ['Nada fuera de lo normal','leak'],
+      ['No sé','tripUnclear']
+    ]
+  },
+  overloadDevice:{
+    result:[
+      'Posible sobreconsumo o calentamiento asociado a un aparato',
+      'La protección actúa después de un tiempo de funcionamiento, lo que puede ser compatible con un consumo elevado o con un problema que aparece al calentarse el aparato o el circuito.',
+      'Dejá ese aparato desconectado y no lo vuelvas a probar repetidamente. Si el resto de la vivienda funciona, conviene revisar el aparato y, si corresponde, el circuito.',
+      '🟠 Revisión recomendada'
+    ],
+    steps:[
+      'Dejá desconectado el aparato que coincide con el corte.',
+      'No lo abras ni intentes repararlo.',
+      'Si la vivienda funciona con él desconectado, no lo vuelvas a conectar solo para probar.',
+      'Si el problema aparece incluso sin ese aparato, solicitá revisión del circuito.'
+    ]
+  },
+  wholeHouseLocal:{
+    q:'Mirá el cuadro sin tocar cables. ¿Ves alguna llave bajada respecto de las demás?',
+    a:[
+      ['Sí, hay una bajada','breakerWhole'],
+      ['No, están todas arriba','meterPowerCheck'],
+      ['No sé reconocerlas','tech']
+    ]
+  },
+  meterPowerCheck:{
+    q:'Pensá en el momento del corte: ¿había varios aparatos de consumo alto funcionando a la vez?',
+    a:[
+      ['Sí, había varios','powerLimit'],
+      ['No, solo había uno o pocos','meterNoTrip'],
+      ['No me acuerdo','meterPowerCheck2']
+    ]
+  },
+  zone:{
+    q:'Para acotar el problema: ¿qué dejó de funcionar en esa zona?',
+    a:[
+      ['Solo las luces','light'],
+      ['Solo los enchufes','outlet'],
+      ['Luces y enchufes','zoneAll'],
+      ['No estoy seguro','zoneDetail']
+    ]
+  },
+  zoneAll:{
+    q:'¿La zona dejó de funcionar de golpe o fue empeorando antes?',
+    a:[
+      ['De golpe','zoneSudden'],
+      ['Fue empeorando / parpadeaba','zoneProgressive'],
+      ['No sé','zoneFault']
+    ]
+  },
+  zoneSudden:{
+    q:'¿Coincidió con conectar o encender algún aparato en esa zona?',
+    a:[
+      ['Sí','suspectDevice'],
+      ['No','zoneFault'],
+      ['No sé','breakerZone']
+    ]
+  },
+  zoneProgressive:{
+    result:[
+      'Posible fallo que necesita revisión del circuito',
+      'Una pérdida progresiva de funcionamiento o parpadeos antes del fallo puede indicar un problema de conexión, protección, punto de consumo o alimentación.',
+      'No desmontes enchufes, interruptores ni cajas. Si el problema continúa, dejá esa zona sin usar y solicitá revisión.',
+      '🟠 Revisión recomendada'
+    ],
+    steps:[
+      'Dejá sin usar los puntos que presentan el problema.',
+      'No manipules conexiones ni retires tapas.',
+      'Observá si el resto de la vivienda funciona con normalidad.',
+      'Solicitá revisión si el fallo persiste o se repite.'
+    ]
+  },
+  light:{
+    q:'¿La luz falla siempre o solo algunas veces?',
+    a:[
+      ['Siempre','lightSudden'],
+      ['A veces / parpadea','oneLightFlicker'],
+      ['No sé','tech']
+    ]
+  },
+  flicker:{
+    q:'¿El cambio de intensidad ocurre cuando encendés otro aparato, o también ocurre sin tocar nada?',
+    a:[
+      ['Ocurre al encender otro aparato','flickerLoad'],
+      ['Ocurre sin relación aparente','flickerSupply'],
+      ['Solo pasa en una lámpara','oneLightFlicker'],
+      ['No sé','tech']
+    ]
+  },
+  flickerLoad:{
+    result:[
+      'Posible relación entre el consumo y la alimentación',
+      'El cambio de intensidad coincide con la puesta en marcha de otro aparato. Puede haber una caída de tensión o un problema de alimentación que merece comprobación.',
+      'No desmontes la instalación. Si ocurre con frecuencia o es muy marcado, solicitá revisión profesional.',
+      '🟠 Revisión recomendada'
+    ],
+    steps:[
+      'Observá qué aparato provoca el cambio de intensidad.',
+      'Evitá hacer pruebas repetidas con aparatos de alto consumo.',
+      'No manipules conexiones ni el interior del cuadro.',
+      'Si el síntoma afecta a varias luces o se repite, solicitá revisión.'
+    ]
+  },
+  flickerSupply:{
+    result:[
+      'Posible problema de alimentación o conexión',
+      'Varias luces cambian de intensidad sin una causa clara. Al afectar a más de un punto, conviene descartar un problema común.',
+      'No desmontes nada. Si el síntoma es intenso, aparece en varias habitaciones o se acompaña de otros fallos, solicitá revisión.',
+      '🔴 Técnico recomendado'
+    ],
+    steps:[
+      'Observá si ocurre en varias habitaciones.',
+      'No manipules cables ni conexiones.',
+      'Anotá si coincide con otros síntomas eléctricos.',
+      'Solicitá revisión de la instalación o del suministro.'
+    ]
+  },
+  outlet:{
+    q:'¿El enchufe falla aunque pruebes con otro aparato que normalmente funciona?',
+    a:[
+      ['Sí, el enchufe sigue sin funcionar','outletCircuit'],
+      ['No, el otro aparato funciona','deviceFault'],
+      ['No puedo probarlo','singleOutlet']
+    ]
+  },
+  singleOutlet:{
+    result:[
+      'Posible fallo localizado en un enchufe',
+      'El problema parece concentrado en una sola toma mientras otros puntos funcionan.',
+      'No desmontes el enchufe. Si está caliente, quemado, suelto, hace ruido u huele a quemado, no lo uses.',
+      '🟠 Revisión recomendada'
+    ],
+    steps:[
+      'Dejá de usar ese enchufe.',
+      'No retires tapas ni toques conductores.',
+      'Si el aparato funciona en otra toma segura, el enchufe original queda como sospechoso.',
+      'Solicitá revisión si el problema continúa.'
+    ]
+  }
+});
+
+/* Resultado final más explicativo: muestra el razonamiento sin afirmar una certeza que no puede verificarse a distancia. */
+const _renderDiagOriginal=renderDiag;
+renderDiag=function(){
+  _renderDiagOriginal();
+  const n=diagTree[diag.node];
+  if(!n?.result)return;
+  const box=document.querySelector('.eia-result');
+  if(!box || box.querySelector('.diag-deep-note'))return;
+  const answered=diag.answers.length;
+  const note=document.createElement('div');
+  note.className='diag-deep-note';
+  note.style.cssText='margin-top:12px;padding:11px 12px;border-radius:12px;background:#f7f8fa;border:1px solid #e3e6ea;color:#4e5862;font-size:13px;line-height:1.45';
+  note.innerHTML='<b>🔎 Cómo llegamos a esto</b><br>ElectroIA ha usado '+answered+' respuesta'+(answered===1?'':'s')+' para acotar el problema. El resultado es una hipótesis orientativa, no una certeza: una comprobación profesional puede confirmar la causa.';
+  box.insertBefore(note,box.querySelector('small'));
+};
+</script>
+
 <script id="electroia-spa-navigation">
 let electroView='home';
 let electroStack=[];
@@ -385,4 +694,99 @@ function goBack(){
 // Inicializar la aplicación después de declarar el sistema de navegación.
 window.electroView = electroView;
 home();
-</script></body></html>
+</script>
+<script id="electroia-diagnostico-v62">
+/* V6.2 — Confirmación conversacional antes del diagnóstico final */
+const _renderDiagV61 = renderDiag;
+
+function diagNeedsConfirmation(node){
+  const n=diagTree[node];
+  if(!n?.result) return false;
+  if(diag.confirmedNode===node) return false;
+  if(n.result[3]?.startsWith('🔴')) return false; // seguridad no se retrasa
+  return diag.answers.length>=2;
+}
+
+renderDiag=function(){
+  const n=diagTree[diag.node];
+  if(n?.result && diagNeedsConfirmation(diag.node)){
+    renderDiagConfirmation();
+    return;
+  }
+  _renderDiagV61();
+};
+
+function renderDiagConfirmation(){
+  const n=diagTree[diag.node];
+  const title=n.result?.[0]||'Posible causa';
+  const why=n.result?.[1]||'';
+  const answers=diag.answers.slice(-4).map(x=>`<div style="margin:7px 0"><b>${esc(x.q)}</b><br><span style="color:#687480">${esc(x.a)}</span></div>`).join('');
+  const body=`<div class="eia-modern">
+    <div class="eia-head"><div class="eia-avatar">⚡</div><div><b>ElectroIA</b><small>Última comprobación</small></div><span class="eia-online">● Analizando</span></div>
+    <div class="eia-messages">
+      <div class="eia-msg ai"><div class="eia-bubble">
+        Antes de darte una conclusión, quiero comprobar una cosa más. Por tus respuestas, <b>parece que ${esc(title.toLowerCase())}</b>.
+        <br><br>${esc(why)}
+        <br><br><b>Esto es lo que entendí de tu caso:</b>
+        <div style="margin-top:8px;padding:10px;border-radius:12px;background:#f7f8fa;border:1px solid #e3e6ea">${answers}</div>
+        <br>¿Esto describe bien lo que está pasando?
+      </div></div>
+    </div>
+    <div class="eia-quick">
+      <button class="eia-start" onclick="diagConfirm(true)">✅ Sí, eso es lo que pasa</button>
+      <button class="eia-back" onclick="diagConfirm(false)">❌ No exactamente</button>
+      <button class="eia-back" onclick="diagCorrect()">✏️ Quiero corregir una respuesta</button>
+    </div>
+  </div>`;
+  app.innerHTML=head(true)+`<main class="wrap page">${body}</main>`;
+}
+
+function diagConfirm(ok){
+  if(ok){
+    diag.confirmedNode=diag.node;
+    diag.answers.push({q:'¿Esto describe bien lo que está pasando?',a:'Sí, eso es lo que pasa'});
+    _renderDiagV61();
+  }else{
+    diag.answers.push({q:'¿Esto describe bien lo que está pasando?',a:'No exactamente'});
+    diag.node='classify';
+    if(!diagTree.classify)diagTree.classify={q:'Vamos a corregirlo. ¿Cuál de estas situaciones describe mejor el problema?',a:[
+      ['No tengo luz en toda la vivienda','wholeHouse'],
+      ['No tengo luz en una zona','zone'],
+      ['Un aparato o enchufe no funciona','outlet'],
+      ['Salta una llave del cuadro','protection'],
+      ['Las luces parpadean','flicker'],
+      ['No estoy seguro','tech']
+    ]};
+    renderDiag();
+  }
+}
+
+function diagCorrect(){
+  if(diag.history.length) {
+    diagBack();
+  } else {
+    diag.node='start';
+    renderDiag();
+  }
+}
+
+/* Si el usuario confirma un resultado recuperado, hacemos una comprobación posterior. */
+const _diagVerifyV61=diagVerify;
+diagVerify=function(ok){
+  if(ok){
+    diag.confirmedNode=null;
+    diag.answers.push({q:'¿La luz quedó funcionando de verdad?',a:'Sí, funciona'});
+    addDiagConfirmation('Perfecto. La electricidad volvió y la situación parece estable. Antes de darlo por cerrado, recordá qué aparato o situación coincidió con el corte: si vuelve a ocurrir, ese dato será muy útil para encontrar la causa.');
+  }else{
+    _diagVerifyV61(false);
+  }
+};
+
+/* Guardar el nodo confirmado cuando se inicia un diagnóstico nuevo. */
+const _diagnosticoV61=diagnostico;
+diagnostico=function(startNode='start',initialProblem=''){
+  diag.confirmedNode=null;
+  _diagnosticoV61(startNode,initialProblem);
+};
+</script>
+</body></html>
