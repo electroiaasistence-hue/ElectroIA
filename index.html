@@ -1,11 +1,45 @@
 <!doctype html>
 <html lang="es">
 <head>
+<meta name="electroia-build" content="7.1-photo-vision-ui-2026-09-07">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ElectroIA · Tu aliado eléctrico · Hogar v6.2</title>
+<meta name="electroia-build" content="7.2-harmonized-ui-photo-ai"><title>ElectroIA · Tu aliado eléctrico · Hogar v7.2</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#000;color:#fff;font-family:"Segoe UI",Arial,sans-serif}body{padding-bottom:78px}.top{padding:18px 16px 14px;background:#000}.brand{font-size:34px;font-weight:300}.tag{font-size:14px;color:#ddd}.ver{color:#888;font-size:12px}.row{display:flex;justify-content:space-between;align-items:center}.wrap{max-width:760px;margin:auto;padding:8px 10px}.tiles{display:grid;grid-template-columns:1fr 1fr;gap:5px}.tile{border:0;color:#fff;min-height:142px;padding:16px;text-align:left;cursor:pointer;font-family:inherit}.tile.full{grid-column:1/-1}.tile.large{min-height:235px}.blue{background:#0879e8}.green{background:#10a84f}.orange{background:#f36b21}.yellow{background:#ffc107;color:#111}.red{background:#e51c3a}.purple{background:#6538c5}.teal{background:#08a7a7}.cyan{background:#00a8c6}.dark{background:#171717}.tile .ico{font-size:42px}.tile b{display:block;font-size:21px;font-weight:400;margin-top:8px}.tile span{display:block;font-size:14px;margin-top:6px;line-height:1.35}.arrow{float:right;font-size:28px;font-weight:200}.page{padding-bottom:20px}.page h1{font-size:29px;font-weight:300;margin:10px 4px 14px}.subtitle{color:#bbb;margin:0 4px 14px;line-height:1.45}.panel{background:#111;padding:15px;margin-bottom:7px}.panel h2{font-size:20px;font-weight:400;margin:0 0 7px}.panel p{color:#ccc;line-height:1.45}.btn{border:0;padding:12px 15px;background:#0879e8;color:#fff;font:inherit;cursor:pointer}.btn.alt{background:#333}.btn.warn{background:#e51c3a}.btn.light{background:#ffc107;color:#111}.choice{width:100%;border:0;background:#222;color:#fff;padding:14px;text-align:left;margin:4px 0;font:inherit;cursor:pointer}.choice strong{display:block;font-weight:400;font-size:17px}.choice small{display:block;color:#aaa;margin-top:4px}.risk{padding:13px;background:#261014;border-left:4px solid #e51c3a;margin:8px 0;line-height:1.4}.ok{padding:13px;background:#0d2415;border-left:4px solid #10a84f;margin:8px 0;line-height:1.4}.chat{height:410px;overflow:auto;background:#0d0d0d;padding:10px}.msg{padding:11px;margin:7px 0;background:#222;max-width:92%;line-height:1.45;white-space:pre-wrap}.msg.user{background:#0879e8;margin-left:auto}.chatrow{display:flex;gap:5px;margin-top:7px}.chatrow input{flex:1}.photo{max-width:100%;max-height:280px;display:block}.hidden{display:none}.progress{height:5px;background:#333;margin:8px 0}.progress i{display:block;height:100%;background:#0879e8;width:0}.list{padding-left:20px;color:#ccc;line-height:1.7}.bottom{position:fixed;bottom:0;left:0;right:0;height:78px;background:#000;border-top:1px solid #333;display:grid;grid-template-columns:repeat(4,1fr);z-index:10}.nav{border:0;background:#000;color:#aaa;font:inherit}.nav.active{color:#0879e8}.nav .i{font-size:23px;display:block}@media(max-width:450px){.brand{font-size:30px}.tile.large{min-height:220px}.tile b{font-size:20px}}
+
+.eia-brand-hero{position:relative;overflow:hidden;border-radius:24px;padding:28px 20px 22px;background:linear-gradient(135deg,#0b65d8 0%,#0879e8 52%,#00a3c7 100%);color:#fff;box-shadow:0 14px 35px rgba(8,121,232,.22)}
+.eia-brand-hero:before{content:"";position:absolute;width:210px;height:210px;border-radius:50%;right:-75px;top:-85px;background:rgba(255,255,255,.13)}
+.eia-brand-hero:after{content:"";position:absolute;width:130px;height:130px;border-radius:50%;right:70px;bottom:-85px;background:rgba(255,255,255,.08)}
+.eia-hero-copy{position:relative;z-index:2;max-width:620px}
+.eia-logo-mark{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.12);border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.5px}
+.eia-brand-hero h1{font-size:34px;line-height:1.05;margin:15px 0 9px;letter-spacing:-.7px}
+.eia-slogan{font-size:20px;font-weight:850;line-height:1.2;margin:0 0 12px}
+.eia-hero-desc{font-size:15px;line-height:1.55;margin:0 0 18px;max-width:590px;color:rgba(255,255,255,.94)}
+.eia-free{display:flex;gap:9px;align-items:flex-start;padding:11px 12px;border-radius:14px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);font-size:13px;line-height:1.4}
+.eia-free strong{display:block;font-size:14px;margin-bottom:2px}
+.eia-hero-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+.eia-hero-actions .btn{background:#fff!important;color:#075ebd!important;min-width:190px}
+.eia-hero-actions .btn.alt{background:rgba(0,0,0,.16)!important;color:#fff!important;border:1px solid rgba(255,255,255,.25)}
+.eia-visual{position:absolute;right:25px;bottom:17px;width:150px;height:150px;z-index:1;opacity:.95}
+.eia-house{position:absolute;left:27px;bottom:12px;width:95px;height:76px;background:rgba(255,255,255,.95);border-radius:10px;box-shadow:0 10px 20px rgba(0,0,0,.12)}
+.eia-roof{position:absolute;left:13px;top:-42px;width:0;height:0;border-left:61px solid transparent;border-right:61px solid transparent;border-bottom:52px solid rgba(255,255,255,.95)}
+.eia-window{position:absolute;width:21px;height:21px;border-radius:4px;background:#0879e8;top:20px;left:15px;box-shadow:45px 0 0 #0879e8}
+.eia-door{position:absolute;width:20px;height:34px;border-radius:5px 5px 0 0;background:#0b65d8;bottom:0;left:38px}
+.eia-bolt{position:absolute;right:7px;top:2px;font-size:48px;filter:drop-shadow(0 6px 5px rgba(0,0,0,.16));transform:rotate(7deg)}
+.eia-promise{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:11px}
+.eia-promise>div{background:#fff;border:1px solid #e2e7ec;border-radius:13px;padding:12px;text-align:center;font-size:12px;line-height:1.35}
+.eia-promise b{display:block;font-size:14px;margin-bottom:3px;color:#18212b}
+@media(max-width:650px){.eia-visual{opacity:.25;right:-18px}.eia-brand-hero h1{font-size:31px}.eia-promise{grid-template-columns:1fr 1fr}.eia-promise>div:last-child{grid-column:1/-1}}
+
+.photo-ai-card{margin-top:10px;padding:12px;border:1px solid #cfe0f5;border-radius:16px;background:#f7fbff}
+.photo-ai-card h3{margin:0 0 6px;font-size:17px}.photo-ai-card p{margin:5px 0;color:#4d5c6b}
+.photo-ai-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.photo-ai-actions button{border:1px solid #c8d7e8;background:#fff;border-radius:12px;padding:9px 11px;font-weight:700;cursor:pointer}
+.photo-ai-preview{width:100%;max-height:320px;object-fit:contain;border-radius:13px;background:#eef3f8;margin-top:8px}
+.visual-note{padding:10px 12px;border-radius:13px;background:#fff8df;border:1px solid #f1d477;margin-top:9px;color:#51420e}
 </style>
 <style id="electroia-chat-v3">
 .chat-app{height:calc(100dvh - 112px);min-height:540px;display:flex;flex-direction:column;background:#f6f7f9;border:1px solid #e6e8ec;border-radius:28px;overflow:hidden;box-shadow:0 16px 45px rgba(0,0,0,.12)}
@@ -29,7 +63,30 @@
 </style><style id="eia-v51-style">
 .eia-modern{background:#fff;color:#18212b;border:1px solid #e1e6eb;border-radius:22px;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,.12)}
 .eia-head{display:flex;align-items:center;gap:11px;padding:14px 15px;border-bottom:1px solid #e6e9ed;background:#fbfcfd}.eia-avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#18212b;color:#fff;font-size:20px}.eia-head b{display:block;font-size:16px}.eia-head small{display:block;color:#687480;font-size:12px;margin-top:2px}.eia-online{margin-left:auto;font-size:11px;color:#27784a}.eia-intro{padding:24px 20px 15px;text-align:center}.eia-hero-icon{font-size:34px}.eia-intro h1{margin:8px 0;font-size:25px}.eia-intro p{color:#5f6b76;line-height:1.5;margin:0 auto 15px;max-width:590px}.eia-warning{background:#fff7e8;border:1px solid #f0d8a3;border-radius:13px;padding:11px;text-align:left;font-size:13px;line-height:1.45}.eia-start{display:block;width:calc(100% - 30px);margin:15px auto 10px;background:#1769e0;color:#fff;border:0;border-radius:13px;padding:14px;font-weight:800;font-size:15px;cursor:pointer}.eia-secondary{display:flex;gap:8px;padding:0 15px 16px;flex-wrap:wrap}.eia-secondary button,.eia-back{flex:1;border:0;border-radius:12px;background:#eef1f4;color:#25303a;padding:11px;font-weight:700;cursor:pointer}.eia-messages{padding:20px 15px 8px;background:#f6f8fa;min-height:120px}.eia-msg{display:flex;margin-bottom:10px}.eia-bubble{max-width:92%;background:#fff;border:1px solid #e1e6eb;border-radius:16px 16px 16px 6px;padding:13px 14px;line-height:1.45}.eia-quick{padding:14px;background:#fff;border-top:1px solid #e6e9ed}.eia-question-label{font-size:12px;color:#6a7580;font-weight:700;margin-bottom:9px}.eia-options{display:grid;grid-template-columns:1fr 1fr;gap:9px}.eia-option{min-height:50px;text-align:left;background:#fff;border:1px solid #d9e0e6;border-radius:13px;padding:11px 12px;font-size:14px;font-weight:700;color:#18212b;cursor:pointer}.eia-option:hover{background:#f3f6f8}.eia-back{display:block;width:100%;margin-top:10px}.eia-textarea{width:100%;min-height:105px;resize:vertical;border:1px solid #ccd4dc;border-radius:13px;padding:12px;font:inherit;font-size:16px}.eia-result{padding:14px;border-radius:15px;background:#f2f7fd;border:1px solid #cbdced}.eia-result.danger{background:#fff2f2;border-color:#edc2c2}.eia-result>span{display:inline-block;font-size:12px;font-weight:800;margin-bottom:8px}.eia-result h2{margin:3px 0 10px;font-size:19px}.eia-result p{line-height:1.5}.eia-result small{color:#687480;display:block;line-height:1.4}.eia-result .eia-start{width:100%;margin:14px 0 8px}.eia-result .eia-back{width:100%}.solution{margin:14px 0;padding:12px;border-radius:12px;background:#fff;border:1px solid #d8e1ea}.solution h3{font-size:15px;margin:0 0 8px}.solution ol{margin:0;padding-left:22px}.solution li{margin:7px 0;line-height:1.45}
+.diag-media{margin:12px 0;padding:10px;border:1px solid #dbe2e8;border-radius:15px;background:#fff}
+.diag-media svg{display:block;width:100%;max-height:210px}
+.diag-media p{margin:8px 4px 2px;color:#55616d;font-size:13px;line-height:1.4;text-align:center}
+.diag-audio{border:0;border-radius:10px;background:#eef4fb;color:#1769e0;padding:7px 10px;font-weight:700;cursor:pointer;margin-top:8px}
+.diag-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+.diag-tool{border:1px solid #d9e0e6;background:#f7f9fb;border-radius:12px;padding:10px;font:inherit;font-weight:700;cursor:pointer;color:#25303a}
+.diag-tool input{display:none}
+
 @media(max-width:520px){.eia-options{grid-template-columns:1fr}.eia-secondary{flex-direction:column}.eia-intro h1{font-size:23px}}
+/* V7.2 — panel de problemas integrado visualmente con el tema oscuro */
+.eia-light-panel{background:linear-gradient(145deg,#121b27 0%,#172536 100%)!important;color:#f5f8fc!important;border:1px solid #26384c!important;box-shadow:0 10px 28px rgba(0,0,0,.18)}
+.eia-light-panel h2{color:#ffffff!important}.eia-light-panel p{color:#cbd6e2!important}.eia-light-panel .btn{color:#fff!important}.eia-light-panel .btn.alt{color:#fff!important;background:#263442!important;border:1px solid #3a4b5c!important}
+.eia-light-panel > div[style*="display:grid"] .btn{box-shadow:0 4px 12px rgba(0,0,0,.16)}
+.eia-pro-card{margin-top:15px;border-radius:22px;overflow:hidden;background:linear-gradient(135deg,#171717 0%,#242424 55%,#303030 100%);color:#fff;border:1px solid #3a3a3a;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.eia-pro-inner{padding:20px}
+.eia-pro-kicker{display:inline-block;padding:6px 10px;border-radius:999px;background:#0879e8;font-size:11px;font-weight:800;letter-spacing:.4px}
+.eia-pro-card h2{font-size:25px;font-weight:500;margin:12px 0 8px}
+.eia-pro-card p{color:#d0d0d0;line-height:1.5;margin:0 0 13px}
+.eia-pro-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.eia-pro-item{padding:12px;border:1px solid #3b3b3b;background:#1d1d1d;border-radius:13px;font-size:12px;line-height:1.35}
+.eia-pro-item b{display:block;font-size:14px;margin-bottom:4px;color:#fff}
+.eia-pro-btn{width:100%;background:#0879e8!important;color:#fff!important;border:0!important;border-radius:13px!important;font-weight:800}
+@media(max-width:650px){.eia-pro-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -42,40 +99,76 @@
 </nav>
 <script>
 const API="/api";let currentMode="hogar",diag={step:0,answers:[]};
-function head(back=false){return `<header class="top">${back?'<button class="btn alt" onclick="goBack()">← Volver</button>':''}<div class="row"><div><div class="brand">⚡ ElectroIA</div><div class="tag">Tu aliado eléctrico</div></div><div style="text-align:right">🏠<div class="ver">Hogar · v6.4</div></div></div></header>`}
+function head(back=false){return `<header class="top">${back?'<button class="btn alt" onclick="goBack()">← Volver</button>':''}<div class="row"><div><div class="brand">⚡ ElectroIA</div><div class="tag">Tu aliado eléctrico · diagnóstico visual, foto y voz</div></div><div style="text-align:right">🏠<div class="ver">Hogar · v7.2</div></div></div></header>`}
 function nav(id){document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));document.getElementById(id)?.classList.add('active')}
 function home(){electroStack=[];electroView='home';nav('nHome');app.innerHTML=head()+`<main class="wrap page">
-<div class="panel" style="background:#0879e8;padding:18px 16px">
-<div style="font-size:12px;opacity:.9;font-weight:700;letter-spacing:.4px">⚡ ELECTRO IA · ASISTENCIA RÁPIDA</div>
-<h1 style="font-size:27px;margin:7px 0 5px;color:#fff">¿Tenés una avería eléctrica ahora?</h1>
-<p style="color:#fff;margin:0 0 13px;line-height:1.45">No necesitás saber nada de electricidad. Elegí lo que más se parezca a lo que está pasando y ElectroIA te irá guiando con preguntas sencillas.</p>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-<button class="btn" style="background:#000" onclick="quickEmergency('⚡ Me salta el automático o diferencial')">⚡ Se me va la luz</button>
-<button class="btn" style="background:#000" onclick="quickEmergency('💡 No tengo luz en el hogar')">💡 No tengo luz</button>
-<button class="btn" style="background:#000" onclick="quickEmergency('🔌 Un enchufe no funciona')">🔌 Enchufe / aparato</button>
-<button class="btn" style="background:#000" onclick="quickEmergency('🚨 Hay olor a quemado, chispas o algo caliente')">🔥 Huele / calienta</button>
-<button class="btn" style="background:#000" onclick="quickEmergency('🚿 Hay agua cerca de algo eléctrico')">🚿 Hay agua cerca</button>
-<button class="btn" style="background:#000" onclick="quickEmergency('❓ No sé qué pasa')">❓ No sé qué pasa</button>
+<section class="eia-brand-hero">
+<div class="eia-hero-copy">
+<div class="eia-logo-mark">⚡ ELECTROIA HOGAR · ASISTENTE ELÉCTRICO</div>
+<h1>Tu problema eléctrico.<br>Una solución sencilla.</h1>
+<div class="eia-slogan">Entendé qué pasa antes de llamar a un electricista.</div>
+<p class="eia-hero-desc">ElectroIA Hogar es un asistente inteligente pensado para cualquier persona. Le contás qué está pasando en tu casa y te guía con preguntas simples y comprobaciones seguras, paso a paso, aunque no sepas absolutamente nada de electricidad.</p>
+<div class="eia-free"><span style="font-size:22px">🆓</span><div><strong>Una ayuda gratuita para todos</strong>Antes de pagar una visita de urgencia que puede salir muy cara, podés intentar entender el problema, solucionarlo si es seguro o saber si realmente necesitás un profesional.</div></div>
+<div class="eia-hero-actions">
+<button class="btn" onclick="diagnostico()">⚡ Tengo un problema ahora</button>
+<button class="btn alt" onclick="chat('hogar')">💬 Contárselo a ElectroIA</button>
 </div>
-<div style="margin-top:9px;display:flex;gap:6px;flex-wrap:wrap">
+</div>
+<div class="eia-visual" aria-hidden="true"><div class="eia-house"><div class="eia-roof"></div><div class="eia-window"></div><div class="eia-door"></div></div><div class="eia-bolt">⚡</div></div>
+</section>
+<div class="eia-promise">
+<div><b>🗣️ Hablá normal</b>No necesitás palabras técnicas.</div>
+<div><b>🧭 Paso a paso</b>Una comprobación cada vez.</div>
+<div><b>🛡️ Seguridad primero</b>Si hay riesgo, te lo decimos.</div>
+</div>
+<div class="panel" style="margin-top:15px">
+<h2 style="margin-top:0">🏠 ¿Para qué sirve ElectroIA?</h2>
+<p>Para ayudarte cuando algo eléctrico de tu casa no funciona y no sabés por dónde empezar. Puede ayudarte a <b>entender el problema, intentar resolverlo cuando sea seguro, apañar la situación de forma temporal</b> o prepararte para llamar a un electricista con la información clara.</p>
+<p style="margin-bottom:0;color:#5f6b76">ElectroIA no reemplaza a un profesional. Su objetivo es que no tengas que llamar a una urgencia a ciegas cuando quizá el problema sea sencillo, y que sepas cuándo <b>no conviene esperar</b>.</p>
+</div>
+<div class="panel eia-light-panel">
+<h2 style="margin-top:0">🚨 ¿Qué te está pasando?</h2>
+<p style="margin-top:0">Elegí la situación que más se parezca. ElectroIA abrirá una conversación y adaptará las preguntas según lo que vayas respondiendo.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<button class="btn" onclick="quickEmergency('⚡ Me salta el automático o diferencial')">⚡ Se me va la luz</button>
+<button class="btn" onclick="quickEmergency('💡 No tengo luz en el hogar')">💡 No tengo luz</button>
+<button class="btn" onclick="quickEmergency('🔌 Un enchufe no funciona')">🔌 Enchufe / aparato</button>
+<button class="btn" onclick="quickEmergency('🚨 Hay olor a quemado, chispas o algo caliente')">🔥 Huele / calienta</button>
+<button class="btn" onclick="quickEmergency('🚿 Hay agua cerca de algo eléctrico')">🚿 Hay agua cerca</button>
+<button class="btn" onclick="quickEmergency('❓ No sé qué pasa')">❓ No sé qué pasa</button>
+</div>
+<div style="margin-top:9px;display:flex;gap:7px;flex-wrap:wrap">
 <button class="btn alt" style="flex:1" onclick="diagnostico('noTouch','No quiero tocar nada')">🙅 No quiero tocar nada</button>
 <button class="btn alt" style="flex:1" onclick="diagnostico('temporaryHelp','Necesito una solución temporal')">🩹 Necesito apañarlo</button>
 </div>
 </div>
 <div class="panel">
-<h2>🏠 Modo Hogar</h2>
-<p>El espacio completo para resolver, entender y controlar la electricidad de tu casa. Acá siguen las herramientas anteriores de ElectroIA, ahora junto al nuevo diagnóstico inteligente.</p>
-<button class="btn" onclick="hogar()">Entrar al Modo Hogar →</button>
-</div>
+<h2 style="margin-top:0">🧰 Y además podés...</h2>
 <div class="tiles">
-<button class="tile blue large" onclick="diagnostico()"><div class="ico">🧠</div><b>Diagnóstico de averías</b><span>ElectroIA te hace preguntas según tus respuestas hasta acotar el problema y prioriza la seguridad.</span></button>
-<button class="tile red" onclick="safety()"><div class="ico">⚠️</div><b>Seguridad</b><span>Qué hacer ante humo, chispas, calor, olor a quemado o agua.</span></button>
-<button class="tile orange" onclick="acciones()"><div class="ico">🔧</div><b>Quiero hacer algo</b><span>Orientación para tareas eléctricas en casa.</span></button>
-<button class="tile yellow" onclick="consumo()"><div class="ico">💰</div><b>Mi consumo</b><span>Estimá y entendé el consumo de tus aparatos.</span></button>
-<button class="tile teal" onclick="miCasa()"><div class="ico">🏡</div><b>Mi casa</b><span>Datos de tu instalación para futuras funciones.</span></button>
-<button class="tile purple" onclick="aprender()"><div class="ico">💡</div><b>Quiero aprender</b><span>Electricidad explicada desde cero.</span></button>
-<button class="tile dark full" onclick="chat('hogar')"><div class="ico">💬</div><b>Hablar con ElectroIA</b><span>Consulta abierta si no sabés por dónde empezar.</span></button>
-<button class="tile green large" onclick="prof()"><div class="ico">🧰</div><b>Modo Profesional</b><span>Herramientas, cálculos, proyectos, FV y normativa.</span></button>
+<button class="tile blue" onclick="consumo()"><div class="ico">💰</div><b>Entender mi consumo</b><span>Estimá cuánto consumen tus aparatos y entendé tu instalación.</span></button>
+<button class="tile red" onclick="safety()"><div class="ico">⚠️</div><b>Consultar seguridad</b><span>Qué hacer ante humo, chispas, calor, olor a quemado o agua.</span></button>
+<button class="tile purple" onclick="aprender()"><div class="ico">💡</div><b>Aprender desde cero</b><span>Electricidad explicada sin tecnicismos.</span></button>
+<button class="tile dark full" onclick="hogar()"><div class="ico">🏠</div><b>Entrar al Modo Hogar</b><span>Todas las herramientas de ElectroIA en un solo lugar.</span></button>
+</div>
+</div>
+<section class="eia-pro-card">
+<div class="eia-pro-inner">
+<span class="eia-pro-kicker">⚙️ PARA OTRO TIPO DE USUARIO</span>
+<h2>🧰 ¿Sos profesional de la electricidad?</h2>
+<p>ElectroIA también tiene un <b>Modo Profesional</b> pensado para electricistas, instaladores, técnicos y personas con conocimientos de electricidad que necesitan resolver dudas técnicas, contrastar criterios o trabajar con problemas más complejos.</p>
+<div class="eia-pro-grid">
+<div class="eia-pro-item"><b>💬 Consultas técnicas</b>Dudas de diagnóstico, funcionamiento y resolución de averías.</div>
+<div class="eia-pro-item"><b>🧮 Cálculos</b>Ayuda para plantear y comprobar cálculos eléctricos.</div>
+<div class="eia-pro-item"><b>☀️ Fotovoltaica</b>Strings, MPPT, baterías, producción y autoconsumo.</div>
+</div>
+<p style="font-size:13px;color:#aaa">Este apartado es independiente del Modo Hogar y está pensado para profundizar progresivamente en herramientas de nivel técnico.</p>
+<button class="btn eia-pro-btn" onclick="prof()">🧰 Entrar al Modo Profesional</button>
+</div>
+</section>
+<div class="panel" style="text-align:center;background:#171717;color:#fff">
+<div style="font-size:13px;opacity:.75">⚡ ELECTROIA HOGAR</div>
+<h2 style="margin:7px 0">Entender el problema es el primer paso para solucionarlo.</h2>
+<p style="margin:0;color:#d5d5d5">Gratis · Sencillo · Paso a paso · Pensado para todos</p>
 </div>
 </main>`}
 function quickEmergency(t){
@@ -119,7 +212,7 @@ function hogar(){enterView('hogar');nav('nHome');app.innerHTML=head(true)+`<main
 </main>`}
 
 const diagTree={
- safetyGate:{q:'Antes de seguir, necesito comprobar una cosa por seguridad: ¿hay ahora mismo humo, fuego, chispas, olor fuerte a quemado, algún enchufe/cable muy caliente, agua en contacto con algo eléctrico o alguien recibió una descarga?',a:[['No, nada de eso','safetyClear'],['Sí, hay algo de eso','danger'],['No estoy seguro','danger']]},
+ safetyGate:{q:'Antes de seguir, necesito comprobar una cosa por seguridad: ¿hay ahora mismo humo, fuego, chispas, olor fuerte a quemado, algún enchufe/cable muy caliente, agua en contacto con algo eléctrico o alguien recibió una descarga?',a:[['No, nada de eso','safetyClear'],['Sí, hay algo de eso','dangerTriage'],['No estoy seguro','dangerTriage']]},
  safetyClear:{q:'Perfecto. Vamos a intentar solucionarlo juntos. No necesitás saber electricidad. ¿Qué preferís hacer?',a:[['Quiero que me guíes paso a paso','continueTarget'],['No quiero tocar nada, solo quiero saber si puedo esperar','noTouch']]},
  continueTarget:{result:['Vamos a hacerlo paso a paso','Solo te voy a pedir comprobaciones visuales y acciones sencillas. No hace falta desmontar nada ni tocar cables.','Seguimos con el problema que seleccionaste. Si en cualquier momento aparece humo, chispas, calor anormal, agua o una descarga, detené la comprobación y buscá ayuda profesional.','🟢 Diagnóstico guiado'],steps:['No abras enchufes, mecanismos, cajas ni el cuadro.','Solo hacé lo que ElectroIA indique como comprobación segura.']},
  noTouch:{q:'Está bien. No tenés que tocar nada. ¿Qué necesitás saber ahora?',a:[['Quiero saber si puedo esperar','waitAdvice'],['Quiero saber qué puedo dejar funcionando','temporaryHelp'],['Quiero preparar lo que le diré al electricista','reportOnly']]},
@@ -131,7 +224,7 @@ const diagTree={
  tempWhole:{result:['No conviene intentar mantener toda la instalación si el origen no está claro','Una solución temporal segura consiste en aislar lo sospechoso, no en forzar el suministro ni en anular protecciones.','Si no sabés qué está provocando el problema, mantené fuera de uso la zona afectada y pedí una revisión.','🟠 Revisión recomendada'],steps:['No puentes ninguna protección.','No manipules el contador ni cables.','Dejá fuera de uso los aparatos relacionados con el corte.','Pedí ayuda profesional si necesitás recuperar todo el suministro.']},
  reportOnly:{result:['Podemos dejar preparado el caso para el profesional','Aunque no quieras tocar nada, podemos registrar lo que pasó para que el electricista llegue con información útil.','Anotá qué dejó de funcionar, cuándo empezó, qué aparatos estaban funcionando y si el resto de la vivienda funciona.','🟠 Revisión recomendada']},
 
- start:{q:'¿Qué está pasando?',a:[['🚨 Hay humo, fuego, chispas, olor a quemado o algo se calienta','danger'],['🏠 No tengo luz en toda la vivienda','wholeHouse'],['💡 No tengo luz en una zona','zone'],['⚡ Me salta el automático o el diferencial','protection'],['🔌 Un enchufe o aparato no funciona','outlet'],['💡 Las luces parpadean o bajan de intensidad','flicker'],['🔧 Es otro problema eléctrico','other']]},
+ start:{q:'¿Qué está pasando?',a:[['🚨 Hay humo, fuego, chispas, olor a quemado o algo se calienta','dangerTriage'],['🏠 No tengo luz en toda la vivienda','wholeHouse'],['💡 No tengo luz en una zona','zone'],['⚡ Me salta el automático o el diferencial','protection'],['🔌 Un enchufe o aparato no funciona','outlet'],['💡 Las luces parpadean o bajan de intensidad','flicker'],['🔧 Es otro problema eléctrico','other']]},
  protection:{q:'¿Qué ocurre justo cuando se dispara la protección?',a:[['Al encender o conectar un aparato concreto','deviceTrip'],['Cuando funcionan varias cosas a la vez','overload'],['Sin un aparato concreto','generalTrip'],['No sé cuál es el interruptor','tech']]},
  deviceTrip:{q:'¿Qué llave baja: el diferencial (suele tener botón TEST) o un automático/automático?',a:[['Diferencial / tiene TEST','deviceDiff'],['Automático o automático','deviceMag'],['No lo sé','tech']]},
  deviceDiff:{q:'¿El diferencial baja inmediatamente o después de unos segundos/minutos de funcionamiento?',a:[['Inmediatamente','diffImmediate'],['Después de un rato','diffDelayed'],['No lo sé','tech']]},
@@ -185,9 +278,18 @@ const diagTree={
  tripUnclear:{result:['No se puede confirmar que sea solo un sobreconsumo','El corte no coincide claramente con varios consumos altos.','No sigas rearmando sin identificar qué protección actúa. Inicia el diagnóstico desde el cuadro o solicita revisión si se repite.','🟠 Revisión recomendada'],steps:['Desconecta aparatos de consumo alto.','Observa qué protección actúa si vuelve a ocurrir, sin tocar cables.','Si el mismo circuito vuelve a disparar, deja de volver a subirlo repetidamente.','Solicita revisión si no se identifica una causa sencilla y segura.']},
  tech:{result:['No hay información suficiente para una solución segura','Las respuestas no permiten diferenciar la causa sin inspección o mediciones.','No manipules cables, enchufes, el interior del cuadro ni el contador. Te conviene un electricista cualificado.','🔴 Técnico recomendado'],steps:['Deja la zona afectada sin manipular.','Desconecta aparatos sospechosos solo si puedes hacerlo normalmente y sin riesgo.','No puentes protecciones ni desmontes mecanismos.','Solicita revisión profesional y utiliza el informe de ElectroIA para explicar lo ocurrido.']}
 };
-diagTree.danger={result:['Situación de riesgo eléctrico','Hay una señal compatible con descarga eléctrica, incendio o contacto peligroso.','DETENÉ LAS PRUEBAS. Alejate de la zona. Si puedes cortar la alimentación sin exponerte, hazlo; no toques partes mojadas, calientes o dañadas. Solicita asistencia profesional y, si existe fuego o peligro inmediato, llama al servicio de emergencias.','🔴 DETENER · Emergencia'],steps:['No toques cables, enchufes, aparatos dañados ni partes mojadas.','No intentes volver a subir una protección si hay humo, chispas, agua, calor anormal u olor fuerte a quemado.','Aléjate y corta la alimentación solo si el corte puede hacerse desde un lugar seguro.','Si hay incendio, humo importante o riesgo para personas, llama al 112.','Después, un profesional debe revisar la causa antes de volver a utilizar la instalación.']};
-
-/* V6.2 — motor conversacional profundo: cada respuesta cambia el siguiente paso y la app intenta comprobar si la luz volvió. */
+Object.assign(diagTree,{
+  dangerTriage:{q:'Gracias por decírmelo. No voy a hacerte tocar nada peligroso. Primero necesito saber qué está pasando para indicarte exactamente qué hacer. ¿Hay ahora mismo fuego, humo abundante o un peligro inmediato para una persona?',a:[['Sí, hay fuego o peligro inmediato','dangerEmergency'],['No, pero hay humo/olor/chispas/calor','dangerCutCheck'],['No sé / no puedo valorar el riesgo','dangerNoApproach']]},
+  dangerEmergency:{result:['Emergencia: aléjate y pide ayuda','Hay fuego, humo importante o un peligro inmediato para una persona. En este punto no merece la pena seguir haciendo pruebas.','Aléjate de la zona y llama al 112 si existe incendio, humo importante o riesgo para una persona. No intentes apagar un incendio eléctrico con agua ni vuelvas a tocar la instalación.','🔴 EMERGENCIA'],steps:['Aléjate de la zona peligrosa.','Si puedes hacerlo sin acercarte al peligro, avisa a las personas que estén cerca.','Llama al 112 ante fuego, humo importante, descarga con afectación a una persona o peligro inmediato.','No uses agua sobre un equipo o instalación eléctrica.','Después, la instalación debe ser revisada por un profesional antes de volver a utilizarla.']},
+  dangerCutCheck:{q:'Vamos a centrarnos en una sola cosa: ¿podés llegar hasta el cuadro eléctrico desde un lugar completamente seco y seguro, sin pasar por agua, humo, chispas ni acercarte al elemento dañado?',a:[['Sí, puedo llegar sin riesgo','dangerCutGuide'],['No, tendría que acercarme al peligro','dangerNoApproach'],['No sé / no estoy seguro','dangerNoApproach']]},
+  dangerCutGuide:{q:'Bien. Sin abrir tapas ni tocar cables: ¿ves una llave grande o interruptor general que puedas accionar normalmente desde el frente del cuadro?',a:[['Sí, veo la llave general','dangerCutHow'],['No sé cuál es','dangerNoApproach'],['No, el cuadro está mojado/dañado o no puedo acceder','dangerNoApproach']]},
+  dangerCutHow:{q:'Si el cuadro está seco y en buen estado, podés cortar el suministro bajando únicamente la palanca del interruptor general, sin retirar ninguna tapa y sin tocar nada más. ¿Podés hacerlo sin exponerte?',a:[['Sí, puedo hacerlo con seguridad','dangerAfterCut'],['No, prefiero no tocarlo','dangerNoApproach'],['No estoy seguro','dangerNoApproach']]},
+  dangerAfterCut:{q:'Una vez bajada la llave general, ¿la situación peligrosa quedó sin tensión aparente y podés mantenerte alejado del elemento afectado?',a:[['Sí, quedó controlado','dangerControlled'],['No, sigue habiendo chispas/ruido/calor/humo','dangerEmergency'],['No sé / no puedo comprobarlo','dangerNoApproach']]},
+  dangerControlled:{result:['Situación peligrosa controlada temporalmente','La alimentación se ha cortado desde un punto accesible y seguro, pero la causa todavía no está solucionada.','No vuelvas a conectar la instalación ni el aparato afectado. Dejá el área fuera de uso y conseguí asistencia profesional. Si reaparece humo, fuego, chispas o una situación peligrosa, aléjate y llama al 112.','🔴 NO VOLVER A CONECTAR'],steps:['Mantené la llave general bajada.','No abras enchufes, cuadros, aparatos ni cajas para buscar la causa.','No vuelvas a subir la alimentación “para probar”.','Alejá a las personas de la zona afectada.','Solicitá un electricista cualificado para localizar y reparar la causa antes de volver a usar la instalación.']},
+  dangerNoApproach:{result:['No te acerques a la zona peligrosa','La forma más segura de actuar es no exponerte para intentar cortar o investigar la avería.','No hace falta que hagas ninguna prueba más. Alejate de la zona y pedí asistencia profesional. Si existe fuego, humo importante o peligro inmediato, llama al 112.','🔴 NO MANIPULAR'],steps:['No pases por agua ni te acerques a chispas, humo, calor o partes dañadas.','No intentes llegar al cuadro si para hacerlo tenés que exponerte.','No toques cables, enchufes, aparatos ni partes mojadas.','Si podés cortar la alimentación desde un lugar claramente seguro y accesible, hacelo; si no, no te arriesgues.','Solicitá asistencia profesional y no vuelvas a utilizar la zona hasta que sea revisada.']}
+});
+diagTree.danger={q:'Antes de darte instrucciones, necesito comprobar el nivel de riesgo. ¿Hay fuego, humo abundante o peligro inmediato para una persona?',a:[['Sí, hay fuego o peligro inmediato','dangerEmergency'],['No, pero hay humo/chispas/calor/olor','dangerCutCheck'],['No sé','dangerNoApproach']]};
+/* V7.0 — motor conversacional profundo: cada respuesta cambia el siguiente paso y la app intenta comprobar si la luz volvió. */
 Object.assign(diagTree,{
   wholeHouse:{q:'Antes de tocar nada: ¿en tu edificio o en una casa cercana tienen luz?',a:[['Sí, los vecinos tienen luz','wholeHouseLocal'],['No, también están sin luz','networkOutage'],['No puedo comprobarlo','wholeHouseLocal']]},
   wholeHouseLocal:{q:'Mirá el cuadro eléctrico sin tocar cables. ¿Ves alguna llave claramente bajada respecto de las demás?',a:[['Sí, hay una bajada','breakerWhole'],['No, están todas arriba','meterPowerCheck'],['No sé reconocerlas','tech']]},
@@ -219,59 +321,69 @@ Object.assign(diagTree,{
 });
 
 let diagAI={};
-function diagnostico(startNode='start', initialProblem=''){enterView('diagnostico');const target=startNode||'start';diag={answers:[],history:[],problem:initialProblem||'',node:(target==='danger'?'danger':'safetyGate'),targetNode:target,risk:(target==='danger')};renderDiag()}
+function diagnostico(startNode='start', initialProblem=''){enterView('diagnostico');const target=startNode||'start';diag={answers:[],history:[],problem:initialProblem||'',node:(target==='danger'?'dangerTriage':'safetyGate'),targetNode:target,risk:(target==='danger')};renderDiag()}
+function diagIllustration(n){
+  const q=((n&&n.q)||'')+' '+((n&&n.result&&n.result.join(' '))||'');
+  const x=q.toLowerCase();
+  const svg=(inner,label)=>`<div class="diag-media"><svg viewBox="0 0 760 260" role="img" aria-label="${esc(label)}"><rect width="760" height="260" rx="18" fill="#f4f8fc"/>${inner}</svg></div>`;
+  if(/cuadro eléctrico|cuadro electrico/.test(x)) return `<div class="diag-media"><img class="photo" src="cuadro_guia.png" alt="Guía visual del cuadro eléctrico"><div class="visual-note"><b>👀 Cómo reconocerlo:</b> suele ser una caja con una tapa y varias palancas. Puede ser distinta a la imagen. No hace falta abrirla ni tocar cables.</div></div>`;
+  if(/interruptor general|llave general/.test(x)) return svg(`<rect x="300" y="42" width="160" height="176" rx="18" fill="#fff" stroke="#8d9aa7" stroke-width="4"/><rect x="340" y="78" width="80" height="105" rx="12" fill="#eef2f5" stroke="#697783" stroke-width="3"/><rect x="355" y="92" width="50" height="68" rx="9" fill="#e83a43"/><path d="M380 104v42" stroke="#fff" stroke-width="10" stroke-linecap="round"/><path d="M255 80h-110v48h110" fill="none" stroke="#d62839" stroke-width="5"/><text x="70" y="69" font-size="25" font-family="Arial" font-weight="700" fill="#b51f30">INTERRUPTOR GENERAL</text><text x="70" y="163" font-size="19" font-family="Arial" fill="#33414d">Puede cortar la luz de toda la vivienda.</text>`,`Ilustración del interruptor general`)+`<div class="visual-note">🔴 Suele ser una palanca más grande. <b>No retires tapas.</b> Solo se acciona desde el frente cuando ElectroIA te indique que es seguro.</div>`;
+  if(/diferencial|botón test|boton test/.test(x)) return svg(`<rect x="285" y="38" width="190" height="184" rx="18" fill="#fff" stroke="#8d9aa7" stroke-width="4"/><rect x="320" y="78" width="120" height="100" rx="10" fill="#e9eef3" stroke="#657480" stroke-width="3"/><rect x="355" y="92" width="50" height="62" rx="8" fill="#2e73c9"/><circle cx="380" cy="58" r="15" fill="#f4c430" stroke="#8b7712" stroke-width="3"/><text x="380" y="64" text-anchor="middle" font-size="15" font-family="Arial" font-weight="700">T</text><text x="80" y="82" font-size="27" font-family="Arial" font-weight="700" fill="#1769e0">DIFERENCIAL</text><text x="80" y="135" font-size="20" font-family="Arial" fill="#33414d">Suele tener un botón</text><text x="80" y="165" font-size="20" font-family="Arial" fill="#33414d">que dice TEST.</text>`,`Ilustración del diferencial`)+`<div class="visual-note">🔵 No hace falta que sepas su nombre: buscá una llave que tenga un botón <b>TEST</b> parecido al de la imagen.</div>`;
+  if(/automático|automatico|magnetotérmico|magnetotermico/.test(x)) return svg(`<g><rect x="310" y="40" width="145" height="180" rx="14" fill="#fff" stroke="#8997a4" stroke-width="4"/>${[0,1,2].map(i=>`<rect x="330" y="65" width="105" height="38" rx="6" fill="#edf2f6" stroke="#687681" stroke-width="2"/><rect x="365" y="74" width="35" height="21" rx="4" fill="#3479c9"/>`).join('')}</g><text x="70" y="85" font-size="28" font-family="Arial" font-weight="700" fill="#238b45">AUTOMÁTICOS</text><text x="70" y="135" font-size="19" font-family="Arial" fill="#33414d">Son varias palancas pequeñas.</text><text x="70" y="165" font-size="19" font-family="Arial" fill="#33414d">Cada una protege un circuito.</text>`,`Ilustración de automáticos`)+`<div class="visual-note">🟢 Si una está bajada respecto de las demás, decímelo. No retires ninguna tapa.</div>`;
+  if(/enchufe|toma de corriente/.test(x)) return svg(`<rect x="300" y="40" width="160" height="180" rx="28" fill="#fff" stroke="#8795a1" stroke-width="4"/><circle cx="350" cy="108" r="13" fill="#27333d"/><circle cx="410" cy="108" r="13" fill="#27333d"/><circle cx="380" cy="160" r="11" fill="#eef2f5" stroke="#6e7b86" stroke-width="3"/><text x="55" y="80" font-size="28" font-family="Arial" font-weight="700" fill="#1769e0">ENCHUFE</text><text x="55" y="132" font-size="19" font-family="Arial" fill="#33414d">El punto de la pared</text><text x="55" y="160" font-size="19" font-family="Arial" fill="#33414d">donde conectás un aparato.</text>`,`Ilustración de enchufe`)+`<div class="visual-note">🔌 No introduzcas objetos ni retires la tapa. Si está quemado, flojo, mojado o muy caliente, decímelo.</div>`;
+  if(/contador|medidor/.test(x)) return svg(`<rect x="320" y="30" width="120" height="200" rx="12" fill="#fff" stroke="#8997a4" stroke-width="4"/><rect x="340" y="58" width="80" height="55" rx="5" fill="#1e2933"/><text x="380" y="94" text-anchor="middle" font-size="22" font-family="Arial" fill="#fff">kWh</text><circle cx="380" cy="148" r="13" fill="#dfe7ed"/><text x="70" y="85" font-size="28" font-family="Arial" font-weight="700" fill="#6b4bc3">CONTADOR</text><text x="70" y="135" font-size="19" font-family="Arial" fill="#33414d">Mide la electricidad que</text><text x="70" y="163" font-size="19" font-family="Arial" fill="#33414d">usa tu vivienda.</text>`,`Ilustración de contador`)+`<div class="visual-note">📟 Puede estar dentro de la vivienda o en una zona común. <b>No lo abras ni lo manipules.</b></div>`;
+  if(/regleta|alargador|prolongador/.test(x)) return svg(`<rect x="190" y="100" width="380" height="65" rx="28" fill="#fff" stroke="#788692" stroke-width="4"/><circle cx="260" cy="132" r="15" fill="#27333d"/><circle cx="330" cy="132" r="15" fill="#27333d"/><circle cx="400" cy="132" r="15" fill="#27333d"/><circle cx="470" cy="132" r="15" fill="#27333d"/><path d="M570 132 C650 132 660 80 710 80" fill="none" stroke="#27333d" stroke-width="10"/><text x="70" y="72" font-size="27" font-family="Arial" font-weight="700" fill="#d98b16">REGLETA / ALARGADOR</text>`,`Ilustración de regleta eléctrica`)+`<div class="visual-note">🔌 Si está caliente, ennegrecida, rota o huele a quemado, dejá de usarla y contámelo.</div>`;
+  if(/lámpara|lampara|bombilla|luz/.test(x)) return svg(`<path d="M380 45c-48 0-78 35-78 72 0 27 14 42 31 58h94c17-16 31-31 31-58 0-37-30-72-78-72z" fill="#ffe27a" stroke="#9b7a16" stroke-width="4"/><path d="M350 185h60M350 202h60" stroke="#64727d" stroke-width="9"/><path d="M335 102h90" stroke="#fff" stroke-width="7"/><text x="70" y="88" font-size="28" font-family="Arial" font-weight="700" fill="#e0a500">LÁMPARA / BOMBILLA</text><text x="70" y="140" font-size="19" font-family="Arial" fill="#33414d">Si no enciende, primero miramos</text><text x="70" y="168" font-size="19" font-family="Arial" fill="#33414d">si el problema es de esa luz o de la casa.</text>`,`Ilustración de lámpara`);
+  if(/cable|hilo|conductor/.test(x)) return svg(`<path d="M120 135 C230 35 320 220 430 120 S610 45 700 130" fill="none" stroke="#333" stroke-width="20" stroke-linecap="round"/><circle cx="120" cy="135" r="12" fill="#e33"/><text x="65" y="70" font-size="28" font-family="Arial" font-weight="700" fill="#b51f30">CABLE</text><text x="65" y="205" font-size="19" font-family="Arial" fill="#33414d">Si está pelado o dañado, no lo toques.</text>`,`Ilustración de cable eléctrico`);
+  if(/agua|humedad|humo|fuego|chispa|olor a quemado|caliente/.test(x)) return `<div class="diag-media"><svg viewBox="0 0 760 210" role="img" aria-label="Señales de peligro"><rect width="760" height="210" rx="18" fill="#fff5f5"/><text x="380" y="62" text-anchor="middle" font-size="30" font-family="Arial" font-weight="700" fill="#c82035">⚠️ SEÑALES DE PELIGRO</text><text x="380" y="112" text-anchor="middle" font-size="22" font-family="Arial" fill="#4a252a">💧 Agua · 🔥 Humo/fuego · ⚡ Chispas</text><text x="380" y="152" text-anchor="middle" font-size="20" font-family="Arial" fill="#4a252a">🌡️ Calor anormal · 👃 Olor a quemado</text><text x="380" y="187" text-anchor="middle" font-size="15" font-family="Arial" fill="#6b4b50">No manipules la instalación si aparece alguna.</text></svg></div>`;
+  return '';
+}
+function speakText(text){
+  if(!('speechSynthesis' in window)){alert('Tu navegador no permite reproducir voz.');return}
+  window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(String(text).replace(/<[^>]*>/g,' '));u.lang='es-ES';u.rate=.91;u.pitch=1.02;u.volume=1;window.speechSynthesis.speak(u);
+}
+function diagSpeak(text){speakText(text)}
+function diagPickPhoto(){const el=document.getElementById('diagPhoto');if(el)el.click()}
+function diagVoice(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){addDiagConfirmation('🎙️ Tu navegador no permite entrada por voz. Podés responder escribiendo o usando los botones.');return}const r=new SR();r.lang='es-ES';r.interimResults=false;r.maxAlternatives=1;r.onresult=e=>{const t=e.results?.[0]?.[0]?.transcript||'';if(!t)return;diagExplainText(t)};r.onerror=()=>addDiagConfirmation('🎙️ No pude tomar la voz. Probá de nuevo o escribí tu respuesta.');r.start()}
+function diagExplainText(t){const current=diagTree[diag.node];if(current?.q)diag.history.push(diag.node);diag.answers.push({q:current?.q||'Situación',a:t});const low=t.toLowerCase();if(/humo|fuego|chispa|olor a quemado|me da corriente|descarga eléctrica|agua.*enchufe|enchufe.*agua|cable.*pelado|cable.*expuesto|enchufe.*caliente|caliente.*enchufe/.test(low)){diag.node='dangerTriage';diag.risk=true;renderDiag();return}if(/vecino|portal|calle.*sin luz|todo el edificio|nadie tiene luz/.test(low)){diag.node='networkOutage';renderDiag();return}if(/todo|toda la casa|toda la vivienda|ninguna luz|nada funciona/.test(low)){diag.node='wholeHouse';renderDiag();return}if(/enchufe|toma de corriente|aparato|electrodoméstico/.test(low)){diag.node='outlet';renderDiag();return}if(/salta|baja|se corta|automático|diferencial/.test(low)){diag.node='protection';renderDiag();return}if(/parpadea|titila|baja la luz|sube y baja la luz/.test(low)){diag.node='flicker';renderDiag();return}diag.node='classify';diagTree.classify={q:'Para seguir sin adivinar: con lo que me contaste, ¿qué se parece más a tu caso?',a:[['No tengo luz en toda la vivienda','wholeHouse'],['No tengo luz solo en una zona','zone'],['Un enchufe o aparato no funciona','outlet'],['Salta una llave del cuadro','protection'],['Las luces parpadean o cambian de intensidad','flicker'],['No estoy seguro','tech']]};renderDiag()}
+function diagHandlePhoto(ev){const f=ev?.target?.files?.[0];if(!f)return;const url=URL.createObjectURL(f);diag.photo=url;diag.photoName=f.name;diag.photoPending=true;renderDiag();addDiagConfirmation('📷 Foto añadida. Ahora podemos intentar identificar lo que estás viendo. No desmontes ni abras nada para fotografiarlo.');}
 function renderDiag(){
   const n=diagTree[diag.node];
   if(!n){diag.node='tech';return renderDiag()}
   let body=`<div class="eia-modern"><div class="eia-head"><div class="eia-avatar">⚡</div><div><b>ElectroIA</b><small>Diagnóstico adaptativo · Hogar</small></div><span class="eia-online">● En línea</span></div><div class="eia-messages" id="diagMessages">`;
-  if(diag.problem){
-    body+=`<div class="eia-msg user"><div class="eia-bubble">${esc(diag.problem)}</div></div>`;
-  }
-  diag.answers.slice(0,-1).forEach(x=>{
-    body+=`<div class="eia-msg ai"><div class="eia-bubble">${esc(x.q)}</div></div>`;
-    body+=`<div class="eia-msg user"><div class="eia-bubble">${esc(x.a)}</div></div>`;
-  });
+  if(diag.problem)body+=`<div class="eia-msg user"><div class="eia-bubble">${esc(diag.problem)}</div></div>`;
+  diag.answers.slice(0,-1).forEach(x=>{body+=`<div class="eia-msg ai"><div class="eia-bubble">${esc(x.q)}<br><button class="diag-audio" onclick='diagSpeak(${JSON.stringify(x.q)})'>🔊 Escuchar</button></div></div><div class="eia-msg user"><div class="eia-bubble">${esc(x.a)}</div></div>`});
   if(n.result){
-    if(diag.answers.length){
-      const last=diag.answers[diag.answers.length-1];
-      if(last && last.q && last.q!=='Situación' && last.q!=='¿Qué está pasando?'){
-        body+=`<div class="eia-msg ai"><div class="eia-bubble">${esc(last.q)}</div></div><div class="eia-msg user"><div class="eia-bubble">${esc(last.a)}</div></div>`;
-      }
-    }
+    if(diag.answers.length){const last=diag.answers[diag.answers.length-1];if(last&&last.q&&last.q!=='Situación'&&last.q!=='¿Qué está pasando?')body+=`<div class="eia-msg ai"><div class="eia-bubble">${esc(last.q)}</div></div><div class="eia-msg user"><div class="eia-bubble">${esc(last.a)}</div></div>`}
     const danger=n.result[3].startsWith('🔴');
-    body+=`</div><div class="eia-quick"><div class="eia-result ${danger?'danger':''}"><span>${esc(n.result[3])}</span><h2>${esc(n.result[0])}</h2><p><b>Por qué:</b> ${esc(n.result[1])}</p><p><b>Qué hacer ahora:</b> ${esc(n.result[2])}</p>${n.steps?.length?`<div class="solution"><h3>🛠️ Qué hacer ahora</h3><ol>${n.steps.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>`:''}${n.result[3].includes('Resuelto')?`<div class="panel"><b>¿La luz quedó funcionando de verdad?</b><div style="margin-top:8px"><button class="eia-start" onclick="diagVerify(true)">✅ Sí, funciona</button><button class="eia-back" onclick="diagVerify(false)">❌ No, sigue igual</button></div></div>`:''}<small>Resultado orientativo. No sustituye una inspección ni mediciones profesionales.</small><button class="eia-start" onclick="diagReport()">📄 Preparar informe para técnico</button><button class="eia-start" onclick="diagnostico('temporaryHelp','Necesito una solución temporal')">🩹 ¿Cómo me apaño hasta que venga alguien?</button><button class="eia-back" onclick="diagnostico()">Nuevo diagnóstico</button></div>`;
+    body+=`</div><div class="eia-quick"><div class="eia-result ${danger?'danger':''}"><span>${esc(n.result[3])}</span><h2>${esc(n.result[0])}</h2><p><b>Por qué:</b> ${esc(n.result[1])}</p>${diagIllustration(n)}<p><b>Qué hacer ahora:</b> ${esc(n.result[2])}</p>${n.steps?.length?`<div class="solution"><h3>🛠️ Qué hacer ahora</h3><ol>${n.steps.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>`:''}<button class="diag-audio" onclick='diagSpeak(${JSON.stringify((n.result[0]||'')+'. '+(n.result[1]||'')+'. '+(n.result[2]||''))})'>🔊 Escuchar esta explicación</button>${n.result[3].includes('Resuelto')?`<div class="panel"><b>¿La luz quedó funcionando de verdad?</b><div style="margin-top:8px"><button class="eia-start" onclick="diagVerify(true)">✅ Sí, funciona</button><button class="eia-back" onclick="diagVerify(false)">❌ No, sigue igual</button></div></div>`:''}<small>Resultado orientativo. No sustituye una inspección ni mediciones profesionales.</small><button class="eia-start" onclick="diagReport()">📄 Preparar informe para técnico</button><button class="eia-start" onclick="diagnostico('temporaryHelp','Necesito una solución temporal')">🩹 ¿Cómo me apaño hasta que venga alguien?</button><button class="eia-back" onclick="diagnostico()">Nuevo diagnóstico</button></div>`;
   }else if(n.free){
-    body+=`</div><div class="eia-quick"><textarea id="diagFree" class="eia-textarea" placeholder="Ej.: cuando enciendo el horno se apaga todo…"></textarea><button class="eia-start" onclick="diagFreeNext()">Continuar →</button>`;
+    body+=`</div><div class="eia-quick"><textarea id="diagFree" class="eia-textarea" placeholder="Ej.: cuando enciendo el horno se apaga todo…"></textarea><div class="diag-tools"><button class="diag-tool" type="button" onclick="diagVoice()">🎙️ Responder con voz</button><button class="diag-tool" type="button" onclick="diagPickPhoto()">📷 Añadir foto</button></div><input id="diagPhoto" class="hidden" type="file" accept="image/*" capture="environment" onchange="diagHandlePhoto(event)"><button class="eia-start" onclick="diagFreeNext()">Continuar →</button>`;
   }else{
-    body+=`<div class="eia-msg ai"><div class="eia-bubble">${esc(n.q||'He analizado tus respuestas.')}</div></div></div><div class="eia-quick"><div style="font-size:12px;color:#687480;margin-bottom:7px">🔎 Te hago una sola comprobación cada vez. No hace falta saber electricidad.</div><div class="eia-question-label">Pregunta ${diag.answers.length+1}</div><div class="eia-options">`;
+    const question=n.q||'He analizado tus respuestas.';
+    body+=`<div class="eia-msg ai"><div class="eia-bubble">${esc(question)}<br><button class="diag-audio" onclick='diagSpeak(${JSON.stringify(question)})'>🔊 Escuchar</button></div></div>${diagIllustration(n)}</div><div class="eia-quick"><div style="font-size:12px;color:#687480;margin-bottom:7px">🔎 Te hago una sola comprobación cada vez. No hace falta saber electricidad.</div><div class="eia-question-label">Pregunta ${diag.answers.length+1}</div><div class="eia-options">`;
     n.a.forEach(x=>body+=`<button type="button" class="eia-option" onclick='diagChoose(${JSON.stringify(x[0])},${JSON.stringify(x[1])})'>${esc(x[0])}</button>`);
-    body+=`</div><button type="button" class="eia-back" onclick="diagExplain()">💬 No sé / quiero explicártelo con mis palabras</button>`;
+    body+=`</div><div class="diag-tools"><button type="button" class="diag-tool" onclick="diagVoice()">🎙️ Responder con voz</button><button type="button" class="diag-tool" onclick="diagPickPhoto()">📷 Mostrar foto</button></div><input id="diagPhoto" class="hidden" type="file" accept="image/*" capture="environment" onchange="diagHandlePhoto(event)"><button type="button" class="eia-back" onclick="diagExplain()">💬 No sé / quiero explicártelo con mis palabras</button>`;
   }
+  if(diag.photo)body+=`<div class="diag-media"><img class="photo" src="${diag.photo}" alt="Foto enviada por el usuario"><p>📷 Foto añadida a esta conversación. No abras ni desmontes nada para hacer la foto.</p></div>`;if(diag.photo&&diag.photoPending)body+=`<div class="photo-ai-card"><h3>👀 ¿Qué querés que mire?</h3><p>Elegí qué necesitás reconocer en la foto. Si el servidor tiene análisis visual con IA habilitado, intentaremos analizarla.</p><div class="photo-ai-actions"><button onclick="diagVision('¿Qué es lo que aparece en esta foto?')">🔎 ¿Qué es esto?</button><button onclick="diagVision('¿Ves algo anormal o una señal visible de daño?')">⚠️ ¿Ves algo raro?</button><button onclick="diagVision('Ayudame a localizar el elemento que estamos buscando.')">📍 Localizar elemento</button></div></div>`;
   if(diag.history.length&&!n.result)body+=`<button type="button" class="eia-back" onclick="diagBack()">← Volver a la pregunta anterior</button>`;
   body+=`</div></div>`;
   app.innerHTML=head(true)+`<main class="wrap page">${body}</main>`;
   requestAnimationFrame(()=>{const box=document.getElementById('diagMessages');if(box)box.scrollTop=box.scrollHeight});
 }
-function diagFreeNext(){const el=document.getElementById('diagFree');const p=(el?.value||'').trim();if(!p){el?.focus();return}diag.problem=p;diag.answers.push({q:'¿Qué está pasando?',a:p});const low=p.toLowerCase();if(/humo|fuego|chispa|chispas|olor a quemado|olor fuerte a quemado|descarga eléctrica|me da corriente|agua.*electric|electric.*agua|cable.*expuesto|cable.*pelado|enchufe.*caliente|caliente.*enchufe/.test(low)){diag.node='danger';renderDiag();return}diag.history.push('start');diag.node='classify';diagTree.classify={q:'Para ubicar la avería: ¿afecta a toda la vivienda, a una zona concreta o a un aparato/enchufe?',a:[['Toda la vivienda','wholeHouse'],['Una zona o habitación','zone'],['Un aparato o enchufe','deviceTrip'],['No estoy seguro','tech']]};renderDiag()}
-function diagChoose(label,next){try{const current=diagTree[diag.node];if(!current)return;diag.history.push(diag.node);diag.answers.push({q:current.q||'Pregunta',a:label});if(next==='danger'){diag.node='danger';diag.risk=true;renderDiag();return}if(next==='continueTarget'){diag.node=diag.targetNode||'start';renderDiag();return}if(next==='safetyClear'){diag.node='safetyClear';renderDiag();return}if(!diagTree[next]){diag.node='tech';renderDiag();return}diag.node=next;renderDiag()}catch(e){console.error('ElectroIA diagnóstico:',e);diag.node='tech';renderDiag()}}
+function diagVision(question){
+  if(!diag.photo){return}
+  diag.photoPending=false; renderDiag();
+  addDiagConfirmation('🔎 Voy a intentar analizar la foto. Si no puedo verla con IA, te lo diré y seguiremos de forma guiada.');
+  fetch(diag.photo).then(r=>r.blob()).then(blob=>new Promise((resolve,reject)=>{const rd=new FileReader();rd.onload=()=>resolve(rd.result);rd.onerror=reject;rd.readAsDataURL(blob)})).then(dataUrl=>fetch(API+'/vision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl,filename:diag.photoName||'foto.jpg',question,mode:'hogar',context:diag.answers})})).then(async r=>{const raw=await r.text();let j={};try{j=JSON.parse(raw)}catch(_){j={error:raw}}if(!r.ok)throw new Error(j.error||'vision');return j}).then(j=>{const ans=j.answer||j.message;if(!ans)throw new Error('sin respuesta');diag.answers.push({q:'Análisis de la foto',a:ans});diag.problem=diag.problem||'Consulta con foto';diag.node='classify';diagTree.classify={q:'Con lo que vemos en la foto y lo que me contaste, ¿qué se parece más a tu caso?',a:[['No tengo luz en toda la vivienda','wholeHouse'],['No tengo luz en una zona','zone'],['Un enchufe o aparato no funciona','outlet'],['Salta una llave del cuadro','protection'],['No estoy seguro','tech']]};renderDiag();addDiagConfirmation('🖼️ Análisis visual: '+ans);}).catch(()=>addDiagConfirmation('📷 No pude analizar la foto automáticamente en este momento. No significa que haya algo malo. No manipules nada: decime qué querés identificar y seguimos paso a paso.'));
+}
+function diagFreeNext(){const el=document.getElementById('diagFree');const p=(el?.value||'').trim();if(!p){el?.focus();return}diag.problem=p;diag.answers.push({q:'¿Qué está pasando?',a:p});const low=p.toLowerCase();if(/humo|fuego|chispa|chispas|olor a quemado|olor fuerte a quemado|descarga eléctrica|me da corriente|agua.*electric|electric.*agua|cable.*expuesto|cable.*pelado|enchufe.*caliente|caliente.*enchufe/.test(low)){diag.node='dangerTriage';renderDiag();return}diag.history.push('start');diag.node='classify';diagTree.classify={q:'Para ubicar la avería: ¿afecta a toda la vivienda, a una zona concreta o a un aparato/enchufe?',a:[['Toda la vivienda','wholeHouse'],['Una zona o habitación','zone'],['Un aparato o enchufe','deviceTrip'],['No estoy seguro','tech']]};renderDiag()}
+function diagChoose(label,next){try{const current=diagTree[diag.node];if(!current)return;diag.history.push(diag.node);diag.answers.push({q:current.q||'Pregunta',a:label});if(next==='danger'){diag.node='dangerTriage';diag.risk=true;renderDiag();return}if(next==='continueTarget'){diag.node=diag.targetNode||'start';renderDiag();return}if(next==='safetyClear'){diag.node='safetyClear';renderDiag();return}if(!diagTree[next]){diag.node='tech';renderDiag();return}diag.node=next;renderDiag()}catch(e){console.error('ElectroIA diagnóstico:',e);diag.node='tech';renderDiag()}}
 window.diagChoose=diagChoose;
 function diagExplain(){
   const text=prompt('Contame con tus palabras qué ves o qué pasó. No hace falta usar términos eléctricos.');
   if(!text||!text.trim())return;
-  const t=text.trim();
-  const current=diagTree[diag.node];
-  if(current?.q) diag.history.push(diag.node);
-  diag.answers.push({q:current?.q||'Situación',a:t});
-  const low=t.toLowerCase();
-  if(/humo|fuego|chispa|olor a quemado|me da corriente|descarga eléctrica|agua.*enchufe|enchufe.*agua|cable.*pelado|cable.*expuesto|enchufe.*caliente|caliente.*enchufe/.test(low)){diag.node='danger';diag.risk=true;renderDiag();return;}
-  if(/vecino|portal|calle.*sin luz|todo el edificio|nadie tiene luz/.test(low)){diag.node='networkOutage';renderDiag();return;}
-  if(/todo|toda la casa|toda la vivienda|ninguna luz|nada funciona/.test(low)){diag.node='wholeHouse';renderDiag();return;}
-  if(/enchufe|toma de corriente|aparato|electrodoméstico/.test(low)){diag.node='outlet';renderDiag();return;}
-  if(/salta|baja|se corta|automático|diferencial/.test(low)){diag.node='protection';renderDiag();return;}
-  if(/parpadea|titila|baja la luz|sube y baja la luz/.test(low)){diag.node='flicker';renderDiag();return;}
-  diag.node='classify';
-  diagTree.classify={q:'Para seguir sin adivinar: con lo que me contaste, ¿qué se parece más a tu caso?',a:[['No tengo luz en toda la vivienda','wholeHouse'],['No tengo luz solo en una zona','zone'],['Un enchufe o aparato no funciona','outlet'],['Salta una llave del cuadro','protection'],['Las luces parpadean o cambian de intensidad','flicker'],['No estoy seguro','tech']]};
-  renderDiag();
+  diagExplainText(text.trim());
 }
 function diagBack(){if(!diag.history.length)return;diag.node=diag.history.pop();diag.answers.pop();renderDiag()}
 function diagVerify(ok){
@@ -312,7 +424,7 @@ ${initial?`<div class="chat-msg user"><div class="chat-msg-bubble">${esc(initial
 const inp=document.getElementById('msg');if(inp){inp.addEventListener('input',()=>{inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,110)+'px'});inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});setTimeout(()=>inp.focus(),150)}if(initial)setTimeout(()=>sendText(initial),120)}
 function quickChat(t){const x=document.getElementById('msg');if(x){x.value=t;x.focus()}send()}
 function clearChat(){chat(currentMode)}
-function add(text,user=false){let c=document.getElementById('chat');if(!c)return;let d=document.createElement('div');d.className='chat-msg '+(user?'user':'ai');d.innerHTML='<div class="chat-msg-bubble">'+text+'</div><div class="chat-msg-meta">Ahora</div>';c.appendChild(d);c.scrollTop=c.scrollHeight}
+function add(text,user=false){let c=document.getElementById('chat');if(!c)return;let d=document.createElement('div');d.className='chat-msg '+(user?'user':'ai');let extra=!user?`<br><button class="diag-audio" onclick='diagSpeak(${JSON.stringify(String(text).replace(/<[^>]*>/g,' '))})'>🔊 Escuchar</button>`:'';d.innerHTML='<div class="chat-msg-bubble">'+text+extra+'</div><div class="chat-msg-meta">Ahora</div>';c.appendChild(d);c.scrollTop=c.scrollHeight}
 function send(){
   const el=document.getElementById('msg');
   if(!el)return;
@@ -336,15 +448,19 @@ function voice(){
   r.start();
 }
 function sendPhoto(ev){
-  const f=ev?.target?.files?.[0];
-  if(!f)return;
-  const c=document.getElementById('chat');
-  if(!c)return;
+  const f=ev?.target?.files?.[0]; if(!f)return;
+  const c=document.getElementById('chat'); if(!c)return;
   const url=URL.createObjectURL(f);
-  const d=document.createElement('div');d.className='chat-msg user';
-  d.innerHTML='<div class="chat-msg-bubble"><img class="photo" src="'+url+'" alt="Foto de la instalación"></div><div class="chat-msg-meta">Foto seleccionada</div>';
-  c.appendChild(d);c.scrollTop=c.scrollHeight;
-  add('📷 Ya veo la foto en la conversación. Para que pueda analizarla con IA, el servidor debe tener habilitado el análisis de imágenes. Mientras tanto, contame qué problema ves y te guío.');
+  const d=document.createElement('div'); d.className='chat-msg user';
+  d.innerHTML='<div class="chat-msg-bubble"><img class="photo-ai-preview" src="'+url+'" alt="Foto enviada por el usuario"><div style="margin-top:8px"><b>📷 Foto enviada</b><br><small>No abras ni desmontes nada para hacer la foto.</small></div></div><div class="chat-msg-meta">Foto seleccionada</div>';
+  c.appendChild(d); c.scrollTop=c.scrollHeight;
+  const aid='photo_'+Date.now();
+  add('<div class="photo-ai-card"><h3>👀 ¿Qué querés que mire en la foto?</h3><p>Podemos intentar identificar lo que estás viendo o buscar señales visibles. La foto no sustituye una medición profesional.</p><div class="photo-ai-actions"><button onclick="requestVision('+JSON.stringify(url)+','+JSON.stringify(f.name)+',\'¿Qué es lo que aparece en esta foto?\')">🔎 ¿Qué es esto?</button><button onclick="requestVision('+JSON.stringify(url)+','+JSON.stringify(f.name)+',\'¿Ves alguna señal visible de daño, calor, quemado, agua o algo anormal?\')">⚠️ ¿Ves algo raro?</button><button onclick="requestVision('+JSON.stringify(url)+','+JSON.stringify(f.name)+',\'¿Podés ayudarme a localizar el elemento que estamos buscando?\')">📍 Ayudame a encontrarlo</button></div><small>Si el análisis visual con IA está habilitado en el servidor, ElectroIA analizará la imagen. Si no, te lo indicará y seguirá guiándote con preguntas.</small></div>');
+}
+function requestVision(url,name,question){
+  add('🔎 '+question,true);
+  add('<div class="chat-typing-v3"><i></i><i></i><i></i></div>');
+  fetch(url).then(r=>r.blob()).then(blob=>new Promise((resolve,reject)=>{const rd=new FileReader();rd.onload=()=>resolve(rd.result);rd.onerror=reject;rd.readAsDataURL(blob)})).then(dataUrl=>fetch(API+'/vision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl,filename:name,question,mode:currentMode})})).then(async r=>{const raw=await r.text();let j={};try{j=JSON.parse(raw)}catch(_){j={error:raw}}if(!r.ok)throw new Error(j.error||'vision');return j}).then(j=>{const c=document.getElementById('chat');const typing=c?.lastElementChild;const b=typing?.querySelector('.chat-msg-bubble');const ans=j.answer||j.message;if(!ans)throw new Error('sin respuesta');if(b)b.innerHTML=esc(ans)+`<br><button class="diag-audio" onclick='diagSpeak(${JSON.stringify(ans)})'>🔊 Escuchar</button>`+(diagIllustration({q:ans})||'');if(typing?.querySelector('.chat-msg-meta'))typing.querySelector('.chat-msg-meta').textContent='ElectroIA · análisis visual'}).catch(()=>{const c=document.getElementById('chat');const typing=c?.lastElementChild;const b=typing?.querySelector('.chat-msg-bubble');if(b)b.innerHTML='📷 <b>La foto quedó en la conversación.</b><br>No tengo disponible el análisis visual automático en este momento. No pasa nada: decime qué querés averiguar de la foto y te voy a guiar con comprobaciones seguras.';if(typing?.querySelector('.chat-msg-meta'))typing.querySelector('.chat-msg-meta').textContent='ElectroIA · foto'});
 }
 async function sendText(t){
   add(esc(t),true);
@@ -361,7 +477,7 @@ async function sendText(t){
     const typing=c?.lastElementChild;
     const b=typing?.querySelector('.chat-msg-bubble');
     if(!r.ok)throw new Error(j.error||('HTTP '+r.status));
-    if(b)b.innerHTML=esc(j.answer||j.message||'No pude responder.');
+    if(b){const answer=j.answer||j.message||'No pude responder.';b.innerHTML=esc(answer)+`<br><button class="diag-audio" onclick='diagSpeak(${JSON.stringify(answer)})'>🔊 Escuchar</button>`+(diagIllustration({q:answer})||'');}
     if(typing?.querySelector('.chat-msg-meta'))typing.querySelector('.chat-msg-meta').textContent='ElectroIA · ahora';
   }catch(e){
     const typing=c?.lastElementChild;
@@ -382,7 +498,7 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
 
 
 <script id="electroia-diagnostico-v61">
-/* V6.2 — Diagnóstico profundo adaptativo.
+/* V7.0 — Diagnóstico profundo adaptativo.
    Prioridad: seguridad, lenguaje cotidiano y preguntas que realmente cambian la hipótesis. */
 Object.assign(diagTree,{
   protection:{
@@ -475,7 +591,7 @@ Object.assign(diagTree,{
       'Anotá qué se cambió y cuándo empezó el fallo.',
       'Solicitá revisión de la zona intervenida antes de volver a utilizarla.'
     ]
-  ],
+  },
   generalTrip:{
     q:'Antes de que bajara la llave, ¿había ocurrido algo fuera de lo normal?',
     a:[
@@ -696,7 +812,7 @@ window.electroView = electroView;
 home();
 </script>
 <script id="electroia-diagnostico-v62">
-/* V6.2 — Confirmación conversacional antes del diagnóstico final */
+/* V7.0 — Confirmación conversacional antes del diagnóstico final */
 const _renderDiagV61 = renderDiag;
 
 function diagNeedsConfirmation(node){
