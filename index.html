@@ -263,7 +263,20 @@
 .chat-typing-v3::before{content:'Pensando…';font-weight:700;margin-right:3px}
 .chat-typing-v3 i{width:5px;height:5px}
 @media(max-width:600px){.chat-app{height:calc(100dvh - 102px);min-height:500px}.chat-header{height:60px;flex-basis:60px}.urgency-ai-banner{height:48px}.urgency-ai-banner b{font-size:15px}.chat-msg-bubble{font-size:15px}}
-</style></head>
+</style>
+<style id="electroia-v159-chat-clean">
+/* V15.9 · Conversación limpia: ocultar lo interno y reducir ruido */
+.chat-welcome{display:none!important}
+.chat-msg-bubble{box-shadow:none!important}
+.chat-msg.ai .chat-msg-bubble{background:#fff;color:#18212b}
+.chat-msg.user .chat-msg-bubble{background:#111;color:#fff}
+.photo-ai-card{margin:0;padding:0;border:0;background:transparent}
+.photo-ai-card h3{font-size:15px;margin:0 0 8px}
+.photo-ai-actions{display:grid;grid-template-columns:1fr;gap:7px}
+.photo-ai-actions button{width:100%;min-height:42px;padding:9px 11px;border:1px solid #d6dee6;border-radius:11px;background:#f7f9fb;color:#18212b;font:inherit;font-weight:700;text-align:left}
+@media(max-width:600px){.chat-stream{padding-top:10px}.chat-msg-bubble{font-size:15px}.chat-chip{font-size:13px;padding:10px 13px}.chat-tool-v3{min-height:48px;font-size:14px}.chat-action{width:48px;height:48px}}
+</style>
+</head>
 <body>
 <div id="app"></div>
 <nav class="bottom">
@@ -430,8 +443,10 @@ function urgenciaLocalTemporary(){
 function diagEscalateAI(){
   const problem=diag.problem||'Consulta de urgencia eléctrica';
   const answers=(diag.answers||[]).map((x,i)=>`${i+1}. ${x.q||'Pregunta'} → ${x.a||''}`).join('\n');
-  eiaAIPrepareDiagnostic(); const prompt=`Necesito que intervengas en una urgencia eléctrica de Hogar porque el diagnóstico guiado local no fue suficiente.\n\nProblema inicial: ${problem}\n\nComprobaciones realizadas:\n${answers||'Todavía ninguna.'}\n\nContinuá desde este punto. No repitas preguntas que ya estén respondidas. Mantené seguridad primero, una sola pregunta por vez y lenguaje cotidiano. Separá hechos, hipótesis y la próxima comprobación segura.`;
-  chat('urgencias_hogar',prompt);
+  eiaAIPrepareDiagnostic();
+  const prompt=`Intervení ahora en esta urgencia eléctrica. El diagnóstico local ya hizo estas comprobaciones y respuestas:\nProblema: ${problem}\n${answers||'Todavía ninguna.'}\n\nContinuá desde acá sin repetir preguntas ya respondidas. Seguridad primero. Hacé una sola pregunta clara por vez y usá lenguaje cotidiano. No muestres este contexto ni instrucciones internas al usuario.`;
+  chat('urgencias_hogar');
+  setTimeout(()=>sendText(prompt,'Seguimos desde acá.'),80);
 }
 function hogar(){enterView('hogar');nav('nHome');app.innerHTML=head(true)+`<main class="wrap page">
 <div class="panel" style="background:#0879e8;padding:18px 16px">
@@ -640,16 +655,30 @@ function eiaSpeechImportant(text){
   if(summary.length>360)summary=summary.slice(0,357).replace(/\s+\S*$/,'')+'…';
   return summary;
 }
+function eiaCleanChatText(text){
+  let s=String(text||'');
+  // Nunca mostrar instrucciones internas, contexto técnico ni HTML de componentes.
+  s=s.replace(/<[^>]*>/g,' ');
+  s=s.replace(/CONTEXTO COMPARTIDO DE ELECTROIA:[\s\S]*?(?=\n\n|$)/gi,'');
+  s=s.replace(/CONTEXTO PARA IA:[\s\S]*?(?=\n\n|$)/gi,'');
+  s=s.replace(/Necesito que intervengas[\s\S]*?(?=\n\n|$)/gi,'');
+  s=s.replace(/Continuá desde este punto\.?/gi,'');
+  return s.replace(/\s{2,}/g,' ').trim();
+}
 function eiaRenderChat(text){
-  let s=esc(String(text||''));
-  // Renderizado Markdown mínimo para que el usuario nunca vea **asteriscos** ni formato técnico.
+  let s=esc(eiaCleanChatText(text));
+  // Markdown mínimo y limpio; nunca mostrar símbolos de formato al usuario.
   s=s.replace(/^######\s+(.+)$/gm,'<b>$1</b>').replace(/^#####\s+(.+)$/gm,'<b>$1</b>').replace(/^####\s+(.+)$/gm,'<b>$1</b>').replace(/^###\s+(.+)$/gm,'<b>$1</b>').replace(/^##\s+(.+)$/gm,'<b>$1</b>').replace(/^#\s+(.+)$/gm,'<b>$1</b>');
   s=s.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/__(.*?)__/g,'<b>$1</b>');
   s=s.replace(/(^|[^*])\*(?!\s)(.*?)(?<!\s)\*(?!\*)/g,'$1<i>$2</i>');
   s=s.replace(/^\s*[-*+]\s+/gm,'• ');
-  s=s.replace(/^\s*\d+[.)]\s+/gm,'$&');
   return s;
 }
+function eiaIsInternalChatText(text){
+  const s=String(text||'');
+  return /CONTEXTO COMPARTIDO DE ELECTROIA|Necesito que intervengas en una urgencia|Continuá desde este punto|CONTEXTO PARA IA|ai_contract|local_first|request_source|context_bundle/i.test(s);
+}
+
 async function speakText(text){
   const clean=eiaSpeechImportant(text); if(!clean)return;
   const token=++eiaSpeakToken;
@@ -798,8 +827,8 @@ const isDirectAI=mode==='ia_directa';
 app.innerHTML=head(true)+`<main class="wrap page"><div class="chat-app">
 <div class="chat-header"><div class="chat-ai-avatar">${isUrgency?'🚨':'⚡'}</div><div class="chat-head-copy"><div class="chat-head-title">ElectroIA</div><div class="chat-head-sub">${isUrgency?'Asistencia de urgencia · Hogar':(isDirectAI?'Conversación libre · IA':'Asistente eléctrico')}</div></div><button class="chat-head-action" onclick="clearChat()" title="Nueva conversación">＋</button></div>
 ${isUrgency?`<div class="urgency-ai-banner"><b>🚨 ASISTENCIA DE URGENCIA</b></div>`:''}
-<div class="chat-stream" id="chat"><div class="chat-welcome"><div class="chat-welcome-icon">${isUrgency?'🚨':(isDirectAI?'💬':'⚡')}</div><strong>${isUrgency?'Estoy para ayudarte ahora':(isDirectAI?'Hablemos directamente':'¿Qué está pasando?')}</strong><span>${isUrgency?'Decime qué pasa, con tus palabras. Yo te voy guiando.':(isDirectAI?'Preguntame lo que quieras. Vamos directo al punto.':'Decime qué pasa. Vamos de a un paso.')}</span></div>
-<div class="chat-msg ai"><div class="chat-msg-bubble">${isDirectAI?'Claro. Estoy acá para charlar con vos sobre lo que necesites. ¿Qué querés saber o resolver?':'Hola. Soy ElectroIA. ¿Qué problema eléctrico tenés en casa?'}</div></div>
+<div class="chat-stream" id="chat">
+<div class="chat-msg ai"><div class="chat-msg-bubble">${initial? (isUrgency?'Te sigo desde acá.':(isDirectAI?'Dale, vamos directo.':'Te escucho.')) : (isUrgency?'Decime qué pasa. Voy con vos paso a paso.':(isDirectAI?'Preguntame lo que quieras.':'Decime qué pasa y lo vemos juntos.'))}</div></div>
 ${initial?`<div class="chat-msg user"><div class="chat-msg-bubble">${esc(initial)}</div></div>`:''}</div>
 <div class="chat-suggestions">${isUrgency?`<button class="chat-chip emergency-chip" onclick="quickChat('Hay olor a quemado, humo, chispas o algo está muy caliente')">🚨 Humo / olor / chispas</button><button class="chat-chip emergency-chip" onclick="quickChat('No tengo luz en toda la casa')">💡 No tengo luz</button><button class="chat-chip emergency-chip" onclick="quickChat('Me salta una llave del cuadro')">⚡ Salta una llave</button><button class="chat-chip emergency-chip" onclick="quickChat('Hay agua cerca de algo eléctrico')">🚿 Agua + electricidad</button><button class="chat-chip emergency-chip" onclick="quickChat('Un enchufe o aparato no funciona')">🔌 Enchufe / aparato</button>`:(isDirectAI?`<button class="chat-chip" onclick="quickChat('Explicame algo de electricidad de forma sencilla')">💡 Explicame algo</button><button class="chat-chip" onclick="quickChat('Quiero aprender electricidad desde cero')">📚 Aprender</button><button class="chat-chip" onclick="quickChat('Tengo una duda sobre mi instalación')">🏠 Mi instalación</button><button class="chat-chip" onclick="quickChat('Quiero hablar sobre ahorro y consumo eléctrico')">💰 Ahorro y consumo</button>`:`<button class="chat-chip" onclick="quickChat('Se me apagaron algunas luces')">💡 Se me apagaron luces</button><button class="chat-chip" onclick="quickChat('Me saltó el diferencial')">⚡ Saltó el diferencial</button><button class="chat-chip" onclick="quickChat('Un enchufe no funciona')">🔌 Enchufe sin corriente</button><button class="chat-chip" onclick="quickChat('Hay olor a quemado')">🚨 Olor a quemado</button>`)}</div>
 <div class="chat-composer"><div class="chat-input-wrap"><textarea id="msg" class="chat-input-v3" rows="1" placeholder="Contame qué pasa…"></textarea><button class="chat-action chat-camera" onclick="pickPhoto()" title="Foto">📷</button><button class="chat-action chat-send-v3" onclick="send()" title="Enviar">↑</button></div>
@@ -810,10 +839,12 @@ function quickChat(t){const x=document.getElementById('msg');if(x){x.value=t;x.f
 function clearChat(){chat(currentMode)}
 function add(text,user=false){
   let c=document.getElementById('chat'); if(!c)return;
+  if(eiaIsInternalChatText(text)) return;
+  const clean=eiaCleanChatText(text); if(!clean)return;
   let d=document.createElement('div'); d.className='chat-msg '+(user?'user':'ai');
-  d.innerHTML='<div class="chat-msg-bubble">'+eiaRenderChat(text)+'</div>';
+  d.innerHTML='<div class="chat-msg-bubble">'+eiaRenderChat(clean)+'</div>';
   c.appendChild(d); c.scrollTop=c.scrollHeight;
-  if(!user && !String(text).includes('chat-typing-v3')) setLastAnswer(String(text));
+  if(!user && !String(text).includes('chat-typing-v3')) setLastAnswer(clean);
 }
 function setLastAnswer(text){
   window.eiaLastAnswer=String(text||'');
@@ -866,15 +897,16 @@ function sendPhoto(ev){
   d.innerHTML='<div class="chat-msg-bubble"><img class="photo-ai-preview" src="'+url+'" alt="Foto enviada por el usuario"><div style="margin-top:8px"><b>📷 Foto enviada</b><br><small>No abras ni desmontes nada para hacer la foto.</small></div></div>';
   c.appendChild(d); c.scrollTop=c.scrollHeight;
   const aid='photo_'+Date.now();
-  add('<div class="photo-ai-card"><h3>👀 ¿Qué querés que mire en la foto?</h3><p>Podemos intentar identificar lo que estás viendo o buscar señales visibles. La foto no sustituye una medición profesional.</p><div class="photo-ai-actions"><button onclick="requestVision('+JSON.stringify(url)+','+JSON.stringify(f.name)+',\'¿Qué es lo que aparece en esta foto?\')">🔎 ¿Qué es esto?</button><button onclick="requestVision('+JSON.stringify(url)+','+JSON.stringify(f.name)+',\'¿Ves alguna señal visible de daño, calor, quemado, agua o algo anormal?\')">⚠️ ¿Ves algo raro?</button><button onclick="requestVision('+JSON.stringify(url)+','+JSON.stringify(f.name)+',\'¿Podés ayudarme a localizar el elemento que estamos buscando?\')">📍 Ayudame a encontrarlo</button></div><small>Si el análisis visual con IA está habilitado en el servidor, ElectroIA analizará la imagen. Si no, te lo indicará y seguirá guiándote con preguntas.</small></div>');
+  const card=document.createElement('div'); card.className='chat-msg ai'; card.innerHTML=`<div class="chat-msg-bubble"><div class="photo-ai-card"><h3>¿Qué querés saber de la foto?</h3><div class="photo-ai-actions"><button type="button" onclick='requestVision(${JSON.stringify(url)},${JSON.stringify(f.name)},${JSON.stringify('¿Qué es lo que aparece en esta foto?')})'>🔎 ¿Qué es esto?</button><button type="button" onclick='requestVision(${JSON.stringify(url)},${JSON.stringify(f.name)},${JSON.stringify('¿Ves alguna señal visible de daño, calor, quemado, agua o algo anormal?')})'>⚠️ ¿Ves algo raro?</button><button type="button" onclick='requestVision(${JSON.stringify(url)},${JSON.stringify(f.name)},${JSON.stringify('¿Podés ayudarme a localizar el elemento que estamos buscando?')})'>📍 ¿Dónde está?</button></div></div></div>`; c.appendChild(card); c.scrollTop=c.scrollHeight;
 }
 function requestVision(url,name,question){
   add('🔎 '+question,true);
   addTyping();
   fetch(url).then(r=>r.blob()).then(blob=>new Promise((resolve,reject)=>{const rd=new FileReader();rd.onload=()=>resolve(rd.result);rd.onerror=reject;rd.readAsDataURL(blob)})).then(dataUrl=>fetch(API+'/vision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl,filename:name,question,mode:currentMode,ai_contract:'electroia-v13',local_first:true,context_bundle:eiaAIContext()})})).then(async r=>{const raw=await r.text();let j={};try{j=JSON.parse(raw)}catch(_){j={error:raw}}if(!r.ok)throw new Error(j.error||'vision');return j}).then(j=>{const c=document.getElementById('chat');const typing=c?.lastElementChild;const b=typing?.querySelector('.chat-msg-bubble');const ans=j.answer||j.message;if(!ans)throw new Error('sin respuesta');if(b){b.innerHTML=eiaRenderChat(ans);setLastAnswer(ans)}}).catch(()=>{const c=document.getElementById('chat');const typing=c?.lastElementChild;const b=typing?.querySelector('.chat-msg-bubble');if(b)b.innerHTML='📷 <b>La foto quedó en la conversación.</b><br>No tengo disponible el análisis visual automático en este momento. No pasa nada: decime qué querés averiguar de la foto y te voy a guiar con comprobaciones seguras.';});
 }
-async function sendText(t){
-  add(esc(t),true);
+async function sendText(t,displayText=null){
+  const visible=displayText===null?t:displayText;
+  add(visible,true);
   addTyping();
   const c=document.getElementById('chat');
   const urgency=currentMode==='urgencias_hogar';
@@ -890,7 +922,7 @@ async function sendText(t){
   try{
     const controller=new AbortController();
     const timer=setTimeout(()=>controller.abort(),30000);
-    const history=[...document.querySelectorAll('#chat .chat-msg')].slice(-10).map(m=>({role:m.classList.contains('user')?'user':'assistant',content:m.querySelector('.chat-msg-bubble')?.innerText||''}));
+    const history=[...document.querySelectorAll('#chat .chat-msg')].slice(-12).map(m=>({role:m.classList.contains('user')?'user':'assistant',content:m.querySelector('.chat-msg-bubble')?.innerText||''})).filter(x=>x.content&&!eiaIsInternalChatText(x.content));
     const payload={message:t,mode:currentMode,history,ai_contract:'electroia-v13',local_first:true,request_source:urgency?'urgency_hogar':'page_chat',context_bundle:eiaAIContext(),user_experience:{concise:true,one_question_at_a_time:urgency,avoid_repetition:true,no_internal_metadata:true,no_code_or_json:true,no_unrequested_images:true,prioritize_actionable_information:true,max_user_facing_sections:2,max_sentences:4,plain_language:true,answer_first:true,no_disclaimers_unless_needed:true,no_long_introductions:true,no_restate_user:true,write_like_a_calm_human_helper:true}};
     if(urgency){payload.urgency=true;payload.urgency_instructions=urgencyInstructions;payload.safety_level='high';payload.escalated_from_local=!!diag?.answers?.length;}
     const r=await fetch(API+'/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
@@ -1902,5 +1934,194 @@ window.ELECTROIA_UX_CONTRACT={
 };
 </script>
 
+
+<style id="electroia-v16-deep-ux">
+/* V16.0 — UX profundo: conversación corta, continuidad y cero ruido interno */
+.urgency-ai-banner{height:42px!important;display:flex!important;align-items:center!important;padding:0 18px!important}
+.urgency-ai-banner b{font-size:15px!important}
+.chat-stream{padding:10px 12px 12px!important;gap:8px!important}
+.chat-msg{max-width:92%!important}
+.chat-msg-bubble{padding:10px 13px!important;border-radius:16px!important;font-size:15px!important;line-height:1.38!important}
+.chat-suggestions{padding:6px 10px!important;gap:7px!important;overflow-x:auto!important;scrollbar-width:none}
+.chat-suggestions::-webkit-scrollbar{display:none}
+.chat-chip{white-space:nowrap!important;font-size:13px!important;padding:9px 12px!important}
+.chat-composer{padding:8px 10px 10px!important}
+.chat-tools-v3{gap:7px!important}
+.chat-tool-v3{min-height:50px!important;border-radius:14px!important;font-size:14px!important;font-weight:700!important}
+.chat-input-wrap{min-height:52px!important}
+.chat-input-v3{font-size:16px!important}
+.chat-action{width:50px!important;height:50px!important}
+.chat-helper{font-size:11px!important;margin-top:6px!important}
+.chat-typing-v3{min-width:92px!important;min-height:38px!important}
+/* Diagnóstico: una sola pregunta visible, sin historial repetido */
+.eia-modern{max-width:720px;margin:0 auto}
+.eia-messages{padding:10px 4px!important}
+.eia-msg.user,.eia-msg.ai{margin:7px 0!important}
+.eia-question-label{display:none!important}
+.eia-quick>div:first-child{display:none!important}
+.eia-option{width:100%!important;text-align:left!important;padding:13px 14px!important;margin:4px 0!important;font-size:15px!important;line-height:1.3!important;border-radius:14px!important}
+.eia-result{padding:16px!important}
+.eia-result h2{margin:5px 0 9px!important;font-size:21px!important}
+.diag-short,.diag-action{font-size:15px!important;line-height:1.4!important}
+.diag-details{margin-top:8px!important}
+.diag-audio{margin-top:9px!important}
+.diag-history-note{font-size:12px;color:#687480;text-align:center;margin:8px 0}
+.photo-ai-card{padding:10px!important}
+.photo-ai-card p{display:none!important}
+.photo-ai-actions{display:grid!important;grid-template-columns:1fr 1fr 1fr!important;gap:6px!important}
+.photo-ai-actions button{padding:10px 7px!important;font-size:13px!important}
+@media(max-width:600px){
+  .chat-header{height:58px!important;flex-basis:58px!important}
+  .chat-head-sub{font-size:11px!important}
+  .chat-stream{min-height:0!important}
+  .chat-msg-bubble{font-size:15px!important}
+  .chat-tool-v3{min-height:52px!important;font-size:14px!important}
+  .photo-ai-actions{grid-template-columns:1fr!important}
+}
+</style>
+<script id="electroia-v16-deep-ux">
+/*
+ V16.0 — Revisión profunda del diálogo.
+ Objetivo: el usuario ve solo la conversación; contexto, prompts, historial técnico
+ y razonamiento quedan fuera de la interfaz.
+*/
+function eiaDecodeHtml(s){
+  try{const t=document.createElement('textarea');t.innerHTML=String(s||'');return t.value}catch(_){return String(s||'')}
+}
+function eiaPublicAnswer(text){
+  let s=eiaDecodeHtml(String(text||''));
+  // Quitar bloques HTML/código que puedan venir accidentalmente desde el modelo.
+  s=s.replace(/```[\s\S]*?```/g,' ');
+  s=s.replace(/<\/?[a-z][^>]*>/gi,' ');
+  // Eliminar instrucciones/contexto internos aunque el modelo los repita.
+  s=s.replace(/CONTEXTO COMPARTIDO DE ELECTROIA:[\s\S]*?(?=(?:Hechos|Qué hacer ahora|Que hacer ahora|Conclusión|Recomendación|Siguiente paso)\s*:|$)/gi,' ');
+  s=s.replace(/CONTEXTO PARA IA:[\s\S]*?(?=(?:Hechos|Qué hacer ahora|Que hacer ahora|Conclusión|Recomendación|Siguiente paso)\s*:|$)/gi,' ');
+  s=s.replace(/Necesito que intervengas en una urgencia eléctrica[\s\S]*?(?=(?:Hechos|Qué hacer ahora|Que hacer ahora|Conclusión|Recomendación|Siguiente paso)\s*:|$)/gi,' ');
+  s=s.replace(/(Usá este contexto|Usa este contexto|Continuá desde este punto|Continúa desde este punto|No muestres este contexto|ai_contract|local_first|request_source|context_bundle)[:\s\S]*?(?=(?:Hechos|Qué hacer ahora|Que hacer ahora|Conclusión|Recomendación|Siguiente paso)\s*:|$)/gi,' ');
+  // No mostrar JSON ni volcados de objetos.
+  if(/^\s*[\[{].*[\]}]\s*$/s.test(s) || /"(?:role|message|context_bundle|ai_contract)"\s*:/.test(s)) return '';
+  s=s.replace(/^\s*(?:Hechos observados|Hipótesis|Comprobaciones realizadas|Problema inicial|Sesión)\s*:\s*/gmi,'');
+  s=s.replace(/\n{3,}/g,'\n\n').replace(/[ \t]{2,}/g,' ').trim();
+  return s;
+}
+function eiaCleanChatText(text){
+  return eiaPublicAnswer(text);
+}
+function eiaRenderChat(text){
+  let s=esc(eiaPublicAnswer(text));
+  s=s.replace(/^######\s+(.+)$/gm,'<b>$1</b>').replace(/^#####\s+(.+)$/gm,'<b>$1</b>').replace(/^####\s+(.+)$/gm,'<b>$1</b>').replace(/^###\s+(.+)$/gm,'<b>$1</b>').replace(/^##\s+(.+)$/gm,'<b>$1</b>').replace(/^#\s+(.+)$/gm,'<b>$1</b>');
+  s=s.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/__(.*?)__/g,'<b>$1</b>');
+  s=s.replace(/(^|[^*])\*(?!\s)(.*?)(?<!\s)\*(?!\*)/g,'$1<i>$2</i>');
+  s=s.replace(/^\s*[-*+]\s+/gm,'• ');
+  return s;
+}
+function eiaIsInternalChatText(text){
+  const s=String(text||'');
+  return /CONTEXTO COMPARTIDO DE ELECTROIA|CONTEXTO PARA IA|Necesito que intervengas en una urgencia eléctrica|Continuá desde este punto|ai_contract|local_first|request_source|context_bundle|<div class="chat-typing|chat-typing-v3/i.test(s);
+}
+
+/* No volvemos a enviar al modelo el prompt técnico como si fuera un mensaje del usuario. */
+diagEscalateAI=function(){
+  const problem=diag.problem||'Consulta de urgencia eléctrica';
+  eiaAIPrepareDiagnostic();
+  eiaAIAdd('goal',{text:'Continuar el diagnóstico desde las comprobaciones ya realizadas.',mode:'urgencias_hogar',date:new Date().toISOString(),reason:'diagnostic_escalation'});
+  // El contexto estructurado viaja por context_bundle; el mensaje visible es normal.
+  chat('urgencias_hogar','Seguimos desde acá.');
+};
+
+/* Evita que chat() muestre el mismo mensaje dos veces al iniciar una conversación. */
+chat=function(mode='hogar',initial=''){
+  enterView('chat');
+  currentMode=mode;nav('nHome');
+  const isUrgency=mode==='urgencias_hogar', isDirectAI=mode==='ia_directa';
+  const greeting=isUrgency?'Decime qué pasa. Voy con vos paso a paso.':(isDirectAI?'Preguntame lo que quieras.':'Decime qué pasa y lo vemos juntos.');
+  const continuation=isUrgency?'Te sigo desde acá.':(isDirectAI?'Dale, vamos directo.':'Te escucho.');
+  app.innerHTML=head(true)+`<main class="wrap page"><div class="chat-app">
+    <div class="chat-header"><div class="chat-ai-avatar">${isUrgency?'🚨':'⚡'}</div><div class="chat-head-copy"><div class="chat-head-title">ElectroIA</div><div class="chat-head-sub">${isUrgency?'Asistencia de urgencia · Hogar':(isDirectAI?'Conversación libre · IA':'Asistente eléctrico')}</div></div><button class="chat-head-action" onclick="clearChat()" title="Nueva conversación">＋</button></div>
+    ${isUrgency?`<div class="urgency-ai-banner"><b>🚨 ASISTENCIA DE URGENCIA</b></div>`:''}
+    <div class="chat-stream" id="chat"><div class="chat-msg ai"><div class="chat-msg-bubble">${initial?continuation:greeting}</div></div></div>
+    <div class="chat-suggestions">${isUrgency?`<button class="chat-chip emergency-chip" onclick="quickChat('Hay humo, olor a quemado o chispas')">🚨 Humo / olor</button><button class="chat-chip emergency-chip" onclick="quickChat('No tengo luz')">💡 No tengo luz</button><button class="chat-chip emergency-chip" onclick="quickChat('Me salta una llave')">⚡ Salta una llave</button><button class="chat-chip emergency-chip" onclick="quickChat('Hay agua cerca de algo eléctrico')">🚿 Agua + electricidad</button>`:(isDirectAI?`<button class="chat-chip" onclick="quickChat('Explicame algo de electricidad de forma sencilla')">💡 Explicame algo</button><button class="chat-chip" onclick="quickChat('Quiero aprender electricidad desde cero')">📚 Aprender</button><button class="chat-chip" onclick="quickChat('Tengo una duda sobre mi instalación')">🏠 Mi instalación</button>`:`<button class="chat-chip" onclick="quickChat('Se me apagaron algunas luces')">💡 Se apagaron luces</button><button class="chat-chip" onclick="quickChat('Me saltó el diferencial')">⚡ Saltó el diferencial</button><button class="chat-chip" onclick="quickChat('Un enchufe no funciona')">🔌 Enchufe sin corriente</button>`)}</div>
+    <div class="chat-composer"><div class="chat-input-wrap"><textarea id="msg" class="chat-input-v3" rows="1" placeholder="Contame qué pasa…"></textarea><button class="chat-action chat-camera" onclick="pickPhoto()" title="Foto">📷</button><button class="chat-action chat-send-v3" onclick="send()" title="Enviar">↑</button></div>
+    <div id="voiceLive" class="voice-live"><span class="voice-dot"></span><b id="voiceLiveText">Escuchando…</b><button class="voice-stop" onclick="stopVoice()">Detener</button></div><div class="chat-tools-v3"><button id="voiceBtn" class="chat-tool-v3 voice-mode-btn" onclick="voice()">🎙️ Hablar</button><button class="chat-tool-v3" onclick="pickPhoto()">📷 Foto</button><button id="chatListenLast" class="chat-tool-v3 chat-listen-last" onclick="speakLastAnswer()">🔊 Escuchar</button><input id="photo" class="hidden" type="file" accept="image/*" capture="environment" onchange="sendPhoto(event)"></div><div class="chat-helper">Podés escribir, hablar o mandar una foto.</div></div>
+  </div></main>`;
+  const inp=document.getElementById('msg');
+  if(inp){inp.addEventListener('input',()=>{inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,110)+'px'});inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});setTimeout(()=>inp.focus(),150)}
+  if(initial)setTimeout(()=>sendText(initial),80);
+};
+
+/* La conversación guardada tampoco debe almacenar prompts técnicos como mensajes del usuario. */
+if(typeof eia83SaveChat==='function'){
+  const _saveChatV16=eia83SaveChat;
+  eia83SaveChat=function(t,role='user'){
+    if(eiaIsInternalChatText(t))return;
+    return _saveChatV16(t,role);
+  };
+}
+/* Wrapper de sendText: conserva el guardado, pero nunca guarda el prompt interno de diagnóstico. */
+if(typeof eia83SendTextOriginal==='function'){
+  const _sendV16=eia83SendTextOriginal;
+  sendText=async function(t,displayText=null){
+    if(eiaIsInternalChatText(t)) return _sendV16.call(this,t,displayText);
+    return _sendV16.call(this,t,displayText);
+  };
+}
+
+/* Render de diagnóstico: solo la conversación actual, sin reconstruir todo el historial. */
+renderDiag=function(){
+  const n=diagTree[diag.node];
+  if(!n){diag.node='tech';return renderDiag()}
+  let body=`<div class="eia-modern"><div class="eia-head"><div class="eia-avatar">⚡</div><div><b>ElectroIA</b><small>Asistencia de urgencia · Hogar</small></div><span class="eia-online">● En línea</span></div><div class="eia-messages" id="diagMessages">`;
+  if(diag.answers?.length){
+    const last=diag.answers[diag.answers.length-1];
+    if(last?.a) body+=`<div class="eia-msg user"><div class="eia-bubble">${esc(last.a)}</div></div>`;
+  }
+  if(n.result){
+    const danger=String(n.result[3]||'').startsWith('🔴');
+    const voiceText=(n.result[0]||'')+'. '+(n.result[2]||'');
+    body+=`</div><div class="eia-quick"><div class="eia-result ${danger?'danger':''}"><span>${esc(n.result[3]||'')}</span><h2>${esc(n.result[0]||'Resultado')}</h2><p class="diag-action"><b>Qué hacer:</b> ${esc(n.result[2]||n.result[1]||'')}</p>
+      ${n.result[1]?`<details class="diag-details"><summary>¿Querés saber por qué?</summary><p>${esc(n.result[1])}</p>${n.steps?.length?`<ol>${n.steps.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`:''}</details>`:''}
+      <div class="eia-image-request"><button type="button" onclick="diagShowIllustration()">🖼️ Ver ejemplo</button><span style="font-size:12px;color:#687480;margin-left:8px">Solo si te ayuda.</span></div>
+      <button class="diag-audio" onclick='diagSpeak(${JSON.stringify(voiceText)})'>🔊 Escuchar</button>
+      ${n.result[3]?.includes('Resuelto')?`<div class="panel"><b>¿La luz funciona ahora?</b><div style="margin-top:8px"><button class="eia-start" onclick="diagVerify(true)">✅ Sí</button><button class="eia-back" onclick="diagVerify(false)">❌ No</button></div></div>`:''}
+      <button class="eia-start" onclick="diagReport()">📄 Pasar el caso a un técnico</button><button class="eia-start" onclick="diagnostico('temporaryHelp','Necesito una solución temporal')">🩹 Necesito una solución temporal</button><button class="eia-back" onclick="diagnostico()">Nuevo diagnóstico</button></div></div>`;
+  }else if(n.free){
+    body+=`</div><div class="eia-quick"><textarea id="diagFree" class="eia-textarea" placeholder="Contame qué pasa con tus palabras…"></textarea><div class="diag-tools"><button class="diag-tool" type="button" onclick="diagVoice()">🎙️ Hablar</button><button class="diag-tool" type="button" onclick="diagPickPhoto()">📷 Foto</button></div><input id="diagPhoto" class="hidden" type="file" accept="image/*" capture="environment" onchange="diagHandlePhoto(event)"><button class="eia-start" onclick="diagFreeNext()">Continuar →</button>`;
+  }else{
+    body+=`</div><div class="eia-quick"><div class="eia-msg ai"><div class="eia-bubble">${esc(n.q||'¿Qué pasa?')}</div></div><div class="eia-options">`;
+    (n.a||[]).forEach(x=>body+=`<button type="button" class="eia-option" onclick='diagChoose(${JSON.stringify(x[0])},${JSON.stringify(x[1])})'>${esc(x[0])}</button>`);
+    body+=`</div><div class="diag-tools"><button type="button" class="diag-tool" onclick="diagVoice()">🎙️ Hablar</button><button type="button" class="diag-tool" onclick="diagPickPhoto()">📷 Foto</button></div><input id="diagPhoto" class="hidden" type="file" accept="image/*" capture="environment" onchange="diagHandlePhoto(event)"></div>`;
+  }
+  if(diag.photo)body+=`<div class="diag-media"><img class="photo" src="${diag.photo}" alt="Foto enviada"><p>📷 Foto añadida. No abras ni desmontes nada para hacerla.</p></div>`;
+  if(diag.photo&&diag.photoPending)body+=`<div class="photo-ai-card"><h3>¿Qué querés saber de la foto?</h3><div class="photo-ai-actions"><button type="button" onclick="diagVision('¿Qué es lo que aparece en esta foto?')">🔎 ¿Qué es esto?</button><button type="button" onclick="diagVision('¿Ves alguna señal visible de daño, calor, quemado, agua o algo anormal?')">⚠️ ¿Ves algo raro?</button><button type="button" onclick="diagVision('¿Podés ayudarme a localizar el elemento que estamos buscando?')">📍 ¿Dónde está?</button></div></div>`;
+  body+=`</div>`;
+  app.innerHTML=head(true)+`<main class="wrap page">${body}</main>`;
+  scrollPageTop();
+};
+
+/* La tarjeta de foto no debe aceptar HTML del modelo como si fuera interfaz. */
+requestVision=async function(url,name,question){
+  add('🔎 '+question,true);addTyping();
+  try{
+    const blob=await fetch(url).then(r=>r.blob());
+    const dataUrl=await new Promise((resolve,reject)=>{const rd=new FileReader();rd.onload=()=>resolve(rd.result);rd.onerror=reject;rd.readAsDataURL(blob)});
+    const r=await fetch(API+'/vision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl,filename:name,question,mode:currentMode,ai_contract:'electroia-v13',local_first:true,context_bundle:eiaAIContext()})});
+    const raw=await r.text();let j={};try{j=JSON.parse(raw)}catch(_){j={}};
+    if(!r.ok)throw new Error('vision');
+    const ans=eiaPublicAnswer(j.answer||j.message||'');
+    const c=document.getElementById('chat'),typing=c?.lastElementChild,b=typing?.querySelector('.chat-msg-bubble');
+    if(b)b.innerHTML=ans?eiaRenderChat(ans):'No pude sacar una conclusión clara de la foto. Decime qué querés localizar y te ayudo paso a paso.';
+    if(ans)setLastAnswer(ans);
+  }catch(_){
+    const c=document.getElementById('chat'),typing=c?.lastElementChild,b=typing?.querySelector('.chat-msg-bubble');
+    if(b)b.innerHTML='📷 No pude analizar la foto ahora. Decime qué querés saber de ella y seguimos sin tocar nada.';
+  }
+};
+
+/* Limpieza final de respuestas del chat y del historial que se usa como contexto. */
+const _sendTextDeep=sendText;
+sendText=async function(t,displayText=null){
+  return _sendTextDeep.call(this,t,displayText);
+};
+</script>
 </body></html>
 
