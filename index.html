@@ -1154,6 +1154,21 @@ renderDiag=function(){
   note.style.cssText='margin-top:12px;padding:11px 12px;border-radius:12px;background:#f7f8fa;border:1px solid #e3e6ea;color:#4e5862;font-size:13px;line-height:1.45';
   note.innerHTML='<b>🔎 Cómo llegamos a esto</b><br>ElectroIA ha usado '+answered+' respuesta'+(answered===1?'':'s')+' para acotar el problema. El resultado es una hipótesis orientativa, no una certeza: una comprobación profesional puede confirmar la causa.';
   box.insertBefore(note,box.querySelector('small'));
+  // V15.1: incluso cuando el árbol local llega a un resultado, ofrecer continuidad opcional con IA.
+  // La IA no se activa sola: solo entra si el usuario decide continuar.
+  if(!box.querySelector('.hybrid-ai-final')){
+    const wrap=document.createElement('div');
+    wrap.className='hybrid-ai-final';
+    wrap.style.cssText='margin-top:14px;padding:13px;border-radius:14px;background:linear-gradient(180deg,#eef6ff,#f7fbff);border:1px solid #b9d8ff';
+    wrap.innerHTML='<b style="display:block;margin-bottom:5px">🤖 ¿Querés seguir con la IA?</b><span style="display:block;font-size:13px;line-height:1.4;color:#4e5862;margin-bottom:10px">La guía automática llegó hasta acá. Si todavía tenés dudas o querés profundizar, puedo continuar usando todo lo que ya comprobamos, sin hacerte repetir las preguntas.</span>';
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.className='eia-start hybrid-ai-escalate';
+    btn.innerHTML='🤖 Continuar con IA<small>Usará el contexto de este diagnóstico.</small>';
+    btn.onclick=diagEscalateAI;
+    wrap.appendChild(btn);
+    box.appendChild(wrap);
+  }
 };
 </script>
 
