@@ -15,7 +15,7 @@ const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gpt-5.6-luna';
 const OPENAI_VISION_MODEL = process.env.OPENAI_VISION_MODEL || OPENAI_MODEL;
 const OPENAI_TTS_MODEL = process.env.OPENAI_TTS_MODEL || 'gpt-4o-mini-tts';
 const OPENAI_TRANSCRIBE_MODEL = process.env.OPENAI_TRANSCRIBE_MODEL || 'gpt-4o-mini-transcribe';
-const TTS_VOICE = process.env.OPENAI_TTS_VOICE || 'alloy';
+const TTS_VOICE = process.env.OPENAI_TTS_VOICE || 'marin';
 const DATABASE_URL = process.env.DATABASE_URL || '';
 
 if (process.env.NODE_ENV === 'production' && !JWT_SECRET) {
@@ -196,10 +196,13 @@ app.post('/api/tts', async (req, res) => {
       model: OPENAI_TTS_MODEL,
       voice: req.body?.voice || TTS_VOICE,
       input: text,
+      instructions: 'Hablá en español de España, con una voz cálida, natural y cercana. Soná como una persona real que está ayudando a alguien por teléfono. Ritmo conversacional, pausas breves y naturales, sin tono robótico, sin leer símbolos de formato.',
+      speed: 1.0,
       response_format: 'mp3'
     });
     const buffer = Buffer.from(await speech.arrayBuffer());
-    res.json({ audio: `data:audio/mpeg;base64,${buffer.toString('base64')}`, format: 'mp3', model: OPENAI_TTS_MODEL });
+    res.setHeader('Cache-Control', 'no-store');
+    res.json({ audio: `data:audio/mpeg;base64,${buffer.toString('base64')}`, format: 'mp3', model: OPENAI_TTS_MODEL, voice: req.body?.voice || TTS_VOICE });
   } catch (e) {
     console.error('TTS_ERROR', e);
     res.status(500).json({ error: 'No se pudo generar la voz.' });
