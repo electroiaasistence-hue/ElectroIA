@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: electroia
+    runtime: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: electroia-db
+          property: connectionString
+      - key: OPENAI_MODEL
+        value: gpt-5.6-luna
+      - key: OPENAI_VISION_MODEL
+        value: gpt-5.6-luna
+      - key: OPENAI_TTS_MODEL
+        value: gpt-4o-mini-tts
+      - key: OPENAI_TRANSCRIBE_MODEL
+        value: gpt-4o-mini-transcribe
+      - key: OPENAI_TTS_VOICE
+        value: alloy
+
+databases:
+  - name: electroia-db
+    plan: basic-256mb
