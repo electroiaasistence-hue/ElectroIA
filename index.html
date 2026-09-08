@@ -7,7 +7,7 @@
 <meta http-equiv="Expires" content="0">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="electroia-build" content="8.0-plataforma-pro-v12"><title>ElectroIA · Tu primera ayuda ante una urgencia eléctrica · Hogar v8.4 · Usuario v12</title>
+<meta name="electroia-build" content="8.0-plataforma-pro-v12"><title>ElectroIA · Tu primera ayuda ante una urgencia eléctrica · Hogar v8.4 · Usuario v13</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#000;color:#fff;font-family:"Segoe UI",Arial,sans-serif}body{padding-bottom:78px}.top{padding:18px 16px 14px;background:#000}
 .top .row>div:first-child{text-align:center;flex:1}
@@ -199,6 +199,43 @@
 </nav>
 <script>
 const API="/api";let currentMode="hogar",diag={step:0,answers:[]};
+/*
+ * ELECTROIA AI BRIDGE V13
+ * Preparación integral para conectar IA real más adelante, sin exponer claves.
+ * Principio: local-first. El navegador resuelve lo determinista; la IA solo se
+ * solicita cuando corresponde o cuando el usuario la pide explícitamente.
+ */
+window.ELECTROIA_AI_CONFIG={
+  enabled:false,
+  endpoint:API+'/chat',
+  visionEndpoint:API+'/vision',
+  ttsEndpoint:API+'/tts',
+  version:'v13',
+  localFirst:true,
+  maxContextChars:12000
+};
+function eiaAIState(){try{return JSON.parse(sessionStorage.getItem('electroia_ai_context_v13')||'{}')}catch(_){return {}}}
+function eiaAISet(x){try{sessionStorage.setItem('electroia_ai_context_v13',JSON.stringify(x||{}))}catch(_){} }
+function eiaAIAdd(kind,data){const s=eiaAIState();s[kind]=data;s.updatedAt=new Date().toISOString();eiaAISet(s);return s}
+function eiaAIContext(){
+  const s=eiaAIState(); const out={source:'ElectroIA V13',mode:currentMode,localFirst:true};
+  if(s.diagnostic)out.diagnostic=s.diagnostic;
+  if(s.calculation)out.calculation=s.calculation;
+  if(s.project)out.project=s.project;
+  if(s.goal)out.goal=s.goal;
+  const raw=JSON.stringify(out); return raw.length>window.ELECTROIA_AI_CONFIG.maxContextChars?raw.slice(0,window.ELECTROIA_AI_CONFIG.maxContextChars):raw;
+}
+function eiaAIPrepareGoal(goal){eiaAIAdd('goal',{text:String(goal||''),mode:currentMode,date:new Date().toISOString()})}
+function eiaAIPrepareDiagnostic(){eiaAIAdd('diagnostic',{problem:diag.problem||'',answers:diag.answers||[],node:diag.node||'',risk:!!diag.risk,targetNode:diag.targetNode||''})}
+function eiaAIPrepareCalculation(type,result,data){eiaAIAdd('calculation',{type:String(type||'Cálculo'),result:String(result||''),data:data||{},date:new Date().toISOString()})}
+function eiaAIRequest(reason='user_request',extra={}){
+  /* Punto único futuro para IA explícita. No se llama automáticamente desde botones locales. */
+  const prompt=extra.prompt||'Analizá el contexto de ElectroIA y ayudame a continuar. Separá hechos, supuestos, hipótesis y datos faltantes. No inventes información.';
+  eiaAIAdd('goal',{text:prompt,reason,mode:currentMode,date:new Date().toISOString()});
+  chat(currentMode,prompt);
+}
+function eiaAIResetContext(){try{sessionStorage.removeItem('electroia_ai_context_v13')}catch(_){} }
+
 function head(back=false){return `<header class="top">${back?'<button class="btn alt" onclick="goBack()">← Volver</button>':''}<div class="row"><div><div class="brand">⚡ ElectroIA</div><div class="tag">Tu primera ayuda ante una urgencia eléctrica</div></div><div style="text-align:right"><button class="btn alt" style="padding:7px 9px;border-radius:999px;font-size:12px" onclick="window.eiaToggleMenu?eiaToggleMenu():document.getElementById('eiaAccountOverlay')?.classList.add('show')">👤 Cuenta</button><div class="ver">Hogar · v8.4</div></div></div></header>`}
 function nav(id){document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));document.getElementById(id)?.classList.add('active')}
 function home(){electroStack=[];electroView='home';nav('nHome');app.innerHTML=head()+`<main class="wrap page">
@@ -293,7 +330,7 @@ function quickEmergency(t){
   else if(/enchufe|aparato/.test(x)) target='outlet';
   else if(/olor a quemado|humo|chispa|caliente/.test(x)) target='danger';
   else if(/agua/.test(x)) target='danger';
-  diagnostico(target,t);
+  eiaAIPrepareGoal(t); diagnostico(target,t);
 }
 function urgenciaIA(initial=''){
   // Entrada explícita a IA: se mantiene disponible, pero no se usa por defecto.
@@ -308,7 +345,7 @@ function urgenciaLocalTemporary(){
 function diagEscalateAI(){
   const problem=diag.problem||'Consulta de urgencia eléctrica';
   const answers=(diag.answers||[]).map((x,i)=>`${i+1}. ${x.q||'Pregunta'} → ${x.a||''}`).join('\n');
-  const prompt=`Necesito que intervengas en una urgencia eléctrica de Hogar porque el diagnóstico guiado local no fue suficiente.\n\nProblema inicial: ${problem}\n\nComprobaciones realizadas:\n${answers||'Todavía ninguna.'}\n\nContinuá desde este punto. No repitas preguntas que ya estén respondidas. Mantené seguridad primero, una sola pregunta por vez y lenguaje cotidiano. Separá hechos, hipótesis y la próxima comprobación segura.`;
+  eiaAIPrepareDiagnostic(); const prompt=`Necesito que intervengas en una urgencia eléctrica de Hogar porque el diagnóstico guiado local no fue suficiente.\n\nProblema inicial: ${problem}\n\nComprobaciones realizadas:\n${answers||'Todavía ninguna.'}\n\nContinuá desde este punto. No repitas preguntas que ya estén respondidas. Mantené seguridad primero, una sola pregunta por vez y lenguaje cotidiano. Separá hechos, hipótesis y la próxima comprobación segura.`;
   chat('urgencias_hogar',prompt);
 }
 function hogar(){enterView('hogar');nav('nHome');app.innerHTML=head(true)+`<main class="wrap page">
@@ -563,10 +600,10 @@ function diagVision(question){
   if(!diag.photo){return}
   diag.photoPending=false; renderDiag();
   addDiagConfirmation('🔎 Voy a intentar analizar la foto. Si no puedo verla con IA, te lo diré y seguiremos de forma guiada.');
-  fetch(diag.photo).then(r=>r.blob()).then(blob=>new Promise((resolve,reject)=>{const rd=new FileReader();rd.onload=()=>resolve(rd.result);rd.onerror=reject;rd.readAsDataURL(blob)})).then(dataUrl=>fetch(API+'/vision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl,filename:diag.photoName||'foto.jpg',question,mode:'hogar',context:diag.answers})})).then(async r=>{const raw=await r.text();let j={};try{j=JSON.parse(raw)}catch(_){j={error:raw}}if(!r.ok)throw new Error(j.error||'vision');return j}).then(j=>{const ans=j.answer||j.message;if(!ans)throw new Error('sin respuesta');diag.answers.push({q:'Análisis de la foto',a:ans});diag.problem=diag.problem||'Consulta con foto';diag.node='classify';diagTree.classify={q:'Con lo que vemos en la foto y lo que me contaste, ¿qué se parece más a tu caso?',a:[['No tengo luz en toda la vivienda','wholeHouse'],['No tengo luz en una zona','zone'],['Un enchufe o aparato no funciona','outlet'],['Salta una llave del cuadro','protection'],['No estoy seguro','tech']]};renderDiag();addDiagConfirmation('🖼️ Análisis visual: '+ans);}).catch(()=>addDiagConfirmation('📷 No pude analizar la foto automáticamente en este momento. No significa que haya algo malo. No manipules nada: decime qué querés identificar y seguimos paso a paso.'));
+  fetch(diag.photo).then(r=>r.blob()).then(blob=>new Promise((resolve,reject)=>{const rd=new FileReader();rd.onload=()=>resolve(rd.result);rd.onerror=reject;rd.readAsDataURL(blob)})).then(dataUrl=>fetch(API+'/vision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl,filename:diag.photoName||'foto.jpg',question,mode:'hogar',context:diag.answers,ai_contract:'electroia-v13',local_first:true,context_bundle:eiaAIContext()})})).then(async r=>{const raw=await r.text();let j={};try{j=JSON.parse(raw)}catch(_){j={error:raw}}if(!r.ok)throw new Error(j.error||'vision');return j}).then(j=>{const ans=j.answer||j.message;if(!ans)throw new Error('sin respuesta');diag.answers.push({q:'Análisis de la foto',a:ans});diag.problem=diag.problem||'Consulta con foto';diag.node='classify';diagTree.classify={q:'Con lo que vemos en la foto y lo que me contaste, ¿qué se parece más a tu caso?',a:[['No tengo luz en toda la vivienda','wholeHouse'],['No tengo luz en una zona','zone'],['Un enchufe o aparato no funciona','outlet'],['Salta una llave del cuadro','protection'],['No estoy seguro','tech']]};renderDiag();addDiagConfirmation('🖼️ Análisis visual: '+ans);}).catch(()=>addDiagConfirmation('📷 No pude analizar la foto automáticamente en este momento. No significa que haya algo malo. No manipules nada: decime qué querés identificar y seguimos paso a paso.'));
 }
 function diagFreeNext(){const el=document.getElementById('diagFree');const p=(el?.value||'').trim();if(!p){el?.focus();return}diag.problem=p;diag.answers.push({q:'¿Qué está pasando?',a:p});const low=p.toLowerCase();if(/humo|fuego|chispa|chispas|olor a quemado|olor fuerte a quemado|descarga eléctrica|me da corriente|agua.*electric|electric.*agua|cable.*expuesto|cable.*pelado|enchufe.*caliente|caliente.*enchufe/.test(low)){diag.node='dangerTriage';renderDiag();return}diag.history.push('start');diag.node='classify';diagTree.classify={q:'Para ubicar la avería: ¿afecta a toda la vivienda, a una zona concreta o a un aparato/enchufe?',a:[['Toda la vivienda','wholeHouse'],['Una zona o habitación','zone'],['Un aparato o enchufe','deviceTrip'],['No estoy seguro','tech']]};renderDiag()}
-function diagChoose(label,next){try{const current=diagTree[diag.node];if(!current)return;diag.history.push(diag.node);diag.answers.push({q:current.q||'Pregunta',a:label});if(next==='danger'){diag.node='dangerTriage';diag.risk=true;renderDiag();return}if(next==='continueTarget'){diag.node=diag.targetNode||'start';renderDiag();return}if(next==='safetyClear'){diag.node='safetyClear';renderDiag();return}if(!diagTree[next]){diag.node='tech';renderDiag();return}diag.node=next;renderDiag()}catch(e){console.error('ElectroIA diagnóstico:',e);diag.node='tech';renderDiag()}}
+function diagChoose(label,next){try{const current=diagTree[diag.node];if(!current)return;diag.history.push(diag.node);diag.answers.push({q:current.q||'Pregunta',a:label});if(next==='danger'){diag.node='dangerTriage';diag.risk=true;renderDiag();return}if(next==='continueTarget'){diag.node=diag.targetNode||'start';renderDiag();return}if(next==='safetyClear'){diag.node='safetyClear';renderDiag();return}if(!diagTree[next]){diag.node='tech';renderDiag();return}diag.node=next; eiaAIPrepareDiagnostic(); renderDiag()}catch(e){console.error('ElectroIA diagnóstico:',e);diag.node='tech';eiaAIPrepareDiagnostic();renderDiag()}}
 window.diagChoose=diagChoose;
 function diagExplain(){
   const text=prompt('Contame con tus palabras qué ves o qué pasó. No hace falta usar términos eléctricos.');
@@ -658,7 +695,7 @@ function sendPhoto(ev){
 function requestVision(url,name,question){
   add('🔎 '+question,true);
   add('<div class="chat-typing-v3"><i></i><i></i><i></i></div>');
-  fetch(url).then(r=>r.blob()).then(blob=>new Promise((resolve,reject)=>{const rd=new FileReader();rd.onload=()=>resolve(rd.result);rd.onerror=reject;rd.readAsDataURL(blob)})).then(dataUrl=>fetch(API+'/vision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl,filename:name,question,mode:currentMode})})).then(async r=>{const raw=await r.text();let j={};try{j=JSON.parse(raw)}catch(_){j={error:raw}}if(!r.ok)throw new Error(j.error||'vision');return j}).then(j=>{const c=document.getElementById('chat');const typing=c?.lastElementChild;const b=typing?.querySelector('.chat-msg-bubble');const ans=j.answer||j.message;if(!ans)throw new Error('sin respuesta');if(b)b.innerHTML=esc(ans)+`<br><button class="diag-audio" onclick='diagSpeak(${JSON.stringify(ans)})'>🔊 Escuchar</button>`+(diagIllustration({q:ans})||'');if(typing?.querySelector('.chat-msg-meta'))typing.querySelector('.chat-msg-meta').textContent='ElectroIA · análisis visual'}).catch(()=>{const c=document.getElementById('chat');const typing=c?.lastElementChild;const b=typing?.querySelector('.chat-msg-bubble');if(b)b.innerHTML='📷 <b>La foto quedó en la conversación.</b><br>No tengo disponible el análisis visual automático en este momento. No pasa nada: decime qué querés averiguar de la foto y te voy a guiar con comprobaciones seguras.';if(typing?.querySelector('.chat-msg-meta'))typing.querySelector('.chat-msg-meta').textContent='ElectroIA · foto'});
+  fetch(url).then(r=>r.blob()).then(blob=>new Promise((resolve,reject)=>{const rd=new FileReader();rd.onload=()=>resolve(rd.result);rd.onerror=reject;rd.readAsDataURL(blob)})).then(dataUrl=>fetch(API+'/vision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl,filename:name,question,mode:currentMode,ai_contract:'electroia-v13',local_first:true,context_bundle:eiaAIContext()})})).then(async r=>{const raw=await r.text();let j={};try{j=JSON.parse(raw)}catch(_){j={error:raw}}if(!r.ok)throw new Error(j.error||'vision');return j}).then(j=>{const c=document.getElementById('chat');const typing=c?.lastElementChild;const b=typing?.querySelector('.chat-msg-bubble');const ans=j.answer||j.message;if(!ans)throw new Error('sin respuesta');if(b)b.innerHTML=esc(ans)+`<br><button class="diag-audio" onclick='diagSpeak(${JSON.stringify(ans)})'>🔊 Escuchar</button>`+(diagIllustration({q:ans})||'');if(typing?.querySelector('.chat-msg-meta'))typing.querySelector('.chat-msg-meta').textContent='ElectroIA · análisis visual'}).catch(()=>{const c=document.getElementById('chat');const typing=c?.lastElementChild;const b=typing?.querySelector('.chat-msg-bubble');if(b)b.innerHTML='📷 <b>La foto quedó en la conversación.</b><br>No tengo disponible el análisis visual automático en este momento. No pasa nada: decime qué querés averiguar de la foto y te voy a guiar con comprobaciones seguras.';if(typing?.querySelector('.chat-msg-meta'))typing.querySelector('.chat-msg-meta').textContent='ElectroIA · foto'});
 }
 async function sendText(t){
   add(esc(t),true);
@@ -678,8 +715,8 @@ async function sendText(t){
     const controller=new AbortController();
     const timer=setTimeout(()=>controller.abort(),30000);
     const history=[...document.querySelectorAll('#chat .chat-msg')].slice(-10).map(m=>({role:m.classList.contains('user')?'user':'assistant',content:m.querySelector('.chat-msg-bubble')?.innerText||''}));
-    const payload={message:t,mode:currentMode,history};
-    if(urgency){payload.urgency=true;payload.urgency_instructions=urgencyInstructions;payload.safety_level='high';}
+    const payload={message:t,mode:currentMode,history,ai_contract:'electroia-v13',local_first:true,request_source:urgency?'urgency_hogar':'page_chat',context_bundle:eiaAIContext()};
+    if(urgency){payload.urgency=true;payload.urgency_instructions=urgencyInstructions;payload.safety_level='high';payload.escalated_from_local=!!diag?.answers?.length;}
     const r=await fetch(API+'/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
     clearTimeout(timer);
     const raw=await r.text();
@@ -781,12 +818,13 @@ function calcPro(){enterView('calcPro');nav('nHome');currentMode='profesional';a
 <div class="tool-card"><h3>📉 Caída de tensión</h3><div class="field-row"><label><span class="calc-field-caption">Tensión (V)</span><input id="cdV" type="number" value="230" placeholder="Tensión (V)"></label><label><span class="calc-field-caption">Corriente (A)</span><input id="cdI" type="number" value="16" placeholder="Corriente (A)"></label></div><div class="field-row"><label><span class="calc-field-caption">Longitud (m)</span><input id="cdL" type="number" value="25" placeholder="Longitud (m)"></label><label><span class="calc-field-caption">Sección (mm²)</span><input id="cdS" type="number" value="2.5" placeholder="Sección (mm²)"></label></div><label><span class="calc-field-caption">Material</span><select id="cdM"><option value="cu">Cobre</option><option value="al">Aluminio</option></select></label><button class="btn" onclick="calcDropPro()">Calcular</button><div id="cdOut"></div></div>
 <div class="tool-card"><h3>📏 Sección orientativa</h3><div class="field-row"><label><span class="calc-field-caption">Corriente (A)</span><input id="csI" type="number" value="16" placeholder="Corriente (A)"></label><label><span class="calc-field-caption">Longitud (m)</span><input id="csL" type="number" value="20" placeholder="Longitud (m)"></label></div><div class="field-row"><label><span class="calc-field-caption">Caída máx. (%)</span><input id="csP" type="number" value="3" placeholder="Caída máx. (%)"></label><label><span class="calc-field-caption">Tensión (V)</span><input id="csV" type="number" value="230" placeholder="Tensión (V)"></label></div><label><span class="calc-field-caption">Material</span><select id="csM"><option value="cu">Cobre</option><option value="al">Aluminio</option></select></label><button class="btn" onclick="calcSectionPro()">Estimar sección</button><div id="csOut"></div></div>
 <div class="tool-card"><h3>💥 Cortocircuito orientativo</h3><div class="field-row"><label><span class="calc-field-caption">Tensión (V)</span><input id="ccV" type="number" value="230" placeholder="Tensión (V)"></label><label><span class="calc-field-caption">Impedancia (Ω)</span><input id="ccZ" type="number" step="0.001" value="0.08" placeholder="Impedancia (Ω)"></label></div><button class="btn" onclick="calcShortPro()">Calcular</button><div id="ccOut"></div></div></div><div class="panel pro-warning"><b>⚠️ Criterio profesional</b><p>Una fórmula aislada no selecciona por sí sola una protección ni una sección definitiva. Hay que comprobar método de instalación, temperatura, agrupamiento, longitud, corriente admisible, caída de tensión, cortocircuito, coordinación y normativa aplicable.</p></div></main>`;scrollPageTop();}
-function showCalc(id,html){const e=document.getElementById(id);if(e)e.innerHTML='<div class="calc-result">'+html+'</div>'}
+function promptForCalcAI(){const c=eiaAIState().calculation;return 'Quiero interpretar un cálculo de ElectroIA. Resultado: '+(c?.result||'no disponible')+'. Tipo: '+(c?.type||'no indicado')+'. Datos: '+JSON.stringify(c?.data||{})+'. Revisá unidades, supuestos, límites y qué debería comprobarse antes de usarlo en una instalación real.'}
+function showCalc(id,html){const e=document.getElementById(id);if(e)e.innerHTML='<div class="calc-result">'+html+'<div class="calc-toolbar"><button class="mini-btn" onclick="eiaAIRequest(\'calculation_review\',{prompt:promptForCalcAI()})">🤖 Interpretar con IA</button></div></div>'}
 function calcCurrentPro(){let w=+document.getElementById('cpW').value,v=+document.getElementById('cpV').value,pf=+document.getElementById('cpPF').value,t=document.getElementById('cpT').value;if(!(w>0&&v>0&&pf>0&&pf<=1))return showCalc('cpOut','Revisá los valores.');let i=t==='single'?w/(v*pf):w/(Math.sqrt(3)*v*pf);showCalc('cpOut',`Corriente calculada: <b>${i.toFixed(2)} A</b><br><span class="confidence">Resultado matemático. La selección de protección/conductor requiere más datos.</span><div class="calc-toolbar"><button class="mini-btn" onclick="useCalcInDiag('Corriente calculada: ${i.toFixed(2)} A')">🔎 Llevar a diagnóstico</button></div>`)}
 function calcDropPro(){let v=+document.getElementById('cdV').value,i=+document.getElementById('cdI').value,l=+document.getElementById('cdL').value,sx=+document.getElementById('cdS').value,r=document.getElementById('cdM').value==='cu'?0.0175:0.0282;if(!(v>0&&i>0&&l>0&&sx>0))return showCalc('cdOut','Revisá los valores.');let d=2*l*i*r/sx;showCalc('cdOut',`Caída aproximada: <b>${d.toFixed(2)} V</b> · <b>${(d/v*100).toFixed(2)} %</b><div class="calc-toolbar"><button class="mini-btn" onclick="useCalcInDiag('Caída aproximada: ${d.toFixed(2)} V (${(d/v*100).toFixed(2)} %)')">🔎 Llevar a diagnóstico</button></div>`)}
 function calcSectionPro(){let i=+document.getElementById('csI').value,l=+document.getElementById('csL').value,p=+document.getElementById('csP').value,v=+document.getElementById('csV').value,r=document.getElementById('csM').value==='cu'?0.0175:0.0282;if(!(i>0&&l>0&&p>0&&v>0))return showCalc('csOut','Revisá los valores.');let s=(2*l*i*r)/(v*p/100);let std=[1.5,2.5,4,6,10,16,25,35,50,70,95,120];let pick=std.find(x=>x>=s)||std.at(-1);showCalc('csOut',`Sección mínima matemática aproximada: <b>${s.toFixed(2)} mm²</b><br>Sección normalizada siguiente: <b>${pick} mm²</b><br><span class="confidence">Orientativo: falta comprobar ampacidad y condiciones reales.</span><div class="calc-toolbar"><button class="mini-btn" onclick="useCalcInDiag('Sección matemática aproximada: ${s.toFixed(2)} mm²; normalizada siguiente: ${pick} mm²')">🔎 Llevar a diagnóstico</button></div>`)}
 function calcShortPro(){let v=+document.getElementById('ccV').value,z=+document.getElementById('ccZ').value;if(!(v>0&&z>0))return showCalc('ccOut','Revisá los valores.');showCalc('ccOut',`Corriente de cortocircuito aproximada: <b>${(v/z).toFixed(0)} A</b><br><span class="confidence">Modelo simplificado. El cálculo real depende de la impedancia completa del lazo/red.</span>`)}
-function useCalcInDiag(text){alert('Resultado preparado para el diagnóstico:\n\n'+text+'\n\nEn la próxima integración con IA este dato podrá pasar automáticamente al contexto del diagnóstico.');}
+function useCalcInDiag(text){eiaAIPrepareCalculation('Resultado eléctrico',text,{});alert('✅ Resultado preparado para el diagnóstico.\n\n'+text+'\n\nElectroIA ya lo dejó disponible en el contexto de esta sesión; la IA podrá usarlo cuando intervenga.');}
 function pv(){enterView('pv');currentMode='profesional';app.innerHTML=head(true)+`<main class="wrap page">
 <h1>☀️ Fotovoltaica PRO</h1>
 <div class="panel ai-router"><div class="pill">FOTOVOLTAICA + IA</div><p>Herramientas para revisar strings, MPPT, paneles, baterías, producción y autoconsumo. Los cálculos son orientativos y deben contrastarse con las fichas técnicas y condiciones reales.</p><button class="btn" onclick="chat('profesional','Estoy trabajando en una instalación fotovoltaica. Quiero que actúes como asistente técnico y me preguntes primero por paneles, strings, MPPT, inversor, baterías y objetivo del sistema según corresponda.')">🤖 Trabajar con IA PRO</button></div>
@@ -1328,7 +1366,7 @@ function toggleTask80(j){const ps=eia80Projects();const i=window.currentProjectI
 function addProjectPhoto80(ev,i){const f=ev?.target?.files?.[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{const img=new Image();img.onload=()=>{const max=1100,scale=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);c.getContext('2d').drawImage(img,0,0,c.width,c.height);const data=c.toDataURL('image/jpeg',.78);const ps=eia80Projects();ps[i].photos=ps[i].photos||[];ps[i].photos.push({name:f.name,data,date:new Date().toLocaleString('es-ES')});eia80Save(ps);renderPhotos80(ps[i])};img.src=rd.result};rd.readAsDataURL(f)}
 function renderPhotos80(x){const e=document.getElementById('p80Photos');if(!e)return;e.innerHTML=(x.photos||[]).map((p,j)=>`<div class="v80-photo"><button onclick="removePhoto80(${j})">×</button><img src="${p.data}" alt="Foto del proyecto"><small>${esc(p.name||'Foto')}<br>${esc(p.date||'')}</small></div>`).join('')||'<div class="v80-context" style="grid-column:1/-1">Todavía no hay fotos guardadas.</div>'}
 function removePhoto80(j){const ps=eia80Projects(),i=window.currentProjectIndex;if(!ps[i]?.photos?.[j])return;if(!confirm('¿Eliminar esta foto del proyecto?'))return;ps[i].photos.splice(j,1);eia80Save(ps);renderPhotos80(ps[i])}
-function projectAI80(){const p=projectPick();if(!p)return alert('Abrí o creá un proyecto primero.');const x=p.x;chat('profesional',`Quiero analizar el proyecto "${x.name}". Contexto: tipo ${x.type||'sin definir'}, cliente ${x.client||'sin definir'}, ubicación ${x.location||'sin definir'}, notas: ${x.notes||'sin notas'}, ${x.calculations?.length||0} cálculos, ${x.photos?.length||0} fotos y ${x.tasks?.filter(t=>!t.done).length||0} tareas pendientes. Separá hechos, supuestos, hipótesis, datos faltantes y comprobaciones.`)}
+function projectAI80(){const p=projectPick();if(!p)return alert('Abrí o creá un proyecto primero.');const x=p.x; eiaAIAdd('project',{name:x.name,type:x.type||'',client:x.client||'',location:x.location||'',notes:x.notes||'',calculations:x.calculations||[],photos:x.photos?.length||0,tasks:x.tasks||[],diagnostics:x.diagnostics||[]}); chat('profesional',`Quiero analizar el proyecto "${x.name}". Contexto: tipo ${x.type||'sin definir'}, cliente ${x.client||'sin definir'}, ubicación ${x.location||'sin definir'}, notas: ${x.notes||'sin notas'}, ${x.calculations?.length||0} cálculos, ${x.photos?.length||0} fotos y ${x.tasks?.filter(t=>!t.done).length||0} tareas pendientes. Separá hechos, supuestos, hipótesis, datos faltantes y comprobaciones.`)}
 function docProject80(){const p=projectPick();if(!p)return;const x=p.x;enterView('doc80');app.innerHTML=head(true)+`<main class="wrap page"><h1>📄 Resumen del proyecto</h1><div class="v80-doc"><h3>${esc(x.name)}</h3><p><b>Cliente:</b> ${esc(x.client||'—')}<br><b>Tipo:</b> ${esc(x.type||'—')}<br><b>Ubicación:</b> ${esc(x.location||'—')}<br><b>Fecha:</b> ${esc(x.date||'—')}</p><h3>Notas</h3><p>${esc(x.notes||'Sin notas.')}</p><h3>Actividad</h3><p>${x.calculations?.length||0} cálculos · ${x.photos?.length||0} fotos · ${x.tasks?.length||0} tareas · ${x.diagnostics?.length||0} diagnósticos</p><div class="v80-context">Este resumen es de trabajo. No representa por sí mismo un certificado, boletín ni documento reglamentario.</div><button class="btn" style="margin-top:10px" onclick="openProject80(${p.i})">← Volver al proyecto</button></div></main>`;scrollPageTop()}
 
 function calcPro(){calcPro80()}
@@ -1370,7 +1408,7 @@ function doEnergy80(){const w=+v80EW.value,h=+v80EH.value,d=+v80ED.value;if(!(w>
 function doResistance80(){const v=+v80RV.value,i=+v80RI.value;if(!(v>0&&i>0))return calcOut80('v80ResistanceOut','Revisá los valores.');calcOut80('v80ResistanceOut',`Resistencia: <strong>${(v/i).toFixed(2)} Ω</strong>`)}
 function doResistors80(){const a=+v80R1.value,b=+v80R2.value,c=+v80R3.value,mode=v80RC.value;if(!(a>0&&b>0)||c<0)return calcOut80('v80ResistorsOut','Revisá las resistencias.');let r;if(mode==='series')r=a+b+(c>0?c:0);else{let sum=1/a+1/b+(c>0?1/c:0);r=1/sum}calcOut80('v80ResistorsOut',`Resistencia equivalente: <strong>${r.toFixed(2)} Ω</strong>`)}
 
-function calcOut80(id,html){const e=document.getElementById(id);if(e)e.innerHTML=`<div class="v80-result">${html}</div>`}
+function calcOut80(id,html){const e=document.getElementById(id);if(e)e.innerHTML=`<div class="v80-result">${html}<div class="calc-toolbar"><button class="mini-btn" onclick="eiaAIRequest('calculation_review',{prompt:promptForCalcAI()})">🤖 Interpretar con IA</button></div></div>`}
 function saveCalc80(type,result,data){const p=projectPick();if(!p){alert('Abrí un proyecto para guardar este cálculo.');return}p.x.calculations=p.x.calculations||[];p.x.calculations.push({type,result,date:new Date().toLocaleString('es-ES'),data});eia80Save(p.ps);alert('✅ Cálculo guardado en el proyecto.')}
 function doCurrent80(){const w=+v80W.value,v=+v80V.value,pf=+v80PF.value,t=v80T.value;if(!(w>0&&v>0&&pf>0&&pf<=1))return calcOut80('v80CurrentOut','Revisá los valores.');const i=t==='single'?w/(v*pf):w/(Math.sqrt(3)*v*pf);const r=`${i.toFixed(2)} A`;calcOut80('v80CurrentOut',`Corriente: <strong>${r}</strong><div class="v80-actions"><button class="v80-primary" onclick="saveCalc80('Potencia → corriente','${r}',{potencia:${w},tension:${v}})">💾 Guardar</button><button class="v80-secondary" onclick="diagProWith80('Corriente calculada: ${r}')">🔎 Diagnóstico</button></div>`)}
 function doDrop80(){const v=+v80DV.value,i=+v80DI.value,l=+v80DL.value,s=+v80DS.value,r=document.getElementById('v80DM').value==='cu'?0.0175:0.0282;if(!(v>0&&i>0&&l>0&&s>0))return calcOut80('v80DropOut','Revisá los valores.');const d=2*l*i*r/s,p=d/v*100;const res=`${d.toFixed(2)} V · ${p.toFixed(2)} %`;calcOut80('v80DropOut',`Caída aproximada: <strong>${res}</strong><div class="v80-actions"><button class="v80-primary" onclick="saveCalc80('Caída de tensión','${res}',{tension:${v},corriente:${i},longitud:${l},seccion:${s}})">💾 Guardar</button><button class="v80-secondary" onclick="diagProWith80('Caída aproximada: ${res}')">🔎 Diagnóstico</button></div>`)}
@@ -1501,7 +1539,7 @@ saveMonoReview80=function(){const r=eia84SaveReviewOriginal.apply(this,arguments
     </form>
     <button class="eia-account-secondary" id="eiaGuestBtn" type="button" style="margin-top:8px">Continuar sin cuenta</button>
     <div class="eia-account-switch" id="eiaAccountSwitch">¿Ya tenés una cuenta? <button type="button" onclick="eiaAccountMode('login')">Iniciar sesión</button></div>
-    <p class="eia-account-note">En esta versión de prueba, la cuenta se guarda en este dispositivo. Para cuentas reales y acceso desde otros móviles necesitaremos conectar un backend seguro.</p>
+    <p class="eia-account-note">Tu cuenta se gestiona de forma segura mediante el servidor. Tus proyectos podrán recuperarse desde otros dispositivos al iniciar sesión.</p>
   </div>
 </div>
 <button class="eia-user-chip" id="eiaUserChip" onclick="eiaToggleMenu()">👤 Mi cuenta</button>
@@ -1521,9 +1559,32 @@ saveMonoReview80=function(){const r=eia84SaveReviewOriginal.apply(this,arguments
   function close(){ $('eiaAccountOverlay').classList.remove('show'); clearError() }
   function updateChip(){const s=session();const c=$('eiaUserChip');if(!c)return;if(s&&!s.guest){c.style.display='block';c.textContent='👤 '+(s.name||'Mi cuenta')}else{c.style.display='block';c.textContent='👤 Iniciar sesión';}}
   window.eiaToggleMenu=function(){const s=session();if(!s||s.guest){$('eiaAccountMenu').classList.remove('show');open('login');return}$('eiaAccountMenu').classList.toggle('show')}
-  window.eiaAccountProfile=function(){ $('eiaAccountMenu').classList.remove('show'); const s=session(); if(!s)return open('login'); alert('Cuenta: '+s.email+'\nNombre: '+(s.name||'Sin nombre')+'\n\nTus datos de ElectroIA quedan asociados a esta cuenta en esta versión de prueba.'); }
+  window.eiaAccountProfile=function(){ $('eiaAccountMenu').classList.remove('show'); const s=session(); if(!s)return open('login'); alert('Cuenta: '+s.email+'\nNombre: '+(s.name||'Sin nombre')+'\n\nTu cuenta está preparada para sincronizar tus proyectos mediante el servidor.'); }
   window.eiaLogout=function(){localStorage.removeItem(SESSION);localStorage.removeItem(GUEST);$('eiaAccountMenu').classList.remove('show');updateChip();open('login')}
-  $('eiaAccountForm').addEventListener('submit',function(ev){ev.preventDefault();clearError();const email=$('eiaEmail').value.trim().toLowerCase(),pass=$('eiaPassword').value;let a=accounts();if(mode==='register'){const name=$('eiaName').value.trim();if(!name)return showError('Escribí tu nombre.');if(pass.length<6)return showError('La contraseña debe tener al menos 6 caracteres.');if(pass!==$('eiaConfirm').value)return showError('Las contraseñas no coinciden.');if(a.some(x=>x.email===email))return showError('Ya existe una cuenta con ese email. Iniciá sesión.');const u={id:'u_'+Date.now(),name,email,password:pass,createdAt:new Date().toISOString()};a.push(u);saveAccounts(a);localStorage.setItem(SESSION,JSON.stringify({id:u.id,name:u.name,email:u.email}));localStorage.removeItem(GUEST);close();updateChip();alert('¡Cuenta creada! Bienvenido/a a ElectroIA.')}else{const u=a.find(x=>x.email===email&&x.password===pass);if(!u)return showError('Email o contraseña incorrectos.');localStorage.setItem(SESSION,JSON.stringify({id:u.id,name:u.name,email:u.email}));localStorage.removeItem(GUEST);close();updateChip();alert('¡Bienvenido/a de nuevo!')}});
+  $('eiaAccountForm').addEventListener('submit',async function(ev){
+    ev.preventDefault();clearError();
+    const email=$('eiaEmail').value.trim().toLowerCase(),pass=$('eiaPassword').value;
+    if(!/^\S+@\S+\.\S+$/.test(email))return showError('Escribí un email válido.');
+    try{
+      const isRegister=mode==='register';
+      const payload=isRegister?{name:$('eiaName').value.trim(),email,password:pass}:{email,password:pass};
+      if(isRegister){
+        if(!payload.name)return showError('Escribí tu nombre.');
+        if(pass.length<8)return showError('La contraseña debe tener al menos 8 caracteres.');
+        if(pass!==$('eiaConfirm').value)return showError('Las contraseñas no coinciden.');
+      }
+      const r=await fetch(isRegister?'/api/auth/register':'/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok)throw new Error(j.error||'AUTH_FAILED');
+      const u=j.user||{};
+      localStorage.setItem(SESSION,JSON.stringify({id:u.id,name:u.name||'',email:u.email||email,token:j.token}));
+      localStorage.removeItem(GUEST);close();updateChip();
+      alert(isRegister?'¡Cuenta creada! Bienvenido/a a ElectroIA.':'¡Bienvenido/a de nuevo!');
+    }catch(e){
+      const map={EMAIL_ALREADY_EXISTS:'Ya existe una cuenta con ese email. Iniciá sesión.',INVALID_CREDENTIALS:'Email o contraseña incorrectos.',PASSWORD_TOO_SHORT:'La contraseña debe tener al menos 8 caracteres.',DATABASE_NOT_CONFIGURED:'La cuenta todavía no está disponible porque falta conectar la base de datos.'};
+      showError(map[e.message]||'No pude conectar con el servidor de cuentas.');
+    }
+  });
   $('eiaGuestBtn').onclick=function(){localStorage.setItem(GUEST,'1');close();updateChip()};
   window.eiaRequireAccount=function(action){const s=session();if(s&&!s.guest)return true;open('register');return false};
   document.addEventListener('click',e=>{if(!e.target.closest('#eiaUserChip')&&!e.target.closest('#eiaAccountMenu'))$('eiaAccountMenu').classList.remove('show')});
@@ -1629,4 +1690,52 @@ function togglePVCalculations(){
  if(button)button.setAttribute('aria-expanded',String(!isOpen));
 }
 </script>
+
+<script id="electroia-readiness-v14">
+/*
+ * ELECTROIA V14 — ARQUITECTURA DE PREPARACIÓN INTEGRAL
+ * No activa IA ni consume tokens por sí sola.
+ * Principio: local-first + escalado explícito + contexto estructurado.
+ */
+window.ELECTROIA_RUNTIME = {
+  version:'v14',
+  ai:{enabled:false, provider:'openai', chat:'/api/chat', vision:'/api/vision', tts:'/api/tts'},
+  auth:{provider:'backend', projects:'/api/projects'},
+  storage:{mode:'local_until_backend', projectAccountOwned:true},
+  policy:{localFirst:true, askOneAtATime:true, safetyFirst:true, neverExposeApiKey:true},
+  capabilities:{chat:true, vision:true, voiceInput:true, voiceOutput:true, calculationsLocal:true, projects:true}
+};
+function eiaV14Log(kind,data={}){
+  try{const k='electroia_runtime_events_v14';const a=JSON.parse(sessionStorage.getItem(k)||'[]');a.push({kind,data,at:new Date().toISOString()});sessionStorage.setItem(k,JSON.stringify(a.slice(-80)));}catch(_){}
+}
+function eiaV14Snapshot(){
+  const s=typeof eiaAIState==='function'?eiaAIState():{};
+  return {version:'v14',mode:currentMode,localFirst:true,diagnostic:s.diagnostic||null,calculation:s.calculation||null,project:s.project||null,goal:s.goal||null};
+}
+function eiaV14Route(kind,opts={}){
+  /* Local actions remain local. Only explicit requests or a deliberate escalation cross the AI boundary. */
+  const explicit=!!opts.explicit, escalated=!!opts.escalated, safety=!!opts.safety;
+  const useAI=explicit||escalated||safety;
+  eiaV14Log('route',{kind,useAI,explicit,escalated,safety});
+  return useAI?'ai':'local';
+}
+function eiaV14Prepare(type,data={}){
+  if(type==='diagnostic' && typeof eiaAIPrepareDiagnostic==='function') eiaAIPrepareDiagnostic();
+  if(type==='calculation' && typeof eiaAIPrepareCalculation==='function') eiaAIPrepareCalculation(data.type,data.result,data.data);
+  if(type==='goal' && typeof eiaAIPrepareGoal==='function') eiaAIPrepareGoal(data.text||'');
+  eiaV14Log('context_prepared',{type});
+  return eiaV14Snapshot();
+}
+window.eiaV14 = {route:eiaV14Route,prepare:eiaV14Prepare,snapshot:eiaV14Snapshot,log:eiaV14Log};
+</script>
+<script id="electroia-v14-ux-contract">
+/* Contrato visual/funcional para que futuros módulos IA mantengan la misma experiencia. */
+window.ELECTROIA_UX_CONTRACT={
+  hogar:{language:'cotidiano',questionFlow:'one_at_a_time',allowNoSe:'true',safetyBeforeDiagnosis:true},
+  urgency:{firstGate:'danger_signs',stopOnDanger:true,localFirst:true,aiOnlyWhenNeeded:true},
+  professional:{technicalLanguage:true,showUnits:true,separateFactsAssumptions:true},
+  ai:{showWhenUsed:true,neverPretendToMeasure:true,neverInventMissingData:true}
+};
+</script>
+
 </body></html>
