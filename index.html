@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta name="electroia-build" content="15.7-electroia">
+<meta name="electroia-build" content="16.1-electroia">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="electroia-build" content="15.7-electroia"><title>ElectroIA · Tu primera ayuda ante una urgencia eléctrica · Hogar v8.4 · Usuario v15.7</title>
+<meta name="electroia-build" content="16.1-electroia"><title>ElectroIA · Tu primera ayuda ante una urgencia eléctrica · Hogar v8.4 · Usuario v16.1</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#000;color:#fff;font-family:"Segoe UI",Arial,sans-serif}body{padding-bottom:78px}.top{padding:18px 16px 14px;background:#000}
 .top .row>div:first-child{text-align:center;flex:1}
@@ -1958,7 +1958,7 @@ window.ELECTROIA_UX_CONTRACT={
 .eia-messages{padding:10px 4px!important}
 .eia-msg.user,.eia-msg.ai{margin:7px 0!important}
 .eia-question-label{display:none!important}
-.eia-quick>div:first-child{display:none!important}
+.eia-quick>div:first-child{display:block!important}
 .eia-option{width:100%!important;text-align:left!important;padding:13px 14px!important;margin:4px 0!important;font-size:15px!important;line-height:1.3!important;border-radius:14px!important}
 .eia-result{padding:16px!important}
 .eia-result h2{margin:5px 0 9px!important;font-size:21px!important}
@@ -1970,6 +1970,7 @@ window.ELECTROIA_UX_CONTRACT={
 .photo-ai-card p{display:none!important}
 .photo-ai-actions{display:grid!important;grid-template-columns:1fr 1fr 1fr!important;gap:6px!important}
 .photo-ai-actions button{padding:10px 7px!important;font-size:13px!important}
+.eia-urgency-label{background:#df1536;color:#fff;font-weight:800;padding:11px 14px;margin:0 0 10px;border-radius:12px;font-size:15px}.eia-msg.ai .eia-bubble{background:#fff;border:1px solid #e1e5ea}.eia-messages{min-height:42px}.eia-quick{padding-top:0!important}
 @media(max-width:600px){
   .chat-header{height:58px!important;flex-basis:58px!important}
   .chat-head-sub{font-size:11px!important}
@@ -1997,7 +1998,7 @@ function eiaPublicAnswer(text){
   s=s.replace(/CONTEXTO COMPARTIDO DE ELECTROIA:[\s\S]*?(?=(?:Hechos|Qué hacer ahora|Que hacer ahora|Conclusión|Recomendación|Siguiente paso)\s*:|$)/gi,' ');
   s=s.replace(/CONTEXTO PARA IA:[\s\S]*?(?=(?:Hechos|Qué hacer ahora|Que hacer ahora|Conclusión|Recomendación|Siguiente paso)\s*:|$)/gi,' ');
   s=s.replace(/Necesito que intervengas en una urgencia eléctrica[\s\S]*?(?=(?:Hechos|Qué hacer ahora|Que hacer ahora|Conclusión|Recomendación|Siguiente paso)\s*:|$)/gi,' ');
-  s=s.replace(/(Usá este contexto|Usa este contexto|Continuá desde este punto|Continúa desde este punto|No muestres este contexto|ai_contract|local_first|request_source|context_bundle)[:\s\S]*?(?=(?:Hechos|Qué hacer ahora|Que hacer ahora|Conclusión|Recomendación|Siguiente paso)\s*:|$)/gi,' ');
+  s=s.replace(/(Usá este contexto|Usa este contexto|Continuá desde este punto|Continúa desde este punto|No muestres este contexto|Continuá desde acá|ai_contract|local_first|request_source|context_bundle)[:\s\S]*?(?=(?:Hechos|Qué hacer ahora|Que hacer ahora|Conclusión|Recomendación|Siguiente paso)\s*:|$)/gi,' ');
   // No mostrar JSON ni volcados de objetos.
   if(/^\s*[\[{].*[\]}]\s*$/s.test(s) || /"(?:role|message|context_bundle|ai_contract)"\s*:/.test(s)) return '';
   s=s.replace(/^\s*(?:Hechos observados|Hipótesis|Comprobaciones realizadas|Problema inicial|Sesión)\s*:\s*/gmi,'');
@@ -2017,7 +2018,7 @@ function eiaRenderChat(text){
 }
 function eiaIsInternalChatText(text){
   const s=String(text||'');
-  return /CONTEXTO COMPARTIDO DE ELECTROIA|CONTEXTO PARA IA|Necesito que intervengas en una urgencia eléctrica|Continuá desde este punto|ai_contract|local_first|request_source|context_bundle|<div class="chat-typing|chat-typing-v3/i.test(s);
+  return /CONTEXTO COMPARTIDO DE ELECTROIA|CONTEXTO PARA IA|Necesito que intervengas en una urgencia eléctrica|Continuá desde este punto|Continuá desde acá|Problema inicial: Consulta de urgencia eléctrica|Comprobaciones realizadas:|ai_contract|local_first|request_source|context_bundle|<div class="chat-typing|chat-typing-v3/i.test(s);
 }
 
 /* No volvemos a enviar al modelo el prompt técnico como si fuera un mensaje del usuario. */
@@ -2087,7 +2088,7 @@ renderDiag=function(){
   }else if(n.free){
     body+=`</div><div class="eia-quick"><textarea id="diagFree" class="eia-textarea" placeholder="Contame qué pasa con tus palabras…"></textarea><div class="diag-tools"><button class="diag-tool" type="button" onclick="diagVoice()">🎙️ Hablar</button><button class="diag-tool" type="button" onclick="diagPickPhoto()">📷 Foto</button></div><input id="diagPhoto" class="hidden" type="file" accept="image/*" capture="environment" onchange="diagHandlePhoto(event)"><button class="eia-start" onclick="diagFreeNext()">Continuar →</button>`;
   }else{
-    body+=`</div><div class="eia-quick"><div class="eia-msg ai"><div class="eia-bubble">${esc(n.q||'¿Qué pasa?')}</div></div><div class="eia-options">`;
+    body+=`</div><div class="eia-quick"><div class="eia-urgency-label">🚨 ASISTENCIA DE URGENCIA</div><div class="eia-msg ai"><div class="eia-bubble">${esc(n.q||'¿Qué pasa?')}</div></div><div class="eia-options">`;
     (n.a||[]).forEach(x=>body+=`<button type="button" class="eia-option" onclick='diagChoose(${JSON.stringify(x[0])},${JSON.stringify(x[1])})'>${esc(x[0])}</button>`);
     body+=`</div><div class="diag-tools"><button type="button" class="diag-tool" onclick="diagVoice()">🎙️ Hablar</button><button type="button" class="diag-tool" onclick="diagPickPhoto()">📷 Foto</button></div><input id="diagPhoto" class="hidden" type="file" accept="image/*" capture="environment" onchange="diagHandlePhoto(event)"></div>`;
   }
