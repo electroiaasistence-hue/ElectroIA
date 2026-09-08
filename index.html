@@ -243,7 +243,27 @@
 .chat-typing-v3{min-width:108px;min-height:40px}
 @media(max-width:600px){.chat-tools-v3{grid-template-columns:1fr 1fr 1fr}.chat-tool-v3{font-size:13px;padding-left:5px;padding-right:5px}.chat-msg{max-width:94%}.chat-msg-bubble{font-size:15px}}
 </style>
-</head>
+<style id="electroia-v158-simple-ux">
+/* V15.8 — chat Hogar: simple, rápido y sin ruido */
+.urgency-ai-banner{height:52px;padding:0 14px;display:flex;align-items:center;background:#d71935;color:#fff;border-bottom:1px solid rgba(255,255,255,.22);font-size:15px}
+.urgency-ai-banner b{font-size:16px;margin:0;display:block}
+.v83-contextbar,.diag-deep-note,.hybrid-ai-final{display:none!important}
+.chat-app{border-radius:22px}
+.chat-header{height:62px;flex-basis:62px;padding:8px 12px}
+.chat-ai-avatar{width:40px;height:40px;border-radius:13px;font-size:19px}
+.chat-head-title{font-size:15px}.chat-head-sub{font-size:11px}
+.chat-stream{padding:14px 12px 14px;gap:9px}
+.chat-msg-bubble{padding:11px 13px;line-height:1.42}
+.chat-welcome{margin:2px auto 8px}
+.chat-welcome-icon{width:46px;height:46px}
+.chat-suggestions{padding:6px 9px 7px}
+.chat-composer{padding:8px 9px calc(9px + env(safe-area-inset-bottom))}
+.chat-helper{font-size:10px}
+.chat-typing-v3{min-width:86px;min-height:38px;width:max-content}
+.chat-typing-v3::before{content:'Pensando…';font-weight:700;margin-right:3px}
+.chat-typing-v3 i{width:5px;height:5px}
+@media(max-width:600px){.chat-app{height:calc(100dvh - 102px);min-height:500px}.chat-header{height:60px;flex-basis:60px}.urgency-ai-banner{height:48px}.urgency-ai-banner b{font-size:15px}.chat-msg-bubble{font-size:15px}}
+</style></head>
 <body>
 <div id="app"></div>
 <nav class="bottom">
@@ -273,11 +293,12 @@ function eiaAIState(){try{return JSON.parse(sessionStorage.getItem('electroia_ai
 function eiaAISet(x){try{sessionStorage.setItem('electroia_ai_context_v13',JSON.stringify(x||{}))}catch(_){} }
 function eiaAIAdd(kind,data){const s=eiaAIState();s[kind]=data;s.updatedAt=new Date().toISOString();eiaAISet(s);return s}
 function eiaAIContext(){
-  const s=eiaAIState(); const out={source:'ElectroIA V13',mode:currentMode,localFirst:true};
+  const s=eiaAIState(); const out={source:'ElectroIA V15.8',mode:currentMode,localFirst:true};
   if(s.diagnostic)out.diagnostic=s.diagnostic;
   if(s.calculation)out.calculation=s.calculation;
   if(s.project)out.project=s.project;
   if(s.goal)out.goal=s.goal;
+  try{if(typeof eia83ContextText==='function'){const pc=eia83ContextText();if(pc)out.project_context=pc;}}catch(_){}
   const raw=JSON.stringify(out); return raw.length>window.ELECTROIA_AI_CONFIG.maxContextChars?raw.slice(0,window.ELECTROIA_AI_CONFIG.maxContextChars):raw;
 }
 function eiaAIPrepareGoal(goal){eiaAIAdd('goal',{text:String(goal||''),mode:currentMode,date:new Date().toISOString()})}
@@ -776,7 +797,7 @@ const isUrgency=mode==='urgencias_hogar';
 const isDirectAI=mode==='ia_directa';
 app.innerHTML=head(true)+`<main class="wrap page"><div class="chat-app">
 <div class="chat-header"><div class="chat-ai-avatar">${isUrgency?'🚨':'⚡'}</div><div class="chat-head-copy"><div class="chat-head-title">ElectroIA</div><div class="chat-head-sub">${isUrgency?'Asistencia de urgencia · Hogar':(isDirectAI?'Conversación libre · IA':'Asistente eléctrico')}</div></div><button class="chat-head-action" onclick="clearChat()" title="Nueva conversación">＋</button></div>
-${isUrgency?`<div class="urgency-ai-banner"><b>🚨 ASISTENCIA DE URGENCIA</b><span>Estoy con vos. Primero voy a descartar peligro. Después iremos paso a paso hasta encontrar una solución segura o decidir si hace falta un profesional.</span><strong>⚠️ Si hay fuego, humo, chispas intensas, una persona recibiendo una descarga o agua en contacto con electricidad: no toques la instalación y alejate de la zona.</strong></div>`:''}
+${isUrgency?`<div class="urgency-ai-banner"><b>🚨 ASISTENCIA DE URGENCIA</b></div>`:''}
 <div class="chat-stream" id="chat"><div class="chat-welcome"><div class="chat-welcome-icon">${isUrgency?'🚨':(isDirectAI?'💬':'⚡')}</div><strong>${isUrgency?'Estoy para ayudarte ahora':(isDirectAI?'Hablemos directamente':'¿Qué está pasando?')}</strong><span>${isUrgency?'Decime qué pasa, con tus palabras. Yo te voy guiando.':(isDirectAI?'Preguntame lo que quieras. Vamos directo al punto.':'Decime qué pasa. Vamos de a un paso.')}</span></div>
 <div class="chat-msg ai"><div class="chat-msg-bubble">${isDirectAI?'Claro. Estoy acá para charlar con vos sobre lo que necesites. ¿Qué querés saber o resolver?':'Hola. Soy ElectroIA. ¿Qué problema eléctrico tenés en casa?'}</div></div>
 ${initial?`<div class="chat-msg user"><div class="chat-msg-bubble">${esc(initial)}</div></div>`:''}</div>
@@ -800,6 +821,12 @@ function setLastAnswer(text){
   if(b)b.classList.toggle('show',!!window.eiaLastAnswer.trim());
 }
 function speakLastAnswer(){if(window.eiaLastAnswer)speakText(window.eiaLastAnswer)}
+function addTyping(){
+  const c=document.getElementById('chat'); if(!c)return null;
+  const d=document.createElement('div'); d.className='chat-msg ai';
+  d.innerHTML='<div class="chat-typing-v3" aria-label="Pensando"><i></i><i></i><i></i></div>';
+  c.appendChild(d); c.scrollTop=c.scrollHeight; return d;
+}
 
 function send(){
   const el=document.getElementById('msg');
@@ -843,12 +870,12 @@ function sendPhoto(ev){
 }
 function requestVision(url,name,question){
   add('🔎 '+question,true);
-  add('<div class="chat-typing-v3"><i></i><i></i><i></i></div>');
+  addTyping();
   fetch(url).then(r=>r.blob()).then(blob=>new Promise((resolve,reject)=>{const rd=new FileReader();rd.onload=()=>resolve(rd.result);rd.onerror=reject;rd.readAsDataURL(blob)})).then(dataUrl=>fetch(API+'/vision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl,filename:name,question,mode:currentMode,ai_contract:'electroia-v13',local_first:true,context_bundle:eiaAIContext()})})).then(async r=>{const raw=await r.text();let j={};try{j=JSON.parse(raw)}catch(_){j={error:raw}}if(!r.ok)throw new Error(j.error||'vision');return j}).then(j=>{const c=document.getElementById('chat');const typing=c?.lastElementChild;const b=typing?.querySelector('.chat-msg-bubble');const ans=j.answer||j.message;if(!ans)throw new Error('sin respuesta');if(b){b.innerHTML=eiaRenderChat(ans);setLastAnswer(ans)}}).catch(()=>{const c=document.getElementById('chat');const typing=c?.lastElementChild;const b=typing?.querySelector('.chat-msg-bubble');if(b)b.innerHTML='📷 <b>La foto quedó en la conversación.</b><br>No tengo disponible el análisis visual automático en este momento. No pasa nada: decime qué querés averiguar de la foto y te voy a guiar con comprobaciones seguras.';});
 }
 async function sendText(t){
   add(esc(t),true);
-  add('<div class="chat-typing-v3"><i></i><i></i><i></i></div>');
+  addTyping();
   const c=document.getElementById('chat');
   const urgency=currentMode==='urgencias_hogar';
   const urgencyInstructions=urgency?{
@@ -1289,36 +1316,9 @@ Object.assign(diagTree,{
   }
 });
 
-/* Resultado final más explicativo: muestra el razonamiento sin afirmar una certeza que no puede verificarse a distancia. */
+/* V15.8 — resultados finales simples: sin razonamiento interno ni bloque de IA adicional. */
 const _renderDiagOriginal=renderDiag;
-renderDiag=function(){
-  _renderDiagOriginal();
-  const n=diagTree[diag.node];
-  if(!n?.result)return;
-  const box=document.querySelector('.eia-result');
-  if(!box || box.querySelector('.diag-deep-note'))return;
-  const answered=diag.answers.length;
-  const note=document.createElement('div');
-  note.className='diag-deep-note';
-  note.style.cssText='margin-top:12px;padding:11px 12px;border-radius:12px;background:#f7f8fa;border:1px solid #e3e6ea;color:#4e5862;font-size:13px;line-height:1.45';
-  note.innerHTML='<b>🔎 Cómo llegamos a esto</b><br>ElectroIA ha usado '+answered+' respuesta'+(answered===1?'':'s')+' para acotar el problema. El resultado es una hipótesis orientativa, no una certeza: una comprobación profesional puede confirmar la causa.';
-  box.insertBefore(note,box.querySelector('small'));
-  // V15.1: incluso cuando el árbol local llega a un resultado, ofrecer continuidad opcional con IA.
-  // La IA no se activa sola: solo entra si el usuario decide continuar.
-  if(!box.querySelector('.hybrid-ai-final')){
-    const wrap=document.createElement('div');
-    wrap.className='hybrid-ai-final';
-    wrap.style.cssText='margin-top:14px;padding:13px;border-radius:14px;background:linear-gradient(180deg,#eef6ff,#f7fbff);border:1px solid #b9d8ff';
-    wrap.innerHTML='<b style="display:block;margin-bottom:5px">🤖 ¿Querés seguir con la IA?</b><span style="display:block;font-size:13px;line-height:1.4;color:#4e5862;margin-bottom:10px">La guía automática llegó hasta acá. Si todavía tenés dudas o querés profundizar, puedo continuar usando todo lo que ya comprobamos, sin hacerte repetir las preguntas.</span>';
-    const btn=document.createElement('button');
-    btn.type='button';
-    btn.className='eia-start hybrid-ai-escalate';
-    btn.innerHTML='🤖 Continuar con IA<small>Usará el contexto de este diagnóstico.</small>';
-    btn.onclick=diagEscalateAI;
-    wrap.appendChild(btn);
-    box.appendChild(wrap);
-  }
-};
+renderDiag=function(){ _renderDiagOriginal(); };
 </script>
 
 <script id="electroia-spa-navigation">
@@ -1612,16 +1612,16 @@ function eia83AttachPhoto(data,name,source='chat'){const p=eia83Project();if(!p)
 function eia83ProjectPrompt(){const ctx=eia83ContextText();return ctx?`\n\nCONTEXTO COMPARTIDO DE ELECTROIA:\n${ctx}\nUsá este contexto como información disponible, pero distinguí hechos, supuestos e hipótesis. No inventes datos.`:''}
 /* Envolvemos el chat existente para inyectar contexto sin romper la interfaz anterior. */
 const eia83ChatOriginal=chat;
-chat=function(mode='hogar',initial=''){eia83ChatOriginal(mode,initial);const main=document.querySelector('#chat')?.parentElement?.parentElement;if(main){const stream=document.getElementById('chat');if(stream)stream.insertAdjacentHTML('beforebegin',eia83ContextBar());}if(initial)eia83SaveChat(initial,'user');};
+chat=function(mode='hogar',initial=''){eia83ChatOriginal(mode,initial);if(initial)eia83SaveChat(initial,'user');};
 const eia83SendTextOriginal=sendText;
-sendText=async function(t){eia83SaveChat(t,'user');const enriched=t+eia83ProjectPrompt();return eia83SendTextOriginal(enriched)};
+sendText=async function(t){eia83SaveChat(t,'user');return eia83SendTextOriginal(t)};
 const eia83RequestVisionOriginal=requestVision;
 requestVision=function(url,name,question){
   const p=eia83Project();
   if(p){
     fetch(url).then(r=>r.blob()).then(blob=>new Promise((resolve,reject)=>{const rd=new FileReader();rd.onload=()=>resolve(rd.result);rd.onerror=reject;rd.readAsDataURL(blob)})).then(data=>{eia83AttachPhoto(data,name,'chat-vision');}).catch(()=>{});
   }
-  return eia83RequestVisionOriginal(url,name,question+eia83ProjectPrompt());
+  return eia83RequestVisionOriginal(url,name,question);
 };
 /* Cuando se añade una foto al proyecto, además queda disponible como contexto visual. */
 const eia83AddProjectPhotoOriginal=addProjectPhoto80;
@@ -1903,3 +1903,4 @@ window.ELECTROIA_UX_CONTRACT={
 </script>
 
 </body></html>
+
