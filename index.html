@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta name="electroia-build" content="15.6-electroia">
+<meta name="electroia-build" content="15.7-electroia">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="electroia-build" content="15.6-electroia"><title>ElectroIA · Tu primera ayuda ante una urgencia eléctrica · Hogar v8.4 · Usuario v15.6</title>
+<meta name="electroia-build" content="15.7-electroia"><title>ElectroIA · Tu primera ayuda ante una urgencia eléctrica · Hogar v8.4 · Usuario v15.7</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#000;color:#fff;font-family:"Segoe UI",Arial,sans-serif}body{padding-bottom:78px}.top{padding:18px 16px 14px;background:#000}
 .top .row>div:first-child{text-align:center;flex:1}
@@ -152,7 +152,7 @@
 @media(max-width:650px){.eia-pro-grid{grid-template-columns:1fr}}
 
 </style>
-<meta name="electroia-build-id" content="15.4-voice-chat-ux">
+<meta name="electroia-build-id" content="15.7-chat-ux">
 
 <style id="electroia-v80-style">
 /* V8.2 — plataforma profesional conectada */
@@ -209,6 +209,39 @@
 .eia-image-request{border:1px solid #dce4eb;background:#f7fafc;border-radius:13px;padding:9px 11px;margin-top:9px}
 .eia-image-request button{border:0;background:#fff;border:1px solid #d6dee6;border-radius:10px;padding:8px 10px;font-weight:700}
 @media(max-width:600px){.chat-tools-v3{display:grid;grid-template-columns:1fr 1fr;gap:7px}.chat-tool-v3{width:100%;font-size:14px}.diag-tools{gap:9px}.diag-tool{min-height:46px;font-size:14px}}
+</style>
+
+<style id="electroia-v157-chat">
+/* V15.7 · Chat simple para personas agobiadas */
+.chat-app{border-radius:22px}
+.chat-header{height:64px;flex-basis:64px;padding:9px 12px}
+.chat-ai-avatar{width:40px;height:40px;border-radius:13px;font-size:19px}
+.chat-stream{padding:16px 12px 12px;gap:10px}
+.chat-msg{max-width:90%}
+.chat-msg-bubble{padding:11px 13px;border-radius:17px;font-size:15px;line-height:1.42}
+.chat-welcome{margin:2px auto 10px}
+.chat-welcome-icon{width:48px;height:48px;border-radius:16px;font-size:22px;margin-bottom:8px}
+.chat-welcome strong{font-size:17px}
+.chat-welcome span{font-size:12px}
+.chat-suggestions{padding:7px 10px 8px;gap:6px}
+.chat-chip{padding:9px 12px;font-size:13px}
+.chat-composer{padding:9px 10px calc(10px + env(safe-area-inset-bottom))}
+.chat-input-wrap{min-height:52px;border-radius:20px;padding-left:13px}
+.chat-input-v3{font-size:16px;min-height:40px}
+.chat-action{width:46px;height:46px;font-size:20px}
+.chat-tools-v3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;padding:7px 2px 0}
+.chat-tool-v3{min-height:44px;padding:9px 8px;font-size:13px;font-weight:800;border:1px solid #e0e4e8;background:#f7f8fa;color:#303841;border-radius:12px}
+.chat-listen-last{display:none}
+.chat-listen-last.show{display:block}
+.chat-tool-v3.chat-listen-last{background:#eef5ff;color:#1769e0;border-color:#cfe0f5}
+.chat-tool-v3.chat-listen-last:disabled{opacity:.45}
+.chat-helper{font-size:11px;color:#7b858e;text-align:center;margin-top:5px}
+.chat-msg.ai .diag-audio{display:none!important}
+.chat-msg.user .diag-audio{display:none!important}
+.chat-msg.ai .chat-msg-bubble p{margin:0 0 5px}
+.chat-msg.ai .chat-msg-bubble p:last-child{margin-bottom:0}
+.chat-typing-v3{min-width:108px;min-height:40px}
+@media(max-width:600px){.chat-tools-v3{grid-template-columns:1fr 1fr 1fr}.chat-tool-v3{font-size:13px;padding-left:5px;padding-right:5px}.chat-msg{max-width:94%}.chat-msg-bubble{font-size:15px}}
 </style>
 </head>
 <body>
@@ -744,17 +777,30 @@ const isDirectAI=mode==='ia_directa';
 app.innerHTML=head(true)+`<main class="wrap page"><div class="chat-app">
 <div class="chat-header"><div class="chat-ai-avatar">${isUrgency?'🚨':'⚡'}</div><div class="chat-head-copy"><div class="chat-head-title">ElectroIA</div><div class="chat-head-sub">${isUrgency?'Asistencia de urgencia · Hogar':(isDirectAI?'Conversación libre · IA':'Asistente eléctrico')}</div></div><button class="chat-head-action" onclick="clearChat()" title="Nueva conversación">＋</button></div>
 ${isUrgency?`<div class="urgency-ai-banner"><b>🚨 ASISTENCIA DE URGENCIA</b><span>Estoy con vos. Primero voy a descartar peligro. Después iremos paso a paso hasta encontrar una solución segura o decidir si hace falta un profesional.</span><strong>⚠️ Si hay fuego, humo, chispas intensas, una persona recibiendo una descarga o agua en contacto con electricidad: no toques la instalación y alejate de la zona.</strong></div>`:''}
-<div class="chat-stream" id="chat"><div class="chat-welcome"><div class="chat-welcome-icon">${isUrgency?'🚨':(isDirectAI?'💬':'⚡')}</div><strong>${isUrgency?'Estoy para ayudarte ahora':(isDirectAI?'Hablemos directamente':'¿Qué está pasando?')}</strong><span>${isUrgency?'Contame exactamente qué ves, qué escuchás o qué dejó de funcionar. No necesitás usar palabras técnicas.':(isDirectAI?'Preguntame lo que quieras. Charlamos directamente, sin seguir un diagnóstico si no querés.':'Contame qué pasa. Te voy a guiar paso a paso y sin complicarte.')}</span></div>
+<div class="chat-stream" id="chat"><div class="chat-welcome"><div class="chat-welcome-icon">${isUrgency?'🚨':(isDirectAI?'💬':'⚡')}</div><strong>${isUrgency?'Estoy para ayudarte ahora':(isDirectAI?'Hablemos directamente':'¿Qué está pasando?')}</strong><span>${isUrgency?'Decime qué pasa, con tus palabras. Yo te voy guiando.':(isDirectAI?'Preguntame lo que quieras. Vamos directo al punto.':'Decime qué pasa. Vamos de a un paso.')}</span></div>
 <div class="chat-msg ai"><div class="chat-msg-bubble">${isDirectAI?'Claro. Estoy acá para charlar con vos sobre lo que necesites. ¿Qué querés saber o resolver?':'Hola. Soy ElectroIA. ¿Qué problema eléctrico tenés en casa?'}</div></div>
 ${initial?`<div class="chat-msg user"><div class="chat-msg-bubble">${esc(initial)}</div></div>`:''}</div>
 <div class="chat-suggestions">${isUrgency?`<button class="chat-chip emergency-chip" onclick="quickChat('Hay olor a quemado, humo, chispas o algo está muy caliente')">🚨 Humo / olor / chispas</button><button class="chat-chip emergency-chip" onclick="quickChat('No tengo luz en toda la casa')">💡 No tengo luz</button><button class="chat-chip emergency-chip" onclick="quickChat('Me salta una llave del cuadro')">⚡ Salta una llave</button><button class="chat-chip emergency-chip" onclick="quickChat('Hay agua cerca de algo eléctrico')">🚿 Agua + electricidad</button><button class="chat-chip emergency-chip" onclick="quickChat('Un enchufe o aparato no funciona')">🔌 Enchufe / aparato</button>`:(isDirectAI?`<button class="chat-chip" onclick="quickChat('Explicame algo de electricidad de forma sencilla')">💡 Explicame algo</button><button class="chat-chip" onclick="quickChat('Quiero aprender electricidad desde cero')">📚 Aprender</button><button class="chat-chip" onclick="quickChat('Tengo una duda sobre mi instalación')">🏠 Mi instalación</button><button class="chat-chip" onclick="quickChat('Quiero hablar sobre ahorro y consumo eléctrico')">💰 Ahorro y consumo</button>`:`<button class="chat-chip" onclick="quickChat('Se me apagaron algunas luces')">💡 Se me apagaron luces</button><button class="chat-chip" onclick="quickChat('Me saltó el diferencial')">⚡ Saltó el diferencial</button><button class="chat-chip" onclick="quickChat('Un enchufe no funciona')">🔌 Enchufe sin corriente</button><button class="chat-chip" onclick="quickChat('Hay olor a quemado')">🚨 Olor a quemado</button>`)}</div>
 <div class="chat-composer"><div class="chat-input-wrap"><textarea id="msg" class="chat-input-v3" rows="1" placeholder="Contame qué pasa…"></textarea><button class="chat-action chat-camera" onclick="pickPhoto()" title="Foto">📷</button><button class="chat-action chat-send-v3" onclick="send()" title="Enviar">↑</button></div>
-<div id="voiceLive" class="voice-live"><span class="voice-dot"></span><b id="voiceLiveText">Escuchando…</b><button class="voice-stop" onclick="stopVoice()">Detener</button></div><div class="chat-tools-v3"><button id="voiceBtn" class="chat-tool-v3 voice-mode-btn" onclick="voice()">🎙️ Hablar</button><button class="chat-tool-v3" onclick="pickPhoto()">📷 Foto</button><span class="eia-minimal-note">Podés hablar, escribir o mandar una foto.</span><input id="photo" class="hidden" type="file" accept="image/*" capture="environment" onchange="sendPhoto(event)"></div></div>
+<div id="voiceLive" class="voice-live"><span class="voice-dot"></span><b id="voiceLiveText">Escuchando…</b><button class="voice-stop" onclick="stopVoice()">Detener</button></div><div class="chat-tools-v3"><button id="voiceBtn" class="chat-tool-v3 voice-mode-btn" onclick="voice()">🎙️ Hablar</button><button class="chat-tool-v3" onclick="pickPhoto()">📷 Foto</button><button id="chatListenLast" class="chat-tool-v3 chat-listen-last" onclick="speakLastAnswer()">🔊 Escuchar</button><input id="photo" class="hidden" type="file" accept="image/*" capture="environment" onchange="sendPhoto(event)"></div><div class="chat-helper">Podés escribir, hablar o mandar una foto.</div></div>
 </div></main>`;
 const inp=document.getElementById('msg');if(inp){inp.addEventListener('input',()=>{inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,110)+'px'});inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});setTimeout(()=>inp.focus(),150)}if(initial)setTimeout(()=>sendText(initial),120)}
 function quickChat(t){const x=document.getElementById('msg');if(x){x.value=t;x.focus()}send()}
 function clearChat(){chat(currentMode)}
-function add(text,user=false){let c=document.getElementById('chat');if(!c)return;let d=document.createElement('div');d.className='chat-msg '+(user?'user':'ai');let extra=!user?`<br><button class="diag-audio" onclick='diagSpeak(${JSON.stringify(String(text).replace(/<[^>]*>/g,' '))})'>🔊 Escuchar lo importante</button>`:'';d.innerHTML='<div class="chat-msg-bubble">'+(user?eiaRenderChat(text):eiaRenderChat(text))+extra+'</div>';c.appendChild(d);c.scrollTop=c.scrollHeight}
+function add(text,user=false){
+  let c=document.getElementById('chat'); if(!c)return;
+  let d=document.createElement('div'); d.className='chat-msg '+(user?'user':'ai');
+  d.innerHTML='<div class="chat-msg-bubble">'+eiaRenderChat(text)+'</div>';
+  c.appendChild(d); c.scrollTop=c.scrollHeight;
+  if(!user && !String(text).includes('chat-typing-v3')) setLastAnswer(String(text));
+}
+function setLastAnswer(text){
+  window.eiaLastAnswer=String(text||'');
+  const b=document.getElementById('chatListenLast');
+  if(b)b.classList.toggle('show',!!window.eiaLastAnswer.trim());
+}
+function speakLastAnswer(){if(window.eiaLastAnswer)speakText(window.eiaLastAnswer)}
+
 function send(){
   const el=document.getElementById('msg');
   if(!el)return;
@@ -798,7 +844,7 @@ function sendPhoto(ev){
 function requestVision(url,name,question){
   add('🔎 '+question,true);
   add('<div class="chat-typing-v3"><i></i><i></i><i></i></div>');
-  fetch(url).then(r=>r.blob()).then(blob=>new Promise((resolve,reject)=>{const rd=new FileReader();rd.onload=()=>resolve(rd.result);rd.onerror=reject;rd.readAsDataURL(blob)})).then(dataUrl=>fetch(API+'/vision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl,filename:name,question,mode:currentMode,ai_contract:'electroia-v13',local_first:true,context_bundle:eiaAIContext()})})).then(async r=>{const raw=await r.text();let j={};try{j=JSON.parse(raw)}catch(_){j={error:raw}}if(!r.ok)throw new Error(j.error||'vision');return j}).then(j=>{const c=document.getElementById('chat');const typing=c?.lastElementChild;const b=typing?.querySelector('.chat-msg-bubble');const ans=j.answer||j.message;if(!ans)throw new Error('sin respuesta');if(b)b.innerHTML=eiaRenderChat(ans)+`<br><button class="diag-audio" onclick='diagSpeak(${JSON.stringify(ans)})'>🔊 Escuchar lo importante</button>`;}).catch(()=>{const c=document.getElementById('chat');const typing=c?.lastElementChild;const b=typing?.querySelector('.chat-msg-bubble');if(b)b.innerHTML='📷 <b>La foto quedó en la conversación.</b><br>No tengo disponible el análisis visual automático en este momento. No pasa nada: decime qué querés averiguar de la foto y te voy a guiar con comprobaciones seguras.';});
+  fetch(url).then(r=>r.blob()).then(blob=>new Promise((resolve,reject)=>{const rd=new FileReader();rd.onload=()=>resolve(rd.result);rd.onerror=reject;rd.readAsDataURL(blob)})).then(dataUrl=>fetch(API+'/vision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl,filename:name,question,mode:currentMode,ai_contract:'electroia-v13',local_first:true,context_bundle:eiaAIContext()})})).then(async r=>{const raw=await r.text();let j={};try{j=JSON.parse(raw)}catch(_){j={error:raw}}if(!r.ok)throw new Error(j.error||'vision');return j}).then(j=>{const c=document.getElementById('chat');const typing=c?.lastElementChild;const b=typing?.querySelector('.chat-msg-bubble');const ans=j.answer||j.message;if(!ans)throw new Error('sin respuesta');if(b){b.innerHTML=eiaRenderChat(ans);setLastAnswer(ans)}}).catch(()=>{const c=document.getElementById('chat');const typing=c?.lastElementChild;const b=typing?.querySelector('.chat-msg-bubble');if(b)b.innerHTML='📷 <b>La foto quedó en la conversación.</b><br>No tengo disponible el análisis visual automático en este momento. No pasa nada: decime qué querés averiguar de la foto y te voy a guiar con comprobaciones seguras.';});
 }
 async function sendText(t){
   add(esc(t),true);
@@ -818,7 +864,7 @@ async function sendText(t){
     const controller=new AbortController();
     const timer=setTimeout(()=>controller.abort(),30000);
     const history=[...document.querySelectorAll('#chat .chat-msg')].slice(-10).map(m=>({role:m.classList.contains('user')?'user':'assistant',content:m.querySelector('.chat-msg-bubble')?.innerText||''}));
-    const payload={message:t,mode:currentMode,history,ai_contract:'electroia-v13',local_first:true,request_source:urgency?'urgency_hogar':'page_chat',context_bundle:eiaAIContext(),user_experience:{concise:true,one_question_at_a_time:urgency,avoid_repetition:true,no_internal_metadata:true,no_code_or_json:true,no_unrequested_images:true,prioritize_actionable_information:true,max_user_facing_sections:3}};
+    const payload={message:t,mode:currentMode,history,ai_contract:'electroia-v13',local_first:true,request_source:urgency?'urgency_hogar':'page_chat',context_bundle:eiaAIContext(),user_experience:{concise:true,one_question_at_a_time:urgency,avoid_repetition:true,no_internal_metadata:true,no_code_or_json:true,no_unrequested_images:true,prioritize_actionable_information:true,max_user_facing_sections:2,max_sentences:4,plain_language:true,answer_first:true,no_disclaimers_unless_needed:true,no_long_introductions:true,no_restate_user:true,write_like_a_calm_human_helper:true}};
     if(urgency){payload.urgency=true;payload.urgency_instructions=urgencyInstructions;payload.safety_level='high';payload.escalated_from_local=!!diag?.answers?.length;}
     const r=await fetch(API+'/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
     clearTimeout(timer);
@@ -830,7 +876,7 @@ async function sendText(t){
     if(!r.ok)throw new Error(j.error||('HTTP '+r.status));
     if(b){
       const answer=j.answer||j.message||'No pude responder.';
-      b.innerHTML=eiaRenderChat(answer)+`<br><button class="diag-audio" onclick='diagSpeak(${JSON.stringify(answer)})'>🔊 Escuchar lo importante</button>`;
+      b.innerHTML=eiaRenderChat(answer);setLastAnswer(answer);
       if(eiaVoiceMode){speakText(answer).finally(()=>{if(eiaVoiceMode)setTimeout(()=>voice(),350)})}
     }
     
