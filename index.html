@@ -7,7 +7,7 @@
 <meta http-equiv="Expires" content="0">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="electroia-build" content="8.0-plataforma-pro"><title>ElectroIA · Tu primera ayuda ante una urgencia eléctrica · Hogar v8.4 · Usuario v4</title>
+<meta name="electroia-build" content="8.0-plataforma-pro-v12"><title>ElectroIA · Tu primera ayuda ante una urgencia eléctrica · Hogar v8.4 · Usuario v12</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#000;color:#fff;font-family:"Segoe UI",Arial,sans-serif}body{padding-bottom:78px}.top{padding:18px 16px 14px;background:#000}
 .top .row>div:first-child{text-align:center;flex:1}
@@ -35,18 +35,7 @@
 .eia-door{position:absolute;width:20px;height:34px;border-radius:5px 5px 0 0;background:#0b65d8;bottom:0;left:38px}
 .eia-bolt{position:absolute;right:7px;top:2px;font-size:48px;filter:drop-shadow(0 6px 5px rgba(0,0,0,.16));transform:rotate(7deg)}
 
-.eia-emergency-card{margin-top:15px;background:linear-gradient(145deg,#101c2a 0%,#172a3d 100%);border:1px solid #29445f;border-radius:18px;overflow:hidden;box-shadow:0 10px 28px rgba(0,0,0,.2)}
-.eia-emergency-toggle{width:100%;border:0;background:transparent;color:#fff;text-align:left;padding:18px 16px;cursor:pointer;font:inherit;display:flex;align-items:center;gap:12px}
-.eia-emergency-icon{width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#e51c3a;display:grid;place-items:center;font-size:25px;box-shadow:0 6px 16px rgba(229,28,58,.28)}
-.eia-emergency-copy{flex:1}.eia-emergency-copy b{display:block;font-size:20px;line-height:1.15}.eia-emergency-copy span{display:block;margin-top:5px;color:#cbd6e2;font-size:13px;line-height:1.35}
-.eia-emergency-arrow{font-size:25px;transition:transform .2s ease}.eia-emergency-card.open .eia-emergency-arrow{transform:rotate(180deg)}
-.eia-emergency-options{display:none;padding:0 12px 12px}.eia-emergency-card.open .eia-emergency-options{display:block}
-.eia-emergency-options>p{margin:0 4px 9px;color:#d5dfe9;font-size:13px;line-height:1.4}
-.eia-emergency-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.eia-emergency-grid .btn{min-height:54px;border-radius:10px;text-align:left}
-.eia-emergency-secondary{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px}
-.eia-emergency-secondary .btn{background:#263442!important;border:1px solid #3a4b5c}
-@media(max-width:520px){.eia-emergency-grid,.eia-emergency-secondary{grid-template-columns:1fr}}
+.eia-emergency-card{margin-top:15px;background:linear-gradient(145deg,#8f1020 0%,#d51d35 55%,#ef3b4d 100%);border:2px solid #ff6a78;border-radius:20px;overflow:hidden;box-shadow:0 12px 30px rgba(213,29,53,.32);position:relative;z-index:3;clear:both}.eia-emergency-card:before{content:"";display:block;height:4px;background:#fff;opacity:.9}.eia-emergency-toggle{width:100%;border:0;background:transparent;color:#fff;text-align:left;padding:18px 16px;cursor:pointer;font:inherit;display:flex;align-items:center;gap:12px}.eia-emergency-icon{width:50px;height:50px;flex:0 0 50px;border-radius:15px;background:#fff;color:#c9152d;display:grid;place-items:center;font-size:27px;box-shadow:0 6px 18px rgba(0,0,0,.18);animation:eiaEmergencyPulse 1.8s infinite}.eia-emergency-copy{flex:1}.eia-emergency-copy b{display:block;font-size:21px;line-height:1.15;letter-spacing:.1px}.eia-emergency-copy span{display:block;margin-top:5px;color:#fff1f3;font-size:13px;line-height:1.35}.eia-emergency-arrow{font-size:28px;transition:transform .2s ease;font-weight:900}.eia-emergency-card.open .eia-emergency-arrow{transform:rotate(180deg)}.eia-emergency-options{display:none;padding:0 12px 12px}.eia-emergency-card.open .eia-emergency-options{display:block}.eia-emergency-options>p{margin:0 4px 9px;color:#fff1f3;font-size:13px;line-height:1.4}.eia-emergency-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.eia-emergency-grid .btn{min-height:54px;border-radius:10px;text-align:left;background:#fff!important;color:#8f1020!important;border:0!important;font-weight:800}.eia-emergency-secondary{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px}.eia-emergency-secondary .btn{background:#8f1020!important;color:#fff!important;border:1px solid rgba(255,255,255,.45)!important}.eia-emergency-grid,.eia-emergency-secondary{grid-template-columns:1fr}@keyframes eiaEmergencyPulse{0%,100%{transform:scale(1);box-shadow:0 6px 18px rgba(0,0,0,.18)}50%{transform:scale(1.06);box-shadow:0 8px 24px rgba(255,255,255,.28)}}}
 
 .eia-promise{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:11px}
 .eia-promise>div{background:#fff;border:1px solid #e2e7ec;border-radius:13px;padding:12px;text-align:center;font-size:12px;line-height:1.35}
@@ -96,6 +85,9 @@
 .voice-mode-btn{position:relative}
 .voice-mode-btn.active{outline:2px solid rgba(67,209,122,.45);background:#173025}
 .voice-hint{font-size:11px;color:#7f8a93;margin-top:5px}
+
+/* V11 · IA integrada en urgencias */
+.urgency-ai-banner{background:linear-gradient(135deg,#7f1020,#d71935);color:#fff;padding:12px 14px;border-bottom:2px solid #ff7180;line-height:1.35;font-size:12px}.urgency-ai-banner b{display:block;font-size:14px;margin-bottom:3px}.urgency-ai-banner span{display:block;color:#fff4f5}.urgency-ai-banner strong{display:block;margin-top:8px;background:rgba(0,0,0,.18);padding:8px;border-radius:10px;font-size:11px}.emergency-chip{border-color:#e51c3a!important;color:#a40e22!important;background:#fff5f6!important}
 </style>
 <style id="electroia-ui-fixes-v761">
 /* V7.6.1 — contraste y navegación móvil */
@@ -160,7 +152,7 @@
 @media(max-width:650px){.eia-pro-grid{grid-template-columns:1fr}}
 
 </style>
-<meta name="electroia-build-id" content="7.3-embedded-visual">
+<meta name="electroia-build-id" content="10-ux-emergency-pv">
 
 <style id="electroia-v80-style">
 /* V8.2 — plataforma profesional conectada */
@@ -196,7 +188,7 @@
 .pv-calculation-body{padding-top:12px}
 .pv-calculation-body .v80-calc-card{margin-bottom:12px}
 </style>
-</head>
+<style id="eia-v10-ux-fixes">.pro-grid{position:relative;z-index:1;margin-bottom:0!important}.pro-grid .tile{position:relative;z-index:1;min-height:196px}.pv-tools-grid{margin-bottom:0!important}.pv-calc-tile{display:block;width:100%;border:0;cursor:pointer;text-align:left;position:relative;padding-right:52px!important}.pv-calc-tile em{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-style:normal;font-size:30px;line-height:1;color:rgba(255,255,255,.95)}.pv-calculation-group{margin:12px 0 18px!important;position:relative;z-index:2}.pv-calculation-body{padding-top:12px!important}.pv-calculation-body .v80-calc-card{margin-bottom:12px}.pv-calculation-group + .pro-warning{margin-top:18px!important;position:relative;z-index:3;clear:both}.pro-warning{position:relative;z-index:3;clear:both}@media(max-width:620px){.pro-grid .tile{min-height:178px}.pv-calc-tile em{right:14px}}</style></head>
 <body>
 <div id="app"></div>
 <nav class="bottom">
@@ -226,22 +218,17 @@ function home(){electroStack=[];electroView='home';nav('nHome');app.innerHTML=he
 <div><b>🧭 Paso a paso</b>Una comprobación cada vez.</div>
 <div><b>🛡️ Seguridad primero</b>Si hay riesgo, te lo decimos.</div>
 </div>
-<div class="panel" style="margin-top:15px">
-<h2 style="margin-top:0">🏠 ¿Para qué sirve ElectroIA?</h2>
-<p>Para ayudarte cuando algo eléctrico de tu casa no funciona y no sabés por dónde empezar. Puede ayudarte a <b>entender el problema, intentar resolverlo cuando sea seguro, apañar la situación de forma temporal</b> o prepararte para llamar a un electricista con la información clara.</p>
-<p style="margin-bottom:0;color:#5f6b76">ElectroIA no reemplaza a un profesional. Su objetivo es que no tengas que llamar a una urgencia a ciegas cuando quizá el problema sea sencillo, y que sepas cuándo <b>no conviene esperar</b>.</p>
-</div>
 <section class="eia-emergency-card" id="eiaEmergency">
 <button class="eia-emergency-toggle" onclick="toggleEmergency()" aria-expanded="false">
 <div class="eia-emergency-icon">🚨</div>
 <div class="eia-emergency-copy">
-<b>¿Tenés una urgencia eléctrica ahora?</b>
-<span>Tranquilo. Empecemos por entender qué está pasando.</span>
+<b>🚨 ¿TENÉS UNA URGENCIA ELÉCTRICA AHORA?</b>
+<span>Entrá acá y te guiamos paso a paso. Si hay peligro, te lo indicamos primero.</span>
 </div>
 <div class="eia-emergency-arrow">⌄</div>
 </button>
 <div class="eia-emergency-options" id="eiaEmergencyOptions">
-<p>Elegí lo que más se parezca a lo que te está pasando. ElectroIA te irá guiando paso a paso.</p>
+<p><b>Primero seguridad.</b> No hace falta que sepas electricidad. La IA te hará una pregunta por vez, entenderá tus palabras y te dirá exactamente qué podés comprobar sin riesgo.</p>
 <div class="eia-emergency-grid">
 <button class="btn" onclick="quickEmergency('⚡ Me salta el automático o diferencial')">⚡ Se me va la luz</button>
 <button class="btn" onclick="quickEmergency('💡 No tengo luz en el hogar')">💡 No tengo luz</button>
@@ -251,11 +238,18 @@ function home(){electroStack=[];electroView='home';nav('nHome');app.innerHTML=he
 <button class="btn" onclick="quickEmergency('❓ No sé qué pasa')">❓ No sé qué pasa</button>
 </div>
 <div class="eia-emergency-secondary">
-<button class="btn alt" onclick="diagnostico('noTouch','No quiero tocar nada')">🙅 No quiero tocar nada</button>
-<button class="btn alt" onclick="diagnostico('temporaryHelp','Necesito una solución temporal')">🩹 Necesito apañarlo</button>
+<button class="btn alt" onclick="urgenciaLocalNoTouch()">🙅 No quiero tocar nada</button>
+<button class="btn alt" onclick="urgenciaLocalTemporary()">🩹 Necesito apañarlo</button>
 </div>
 </div>
 </section>
+
+<div class="panel" style="margin-top:15px">
+<h2 style="margin-top:0">🏠 ¿Para qué sirve ElectroIA?</h2>
+<p>Para ayudarte cuando algo eléctrico de tu casa no funciona y no sabés por dónde empezar. Puede ayudarte a <b>entender el problema, intentar resolverlo cuando sea seguro, apañar la situación de forma temporal</b> o prepararte para llamar a un electricista con la información clara.</p>
+<p style="margin-bottom:0;color:#5f6b76">ElectroIA no reemplaza a un profesional. Su objetivo es que no tengas que llamar a una urgencia a ciegas cuando quizá el problema sea sencillo, y que sepas cuándo <b>no conviene esperar</b>.</p>
+</div>
+
 
 <div class="panel" style="margin-top:15px;background:#171717;color:#fff;border-radius:18px">
 <h2 style="margin-top:0">🏠 Entrar al Modo Hogar</h2>
@@ -291,15 +285,31 @@ function toggleEmergency(){
   btn?.setAttribute('aria-expanded',String(open));
 }
 function quickEmergency(t){
-  const map={
-    '⚡ Me salta el automático o diferencial':'protection',
-    '💡 No tengo luz en el hogar':'wholeHouse',
-    '🔌 Un enchufe no funciona':'outlet',
-    '🚨 Hay olor a quemado, chispas o algo caliente':'danger',
-    '🚿 Hay agua cerca de algo eléctrico':'danger',
-    '❓ No sé qué pasa':'start'
-  };
-  diagnostico(map[t]||'start',t);
+  // V12: las opciones rápidas NO consumen IA. Arrancan el árbol local de diagnóstico.
+  const x=String(t||'').toLowerCase();
+  let target='start';
+  if(/salta|automático|diferencial/.test(x)) target='protection';
+  else if(/no tengo luz|sin luz|se me va la luz/.test(x)) target='wholeHouse';
+  else if(/enchufe|aparato/.test(x)) target='outlet';
+  else if(/olor a quemado|humo|chispa|caliente/.test(x)) target='danger';
+  else if(/agua/.test(x)) target='danger';
+  diagnostico(target,t);
+}
+function urgenciaIA(initial=''){
+  // Entrada explícita a IA: se mantiene disponible, pero no se usa por defecto.
+  chat('urgencias_hogar',initial);
+}
+function urgenciaLocalNoTouch(){
+  diagnostico('start','🙅 No quiero tocar nada. Quiero saber qué puedo hacer sin tocar la instalación.');
+}
+function urgenciaLocalTemporary(){
+  diagnostico('temporaryHelp','🩹 Necesito una solución temporal hasta que pueda recibir ayuda.');
+}
+function diagEscalateAI(){
+  const problem=diag.problem||'Consulta de urgencia eléctrica';
+  const answers=(diag.answers||[]).map((x,i)=>`${i+1}. ${x.q||'Pregunta'} → ${x.a||''}`).join('\n');
+  const prompt=`Necesito que intervengas en una urgencia eléctrica de Hogar porque el diagnóstico guiado local no fue suficiente.\n\nProblema inicial: ${problem}\n\nComprobaciones realizadas:\n${answers||'Todavía ninguna.'}\n\nContinuá desde este punto. No repitas preguntas que ya estén respondidas. Mantené seguridad primero, una sola pregunta por vez y lenguaje cotidiano. Separá hechos, hipótesis y la próxima comprobación segura.`;
+  chat('urgencias_hogar',prompt);
 }
 function hogar(){enterView('hogar');nav('nHome');app.innerHTML=head(true)+`<main class="wrap page">
 <div class="panel" style="background:#0879e8;padding:18px 16px">
@@ -493,7 +503,7 @@ function diagSpeak(text){speakText(text)}
 function diagPickPhoto(){const el=document.getElementById('diagPhoto');if(el)el.click()}
 function diagVoice(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){addDiagConfirmation('🎙️ Tu navegador no permite entrada por voz. Podés responder escribiendo o usando los botones.');return}const r=new SR();r.lang='es-ES';r.interimResults=false;r.maxAlternatives=1;r.onresult=e=>{const t=e.results?.[0]?.[0]?.transcript||'';if(!t)return;diagExplainText(t)};r.onerror=()=>addDiagConfirmation('🎙️ No pude tomar la voz. Probá de nuevo o escribí tu respuesta.');r.start()}
 function diagExplainText(t){const current=diagTree[diag.node];if(current?.q)diag.history.push(diag.node);diag.answers.push({q:current?.q||'Situación',a:t});const low=t.toLowerCase();if(/humo|fuego|chispa|olor a quemado|me da corriente|descarga eléctrica|agua.*enchufe|enchufe.*agua|cable.*pelado|cable.*expuesto|enchufe.*caliente|caliente.*enchufe/.test(low)){diag.node='dangerTriage';diag.risk=true;renderDiag();return}if(/vecino|portal|calle.*sin luz|todo el edificio|nadie tiene luz/.test(low)){diag.node='networkOutage';renderDiag();return}if(/todo|toda la casa|toda la vivienda|ninguna luz|nada funciona/.test(low)){diag.node='wholeHouse';renderDiag();return}if(/enchufe|toma de corriente|aparato|electrodoméstico/.test(low)){diag.node='outlet';renderDiag();return}if(/salta|baja|se corta|automático|diferencial/.test(low)){diag.node='protection';renderDiag();return}if(/parpadea|titila|baja la luz|sube y baja la luz/.test(low)){diag.node='flicker';renderDiag();return}diag.node='classify';diagTree.classify={q:'Para seguir sin adivinar: con lo que me contaste, ¿qué se parece más a tu caso?',a:[['No tengo luz en toda la vivienda','wholeHouse'],['No tengo luz solo en una zona','zone'],['Un enchufe o aparato no funciona','outlet'],['Salta una llave del cuadro','protection'],['Las luces parpadean o cambian de intensidad','flicker'],['No estoy seguro','tech']]};renderDiag()}
-function diagHandlePhoto(ev){const f=ev?.target?.files?.[0];if(!f)return;const url=URL.createObjectURL(f);diag.photo=url;diag.photoName=f.name;diag.photoPending=true;renderDiag();addDiagConfirmation('📷 Foto añadida. Ahora podemos intentar identificar lo que estás viendo. No desmontes ni abras nada para fotografiarlo.');}
+function diagHandlePhoto(ev){const f=ev?.target?.files?.[0];if(!f)return;const url=URL.createObjectURL(f);diag.photo=url;diag.photoName=f.name;diag.photoPending=true;renderDiag();addDiagConfirmation('📷 Foto añadida. Primero podemos seguir con preguntas locales. Solo usaremos análisis con IA si hace falta identificar algo que no podamos resolver de forma guiada.');}
 function renderDiag(){
   const n=diagTree[diag.node];
   if(!n){diag.node='tech';return renderDiag()}
@@ -518,6 +528,37 @@ function renderDiag(){
   app.innerHTML=head(true)+`<main class="wrap page">${body}</main>`;
   requestAnimationFrame(()=>{const box=document.getElementById('diagMessages');if(box)box.scrollTop=box.scrollHeight});
 }
+/* V12: capa híbrida sobre el diagnóstico existente. El árbol local trabaja primero; la IA es escalamiento. */
+const _renderDiagHybrid=renderDiag;
+renderDiag=function(){
+  _renderDiagHybrid();
+  const head=document.querySelector('.eia-head');
+  if(head && !head.querySelector('.hybrid-local-badge')){
+    const b=document.createElement('span');
+    b.className=diag?.node==='tech'?'hybrid-ai-active':'hybrid-local-badge';
+    b.textContent=diag?.node==='tech'?'🤖 IA disponible':'🧭 Guía local';
+    head.appendChild(b);
+  }
+  const area=document.querySelector('.eia-quick');
+  if(!area)return;
+  if(diag?.node==='tech'){
+    const note=document.createElement('div');
+    note.className='hybrid-ai-note';
+    note.innerHTML='<b>🧠 Llegamos al límite del diagnóstico programado.</b><br>Hasta ahora resolvimos el caso sin usar IA. Si querés, ahora sí puedo pasarle a la IA todo lo que ya comprobamos para que continúe sin hacerte repetirlo.';
+    area.insertBefore(note,area.firstChild);
+    const btn=document.createElement('button');
+    btn.type='button'; btn.className='eia-start hybrid-ai-escalate';
+    btn.innerHTML='🤖 Que intervenga la IA ahora<small>Usará las respuestas que ya dimos para continuar el diagnóstico.</small>';
+    btn.onclick=diagEscalateAI;
+    area.insertBefore(btn,note.nextSibling);
+  }else if(!area.querySelector('.hybrid-ai-note')){
+    const note=document.createElement('div');
+    note.className='hybrid-ai-note';
+    note.innerHTML='<b>🧭 Primero vamos por lo sencillo.</b> Este diagnóstico usa preguntas y soluciones programadas para resolver o acotar la avería sin gastar IA innecesariamente. La IA entra solo si hace falta.';
+    area.insertBefore(note,area.firstChild);
+  }
+};
+
 function diagVision(question){
   if(!diag.photo){return}
   diag.photoPending=false; renderDiag();
@@ -559,12 +600,14 @@ function aprender(){enterView('aprender');nav('nHome');app.innerHTML=head(true)+
 function learn(t){chat('hogar',t)}
 function chat(mode='hogar',initial=''){enterView('chat');
 currentMode=mode;nav('nHome');
+const isUrgency=mode==='urgencias_hogar';
 app.innerHTML=head(true)+`<main class="wrap page"><div class="chat-app">
-<div class="chat-header"><div class="chat-ai-avatar">⚡</div><div class="chat-head-copy"><div class="chat-head-title">ElectroIA</div><div class="chat-head-sub">Asistente eléctrico</div></div><button class="chat-head-action" onclick="clearChat()" title="Nueva conversación">＋</button></div>
-<div class="chat-stream" id="chat"><div class="chat-welcome"><div class="chat-welcome-icon">⚡</div><strong>¿Qué está pasando?</strong><span>Contame el problema con tus palabras. Te voy a guiar paso a paso y priorizar la seguridad.</span></div>
+<div class="chat-header"><div class="chat-ai-avatar">${isUrgency?'🚨':'⚡'}</div><div class="chat-head-copy"><div class="chat-head-title">ElectroIA</div><div class="chat-head-sub">${isUrgency?'Asistencia de urgencia · Hogar':'Asistente eléctrico'}</div></div><button class="chat-head-action" onclick="clearChat()" title="Nueva conversación">＋</button></div>
+${isUrgency?`<div class="urgency-ai-banner"><b>🚨 ASISTENCIA DE URGENCIA</b><span>Estoy con vos. Primero voy a descartar peligro. Después iremos paso a paso hasta encontrar una solución segura o decidir si hace falta un profesional.</span><strong>⚠️ Si hay fuego, humo, chispas intensas, una persona recibiendo una descarga o agua en contacto con electricidad: no toques la instalación y alejate de la zona.</strong></div>`:''}
+<div class="chat-stream" id="chat"><div class="chat-welcome"><div class="chat-welcome-icon">${isUrgency?'🚨':'⚡'}</div><strong>${isUrgency?'Estoy para ayudarte ahora':'¿Qué está pasando?'}</strong><span>${isUrgency?'Contame exactamente qué ves, qué escuchás o qué dejó de funcionar. No necesitás usar palabras técnicas.':'Contame el problema con tus palabras. Te voy a guiar paso a paso y priorizar la seguridad.'}</span></div>
 <div class="chat-msg ai"><div class="chat-msg-bubble">Hola. Soy ElectroIA. ¿Qué problema eléctrico tenés en casa?</div><div class="chat-msg-meta">Ahora</div></div>
 ${initial?`<div class="chat-msg user"><div class="chat-msg-bubble">${esc(initial)}</div><div class="chat-msg-meta">Ahora</div></div>`:''}</div>
-<div class="chat-suggestions"><button class="chat-chip" onclick="quickChat('Se me apagaron algunas luces')">💡 Se me apagaron luces</button><button class="chat-chip" onclick="quickChat('Me saltó el diferencial')">⚡ Saltó el diferencial</button><button class="chat-chip" onclick="quickChat('Un enchufe no funciona')">🔌 Enchufe sin corriente</button><button class="chat-chip" onclick="quickChat('Hay olor a quemado')">🚨 Olor a quemado</button></div>
+<div class="chat-suggestions">${isUrgency?`<button class="chat-chip emergency-chip" onclick="quickChat('Hay olor a quemado, humo, chispas o algo está muy caliente')">🚨 Humo / olor / chispas</button><button class="chat-chip emergency-chip" onclick="quickChat('No tengo luz en toda la casa')">💡 No tengo luz</button><button class="chat-chip emergency-chip" onclick="quickChat('Me salta una llave del cuadro')">⚡ Salta una llave</button><button class="chat-chip emergency-chip" onclick="quickChat('Hay agua cerca de algo eléctrico')">🚿 Agua + electricidad</button><button class="chat-chip emergency-chip" onclick="quickChat('Un enchufe o aparato no funciona')">🔌 Enchufe / aparato</button>`:`<button class="chat-chip" onclick="quickChat('Se me apagaron algunas luces')">💡 Se me apagaron luces</button><button class="chat-chip" onclick="quickChat('Me saltó el diferencial')">⚡ Saltó el diferencial</button><button class="chat-chip" onclick="quickChat('Un enchufe no funciona')">🔌 Enchufe sin corriente</button><button class="chat-chip" onclick="quickChat('Hay olor a quemado')">🚨 Olor a quemado</button>`}</div>
 <div class="chat-composer"><div class="chat-input-wrap"><textarea id="msg" class="chat-input-v3" rows="1" placeholder="Contame qué pasa…"></textarea><button class="chat-action chat-camera" onclick="pickPhoto()" title="Foto">📷</button><button class="chat-action chat-send-v3" onclick="send()" title="Enviar">↑</button></div>
 <div id="voiceLive" class="voice-live"><span class="voice-dot"></span><b id="voiceLiveText">Escuchando…</b><button class="voice-stop" onclick="stopVoice()">Detener</button></div><div class="chat-tools-v3"><button id="voiceBtn" class="chat-tool-v3 voice-mode-btn" onclick="voice()">🎙️ Hablar</button><button class="chat-tool-v3" onclick="pickPhoto()">📷 Foto</button><span style="margin-left:auto;font-size:10px;color:#a0a4aa;padding:7px 4px">Podés hablar o escribir</span><input id="photo" class="hidden" type="file" accept="image/*" capture="environment" onchange="sendPhoto(event)"></div></div>
 </div></main>`;
@@ -621,10 +664,23 @@ async function sendText(t){
   add(esc(t),true);
   add('<div class="chat-typing-v3"><i></i><i></i><i></i></div>');
   const c=document.getElementById('chat');
+  const urgency=currentMode==='urgencias_hogar';
+  const urgencyInstructions=urgency?{
+    role:'Especialista en asistencia eléctrica doméstica para personas sin conocimientos técnicos.',
+    priority:'SEGURIDAD PRIMERO. Antes de cualquier comprobación, descartar fuego, humo, chispas, olor fuerte a quemado, calor anormal, agua en contacto con electricidad y descargas.',
+    style:'Lenguaje cotidiano, claro y tranquilo. Una sola pregunta por vez. No usar jerga sin explicarla. Pedir solo comprobaciones visuales o acciones de bajo riesgo.',
+    diagnosis:'No adivinar. Separar lo que sabemos, lo que puede estar pasando y lo que falta comprobar.',
+    resolution:'Buscar primero una solución segura y sencilla. Si no es seguro resolverlo, explicar cómo dejar la situación controlada y cuándo pedir un profesional.',
+    prohibitions:'No indicar abrir cuadros, enchufes, cajas o mecanismos, tocar conductores, puentear protecciones, manipular contador ni hacer conexiones provisionales.',
+    escalation:'Si aparece una señal de peligro, detener el diagnóstico y dar instrucciones de alejamiento/aislamiento seguro según corresponda. Si hay una emergencia médica o fuego, indicar servicios de emergencia locales.'
+  }:null;
   try{
     const controller=new AbortController();
     const timer=setTimeout(()=>controller.abort(),30000);
-    const r=await fetch(API+'/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:t,mode:currentMode}),signal:controller.signal});
+    const history=[...document.querySelectorAll('#chat .chat-msg')].slice(-10).map(m=>({role:m.classList.contains('user')?'user':'assistant',content:m.querySelector('.chat-msg-bubble')?.innerText||''}));
+    const payload={message:t,mode:currentMode,history};
+    if(urgency){payload.urgency=true;payload.urgency_instructions=urgencyInstructions;payload.safety_level='high';}
+    const r=await fetch(API+'/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
     clearTimeout(timer);
     const raw=await r.text();
     let j={};
@@ -632,16 +688,21 @@ async function sendText(t){
     const typing=c?.lastElementChild;
     const b=typing?.querySelector('.chat-msg-bubble');
     if(!r.ok)throw new Error(j.error||('HTTP '+r.status));
-    if(b){const answer=j.answer||j.message||'No pude responder.';b.innerHTML=esc(answer)+`<br><button class="diag-audio" onclick='diagSpeak(${JSON.stringify(answer)})'>🔊 Escuchar</button>`+(diagIllustration({q:answer})||''); if(eiaVoiceMode){speakText(answer).finally(()=>{if(eiaVoiceMode)setTimeout(()=>voice(),350)})}}
-    if(typing?.querySelector('.chat-msg-meta'))typing.querySelector('.chat-msg-meta').textContent='ElectroIA · ahora';
+    if(b){
+      const answer=j.answer||j.message||'No pude responder.';
+      b.innerHTML=esc(answer)+`<br><button class="diag-audio" onclick='diagSpeak(${JSON.stringify(answer)})'>🔊 Escuchar</button>`+(diagIllustration({q:answer})||'');
+      if(eiaVoiceMode){speakText(answer).finally(()=>{if(eiaVoiceMode)setTimeout(()=>voice(),350)})}
+    }
+    if(typing?.querySelector('.chat-msg-meta'))typing.querySelector('.chat-msg-meta').textContent=urgency?'ElectroIA · urgencia · ahora':'ElectroIA · ahora';
   }catch(e){
     const typing=c?.lastElementChild;
     const b=typing?.querySelector('.chat-msg-bubble');
-    if(b)b.innerHTML='No pude conectar con la IA en este momento. Podés usar <b>Diagnóstico de averías</b> para que ElectroIA te guíe paso a paso mientras revisamos la conexión del servidor.';
+    if(b)b.innerHTML=urgency?'<b>⚠️ No pude conectar con la IA ahora mismo.</b><br>Mientras recuperamos la conexión, no manipules cables, enchufes ni protecciones. Si hay humo, fuego, chispas, calor intenso, agua con electricidad o una descarga, alejate y buscá ayuda de emergencia. Si no hay peligro inmediato, podés volver al <b>Diagnóstico de averías</b> para una guía local paso a paso.':'No pude conectar con la IA en este momento. Podés usar <b>Diagnóstico de averías</b> para que ElectroIA te guíe paso a paso mientras revisamos la conexión del servidor.';
     if(typing?.querySelector('.chat-msg-meta'))typing.querySelector('.chat-msg-meta').textContent='ElectroIA · conexión';
   }
   if(c)c.scrollTop=c.scrollHeight;
 }
+
 function prof(){
   enterView('prof');nav('nHome');currentMode='profesional';
   app.innerHTML=head(true)+`<main class="wrap page">
@@ -730,11 +791,17 @@ function pv(){enterView('pv');currentMode='profesional';app.innerHTML=head(true)
 <h1>☀️ Fotovoltaica PRO</h1>
 <div class="panel ai-router"><div class="pill">FOTOVOLTAICA + IA</div><p>Herramientas para revisar strings, MPPT, paneles, baterías, producción y autoconsumo. Los cálculos son orientativos y deben contrastarse con las fichas técnicas y condiciones reales.</p><button class="btn" onclick="chat('profesional','Estoy trabajando en una instalación fotovoltaica. Quiero que actúes como asistente técnico y me preguntes primero por paneles, strings, MPPT, inversor, baterías y objetivo del sistema según corresponda.')">🤖 Trabajar con IA PRO</button></div>
 
-<div class="pv-calculation-group">
-<button class="pv-calculation-header" type="button" onclick="togglePVCalculations()" aria-expanded="false">
-  <span><strong>🧮 Cálculos fotovoltaicos</strong><small>Todo lo necesario para revisar y dimensionar un sistema</small></span>
-  <span id="pvCalcChevron">＋</span>
+<div class="pro-calc-section-title"><b>🔧 Herramientas fotovoltaicas</b><span>Acceso rápido a trabajo técnico</span></div>
+<div class="tiles pro-grid pv-tools-grid">
+<button class="tile red pv-calc-tile" type="button" onclick="togglePVCalculations()" aria-expanded="false">
+<div class="ico">🧮</div><b>Cálculos fotovoltaicos</b><span>Potencia, strings, MPPT, batería, producción y más.</span><em id="pvCalcChevron">＋</em>
 </button>
+<button class="tile green" onclick="chat('profesional','Quiero dimensionar o revisar baterías para una instalación fotovoltaica. Preguntame consumo diario, tensión, autonomía, profundidad de descarga y demás datos necesarios.')">🔋<b>Baterías</b><span>Capacidad, autonomía y supuestos.</span></button>
+<button class="tile blue" onclick="chat('profesional','Quiero revisar strings y MPPT. Preguntame Voc, Vmp, Isc, Imp, número de paneles, temperatura y límites del MPPT.')">⚡<b>Strings / MPPT</b><span>Tensiones, corrientes y límites.</span></button>
+<button class="tile orange" onclick="chat('profesional','Quiero estimar producción fotovoltaica. Preguntame potencia instalada, ubicación, orientación, inclinación, sombras y rendimiento.')">☀️<b>Producción</b><span>Estimación y pérdidas.</span></button>
+<button class="tile purple" onclick="chat('profesional','Quiero revisar autoconsumo. Ayudame a relacionar consumo, producción, excedentes, batería y potencia del inversor.')">🏠<b>Autoconsumo</b><span>Consumo, producción y almacenamiento.</span></button>
+</div>
+<div class="pv-calculation-group">
 <div id="pvCalculationBody" class="pv-calculation-body" style="display:none">
 <div class="v80-calc-layout">
 <div class="v80-calc-card"><h3>☀️ Potencia total de paneles</h3><p>Calculá la potencia pico del campo fotovoltaico.</p><div class="field-row"><label><span class="calc-field-caption">Potencia por panel (W)</span><input id="pvPW" type="number" value="450" placeholder="Potencia por panel (W)"></label><label><span class="calc-field-caption">N.º de paneles</span><input id="pvPN" type="number" value="10" placeholder="N.º de paneles"></label></div><button class="btn" onclick="pvPower80()">Calcular potencia FV</button><div id="pvPowerOut"></div></div>
@@ -757,14 +824,6 @@ function pv(){enterView('pv');currentMode='profesional';app.innerHTML=head(true)
 
 <div class="v80-calc-card"><h3>🎯 Comprobar relación FV / MPPT</h3><p>Compará la potencia del campo con la potencia máxima admitida por la entrada MPPT.</p><div class="field-row"><label><span class="calc-field-caption">Potencia FV (W)</span><input id="pvMPW" type="number" value="5000" placeholder="Potencia FV (W)"></label><label><span class="calc-field-caption">Máx. MPPT (W)</span><input id="pvMPM" type="number" value="5500" placeholder="Máx. MPPT (W)"></label></div><button class="btn" onclick="pvMppt80()">Comprobar MPPT</button><div id="pvMpptOut"></div></div>
 </div></div>
-</div>
-
-<div class="pro-calc-section-title"><b>🔧 Herramientas fotovoltaicas</b><span>Acceso rápido a trabajo técnico</span></div>
-<div class="tiles pro-grid">
-<button class="tile green" onclick="chat('profesional','Quiero dimensionar o revisar baterías para una instalación fotovoltaica. Preguntame consumo diario, tensión, autonomía, profundidad de descarga y demás datos necesarios.')">🔋<b>Baterías</b><span>Capacidad, autonomía y supuestos.</span></button>
-<button class="tile blue" onclick="chat('profesional','Quiero revisar strings y MPPT. Preguntame Voc, Vmp, Isc, Imp, número de paneles, temperatura y límites del MPPT.')">⚡<b>Strings / MPPT</b><span>Tensiones, corrientes y límites.</span></button>
-<button class="tile orange" onclick="chat('profesional','Quiero estimar producción fotovoltaica. Preguntame potencia instalada, ubicación, orientación, inclinación, sombras y rendimiento.')">☀️<b>Producción</b><span>Estimación y pérdidas.</span></button>
-<button class="tile purple" onclick="chat('profesional','Quiero revisar autoconsumo. Ayudame a relacionar consumo, producción, excedentes, batería y potencia del inversor.')">🏠<b>Autoconsumo</b><span>Consumo, producción y almacenamiento.</span></button>
 </div>
 
 <div class="panel pro-warning"><b>⚠️ Criterio profesional</b><p>Los cálculos FV sirven para ordenar y contrastar datos, pero la selección final depende de las fichas de paneles, inversor y batería, temperatura, tensiones máximas y mínimas, corriente admisible, protecciones, cableado, orientación, sombras y normativa aplicable.</p></div>
@@ -1423,6 +1482,9 @@ saveMonoReview80=function(){const r=eia84SaveReviewOriginal.apply(this,arguments
 
 <style id="eia-account-v1">
 .eia-account-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);z-index:9999;display:none;align-items:center;justify-content:center;padding:18px}.eia-account-overlay.show{display:flex}.eia-account-card{width:min(440px,100%);background:#fff;color:#18212b;border-radius:24px;padding:24px;box-shadow:0 25px 70px rgba(0,0,0,.4)}.eia-account-brand{text-align:center;font-size:26px;font-weight:800}.eia-account-card h2{margin:12px 0 6px;text-align:center;font-size:24px}.eia-account-card .lead{text-align:center;color:#66717c;line-height:1.45;margin:0 0 18px}.eia-account-form{display:grid;gap:10px}.eia-account-form label{font-size:12px;font-weight:800;color:#46515c}.eia-account-form input{width:100%;padding:13px;border:1px solid #d8dee5;border-radius:12px;font:inherit;color:#18212b;background:#fff}.eia-account-primary{width:100%;border:0;border-radius:13px;padding:14px;background:#0879e8;color:#fff;font:inherit;font-weight:800;cursor:pointer;margin-top:4px}.eia-account-secondary{width:100%;border:1px solid #d8dee5;border-radius:13px;padding:12px;background:#f5f7f9;color:#25303a;font:inherit;font-weight:700;cursor:pointer}.eia-account-note{font-size:11px;color:#7a838d;text-align:center;line-height:1.4;margin:10px 0 0}.eia-account-switch{text-align:center;margin-top:13px;font-size:13px;color:#687480}.eia-account-switch button{border:0;background:none;color:#0879e8;font-weight:800;cursor:pointer}.eia-account-error{display:none;background:#fff1f1;border:1px solid #edc7c7;color:#a7192e;padding:10px;border-radius:10px;font-size:13px;line-height:1.4}.eia-account-error.show{display:block}.eia-user-chip{position:fixed;right:12px;top:10px;z-index:20;display:block;background:#171717;color:#fff;border:1px solid #333;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:700;cursor:pointer}.eia-account-menu{position:fixed;right:12px;top:52px;z-index:9998;background:#fff;color:#18212b;border:1px solid #ddd;border-radius:14px;padding:8px;box-shadow:0 12px 30px rgba(0,0,0,.25);display:none;min-width:190px}.eia-account-menu.show{display:block}.eia-account-menu button{width:100%;border:0;background:#fff;text-align:left;padding:10px;border-radius:9px;font:inherit;cursor:pointer}.eia-account-menu button:hover{background:#f1f4f7}
+
+/* V12 · Arquitectura híbrida Hogar: diagnóstico local primero, IA solo cuando aporta valor */
+.hybrid-ai-note{margin:8px 0;padding:9px 11px;border-radius:12px;background:#eef7f1;border:1px solid #c9e8d5;color:#245c3c;font-size:11px;line-height:1.35}.hybrid-ai-note b{color:#17482d}.hybrid-ai-escalate{width:100%;margin-top:9px!important;background:#111!important;color:#fff!important;border:0!important}.hybrid-ai-escalate small{display:block;opacity:.75;font-weight:400;margin-top:3px}.hybrid-ai-active{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:999px;background:#fff3cd;color:#725500;font-size:10px;font-weight:800;margin-left:auto}.hybrid-local-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:999px;background:#eaf7ef;color:#237144;font-size:10px;font-weight:800;margin-left:auto}
 </style>
 <div class="eia-account-overlay" id="eiaAccountOverlay">
   <div class="eia-account-card">
@@ -1559,7 +1621,7 @@ saveMonoReview80=function(){const r=eia84SaveReviewOriginal.apply(this,arguments
 function togglePVCalculations(){
  const body=document.getElementById('pvCalculationBody');
  const icon=document.getElementById('pvCalcChevron');
- const button=document.querySelector('.pv-calculation-header');
+ const button=document.querySelector('.pv-calc-tile');
  if(!body)return;
  const isOpen=body.style.display!=='none';
  body.style.display=isOpen?'none':'block';
