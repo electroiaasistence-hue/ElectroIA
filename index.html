@@ -518,21 +518,36 @@ function pickNaturalSpanishVoice(){
     return s};
   return es.sort((a,b)=>score(b)-score(a))[0]||null;
 }
+function eiaSpeechText(text){
+  let s=String(text||'');
+  s=s.replace(/<[^>]*>/g,' ');
+  s=s.replace(/```[\s\S]*?```/g,' ');
+  s=s.replace(/`([^`]*)`/g,'$1');
+  s=s.replace(/^\s{0,3}#{1,6}\s*/gm,'');
+  s=s.replace(/\*\*(.*?)\*\*/g,'$1').replace(/__(.*?)__/g,'$1');
+  s=s.replace(/(?<!\w)\*(.*?)\*(?!\w)/g,'$1').replace(/(?<!\w)_(.*?)_(?!\w)/g,'$1');
+  s=s.replace(/^\s*[-*+]\s+/gm,'');
+  s=s.replace(/^\s*\d+[.)]\s+/gm,'');
+  s=s.replace(/\[([^\]]+)\]\([^)]*\)/g,'$1');
+  s=s.replace(/https?:\/\/\S+/gi,'');
+  s=s.replace(/[•▪◦]/g,' ');
+  s=s.replace(/\s+/g,' ').trim();
+  return s;
+}
 async function speakText(text){
-  const clean=String(text).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim(); if(!clean)return;
+  const clean=eiaSpeechText(text); if(!clean)return;
   const token=++eiaSpeakToken;
   if(eiaAudio){try{eiaAudio.pause();eiaAudio.currentTime=0}catch(_){}}
-  // Primero intentamos una voz neuronal del servidor. Si no está disponible, usamos la mejor voz española del dispositivo.
+  if('speechSynthesis' in window) window.speechSynthesis.cancel();
+  // Voz neuronal del servidor: natural y consistente en todos los móviles.
   try{
-    const r=await fetch(API+'/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:clean,voice:'es-natural'})});
-    if(r.ok){const j=await r.json();const src=j.audio||j.audioUrl||j.url;if(src){eiaAudio=new Audio(src);eiaAudio.preload='auto';await eiaAudio.play();return}}
+    const r=await fetch(API+'/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:clean,voice:'marin'})});
+    if(r.ok){const j=await r.json();const src=j.audio||j.audioUrl||j.url;if(src){eiaAudio=new Audio(src);eiaAudio.preload='auto';eiaAudio.volume=1;await eiaAudio.play();return}}
   }catch(_){}
   if(token!==eiaSpeakToken)return;
   if(!('speechSynthesis' in window)){alert('Tu navegador no permite reproducir voz.');return}
-  window.speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(clean);const v=pickNaturalSpanishVoice();
-  if(v)u.voice=v;u.lang=v?.lang||'es-ES';u.rate=.88;u.pitch=1.0;u.volume=1;
-  // Pausas más naturales entre frases.
+  if(v)u.voice=v;u.lang=v?.lang||'es-ES';u.rate=.96;u.pitch=1.0;u.volume=1;
   u.text=clean.replace(/([.!?])\s+/g,'$1  ');
   window.speechSynthesis.speak(u);
 }
