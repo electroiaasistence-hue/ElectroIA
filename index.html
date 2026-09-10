@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta name="electroia-build" content="17.0.22-hogar">
+<meta name="electroia-build" content="17.0.23-super">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6149,6 +6149,16 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
 </div>
 </section>
 
+<section class="eia-direct-ai-card eia-v23-direct-ai">
+  <div class="eia-direct-ai-icon">💬</div>
+  <div class="eia-direct-ai-copy">
+    <div class="eia-direct-ai-kicker">HABLAR DIRECTAMENTE CON ELECTROIA</div>
+    <h2>🤖 ¿Querés hablar con la IA?</h2>
+    <p>Contale lo que necesitás con tus propias palabras. Podés preguntar, pedir una explicación o consultar un problema sin seguir un diagnóstico cerrado.</p>
+    <button class="btn eia-direct-ai-btn" type="button" onclick="chat('ia_directa')">💬 Hablar directamente con la IA</button>
+  </div>
+</section>
+
 <section class="eia-v22-sections" aria-label="Secciones de ElectroIA">
   <button class="eia-v22-section-card eia-v22-home" type="button" onclick="window.eia17Home?window.eia17Home('zones'):window.hogar?.()">
     <div class="eia-v22-icon">🏠</div>
@@ -6188,6 +6198,16 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
 .eia-v22-note{margin:12px 3px 4px;text-align:center;color:#8994a0;font-size:12px;line-height:1.4}
 @media(max-width:450px){.eia-v22-section-card{grid-template-columns:50px 1fr 18px;padding:14px}.eia-v22-icon{width:50px;height:50px;font-size:25px}.eia-v22-section-card h2{font-size:20px}}
 </style>
+
+<style id="electroia-v230-direct-ai-style">
+.eia-v23-direct-ai{display:grid;grid-template-columns:58px 1fr;gap:14px;align-items:start;margin-top:15px;padding:17px;border-radius:20px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(135deg,#161d27,#202a35);color:#fff;box-shadow:0 10px 24px rgba(0,0,0,.16)}
+.eia-v23-direct-ai .eia-direct-ai-icon{width:58px;height:58px;border-radius:16px;background:rgba(255,255,255,.12);display:grid;place-items:center;font-size:29px}
+.eia-v23-direct-ai .eia-direct-ai-kicker{font-size:11px;font-weight:800;letter-spacing:.7px;opacity:.8;margin-bottom:3px}
+.eia-v23-direct-ai h2{margin:0 0 5px;font-size:21px;color:#fff}
+.eia-v23-direct-ai p{margin:0 0 12px;color:rgba(255,255,255,.88);font-size:13px;line-height:1.45}
+.eia-v23-direct-ai .eia-direct-ai-btn{width:100%;margin-top:2px}
+@media(max-width:450px){.eia-v23-direct-ai{grid-template-columns:50px 1fr;padding:14px}.eia-v23-direct-ai .eia-direct-ai-icon{width:50px;height:50px;font-size:25px}.eia-v23-direct-ai h2{font-size:19px}}
+</style>
 <script id="electroia-v221-final-boot">
 (function(){
   'use strict';
@@ -6202,5 +6222,54 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
   W.eiaV22Boot=boot;
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,0),{once:true});
   else setTimeout(boot,0);
+})();
+</script>
+
+
+<!-- ELECTROIA V17.0.23 · ROBUST HOME RETURN + DIRECT AI ENTRY
+     Navigation-only patch. Does not alter the emergency diagnostic tree/controller.
+-->
+<script id="electroia-v230-navigation">
+(function(){
+  'use strict';
+  const W=window;
+  const landing=()=>typeof W.eiaV22Home==='function'?W.eiaV22Home():((typeof W.home==='function')?W.home():void 0);
+  function goHome(){
+    try{
+      if(Array.isArray(W.electroStack)) W.electroStack.length=0;
+      if('electroView' in W) W.electroView='home';
+      if('electroGoingBack' in W) W.electroGoingBack=false;
+      if('currentMode' in W) W.currentMode='hogar';
+      W.nav?.('nHome');
+    }catch(_){ }
+    const fn=landing();
+    try{W.scrollTo?.({top:0,left:0,behavior:'instant'});}catch(_){try{W.scrollTo?.(0,0)}catch(__){}}
+    setTimeout(()=>{try{W.scrollTo?.(0,0)}catch(_){ }},30);
+    return fn;
+  }
+  W.eiaV23GoHome=goHome;
+  // Keep the browser/back button inside the SPA predictable: an empty history stack means Home.
+  W.goBack=function(){
+    if(!Array.isArray(W.electroStack)||W.electroStack.length===0) return goHome();
+    const prev=W.electroStack[W.electroStack.length-1];
+    if(prev==='home'||prev==='diagnostico'||prev==='safety'||prev==='acciones'||prev==='consumo'||prev==='miCasa'||prev==='cuadro'||prev==='aprender'){
+      W.electroStack.pop();
+      return goHome();
+    }
+    W.electroStack.pop();
+    try{
+      if(prev==='hogar' && typeof W.hogar==='function') return W.hogar();
+      if(prev==='prof' && typeof W.prof==='function') return W.prof();
+      if(prev==='pv' && typeof W.pv==='function') return W.pv();
+      if(prev==='projects' && typeof W.projects==='function') return W.projects();
+      if(prev==='favorites' && typeof W.favorites==='function') return W.favorites();
+      if(prev==='settings' && typeof W.settings==='function') return W.settings();
+      if(prev==='chat' && typeof W.chat==='function') return W.chat(W.currentMode||'hogar');
+    }catch(_){ }
+    return goHome();
+  };
+  try{goBack=W.goBack}catch(_){ }
+  W.ELECTROIA_BUILD='V17.0.23-SUPER';
+  W.ELECTROIA_HOME_READY=true;
 })();
 </script>
