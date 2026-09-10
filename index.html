@@ -6407,4 +6407,35 @@ ${sourcesBlock()}
 .eia17-home .eia-super-knowledge .body{padding:0 13px 12px;line-height:1.45}
 .eia17-home .eia-super-knowledge ul{margin:8px 0;padding-left:18px}
 </style>
-<script id="electroia-v250-build">window.ELECTROIA_BUILD="V17.0.25-SUPER";</script></body></html>
+<script id="electroia-v250-build">window.ELECTROIA_BUILD="V17.0.25-SUPER";</script>
+<!-- ELECTROIA V17.0.26 · FINAL STARTUP AUTHORITY
+     The public Inicio screen must always be the initial screen.
+     Older startup blocks remain in the historical single-file for compatibility,
+     but their automatic boot is disabled here so they cannot reopen Modo Hogar.
+     Urgency / diagnostic tree is untouched.
+-->
+<script id="electroia-v260-final-startup">
+(function(){
+  'use strict';
+  const W=window;
+  // Disable legacy automatic boot controllers before DOMContentLoaded fires.
+  W.__ELECTROIA_V190_BOOTED=true;
+  W.__ELECTROIA_V22_BOOTED=true;
+  function startPublicInicio(){
+    try{
+      if(Array.isArray(W.electroStack)) W.electroStack.length=0;
+      if('electroGoingBack' in W) W.electroGoingBack=false;
+      if('electroView' in W) W.electroView='home';
+      if('currentMode' in W) W.currentMode='hogar';
+      W.ELECTROIA_BUILD='V17.0.26-SUPER';
+      W.ELECTROIA_HOME_READY=true;
+      if(typeof W.eiaV22Home==='function') return W.eiaV22Home();
+      if(typeof W.home==='function') return W.home();
+    }catch(e){ console.warn('ElectroIA startup',e); }
+  }
+  W.eiaV26Start=startPublicInicio;
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(startPublicInicio,0),{once:true});
+  else setTimeout(startPublicInicio,0);
+})();
+</script>
+</body></html>
