@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta name="electroia-build" content="17.0.23-super">
+<meta name="electroia-build" content="17.0.24-super">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -5921,7 +5921,7 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
 })();
 </script>
 
-</body></html>
+</html>
 
 <!-- ELECTROIA V17.0.18 · AI TRANSPORT RELIABILITY PATCH
      El estado "IA disponible" no se basa en que exista una URL: primero se verifica /api/health.
@@ -6160,7 +6160,7 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
 </section>
 
 <section class="eia-v22-sections" aria-label="Secciones de ElectroIA">
-  <button class="eia-v22-section-card eia-v22-home" type="button" onclick="window.eia17Home?window.eia17Home('zones'):window.hogar?.()">
+  <button class="eia-v22-section-card eia-v22-home" type="button" onclick="window.eiaV24HomeMode?.('zones')">
     <div class="eia-v22-icon">🏠</div>
     <div><div class="eia-v22-kicker">PARA TU CASA</div><h2>Modo Hogar</h2><p>Problemas, dudas, consumo, seguridad y tareas de tu vivienda. Todo ordenado dentro de esta sección.</p></div>
     <span class="eia-v22-arrow">›</span>
@@ -6273,3 +6273,120 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
   W.ELECTROIA_HOME_READY=true;
 })();
 </script>
+
+
+<!-- ELECTROIA V17.0.24 · SEPARATE HOME MODE + EMERGENCY INSIDE HOME
+     Keeps the public landing page as the Inicio screen and opens Hogar as a real section.
+     Professional mode intentionally does not render the Home emergency card.
+-->
+<script id="electroia-v240-home-mode">
+(function(){
+  'use strict';
+  const W=window;
+
+  function renderEmergency(){
+    return `<section class="eia-emergency-card" id="eiaEmergency">
+      <button class="eia-emergency-toggle" type="button" onclick="toggleEmergency()" aria-expanded="false">
+        <div class="eia-emergency-icon">🚨</div>
+        <div class="eia-emergency-copy"><b>🚨 ¿TENÉS UNA URGENCIA ELÉCTRICA AHORA?</b><span>Entrá acá y te guiamos paso a paso. Si hay peligro, te lo indicamos primero.</span></div>
+        <div class="eia-emergency-arrow">⌄</div>
+      </button>
+      <div class="eia-emergency-options" id="eiaEmergencyOptions">
+        <p><b>Primero seguridad.</b> No hace falta que sepas electricidad. ElectroIA te hará una pregunta por vez, entenderá tus palabras y te dirá qué podés comprobar sin riesgo. La IA intervendrá cuando aporte valor.</p>
+        <div class="eia-emergency-grid">
+          <button class="btn" type="button" onclick="quickEmergency('⚡ Me salta el automático o diferencial')">⚡ Se me va la luz</button>
+          <button class="btn" type="button" onclick="quickEmergency('💡 No tengo luz en el hogar')">💡 No tengo luz</button>
+          <button class="btn" type="button" onclick="quickEmergency('🔌 Un enchufe no funciona')">🔌 Enchufe / aparato</button>
+          <button class="btn" type="button" onclick="quickEmergency('🚨 Hay olor a quemado, chispas o algo caliente')">🔥 Huele / calienta</button>
+          <button class="btn" type="button" onclick="quickEmergency('🚿 Hay agua cerca de algo eléctrico')">🚿 Hay agua cerca</button>
+          <button class="btn" type="button" onclick="quickEmergency('❓ No sé qué pasa')">❓ No sé qué pasa</button>
+        </div>
+        <div class="eia-emergency-secondary">
+          <button class="btn alt" type="button" onclick="urgenciaLocalNoTouch()">🙅 No quiero tocar nada</button>
+          <button class="btn alt" type="button" onclick="urgenciaLocalTemporary()">🩹 Necesito apañarlo</button>
+        </div>
+      </div>
+    </section>`;
+  }
+
+  function homeMode(tab='zones'){
+    try{
+      if(Array.isArray(W.electroStack)) W.electroStack.length=0;
+      if('electroGoingBack' in W) W.electroGoingBack=false;
+      if('electroView' in W) W.electroView='hogarMode';
+      if('currentMode' in W) W.currentMode='hogar';
+      W.nav?.('nHome');
+    }catch(_){ }
+    const app=W.document.getElementById('app');
+    if(!app)return;
+    const zonesData=W.eia17Zones;
+    const needsData=W.eia17Needs;
+    // Use the already-stable V17 renderer when available, then remove landing-only content.
+    if(typeof W.eia17Home==='function'){
+      W.eia17Home(tab);
+      try{
+        const root=app.querySelector('.eia17-home');
+        if(root){
+          root.querySelectorAll('.eia-direct-ai-card,.eia-v23-direct-ai,.eia-v22-sections,.eia-v22-note').forEach(el=>el.remove());
+          const panels=[...root.querySelectorAll('.panel')];
+          panels.forEach(el=>el.remove());
+          root.querySelectorAll('.eia-pro-card').forEach(el=>el.remove());
+          const tail=[...root.children].filter(el=>String(el.textContent||'').includes('Entender el problema es el primer paso para solucionarlo.'));
+          tail.forEach(el=>el.remove());
+        }
+      }catch(_){ }
+      // eia17Home uses enterView(); reset the state after painting so emergency Back returns here.
+      try{W.electroStack.length=0;W.electroView='hogarMode';W.currentMode='hogar';}catch(_){ }
+      return;
+    }
+    // Fallback should the V17 controller ever be unavailable.
+    app.innerHTML=(typeof W.head==='function'?W.head(true):'')+`<main class="wrap page eia17-home">
+      <div class="eia17-hero"><div class="eia17-kicker">ELECTROIA · MODO HOGAR</div><h1>🏠 ¿Qué pasa en tu casa?</h1><p>No necesitás saber electricidad. Elegí una zona o una necesidad.</p></div>
+      ${renderEmergency()}
+      <div class="eia17-tabs" role="tablist"><button class="eia17-tab ${tab==='zones'?'active':''}" type="button" onclick="eiaV24HomeMode('zones')">🏠 Por zonas</button><button class="eia17-tab ${tab==='needs'?'active':''}" type="button" onclick="eiaV24HomeMode('needs')">✨ Por necesidad</button></div>
+      <div class="eia17-fallback-note">Usá las opciones de esta sección para avanzar paso a paso.</div>
+    </main>`;
+    try{W.electroStack.length=0;W.electroView='hogarMode';W.currentMode='hogar';W.scrollPageTop?.();}catch(_){ }
+  }
+
+  function backToHomeMode(){
+    homeMode('zones');
+  }
+
+  const previousGoBack=W.goBack;
+  W.goBack=function(){
+    const stack=W.electroStack;
+    if(Array.isArray(stack) && stack.length){
+      const prev=stack[stack.length-1];
+      if(prev==='hogarMode'){
+        stack.pop();
+        return homeMode('zones');
+      }
+    }
+    // On a direct Home-mode screen, Back means return to the public Inicio screen.
+    if(W.electroView==='hogarMode'){
+      stack?.splice?.(0);
+      return typeof W.eiaV22Home==='function'?W.eiaV22Home():typeof W.home==='function'?W.home():undefined;
+    }
+    return typeof previousGoBack==='function'?previousGoBack.apply(this,arguments):undefined;
+  };
+  try{goBack=W.goBack;}catch(_){ }
+
+  W.eiaV24HomeMode=homeMode;
+  W.hogar=homeMode;
+  W.ELECTROIA_BUILD='V17.0.24-SUPER';
+  W.ELECTROIA_HOME_READY=true;
+})();
+</script>
+
+<style id="electroia-v240-home-mode-style">
+.eia-fallback-note{margin:14px 2px;color:#7b8794;font-size:13px;text-align:center}
+</style>
+<script id="electroia-v240-final-boot-marker">
+(function(){
+  window.ELECTROIA_BUILD='V17.0.24-SUPER';
+  window.ELECTROIA_HOME_READY=true;
+})();
+</script>
+
+</body></html>
