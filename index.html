@@ -7,7 +7,7 @@
 <meta http-equiv="Expires" content="0">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="electroia-build" content="17.0.20-hogar"><title>ElectroIA · Tu primera ayuda en casa · Hogar · V17.0.19</title>
+<meta name="electroia-build" content="17.0.20-hogar"><title>ElectroIA · Tu primera ayuda en casa · Hogar · V17.0.21</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#000;color:#fff;font-family:"Segoe UI",Arial,sans-serif}body{padding-bottom:78px}.top{padding:18px 16px 14px;background:#000}
 .top .row>div:first-child{text-align:center;flex:1}
@@ -1471,7 +1471,7 @@ function goBack(){
 
 // Inicializar la aplicación después de declarar el sistema de navegación.
 window.electroView = electroView;
-/* V17.0.19: boot deferred until every controller/override is loaded. */
+/* V17.0.21: boot deferred until every controller/override is loaded. */
 </script>
 <script id="electroia-diagnostico-v62">
 /* V7.0 — Confirmación conversacional antes del diagnóstico final */
@@ -5852,7 +5852,33 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
     const r=recent();
     let recentHtml='';
     if(r.length){recentHtml=`<div class="eia17-recent"><div class="eia17-title">↩️ Podés continuar</div>${r.map(x=>`<button class="eia17-recent-item" type="button" onclick="eia17Resume('${encodeURIComponent(x.action)}','${encodeURIComponent(x.label)}')"><span>🕘</span><span><b>${escH(x.label)}</b><small>Volver a este tipo de ayuda</small></span><span class="eia17-arrow">›</span></button>`).join('')}</div>`}
-    app.innerHTML=head(false)+`<main class="wrap page eia17-home">${headTitle()}<div class="eia17-tabs" role="tablist"><button class="eia17-tab ${tab==='zones'?'active':''}" type="button" onclick="eia17Home('zones')">🏠 Por zonas</button><button class="eia17-tab ${tab==='needs'?'active':''}" type="button" onclick="eia17Home('needs')">✨ Por necesidad</button></div><div id="eia17HomeContent"></div>${homeFree}${homePhoto}${recentHtml}<div class="eia17-section-note">🚨 <b>¿Hay humo, fuego, chispas, olor fuerte a quemado, calor anormal, agua con electricidad o una descarga?</b> Salí de estas opciones y usá la asistencia de urgencia.</div><div class="eia17-pro-link">¿Sos electricista o técnico? <button type="button" onclick="prof()">Entrar al Modo Profesional →</button></div></main>`;
+    const emergencyHome=`<section class="eia-emergency-card" id="eiaEmergencyHome">
+      <button class="eia-emergency-toggle" type="button" onclick="toggleEmergency()" aria-expanded="false">
+        <div class="eia-emergency-icon">🚨</div>
+        <div class="eia-emergency-copy"><b>🚨 ¿TENÉS UNA URGENCIA ELÉCTRICA AHORA?</b><span>Si hay un problema urgente, entrá acá. Te guiamos paso a paso y comprobamos la seguridad primero.</span></div>
+        <div class="eia-emergency-arrow">⌄</div>
+      </button>
+      <div class="eia-emergency-options" id="eiaEmergencyOptions">
+        <p><b>Primero seguridad.</b> No necesitás saber electricidad. Elegí lo que más se parece a lo que está pasando.</p>
+        <div class="eia-emergency-grid">
+          <button class="btn" type="button" onclick="quickEmergency('⚡ Me salta el automático o diferencial')">⚡ Se me va la luz</button>
+          <button class="btn" type="button" onclick="quickEmergency('💡 No tengo luz en el hogar')">💡 No tengo luz</button>
+          <button class="btn" type="button" onclick="quickEmergency('🔌 Un enchufe no funciona')">🔌 Enchufe / aparato</button>
+          <button class="btn" type="button" onclick="quickEmergency('🚨 Hay olor a quemado, chispas o algo caliente')">🔥 Huele / calienta</button>
+          <button class="btn" type="button" onclick="quickEmergency('🚿 Hay agua cerca de algo eléctrico')">🚿 Hay agua cerca</button>
+          <button class="btn" type="button" onclick="quickEmergency('❓ No sé qué pasa')">❓ No sé qué pasa</button>
+        </div>
+        <div class="eia-emergency-secondary">
+          <button class="btn alt" type="button" onclick="urgenciaLocalNoTouch()">🙅 No quiero tocar nada</button>
+          <button class="btn alt" type="button" onclick="urgenciaLocalTemporary()">🩹 Necesito apañarlo</button>
+        </div>
+      </div>
+    </section>`;
+    const extraHome=`<section class="eia-direct-ai-card"><div class="eia-direct-ai-copy"><div class="eia-direct-ai-kicker">💬 CONVERSACIÓN LIBRE</div><h2>Charlá directamente con la IA</h2><p>Contale lo que te pasa, pedile una explicación o hacé una pregunta. No hay un diagnóstico cerrado ni tenés que saber palabras técnicas.</p><button class="btn eia-direct-ai-btn" type="button" onclick="chat('ia_directa')">💬 Empezar a charlar con ElectroIA</button></div></section>
+    <section class="panel" style="margin-top:15px"><h2 style="margin-top:0">🏠 ¿Para qué sirve ElectroIA?</h2><p>Para ayudarte cuando algo eléctrico de tu casa no funciona y no sabés por dónde empezar. Puede ayudarte a <b>entender el problema, intentar resolverlo cuando sea seguro, apañar una situación de forma temporal</b> o prepararte para llamar a un electricista con la información clara.</p><p style="margin-bottom:0;color:#5f6b76">ElectroIA no reemplaza a un profesional. Si hay peligro, la prioridad es alejarte y pedir asistencia.</p></section>
+    <section class="eia-pro-card"><div class="eia-pro-inner"><span class="eia-pro-kicker">⚙️ PARA PROFESIONALES</span><h2>🧰 ¿Sos electricista o técnico?</h2><p>El Modo Profesional reúne las herramientas técnicas de ElectroIA sin mezclarlas con la experiencia sencilla de Hogar.</p><div class="eia-pro-grid"><div class="eia-pro-item"><b>💬 Consultas técnicas</b>Dudas de diagnóstico, funcionamiento y averías.</div><div class="eia-pro-item"><b>🧮 Cálculos</b>Ayuda para plantear y comprobar cálculos eléctricos.</div><div class="eia-pro-item"><b>☀️ Fotovoltaica</b>Strings, MPPT, baterías, producción y autoconsumo.</div></div><button class="btn eia-pro-btn" type="button" onclick="prof()">🧰 Entrar al Modo Profesional</button></div></section>
+    <div class="panel" style="text-align:center;background:#171717;color:#fff"><div style="font-size:13px;opacity:.75">⚡ ELECTROIA</div><h2 style="margin:7px 0">Entender el problema es el primer paso para solucionarlo.</h2><p style="margin:0;color:#d5d5d5">Gratis · Sencillo · Paso a paso · Pensado para todos</p></div>`;
+    app.innerHTML=head(false)+`<main class="wrap page eia17-home">${headTitle()}${emergencyHome}<div class="eia17-tabs" role="tablist"><button class="eia17-tab ${tab==='zones'?'active':''}" type="button" onclick="eia17Home('zones')">🏠 Por zonas</button><button class="eia17-tab ${tab==='needs'?'active':''}" type="button" onclick="eia17Home('needs')">✨ Por necesidad</button></div><div id="eia17HomeContent"></div>${homeFree}${homePhoto}${recentHtml}${extraHome}</main>`;
     const h=document.getElementById('eia17HomeContent');if(!h)return;
     if(tab==='needs'){
       h.innerHTML=`<div class="eia17-title">✨ ¿Qué querés hacer?</div><div class="eia17-subtitle">Elegí lo que más se parezca a lo que te pasa. No necesitás saber ningún término técnico.</div><div class="eia17-grid">${Object.entries(needs).map(([k,v])=>`<button class="eia17-card ${k==='problem'?'coral':k==='understand'?'yellow':k==='save'?'green':k==='change'?'blue':k==='buy'?'purple':'teal'}" type="button" onclick="eia17OpenNeed('${k}')"><span class="eia17-ico">${v.title.slice(0,2)}</span><b>${escH(v.title.slice(3))}</b><small>${escH(v.desc)}</small><span class="eia17-arrow">›</span></button>`).join('')}</div>`;
@@ -6063,3 +6089,5 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
   }
 })();
 </script>
+
+<script>window.ELECTROIA_BUILD='V17.0.21-SUPER';</script>
