@@ -15,7 +15,7 @@ const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gpt-5.6-luna';
 const OPENAI_VISION_MODEL = process.env.OPENAI_VISION_MODEL || OPENAI_MODEL;
 const OPENAI_TTS_MODEL = process.env.OPENAI_TTS_MODEL || 'gpt-4o-mini-tts';
 const OPENAI_TRANSCRIBE_MODEL = process.env.OPENAI_TRANSCRIBE_MODEL || 'gpt-4o-mini-transcribe';
-const TTS_VOICE = process.env.OPENAI_TTS_VOICE || 'marin';
+const TTS_VOICE = process.env.OPENAI_TTS_VOICE || 'alloy';
 const DATABASE_URL = process.env.DATABASE_URL || '';
 
 if (process.env.NODE_ENV === 'production' && !JWT_SECRET) {
@@ -29,7 +29,7 @@ const upload = multer({
   limits: { fileSize: 12 * 1024 * 1024 }
 });
 
-const client = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
+const client = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY, timeout: 45000, maxRetries: 1 }) : null;
 const pool = DATABASE_URL ? new Pool({ connectionString: DATABASE_URL, max: 5, idleTimeoutMillis: 30000 }) : null;
 
 app.set('trust proxy', 1);
@@ -112,14 +112,15 @@ app.get('/api/health', async (req, res) => {
     try { await pool.query('SELECT 1'); database = 'ok'; }
     catch (_) { database = 'error'; }
   }
-  res.json({ ok: true, version: 'v15', ai: !!client, database, node: process.version });
+  res.setHeader('Cache-Control','no-store');
+  res.json({ ok: true, version: 'v17.0.25', ai: !!client, model: OPENAI_MODEL, database, node: process.version });
 });
 
 app.post('/api/chat', async (req, res) => {
   if (!requireAI(res)) return;
   try {
     const {
-      message = '', mode = 'hogar', history = [], context_bundle = {},
+      message = '', mode = 'hogar', history = [], context_bundle = {}, diagnostic_context = {},
       ai_contract = 'electroia-v14', local_first = true,
       request_source = 'page_chat', urgency = false,
       safety_level = 'normal', escalated_from_local = false
@@ -132,10 +133,12 @@ app.post('/api/chat', async (req, res) => {
       { role: 'user', content: `Modo: ${mode}. Origen: ${request_source}. Urgencia: ${urgency}. Seguridad: ${safety_level}. Escalado desde lógica local: ${escalated_from_local}. Local-first: ${local_first}. Contrato: ${ai_contract}.\nContexto ya recopilado (no repitas preguntas ya respondidas): ${context}\n\nMensaje actual: ${message}` }
     ];
     const response = await client.responses.create({ model: OPENAI_MODEL, instructions: SYSTEM, input });
+    res.setHeader('Cache-Control','no-store');
     res.json({ answer: response.output_text, model: OPENAI_MODEL, source: 'ai' });
   } catch (e) {
-    console.error('CHAT_ERROR', e);
-    res.status(500).json({ error: 'Error conectando con la IA.' });
+    console.error('CHAT_ERROR', { name:e?.name, message:e?.message, code:e?.code, status:e?.status, request_id:e?.request_id });
+    res.setHeader('Cache-Control','no-store');
+    res.status(e?.status === 429 ? 503 : 502).json({ error: 'Error conectando con la IA.', retryable: true, request_id: e?.request_id || null });
   }
 });
 
@@ -196,13 +199,12 @@ app.post('/api/tts', async (req, res) => {
       model: OPENAI_TTS_MODEL,
       voice: req.body?.voice || TTS_VOICE,
       input: text,
-      instructions: 'Hablá en español de España, con una voz cálida, natural y cercana. Soná como una persona real que está ayudando a alguien por teléfono. Ritmo conversacional, pausas breves y naturales, sin tono robótico, sin leer símbolos de formato.',
-      speed: 1.0,
       response_format: 'mp3'
     });
-    const buffer = Buffer.from(await speech.arrayBuffer());
+    res.setHeader('Content-Type', 'audio/mpeg');
     res.setHeader('Cache-Control', 'no-store');
-    res.json({ audio: `data:audio/mpeg;base64,${buffer.toString('base64')}`, format: 'mp3', model: OPENAI_TTS_MODEL, voice: req.body?.voice || TTS_VOICE });
+    const buffer = Buffer.from(await speech.arrayBuffer());
+    res.send(buffer);
   } catch (e) {
     console.error('TTS_ERROR', e);
     res.status(500).json({ error: 'No se pudo generar la voz.' });

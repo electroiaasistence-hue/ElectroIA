@@ -4796,7 +4796,7 @@ sendText=async function(t,displayText=null){
     if(!d.aiHandoff&&node?.result)html+=resultHTML(node);
     else if(!d.aiHandoff&&node?.free){html+=`<div class="eia-super-question"><div class="label">CONTAME QUÉ PASA</div><div class="text">Podés explicarlo con tus palabras.</div></div><textarea id="eiaSuperFree" class="eia-super-input" style="width:100%;min-height:105px;margin-top:9px" placeholder="Contame qué pasa…"></textarea><button class="eia-super-send" style="margin-top:9px;width:100%" type="button" onclick="window.eiaSuperFreeNext?.()">Continuar →</button>`}
     else if(!d.aiHandoff){const safety=d.node==='safetyGate'||d.node==='start';html+=`<div class="eia-super-question ${safety?'safety':''}"><div class="label">${safety?'⚠️ PRECAUCIÓN':'PREGUNTA'}</div><div class="text">${esc(node?.q||'¿Qué pasa?')}</div></div><div class="eia-super-note">Elegí la opción que más se parece a lo que está pasando</div><div class="eia-super-options">`;for(const pair of (node?.a||[])){const label=String(pair[0]||''),cl=unknown(label)?'unknown':safetyRx.test(label)?'danger':'';html+=`<button type="button" class="eia-super-option ${cl}" data-super-label="${esc(label)}" data-super-next="${esc(pair[1])}">${esc(label)}</button>`}html+=`</div>`}
-    html+=sourcesBlock()+`</div>`;
+    html+=`</div>`;
     if(d.aiHandoff)html+=`<div class="eia-super-composer"><div class="eia-super-inputwrap"><textarea id="eiaSuperInput" class="eia-super-input" rows="1" placeholder="Contame qué pasa…"></textarea><button class="eia-super-send" type="button" onclick="window.eiaSuperSend?.()">↑</button></div><div class="eia-super-tools"><button class="eia-super-tool" type="button" onclick="window.eiaSuperVoice?.()">🎙️ Hablar</button><button class="eia-super-tool" type="button" onclick="window.eiaSuperPhoto?.()">📷 Foto</button></div><div class="eia-super-status">Todo lo que ya vimos queda arriba. Podés subir para consultarlo.</div></div>`;
     html+=`</div></main>`;
     const app=document.getElementById('app');if(app)app.innerHTML=(typeof head==='function'?head(true):'')+html;
@@ -4807,10 +4807,19 @@ sendText=async function(t,displayText=null){
     const local=!(location.protocol==='http:'||location.protocol==='https:');
     if(local){d.aiMessages.push({role:'assistant',content:'',html:'<div class="eia-super-local"><b>🌐 La IA necesita la versión online.</b><br>Esta copia está abierta como archivo local y no puede acceder al servidor de ElectroIA. El diagnóstico se conserva.<div class="eia-super-actions"><button type="button" onclick="window.eiaSuperOpenOnline?.()">🌐 Abrir ElectroIA online</button></div></div>'});S.aiBusy=false;render();return;}
     const endpoint=(W.ELECTROIA_API_BASE?String(W.ELECTROIA_API_BASE).replace(/\/$/,''):'/api')+'/chat';
+    const healthEndpoint=endpoint.replace(/\/chat$/,'/health');
     const history=(d.answers||[]).flatMap(x=>[{role:'assistant',content:String(x.q)}, {role:'user',content:String(x.a)}]).concat((d.aiMessages||[]).filter(x=>x.content).map(x=>({role:x.role,content:String(x.content)}))).slice(-30);
     const knowledge=W.ELECTROIA_WEB_KNOWLEDGE_2026||{};
     const prompt=`Actuá como asistencia eléctrica doméstica para una persona sin conocimientos técnicos. Continuá desde el punto exacto del diagnóstico sin repetir preguntas. Seguridad primero. No pidas abrir/desmontar cuadros, enchufes, aparatos ni contador. Si hay fuego, humo importante, chispas, olor fuerte a quemado, calor anormal, agua con electricidad o descarga, detené las pruebas y priorizá alejamiento y ayuda de emergencia. ${reason==='identification'?'Ayudá primero a identificar visualmente el elemento descrito, usando una pregunta por vez.':''}`;
-    try{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),20000);const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:prompt,mode:d.entryKind==='emergency'?'urgencias_hogar':'diagnostico_hogar',history,ai_contract:'electroia-v17-super',local_first:true,request_source:'diagnostic_handoff',urgency:!!d.risk,safety_level:d.risk?'high':'normal',diagnostic_context:{problem:d.problem||'',answers:d.answers||[],node:d.node,historyNodes:d.history||[],visualTarget:d.visualTarget||null},knowledge_pack:knowledge,user_experience:{plain_language:true,one_question_at_a_time:true,no_repetition:true,no_unrequested_images:true,answer_first:true,no_internal_metadata:true}}),signal:controller.signal});clearTimeout(timer);const raw=await r.text();let j={};try{j=JSON.parse(raw)}catch(_){ }if(!r.ok)throw Error(j.error||('HTTP '+r.status));const ans=String(j.answer||j.message||j.output||'').trim();if(!ans)throw Error('empty');d.aiMessages.push({role:'assistant',content:ans,html:esc(ans).replace(/\n/g,'<br>')});S.aiBusy=false;if(token===S.token)render()}catch(e){d.aiMessages.push({role:'assistant',content:'No pude conectar con la IA.',html:retryHTML()});S.aiBusy=false;render()}
+    try{
+      const healthController=new AbortController();const healthTimer=setTimeout(()=>healthController.abort(),8000);
+      const hr=await fetch(healthEndpoint,{method:'GET',cache:'no-store',credentials:'same-origin',signal:healthController.signal});
+      clearTimeout(healthTimer);
+      if(!hr.ok)throw Error('health_'+hr.status);
+      let health={};try{health=await hr.json()}catch(_){}
+      if(health.ai===false)throw Error('AI_NOT_CONFIGURED');
+      const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),45000);
+      const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',credentials:'same-origin',body:JSON.stringify({message:prompt,mode:d.entryKind==='emergency'?'urgencias_hogar':'diagnostico_hogar',history,context_bundle:{problem:d.problem||'',answers:d.answers||[],node:d.node,historyNodes:d.history||[],visualTarget:d.visualTarget||null},ai_contract:'electroia-v17-super',local_first:true,request_source:'diagnostic_handoff',urgency:!!d.risk,safety_level:d.risk?'high':'normal',escalated_from_local:true,diagnostic_context:{problem:d.problem||'',answers:d.answers||[],node:d.node,historyNodes:d.history||[],visualTarget:d.visualTarget||null},knowledge_pack:knowledge,user_experience:{plain_language:true,one_question_at_a_time:true,no_repetition:true,no_unrequested_images:true,answer_first:true,no_internal_metadata:true}}),signal:controller.signal});clearTimeout(timer);const raw=await r.text();let j={};try{j=JSON.parse(raw)}catch(_){ }if(!r.ok)throw Error(j.error||('HTTP '+r.status));const ans=String(j.answer||j.message||j.output||'').trim();if(!ans)throw Error('empty');d.aiMessages.push({role:'assistant',content:ans,html:esc(ans).replace(/\n/g,'<br>')});S.aiBusy=false;if(token===S.token)render()}catch(e){d.aiMessages.push({role:'assistant',content:'No pude conectar con la IA.',html:retryHTML()});S.aiBusy=false;render()}
   }
   function choose(btn){if(S.busy)return;const d=D(),tree=T();if(!d)return;const label=String(btn?.dataset?.superLabel||btn?.textContent||'').trim(),next=String(btn?.dataset?.superNext||'');const node=tree[d.node];if(!node)return;S.busy=true;clear();
     const q=node.q||'Pregunta';const asksExample=/mostrarme el ejemplo|ver un ejemplo|quiero ver el ejemplo|mostrar ejemplo/i.test(label);const confirmsKnown=/ya s[eé] (cu[aá]l|qué) es|ya lo encontr[eé]|la encontr[eé]/i.test(label);const v=visualKey(q,d.node);const id=identification(q,d.node);
@@ -6010,7 +6019,7 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
       context_bundle:JSON.stringify({area:'hogar',mode:String(mode||'hogar'),source:'consulta_general',principiante:true}),
       user_experience:{plain_language:true,answer_first:true,no_internal_metadata:true,no_code_or_json:true,no_unrequested_images:true,avoid_repetition:true,concise:true,max_user_facing_sections:3,write_like_a_calm_human_helper:true}
     };
-    const c=new AbortController(),tm=setTimeout(()=>c.abort(),25000);
+    const c=new AbortController(),tm=setTimeout(()=>c.abort(),45000);
     try{
       const r=await fetch(endpoint(),{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},credentials:'same-origin',cache:'no-store',body:JSON.stringify(payload),signal:c.signal});
       const raw=await r.text();let j={};try{j=JSON.parse(raw)}catch(_){j={error:raw}};
@@ -6172,6 +6181,7 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
   </button>
 </section>
 
+${sourcesBlock()}
 </main>`;
     W.scrollPageTop?.();
   }
@@ -6389,4 +6399,12 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
 })();
 </script>
 
-</body></html>
+
+<style id="eia-v25-sources-home-style">
+.eia17-home .eia-super-knowledge{margin:24px 2px 8px;opacity:.82;font-size:12px;border:1px solid #dfe5eb;border-radius:14px;background:#f8fafc;color:#687586}
+.eia17-home .eia-super-knowledge summary{padding:11px 13px;cursor:pointer;font-weight:800;list-style:none}
+.eia17-home .eia-super-knowledge summary::-webkit-details-marker{display:none}
+.eia17-home .eia-super-knowledge .body{padding:0 13px 12px;line-height:1.45}
+.eia17-home .eia-super-knowledge ul{margin:8px 0;padding-left:18px}
+</style>
+<script id="electroia-v250-build">window.ELECTROIA_BUILD="V17.0.25-SUPER";</script></body></html>
