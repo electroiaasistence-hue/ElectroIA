@@ -4364,4 +4364,71 @@ sendText=async function(t,displayText=null){
   window.eiaV21Repair=function(){const d=window.diag,n=d&&tree()[d.node],last=d?.answers?.at(-1);if(!d||d.aiHandoff||!n?.result||!last)return false;if(/no s[eé]|no estoy seguro|no puedo|no reconozco|no se cual/i.test(last.a||'') && /identific|reconoc|llave|interruptor|cuadro|contador|diferencial|termico|automatico/i.test(last.q||'')){d.visualTarget=d.visualTarget||(/contador/i.test(last.q)?'contador':'panel');d.aiRequested=true;d.aiReason='identification';if(typeof window.diagEscalateAI==='function')return window.diagEscalateAI('identification')}return false};
 })();
 </script>
+
+<script id="electroia-merged-v33-final-ux-controller">
+(function(){
+  'use strict';
+  /*
+   * V33 — MERGE FINAL
+   * Base: Index-32
+   * UX recovered from v16.5.1:
+   * - local-first diagnostic remains the main experience
+   * - previous answers stay visible as context
+   * - AI continues from the exact point instead of restarting
+   * - visual examples are optional / on-demand
+   * - "No sé" while identifying a component goes to AI assistance
+   * - normal diagnostic results never trigger AI just because of answer count
+   */
+  const D=()=>window.diag;
+  const T=()=>window.diagTree||{};
+  const isUnknown=(x)=>/no s[eé]|no estoy seguro|no puedo|no reconozco|no se cual|no sé cuál/i.test(String(x||''));
+  const isIdentification=(q)=>/identific|reconoc|cuadro|tablero|diferencial|disyuntor|t[eé]rmico|autom[aá]tico|interruptor|enchufe|contador/i.test(String(q||''));
+
+  /* Nunca iniciar IA automáticamente por número de respuestas. */
+  window.scheduleAutomaticAI=function(){ return false; };
+  try{ scheduleAutomaticAI=window.scheduleAutomaticAI; }catch(_){ }
+
+  /* Refuerza la semántica local-first en el controlador público. */
+  const baseChoose=window.diagChoose;
+  window.eiaMergedChoose=function(label,next){
+    const d=D(), tree=T(), n=d&&tree[d.node];
+    if(!d||!n){ return typeof baseChoose==='function' ? baseChoose(label,next) : false; }
+    const q=n.q||'Pregunta';
+    if(isUnknown(label) && isIdentification(q) && !d.risk){
+      d.answers=Array.isArray(d.answers)?d.answers:[];
+      d.history=Array.isArray(d.history)?d.history:[];
+      if(!d.answers.length || d.answers[d.answers.length-1]?.q!==q || d.answers[d.answers.length-1]?.a!==String(label)){
+        d.history.push(d.node);
+        d.answers.push({q,a:String(label)});
+      }
+      if(/contador/i.test(q))d.visualTarget='contador';
+      else if(/diferencial|disyuntor/i.test(q))d.visualTarget='diferencial';
+      else if(/t[eé]rmico|autom[aá]tico/i.test(q))d.visualTarget='termico';
+      else d.visualTarget=d.visualTarget||'panel';
+      d.aiRequested=true;
+      d.aiReason='identification';
+      if(typeof window.diagEscalateAI==='function')return window.diagEscalateAI('identification');
+    }
+    return typeof baseChoose==='function' ? baseChoose(label,next) : false;
+  };
+  window.diagChoose=window.eiaMergedChoose;
+  window.eiaHandleOption=window.eiaMergedChoose;
+
+  /* Si una rama terminal heredada recibe "No sé" sobre identificación, rescatarla. */
+  window.eiaMergedRepair=function(){
+    const d=D(), n=d&&T()[d.node], last=d?.answers?.at(-1);
+    if(!d||d.aiHandoff||!n?.result||!last||!isUnknown(last.a)||!isIdentification(last.q))return false;
+    d.aiRequested=true; d.aiReason='identification';
+    if(/contador/i.test(last.q))d.visualTarget='contador';
+    else if(/diferencial|disyuntor/i.test(last.q))d.visualTarget='diferencial';
+    else if(/t[eé]rmico|autom[aá]tico/i.test(last.q))d.visualTarget='termico';
+    else d.visualTarget=d.visualTarget||'panel';
+    return typeof window.diagEscalateAI==='function' ? window.diagEscalateAI('identification') : false;
+  };
+
+  /* Mantener el chat sencillo: una sola pregunta, contexto arriba, sin reinicio. */
+  window.eiaMergedChatRules={oneQuestionAtATime:true,noRepetition:true,localFirst:true,visualExamplesOnDemand:true,plainLanguage:true};
+})();
+</script>
+
 </body></html>
