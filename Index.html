@@ -5882,7 +5882,7 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
   async function analyzePhoto(){const f=W._eia17PhotoFile;if(!f)return;const out=document.getElementById('eia17PhotoResult');if(out)out.innerHTML='<div class="eia17-photo-result">🤖 Estoy revisando solo lo que se puede ver en la foto…</div>';const rd=new FileReader();const data=await new Promise((res,rej)=>{rd.onload=()=>res(String(rd.result));rd.onerror=rej;rd.readAsDataURL(f)});const endpoint=(W.ELECTROIA_AI_CONFIG?.visionEndpoint)||'/api/vision';try{const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:data,filename:f.name,question:'Analizá esta foto para una persona que sabe poco o nada de electricidad. Identificá solo lo que sea visible y legible. Decí qué parece ser, qué datos se pueden leer, qué no se puede saber solo por la foto y qué información sencilla conviene aportar después. No concluyas que una instalación es segura solo por la foto. No pidas abrir ni desmontar nada.',mode:'hogar',ai_contract:'electroia-home-visual-v1717',local_first:true,request_source:'home_visual'} )});const raw=await r.text();let j={};try{j=JSON.parse(raw)}catch(_){j={error:raw}}if(!r.ok)throw new Error(j.error||'HTTP '+r.status);const ans=String(j.answer||j.message||'').trim()||'No pude sacar una lectura clara de la foto. Podemos seguir con una descripción sencilla.';if(out)out.innerHTML=`<div class="eia17-photo-result"><b>👀 Esto es lo que puedo ver</b><div style="margin-top:7px">${(typeof W.eiaRenderChat==='function'?W.eiaRenderChat(ans):escH(ans)).replace(/\n/g,'<br>')}</div></div><div class="eia17-form-actions"><button class="btn" type="button" onclick="eia17PhotoContinue()">💬 Seguir hablando de esto</button></div>`}catch(e){const local=location.protocol==='file:'||location.protocol==='content:'||location.protocol==='about:';if(out)out.innerHTML=local?'<div class="eia17-photo-result"><b>🌐 La IA necesita la versión online.</b><br>Esta copia local no puede conectarse al análisis de imágenes.</div>':'<div class="eia17-photo-result"><b>⚠️ No pude analizar la foto ahora.</b><br>Podés reintentarlo sin perder la imagen.</div>'}}
   function photoContinue(){const result=document.getElementById('eia17PhotoResult')?.innerText||'';safe(()=>chat('hogar',`Quiero seguir con lo que aparece en una foto que acabo de aportar. Lo que ya se observó fue: ${result}. Soy principiante. No repitas lo ya visto; haceme solo la siguiente pregunta necesaria y usá lenguaje cotidiano.`))}
   function resume(a,l){try{run(...decodeURIComponent(a).split(':').length===2?decodeURIComponent(a).split(':'):['free','general',decodeURIComponent(l)])}catch(_){safe(()=>chat('hogar',`Quiero retomar esta ayuda: ${decodeURIComponent(l)}. Guiame desde donde lo dejamos, sin tecnicismos y sin repetir preguntas innecesarias.`))}}
-  W.eia17Home=home;W.eia17OpenZone=openZone;W.eia17RunZone=runZone;W.eia17OpenNeed=openNeed;W.eia17RunNeed=runNeed;W.eia17OpenFree=free;W.eia17FreeGo=freeGo;W.eia17OpenPhoto=photo;W.eia17PickPhoto=pickPhoto;W.eia17PhotoSelected=selected;W.eia17AnalyzePhoto=analyzePhoto;W.eia17PhotoContinue=photoContinue;W.eia17Resume=resume;W.hogar=home;W.ELECTROIA_BUILD='V17.0.17-SUPER';
+  W.eia17Home=home;W.eia17OpenZone=openZone;W.eia17RunZone=runZone;W.eia17OpenNeed=openNeed;W.eia17RunNeed=runNeed;W.eia17OpenFree=free;W.eia17FreeGo=freeGo;W.eia17OpenPhoto=photo;W.eia17PickPhoto=pickPhoto;W.eia17PhotoSelected=selected;W.eia17AnalyzePhoto=analyzePhoto;W.eia17PhotoContinue=photoContinue;W.eia17Resume=resume;W.hogar=home;W.ELECTROIA_BUILD='V17.0.18-SUPER';
 
   // Protección transversal: los chats generales de Hogar nunca reciben tarjetas visuales por coincidencia de palabras.
   try{
@@ -5896,3 +5896,132 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
 </script>
 
 </body></html>
+
+<!-- ELECTROIA V17.0.18 · AI TRANSPORT RELIABILITY PATCH
+     El estado "IA disponible" no se basa en que exista una URL: primero se verifica /api/health.
+     Las consultas generales tienen timeout, diagnóstico de conexión y reintento explícito.
+     No modifica la lógica de urgencia eléctrica.
+-->
+<style id="electroia-ai-transport-v180-style">
+.eia-ai-connection-note{margin:8px 0;padding:10px 12px;border-radius:12px;border:1px solid #d9e1e8;background:#f7f9fb;color:#596875;font-size:12px;line-height:1.4}
+.eia-ai-connection-note.ok{border-color:#bfe2ca;background:#f1fbf4;color:#17643a}
+.eia-ai-connection-note.bad{border-color:#efc7cb;background:#fff5f6;color:#8d2430}
+.eia-ai-retry-btn{margin-top:9px;width:100%;min-height:44px;border:1px solid #b8d4ee;border-radius:12px;background:#fff;color:#1769e0;font:inherit;font-weight:850;cursor:pointer}
+</style>
+<script id="electroia-ai-transport-v180-js">
+(function(){
+  'use strict';
+  const W=window;
+  const genericMode=m=>!['urgencias_hogar','diagnostico_hogar'].includes(String(m||''));
+  const escT=v=>typeof W.escSafe==='function'?W.escSafe(String(v??'')):String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const render=v=>typeof W.eiaRenderChat==='function'?W.eiaRenderChat(String(v??'')):escT(v).replace(/\n/g,'<br>');
+  function endpoint(){
+    const base=W.ELECTROIA_API_BASE||W.ELECTROIA_RUNTIME?.ai?.baseUrl||'';
+    if(base)return String(base).replace(/\/$/,'')+'/chat';
+    return '/api/chat';
+  }
+  function healthEndpoint(){
+    const base=W.ELECTROIA_API_BASE||W.ELECTROIA_RUNTIME?.ai?.baseUrl||'';
+    if(base)return String(base).replace(/\/$/,'')+'/health';
+    return '/api/health';
+  }
+  async function health(timeout=7000){
+    if(location.protocol!=='http:'&&location.protocol!=='https:')return {ok:false,local:true};
+    const c=new AbortController(),tm=setTimeout(()=>c.abort(),timeout);
+    try{
+      const r=await fetch(healthEndpoint(),{method:'GET',cache:'no-store',credentials:'same-origin',signal:c.signal});
+      let j={};try{j=await r.json()}catch(_){ }
+      return {ok:r.ok&&j.ok!==false&&j.ai!==false,status:r.status,ai:j.ai,model:j.model};
+    }catch(e){return {ok:false,error:e?.name==='AbortError'?'timeout':'network'}}
+    finally{clearTimeout(tm)}
+  }
+  function statusNode(ok,text){
+    const c=document.getElementById('chat');if(!c)return;
+    const old=c.querySelector('.eia-ai-connection-note');if(old)old.remove();
+    if(!text)return;
+    const d=document.createElement('div');d.className='chat-msg ai';
+    d.innerHTML='<div class="chat-msg-bubble"><div class="eia-ai-connection-note '+(ok?'ok':'bad')+'">'+text+'</div></div>';
+    c.appendChild(d);c.scrollTop=c.scrollHeight;
+  }
+  function addUser(text,display){
+    if(typeof W.add==='function')W.add(display??text,true);
+  }
+  function typing(){
+    const c=document.getElementById('chat');if(!c)return null;
+    const d=document.createElement('div');d.className='chat-msg ai eia-general-ai-pending';
+    d.innerHTML='<div class="chat-msg-bubble"><div class="chat-typing-v3" aria-label="Pensando"><i></i><i></i><i></i></div></div>';
+    c.appendChild(d);c.scrollTop=c.scrollHeight;return d;
+  }
+  function history(){
+    return [...document.querySelectorAll('#chat .chat-msg')].slice(-14).map(m=>({role:m.classList.contains('user')?'user':'assistant',content:m.querySelector('.chat-msg-bubble')?.innerText||''}))
+      .filter(x=>x.content&&!/Contexto estructurado de ElectroIA|context_bundle|ai_contract|local_first|request_source|Pensando|No pude obtener la respuesta/i.test(x.content));
+  }
+  function replacePending(p,html){
+    const b=p?.querySelector('.chat-msg-bubble');if(b)b.innerHTML=html;
+    p?.classList.remove('eia-general-ai-pending');
+    const c=document.getElementById('chat');if(c)c.scrollTop=c.scrollHeight;
+  }
+  async function sendGeneric(text,mode){
+    const q=String(text||'').trim();if(!q)return;
+    const p=typing();
+    const h=await health();
+    if(!h.ok){
+      const local=location.protocol==='file:'||location.protocol==='content:'||location.protocol==='about:';
+      replacePending(p,local
+        ?'<b>🌐 ElectroIA está abierta como archivo local.</b><br>La IA necesita la versión online para responder.'
+        :'<b>⚠️ El servidor de IA no está respondiendo.</b><br>No voy a dejarte esperando indefinidamente. La pregunta quedó guardada en la conversación.');
+      if(!local){
+        const c=document.getElementById('chat');
+        const d=document.createElement('div');d.className='chat-msg ai';
+        d.innerHTML='<div class="chat-msg-bubble"><button class="eia-ai-retry-btn" type="button">🔄 Comprobar y reintentar</button></div>';
+        d.querySelector('button').onclick=()=>sendGeneric(q,mode);c?.appendChild(d);if(c)c.scrollTop=c.scrollHeight;
+      }
+      return;
+    }
+    const payload={
+      message:q,mode:String(mode||'hogar'),history:history(),
+      ai_contract:'electroia-home-chat-v17.0.18',local_first:true,request_source:'home_general_chat',
+      context_bundle:JSON.stringify({area:'hogar',mode:String(mode||'hogar'),source:'consulta_general',principiante:true}),
+      user_experience:{plain_language:true,answer_first:true,no_internal_metadata:true,no_code_or_json:true,no_unrequested_images:true,avoid_repetition:true,concise:true,max_user_facing_sections:3,write_like_a_calm_human_helper:true}
+    };
+    const c=new AbortController(),tm=setTimeout(()=>c.abort(),25000);
+    try{
+      const r=await fetch(endpoint(),{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},credentials:'same-origin',cache:'no-store',body:JSON.stringify(payload),signal:c.signal});
+      const raw=await r.text();let j={};try{j=JSON.parse(raw)}catch(_){j={error:raw}};
+      if(!r.ok)throw new Error(j.error||('HTTP '+r.status));
+      let ans=typeof W.eiaPublicAnswer==='function'?W.eiaPublicAnswer(j.answer||j.message||j.output||''):String(j.answer||j.message||j.output||'');
+      if(!ans)throw new Error('EMPTY_RESPONSE');
+      replacePending(p,render(ans));
+      if(typeof W.setLastAnswer==='function')W.setLastAnswer(ans);
+    }catch(e){
+      const msg=e?.name==='AbortError'?'La IA tardó demasiado en responder.':'No pude obtener una respuesta del servidor.';
+      replacePending(p,'<b>⚠️ '+escT(msg)+'</b><br>Tu pregunta no se perdió. Podés reintentar ahora.');
+      if(!c){ }
+      const node=document.createElement('div');node.className='chat-msg ai';node.innerHTML='<div class="chat-msg-bubble"><button class="eia-ai-retry-btn" type="button">🔄 Reintentar</button></div>';
+      node.querySelector('button').onclick=()=>sendGeneric(q,mode);document.getElementById('chat')?.appendChild(node);
+    }finally{clearTimeout(tm);const c2=document.getElementById('chat');if(c2)c2.scrollTop=c2.scrollHeight;}
+  }
+
+  // Reemplazamos únicamente el transporte del chat general. Diagnóstico/urgencia siguen con sus controladores.
+  const previousSend=W.sendText;
+  W.sendText=async function(t,displayText=null){
+    const text=String(t||'').trim();if(!text)return;
+    const mode=String(typeof currentMode!=='undefined'?currentMode:(W.currentMode||'hogar'));
+    if(genericMode(mode)){
+      const visible=displayText===null?text:displayText;
+      addUser(text,visible);
+      document.querySelectorAll('#chat .eia-final-visual,#chat .eia-ai-visual-card,#chat .eia-master-visual,.eia-chat-context-divider').forEach(x=>x.remove());
+      return sendGeneric(text,mode);
+    }
+    return previousSend?.call(this,t,displayText);
+  };
+
+  // El indicador de "IA disponible" solo se muestra cuando el backend realmente responde al health-check.
+  W.eiaRefreshAIStatus=async function(){
+    const h=await health();
+    document.querySelectorAll('.eia2-online,.eia-super-state').forEach(el=>{el.textContent=h.ok?'● IA disponible':(h.local?'● Modo local':'● IA sin conexión');el.style.color=h.ok?'#20a15b':'#c64a55'});
+    return h;
+  };
+  setTimeout(()=>W.eiaRefreshAIStatus?.(),250);
+})();
+</script>
