@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 
 const app = express();
+app.use((req,res,next)=>{const id=crypto.randomUUID();res.setHeader('X-Request-Id',id);req.requestId=id;next();});
 const PORT = Number(process.env.PORT || 3000);
 const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === 'production' ? null : 'electroia-dev-secret-change-me');
 const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gpt-5.6-luna';
@@ -33,7 +34,7 @@ const client = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPE
 const pool = DATABASE_URL ? new Pool({ connectionString: DATABASE_URL, max: 5, idleTimeoutMillis: 30000 }) : null;
 
 app.set('trust proxy', 1);
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(express.static(__dirname));
 
@@ -47,7 +48,17 @@ No reemplazás a un electricista habilitado ni un proyecto profesional.
 Ante humo, fuego, chispas, olor fuerte a quemado, conductores expuestos o riesgo de electrocución, priorizá detener la manipulación, mantener distancia y pedir asistencia; solo cortar la alimentación si puede hacerse de forma segura.
 Cuando el usuario no sabe qué preguntar, hacé preguntas concretas de a una para diagnosticar.
 No repitas preguntas que ya estén respondidas en el contexto recibido.
-Separá hechos observados, hipótesis, comprobaciones y datos faltantes cuando sea útil.`;
+Separá hechos observados, hipótesis, comprobaciones y datos faltantes cuando sea útil.
+Base técnica prioritaria para España: REBT/ITC-BT y sus guías técnicas oficiales; para autoconsumo fotovoltaico, priorizá guías IDAE y tramitación oficial. No cites artículos o límites numéricos si no están confirmados.
+Áreas domésticas a contemplar: cortes generales y de zona, disparos de diferencial/automáticos, sobrecarga, fugas, enchufes/regletas, iluminación, humedad/agua, calentamiento/olor/chispas, problemas de suministro/contador, consumo/potencia y preparación de información para un técnico. En fotovoltaica/profesional: strings, tensión/corriente, caída de tensión, protecciones DC/AC, baterías, MPPT, inversor, autoconsumo y documentación/tramitación. Esta lista orienta la cobertura; no sustituye la fuente oficial vigente.
+
+Prioridad documental cuando el caso sea de España:
+1) BOE / REBT (Real Decreto 842/2002) para el marco reglamentario; comprobá siempre la redacción vigente antes de afirmar una obligación.
+2) Guías Técnicas de aplicación del Ministerio de Industria para BT-18, BT-22, BT-23, BT-24, BT-25, BT-33, BT-40, BT-52 y anexos de caída de tensión, según corresponda al caso.
+3) IDAE para autoconsumo, autoconsumo colectivo, comunidades y tramitación; diferenciá orientación divulgativa de requisitos administrativos concretos.
+No presentes una guía, FAQ o ejemplo comercial como si fuera una obligación legal. Cuando falte un dato crítico, pedilo o indicá que debe verificarse en la documentación oficial vigente.
+
+Fuentes oficiales de referencia: BOE REBT (https://www.boe.es/eli/es/rd/2002/08/02/842/con), Guías Técnicas REBT (https://industria.gob.es/Calidad-Industrial/seguridadindustrial/instalacionesindustriales/baja-tension/Paginas/guia-tecnica-aplicacion.aspx), IDAE Autoconsumo (https://www.idae.es/tecnologias/energias-renovables/oficina-de-autoconsumo/guias-tecnicas-sobre-autoconsumo).`;
 
 function safeJson(value, max = 12000) {
   try {
@@ -106,6 +117,22 @@ function cleanTemp(file) {
   if (file?.path) fs.unlink(file.path, () => {});
 }
 
+function aiFailure(res, label, error) {
+  const status = Number(error?.status || 0);
+  const code = status === 429 ? 503 : 502;
+  console.error(label, { request_id: res.req?.requestId, openai_request_id: error?.request_id, name: error?.name, message: error?.message, code: error?.code, status });
+  res.setHeader('Cache-Control', 'no-store');
+  return res.status(code).json({ error: 'Error conectando con la IA.', retryable: true, request_id: error?.request_id || null });
+}
+
+function bodyImageData(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return null;
+  if (!/^data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\r\n]+$/.test(raw)) return null;
+  return raw;
+}
+
+
 app.get('/api/health', async (req, res) => {
   let database = 'not_configured';
   if (pool) {
@@ -113,7 +140,7 @@ app.get('/api/health', async (req, res) => {
     catch (_) { database = 'error'; }
   }
   res.setHeader('Cache-Control','no-store');
-  res.json({ ok: true, version: 'v17.0.25', ai: !!client, model: OPENAI_MODEL, database, node: process.version });
+  res.json({ ok: true, version: 'v17.0.28', ai: !!client, model: OPENAI_MODEL, database, node: process.version });
 });
 
 app.post('/api/chat', async (req, res) => {
@@ -126,17 +153,17 @@ app.post('/api/chat', async (req, res) => {
       safety_level = 'normal', escalated_from_local = false
     } = req.body || {};
     if (!String(message).trim()) return res.status(400).json({ error: 'MESSAGE_REQUIRED' });
-    const context = safeJson(context_bundle);
-    const recentHistory = Array.isArray(history) ? history.slice(-12) : [];
+    const context = safeJson(Object.keys(context_bundle || {}).length ? context_bundle : diagnostic_context);
+    const recentHistory = Array.isArray(history) ? history.slice(-12).map(x => ({ role: x.role === 'assistant' ? 'assistant' : 'user', content: String(x.content || x.message || '').slice(0, 1800) })) : [];
     const input = [
-      ...recentHistory.map(x => ({ role: x.role === 'assistant' ? 'assistant' : 'user', content: String(x.content || x.message || '') })),
+      ...recentHistory,
       { role: 'user', content: `Modo: ${mode}. Origen: ${request_source}. Urgencia: ${urgency}. Seguridad: ${safety_level}. Escalado desde lógica local: ${escalated_from_local}. Local-first: ${local_first}. Contrato: ${ai_contract}.\nContexto ya recopilado (no repitas preguntas ya respondidas): ${context}\n\nMensaje actual: ${message}` }
     ];
     const response = await client.responses.create({ model: OPENAI_MODEL, instructions: SYSTEM, input });
     res.setHeader('Cache-Control','no-store');
     res.json({ answer: response.output_text, model: OPENAI_MODEL, source: 'ai' });
   } catch (e) {
-    console.error('CHAT_ERROR', { name:e?.name, message:e?.message, code:e?.code, status:e?.status, request_id:e?.request_id });
+    console.error('CHAT_ERROR', { request_id:req.requestId, openai_request_id:e?.request_id, name:e?.name, message:e?.message, code:e?.code, status:e?.status });
     res.setHeader('Cache-Control','no-store');
     res.status(e?.status === 429 ? 503 : 502).json({ error: 'Error conectando con la IA.', retryable: true, request_id: e?.request_id || null });
   }
@@ -151,10 +178,14 @@ app.post('/api/vision', upload.single('image'), async (req, res) => {
     let imageUrl = null;
     let mime = 'image/jpeg';
     if (req.file) {
+      if (!String(req.file.mimetype || '').startsWith('image/')) return res.status(415).json({ error: 'IMAGE_TYPE_NOT_SUPPORTED' });
       mime = req.file.mimetype || mime;
       imageUrl = `data:${mime};base64,${fs.readFileSync(req.file.path).toString('base64')}`;
+    } else if (bodyImageData(req.body?.image)) {
+      // The frontend frequently sends a compressed data URL as JSON. Accept it as a first-class input.
+      imageUrl = bodyImageData(req.body.image);
     } else if (req.body?.image_url) {
-      imageUrl = req.body.image_url;
+      imageUrl = String(req.body.image_url).trim();
     }
     if (!imageUrl) return res.status(400).json({ error: 'IMAGE_REQUIRED' });
     const response = await client.responses.create({
@@ -167,8 +198,7 @@ app.post('/api/vision', upload.single('image'), async (req, res) => {
     });
     res.json({ answer: response.output_text, model: OPENAI_VISION_MODEL, source: 'vision' });
   } catch (e) {
-    console.error('VISION_ERROR', e);
-    res.status(500).json({ error: 'No se pudo analizar la imagen.' });
+    aiFailure(res, 'VISION_ERROR', e);
   } finally { cleanTemp(temp); }
 });
 
@@ -184,8 +214,7 @@ app.post('/api/transcribe', upload.single('audio'), async (req, res) => {
     });
     res.json({ text: tr.text, model: OPENAI_TRANSCRIBE_MODEL, source: 'transcription' });
   } catch (e) {
-    console.error('TRANSCRIBE_ERROR', e);
-    res.status(500).json({ error: 'No se pudo transcribir el audio.' });
+    aiFailure(res, 'TRANSCRIBE_ERROR', e);
   } finally { cleanTemp(temp); }
 });
 
@@ -194,7 +223,7 @@ app.post('/api/tts', async (req, res) => {
   try {
     const text = String(req.body?.text || '').trim();
     if (!text) return res.status(400).json({ error: 'TEXT_REQUIRED' });
-    if (text.length > 5000) return res.status(413).json({ error: 'TEXT_TOO_LONG' });
+    if (text.length > 4096) return res.status(413).json({ error: 'TEXT_TOO_LONG' });
     const speech = await client.audio.speech.create({
       model: OPENAI_TTS_MODEL,
       voice: req.body?.voice || TTS_VOICE,
@@ -206,8 +235,7 @@ app.post('/api/tts', async (req, res) => {
     const buffer = Buffer.from(await speech.arrayBuffer());
     res.send(buffer);
   } catch (e) {
-    console.error('TTS_ERROR', e);
-    res.status(500).json({ error: 'No se pudo generar la voz.' });
+    aiFailure(res, 'TTS_ERROR', e);
   }
 });
 
@@ -296,7 +324,7 @@ app.use((err, req, res, next) => {
 (async()=>{
   try {
     await initDB();
-    app.listen(PORT, '0.0.0.0', () => console.log(`ElectroIA V15 escuchando en ${PORT}`));
+    app.listen(PORT, '0.0.0.0', () => console.log(`ElectroIA V17.0.28 escuchando en ${PORT}`));
   } catch (e) {
     console.error('STARTUP_ERROR', e);
     process.exit(1);
