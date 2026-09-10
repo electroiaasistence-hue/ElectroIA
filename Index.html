@@ -5716,4 +5716,183 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
 .eia15-subtitle{color:#c8d2de}
 .eia15-path .eia15-pill{background:#172332;color:#d9e5f2;border:1px solid #2d3b4b}
 </style>
+
+<script id="electroia-v17-0-17-home-ux">
+/* V17.0.17 — Modo Hogar final: casa primero, lenguaje humano, evidencia opcional.
+   Principios:
+   - Hogar nunca muestra vocabulario técnico como punto de entrada.
+   - La persona puede pensar por zona, por necesidad, por foto o con sus propias palabras.
+   - Una foto es opcional y solo se usa cuando el usuario decide mostrar algo.
+   - PRO concentra fotovoltaica, EV, cálculos y herramientas técnicas.
+   - No se toca la lógica de urgencia/diagnóstico existente.
+*/
+(function(){
+  'use strict';
+  const W=window;
+  const escH=W.esc||((s)=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])));
+  const safe=(fn)=>{try{if(typeof fn==='function')return fn()}catch(e){console.warn('EIA Home V17.0.17',e)}return null};
+  const forbidden=/(\bmppt\b|\bstring(s)?\b|\bvoc\b|\bvmp\b|\bisc\b|\bimp\b|\bbms\b|\bdo\s*\/\s*d|\bsoc\b|\bfotovoltaica\b|\bcargador(es)?\s+de\s+coche|\bveh[ií]culo\s+el[eé]ctrico\b|\bca[ií]da\s+de\s+tensi[oó]n\b|\bsecci[oó]n\s+de\s+conductor\b|\bampacidad\b)/i;
+  const zones={
+    entrada:{label:'Entrada / pasillo',icon:'🚪',color:'coral',items:[
+      ['💡','La luz no funciona','Una luz o lámpara de esta zona dejó de funcionar.','problem','light'],
+      ['🔘','Algo del interruptor','No sé qué estoy viendo o qué debería pasar.','understand','puntos'],
+      ['👃','Hay olor, calor o algo raro','Antes de tocar nada, comprobamos si hay riesgo.','danger',''],
+      ['📷','Quiero mostrar lo que veo','Podés enseñar el elemento; la foto es opcional.','photo','entrada']
+    ]},
+    salon:{label:'Salón / comedor',icon:'🛋️',color:'yellow',items:[
+      ['💡','Una luz no funciona','Una lámpara o luz del salón dejó de funcionar.','problem','light'],
+      ['🔌','Un enchufe no funciona','Algo conectado aquí dejó de funcionar.','problem','outlet'],
+      ['📺','Un aparato no funciona','La tele, ventilador u otro aparato no responde.','problem','outlet'],
+      ['🔎','Quiero entender algo','Te lo explicamos sin palabras técnicas.','understand','instalacion'],
+      ['📷','Quiero mostrar lo que veo','Una foto puede ayudarnos a identificarlo.','photo','salon']
+    ]},
+    cocina:{label:'Cocina',icon:'🍳',color:'green',items:[
+      ['⚠️','Algo no funciona','Horno, vitro, nevera, luz o enchufe.','problem','outlet'],
+      ['🔌','Un enchufe o aparato da problemas','Te ayudamos a distinguir si falla el punto o el aparato.','problem','outlet'],
+      ['💡','Una luz no funciona','Una luz de la cocina dejó de funcionar.','problem','light'],
+      ['❓','Quiero entender algo','¿Qué es eso y para qué sirve? Te lo explicamos.','understand','puntos'],
+      ['📷','Quiero mostrarlo','Mostranos lo que estás viendo, sin desmontar nada.','photo','cocina']
+    ]},
+    bano:{label:'Baño / lavadero',icon:'🚿',color:'blue',items:[
+      ['💡','No funciona la luz','La iluminación dejó de funcionar.','problem','light'],
+      ['🔌','Un enchufe o aparato no funciona','Algo conectado aquí dejó de funcionar.','problem','outlet'],
+      ['💧','Hay humedad cerca de algo eléctrico','No toques nada; primero vemos si hay riesgo.','danger',''],
+      ['🔎','Quiero entender algo','Te lo explicamos desde cero.','understand','instalacion'],
+      ['📷','Quiero mostrarlo','Una foto puede ayudar si es seguro hacerla sin acercarte al peligro.','photo','bano']
+    ]},
+    dormitorio:{label:'Dormitorio',icon:'🛏️',color:'purple',items:[
+      ['💡','Una luz no funciona','Una lámpara o luz dejó de funcionar.','problem','light'],
+      ['🔌','Un enchufe no funciona','Algo conectado aquí dejó de funcionar.','problem','outlet'],
+      ['🔋','Un cargador o aparato no funciona','Podemos comprobar si falla el aparato o el enchufe.','problem','outlet'],
+      ['🔎','Quiero entender algo','Te lo explicamos sin tecnicismos.','understand','puntos'],
+      ['📷','Quiero mostrarlo','Mostranos el elemento si no hay peligro.','photo','dormitorio']
+    ]},
+    exterior:{label:'Exterior / garaje',icon:'🌳',color:'teal',items:[
+      ['💡','Una luz exterior no funciona','Una luz o lámpara dejó de funcionar.','problem','light'],
+      ['🔌','Un enchufe o aparato no funciona','Algo conectado en el exterior dejó de funcionar.','problem','outlet'],
+      ['🌧️','Hay agua o humedad donde no debería','Primero priorizamos la seguridad.','danger',''],
+      ['🔎','Quiero entender algo','Te ayudamos a identificarlo sin desmontar.','understand','instalacion'],
+      ['📷','Quiero mostrar lo que veo','Una foto solo si podés hacerla con seguridad.','photo','exterior']
+    ]},
+    toda:{label:'Toda la casa',icon:'🏠',color:'slate',items:[
+      ['⚡','No hay luz en toda la casa','Te guiamos para distinguir un corte general de un problema de tu vivienda.','problem','whole'],
+      ['🏠','No hay luz en una parte','Podemos acotar dónde está el problema.','problem','zone'],
+      ['💡','Las luces parpadean o cambian','Te hacemos las preguntas necesarias sin tecnicismos.','problem','flicker'],
+      ['💶','Quiero gastar menos','Revisamos factura, consumo y hábitos.','save','general'],
+      ['📷','Quiero mostrar lo que veo','Una foto puede ser el mejor punto de partida.','photo','toda']
+    ]}
+  };
+  const needs={
+    problem:{title:'⚠️ Tengo un problema',desc:'Algo dejó de funcionar, se comporta raro o querés saber si es normal.',items:[
+      ['💡','Una luz no funciona','Una lámpara o parte de la iluminación dejó de funcionar.','problem','light'],
+      ['🔌','Un enchufe o aparato no funciona','Te ayudamos a separar “falla el enchufe” de “falla el aparato”.','problem','outlet'],
+      ['🏠','No hay luz en una parte de la casa','Vamos acotando el problema paso a paso.','problem','zone'],
+      ['💡','Las luces parpadean','Primero miramos cuándo ocurre y a cuántas luces afecta.','problem','flicker'],
+      ['⚡','Se corta cuando uso algo','Te ayudamos a describir qué ocurre sin pedirte términos eléctricos.','problem','protection'],
+      ['🚨','Hay algo que puede ser peligroso','Humo, fuego, chispas, olor fuerte, calor, agua o descarga.','danger','']
+    ]},
+    understand:{title:'🔎 Quiero entender algo',desc:'No necesitás saber cómo se llama. Decinos qué ves o dónde está.',items:[
+      ['🛡️','Quiero entender mi cuadro','Qué podés mirar de forma segura, sin abrirlo.','understand','cuadro'],
+      ['🔌','Quiero entender un enchufe o interruptor','Qué es, para qué sirve y qué señales llaman la atención.','understand','puntos'],
+      ['📟','Quiero entender el contador','Qué podés observar sin manipularlo.','understand','contador'],
+      ['🏠','Quiero entender algo de la instalación','Lo identificamos con palabras sencillas.','understand','instalacion'],
+      ['📷','Quiero mostrar lo que no entiendo','Primero vemos qué conviene mirar.','photo','otra']
+    ]},
+    save:{title:'💶 Quiero gastar menos',desc:'Primero entendemos dónde puede estar el gasto; después decidimos qué cambiar.',items:[
+      ['🧾','No entiendo mi factura','Te la traducimos a lenguaje cotidiano.','save','bill'],
+      ['🔌','Quiero saber qué gasta más','Podemos empezar por los aparatos que más usás.','save','consumo'],
+      ['⚡','No sé qué potencia necesito','Te explicamos qué significa y cuándo conviene revisarla.','save','power'],
+      ['💶','Quiero revisar mi tarifa','Te ayudamos a entender lo que tenés contratado.','save','tarifa'],
+      ['🌱','Quiero una revisión para ahorrar','Ordenamos las oportunidades fáciles antes de meternos en cambios grandes.','save','general']
+    ]},
+    change:{title:'🧰 Quiero hacer o cambiar algo',desc:'Primero vemos qué querés conseguir y si es una tarea sencilla o requiere un profesional.',items:[
+      ['💡','Cambiar una bombilla o lámpara','Empezamos por la opción más sencilla y segura.','task','luz'],
+      ['🔘','Cambiar un enchufe o interruptor','Primero valoramos si es apropiado hacerlo o conviene un profesional.','task','mecanismo'],
+      ['🌀','Instalar un aparato','Decinos qué querés colocar y cómo se conecta.','task','aparato'],
+      ['✨','Mejorar la iluminación','Pensamos la solución antes de comprar materiales.','task','mejora'],
+      ['🏠','Hacer una mejora eléctrica','Te ayudamos a definirla y detectar cuándo requiere un profesional.','task','mejora']
+    ]},
+    buy:{title:'🛒 Voy a comprar algo',desc:'Te ayudamos a elegir sin que tengas que entender las especificaciones técnicas.',items:[
+      ['🧊','Un electrodoméstico','Qué mirar en consumo, tamaño, conexión y uso real.','buy','aparato'],
+      ['💡','Bombillas o iluminación','Tipo de luz, potencia, tamaño y dónde la vas a usar.','buy','luz'],
+      ['🌬️','Un aparato pequeño','Qué datos mirar para no comprar a ciegas.','buy','pequeno'],
+      ['🧾','Me dieron un presupuesto','Te ayudamos a entender qué incluye y qué conviene preguntar.','buy','presupuesto'],
+      ['📷','Quiero enseñarte lo que voy a comprar','Una foto de la etiqueta o producto puede ahorrar muchas preguntas.','photo','compra']
+    ]},
+    show:{title:'📷 Quiero mostrar lo que veo',desc:'La foto no es obligatoria. La usamos solo si realmente puede aportar algo.',items:[
+      ['🛡️','Algo del cuadro','Sin abrirlo ni tocar conexiones.','photo','cuadro'],
+      ['🔌','Un enchufe o interruptor','Una foto del exterior suele ser suficiente para empezar.','photo','enchufe'],
+      ['🌀','Un aparato o etiqueta','Podemos leer marca, modelo y datos visibles.','photo','aparato'],
+      ['🧾','Una factura o presupuesto','Podemos ayudarte a entender lo que pone.','photo','documento'],
+      ['🏠','Cualquier otra cosa','Mostranos lo que quieras comprender.','photo','otra']
+    ]}
+  };
+  const homeFree=`<button type="button" class="eia17-free" onclick="eia17OpenFree()"><span class="eia17-free-ico">💬</span><span><b>No sé bien cómo explicarlo</b><small>Escribilo como se lo contarías a alguien en casa.</small></span><span class="eia17-arrow">›</span></button>`;
+  const homePhoto=`<button type="button" class="eia17-photo-cta" onclick="eia17OpenPhoto('algo de mi casa')"><span>📷</span><span><b>Mostrame lo que estás viendo</b><small>Hacemos la foto solo si es seguro y si puede ayudarnos.</small></span><strong>›</strong></button>`;
+
+  const style=`<style id="eia17-home-style">
+  .eia17-home{padding-bottom:125px}
+  .eia17-hero{position:relative;overflow:hidden;border-radius:26px;padding:22px 18px 18px;margin-bottom:13px;background:linear-gradient(135deg,#0b75df 0%,#1550b9 100%);box-shadow:0 14px 32px rgba(15,76,153,.24);color:#fff}
+  .eia17-hero:after{content:'⚡';position:absolute;right:-12px;top:-25px;font-size:120px;opacity:.10;transform:rotate(14deg)}
+  .eia17-kicker{font-size:11px;font-weight:900;letter-spacing:.12em;opacity:.86}.eia17-hero h1{font-size:29px;line-height:1.05;margin:6px 0 8px;color:#fff;max-width:330px}.eia17-hero p{font-size:15px;line-height:1.45;margin:0;color:#f5f9ff;max-width:560px}
+  .eia17-quickbar{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}.eia17-quick{border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.12);border-radius:15px;color:#fff;padding:10px 11px;text-align:left;font:inherit;display:flex;gap:8px;align-items:center;cursor:pointer}.eia17-quick b{font-size:13px}.eia17-quick small{display:block;font-size:11px;opacity:.82;margin-top:2px}.eia17-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:5px;background:#eaf0f7;border-radius:15px;margin-bottom:15px}.eia17-tab{border:0;background:transparent;border-radius:11px;padding:10px 8px;font:800 14px inherit;color:#5d6b7b;cursor:pointer}.eia17-tab.active{background:#fff;color:#0b67d7;box-shadow:0 3px 12px rgba(0,0,0,.08)}
+  .eia17-title{font-size:20px;font-weight:900;margin:2px 2px 7px;color:#162433}.eia17-subtitle{font-size:13px;line-height:1.45;color:#667587;margin:0 2px 12px}.eia17-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.eia17-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;text-align:left;min-height:130px;padding:14px;border:1px solid #d9e2eb;border-radius:20px;box-shadow:0 7px 18px rgba(11,34,62,.07);font:inherit;color:#16212d;cursor:pointer;overflow:hidden}.eia17-card:active,.eia17-free:active,.eia17-photo-cta:active{transform:scale(.99)}
+  .eia17-card.coral{background:#fff1ef}.eia17-card.yellow{background:#fff8df}.eia17-card.green{background:#ecfaf1}.eia17-card.blue{background:#eef5ff}.eia17-card.purple{background:#f4efff}.eia17-card.teal{background:#edf9fb}.eia17-card.slate{background:#f4f6f8}.eia17-ico{font-size:28px;line-height:1;margin-bottom:9px}.eia17-card b{font-size:15px;line-height:1.18}.eia17-card small{font-size:12.5px;line-height:1.36;color:#657383;margin-top:6px}.eia17-arrow{position:absolute;right:11px;bottom:9px;font-size:25px;color:#7b8997}.eia17-card.danger{box-shadow:0 7px 18px rgba(160,40,35,.10);border-color:#ffc8c3}.eia17-section-note{margin-top:14px;padding:12px 13px;border:1px solid #dde5ed;border-radius:15px;background:#f8fafc;color:#647181;font-size:12.5px;line-height:1.45}.eia17-free,.eia17-photo-cta{margin-top:11px;width:100%;display:flex;align-items:center;gap:11px;padding:13px 14px;border-radius:18px;border:1px solid #d8e1ea;background:#fff;box-shadow:0 6px 16px rgba(12,31,52,.06);font:inherit;color:#192431;text-align:left;cursor:pointer}.eia17-free-ico,.eia17-photo-cta>span:first-child{font-size:25px}.eia17-free b,.eia17-photo-cta b{font-size:15px}.eia17-free small,.eia17-photo-cta small{display:block;color:#697687;line-height:1.35;margin-top:3px;font-size:12.5px}.eia17-photo-cta{background:linear-gradient(180deg,#f6fbff,#eef7ff);border-color:#cfe1f1}.eia17-photo-cta strong{margin-left:auto;font-size:25px;color:#7790a6}.eia17-path{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 12px}.eia17-pill{padding:6px 9px;border-radius:999px;background:#edf3fa;color:#496178;font-size:12px;font-weight:800}.eia17-back{width:100%;margin-top:13px}.eia17-pro-link{margin-top:14px;text-align:center;font-size:12px;color:#697789}.eia17-pro-link button{border:0;background:none;color:#1769db;font-weight:900;font:inherit;cursor:pointer}.eia17-freebox textarea,.eia17-photo-label textarea{width:100%;box-sizing:border-box;border:1px solid #cfd9e4;border-radius:14px;padding:12px;font:inherit;background:#fff;min-height:110px}.eia17-form-actions{display:grid;gap:9px;margin-top:10px}.eia17-photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.eia17-photo-card{border:1px solid #dae3ec;background:#fff;border-radius:16px;padding:13px;cursor:pointer;text-align:left;font:inherit;color:#192431}.eia17-photo-card b{display:block;margin-top:5px}.eia17-photo-card small{display:block;color:#697787;margin-top:3px;line-height:1.35}.eia17-photo-preview{margin-top:12px}.eia17-photo-preview img{display:block;max-width:100%;max-height:290px;border-radius:14px;margin:0 auto}.eia17-photo-result{margin-top:12px;padding:13px;border-radius:15px;background:#f7fbff;border:1px solid #d8e9f7;line-height:1.48;color:#253342}.eia17-photo-disclaimer{margin-top:10px;padding:11px 12px;border-radius:13px;background:#fff8ed;color:#6e5a3e;font-size:12px;line-height:1.4}.eia17-recent{margin-top:15px}.eia17-recent-item{width:100%;text-align:left;border:1px solid #dbe4ec;background:#fff;border-radius:15px;padding:11px 13px;margin-bottom:8px;display:flex;gap:10px;align-items:center;font:inherit;color:#1b2734;cursor:pointer}.eia17-recent-item small{display:block;color:#6c7a89;margin-top:2px}.eia17-recent-empty{padding:12px 13px;border-radius:15px;background:#f7f9fb;color:#6b7988;font-size:12.5px;line-height:1.4}
+  @media(max-width:390px){.eia17-grid{gap:8px}.eia17-card{padding:12px;min-height:128px}.eia17-hero h1{font-size:26px}.eia17-photo-grid{gap:8px}}
+  </style>`;
+  if(!document.getElementById('eia17-home-style'))document.head.insertAdjacentHTML('beforeend',style);
+
+  function record(label,action){try{const key='electroia_home_recent_v1717';const old=JSON.parse(localStorage.getItem(key)||'[]');const arr=[{label:String(label),action:String(action),at:Date.now()},...old.filter(x=>x.label!==label)].slice(0,4);localStorage.setItem(key,JSON.stringify(arr))}catch(_){} }
+  function recent(){try{return JSON.parse(localStorage.getItem('electroia_home_recent_v1717')||'[]')}catch(_){return []}}
+  function headTitle(){return `<div class="eia17-hero"><div class="eia17-kicker">ELECTROIA · MODO HOGAR</div><h1>🏠 ¿Qué pasa en tu casa?</h1><p>No necesitás saber electricidad. Elegí una zona, contame qué necesitás o mostrame lo que estás viendo.</p><div class="eia17-quickbar"><button class="eia17-quick" type="button" onclick="eia17OpenFree()"><span>💬</span><span><b>Contarlo con mis palabras</b><small>Sin tecnicismos</small></span></button><button class="eia17-quick" type="button" onclick="eia17OpenPhoto('algo de mi casa')"><span>📷</span><span><b>Mostrar lo que veo</b><small>Foto opcional</small></span></button></div></div>`}
+  function shell(title,sub,content){enterView('hogarV17');nav('nHome');app.innerHTML=head(true)+`<main class="wrap page eia17-home">${title===null?headTitle():`<div class="eia17-hero"><div class="eia17-kicker">ELECTROIA · MODO HOGAR</div><h1>${title}</h1><p>${sub}</p></div>`}${content}</main>`;try{scrollPageTop()}catch(_){window.scrollTo(0,0)}}
+  function card(item,onclick,cls=''){return `<button class="eia17-card ${item[4]||cls}" type="button" onclick="${onclick}"><span class="eia17-ico">${item[0]}</span><b>${item[1]}</b><small>${item[2]}</small><span class="eia17-arrow">›</span></button>`}
+  function home(tab='zones'){
+    enterView('hogarV17');nav('nHome');
+    const r=recent();
+    let recentHtml='';
+    if(r.length){recentHtml=`<div class="eia17-recent"><div class="eia17-title">↩️ Podés continuar</div>${r.map(x=>`<button class="eia17-recent-item" type="button" onclick="eia17Resume('${encodeURIComponent(x.action)}','${encodeURIComponent(x.label)}')"><span>🕘</span><span><b>${escH(x.label)}</b><small>Volver a este tipo de ayuda</small></span><span class="eia17-arrow">›</span></button>`).join('')}</div>`}
+    app.innerHTML=head(true)+`<main class="wrap page eia17-home">${headTitle()}<div class="eia17-tabs" role="tablist"><button class="eia17-tab ${tab==='zones'?'active':''}" type="button" onclick="eia17Home('zones')">🏠 Por zonas</button><button class="eia17-tab ${tab==='needs'?'active':''}" type="button" onclick="eia17Home('needs')">✨ Por necesidad</button></div><div id="eia17HomeContent"></div>${homeFree}${homePhoto}${recentHtml}<div class="eia17-section-note">🚨 <b>¿Hay humo, fuego, chispas, olor fuerte a quemado, calor anormal, agua con electricidad o una descarga?</b> Salí de estas opciones y usá la asistencia de urgencia.</div><div class="eia17-pro-link">¿Sos electricista o técnico? <button type="button" onclick="prof()">Entrar al Modo Profesional →</button></div></main>`;
+    const h=document.getElementById('eia17HomeContent');if(!h)return;
+    if(tab==='needs'){
+      h.innerHTML=`<div class="eia17-title">✨ ¿Qué querés hacer?</div><div class="eia17-subtitle">Elegí lo que más se parezca a lo que te pasa. No necesitás saber ningún término técnico.</div><div class="eia17-grid">${Object.entries(needs).map(([k,v])=>`<button class="eia17-card ${k==='problem'?'coral':k==='understand'?'yellow':k==='save'?'green':k==='change'?'blue':k==='buy'?'purple':'teal'}" type="button" onclick="eia17OpenNeed('${k}')"><span class="eia17-ico">${v.title.slice(0,2)}</span><b>${escH(v.title.slice(3))}</b><small>${escH(v.desc)}</small><span class="eia17-arrow">›</span></button>`).join('')}</div>`;
+    }else{
+      h.innerHTML=`<div class="eia17-title">🏠 ¿Dónde está lo que necesitás?</div><div class="eia17-subtitle">Pensá en la parte de la casa donde ocurre. Si no sabés dónde, usá “Toda la casa”.</div><div class="eia17-grid">${Object.entries(zones).map(([k,z],i)=>card([z.icon,z.label,k==='toda'?'Cuando afecta a varias zonas o querés revisar algo general.':`Problemas, dudas o cambios en ${z.label.toLowerCase()}.`,z.color],`eia17OpenZone('${k}')`,z.color)).join('')}</div>`;
+    }
+    try{scrollPageTop()}catch(_){window.scrollTo(0,0)}
+  }
+  function openZone(z){const q=zones[z];if(!q)return;record(q.label,'zone:'+z);shell(`${q.icon} ${q.label}`,'Elegí lo que más se parece a lo que necesitás. No hace falta saber electricidad.',`<div class="eia17-path"><span class="eia17-pill">🏠 Hogar</span><span class="eia17-pill">${escH(q.label)}</span></div><div class="eia17-grid">${q.items.map((it,i)=>card(it,`eia17RunZone('${z}',${i})`,q.color)).join('')}</div><button class="btn alt eia17-back" type="button" onclick="eia17Home('zones')">← Volver a zonas</button>`)}
+  function runZone(z,i){const it=zones[z]?.items?.[Number(i)];if(!it)return;run(it[3],it[4],zones[z].label+' · '+it[1])}
+  function openNeed(k){const q=needs[k];if(!q)return;record(q.title,k);shell(q.title,q.desc,`<div class="eia17-path"><span class="eia17-pill">🏠 Hogar</span><span class="eia17-pill">${escH(q.title.replace(/^\S+\s/,''))}</span></div><div class="eia17-grid">${q.items.map((it,i)=>card(it,`eia17RunNeed('${k}',${i})`)).join('')}</div><button class="btn alt eia17-back" type="button" onclick="eia17Home('needs')">← Volver</button>`) }
+  function runNeed(k,i){const it=needs[k]?.items?.[Number(i)];if(!it)return;run(it[3],it[4],needs[k].title+' · '+it[1])}
+  function run(kind,value,label){record(label,kind+':'+value);if(kind==='danger')return safe(()=>typeof safety==='function'?safety():chat('urgencias_hogar','Hay una situación que podría ser peligrosa. Necesito orientación de seguridad.'));
+    if(kind==='problem'){const map={light:['outlet','Tengo una luz o lámpara que no funciona'],outlet:['outlet','Tengo un enchufe o aparato que no funciona'],zone:['zone','No tengo luz en una parte de la casa'],whole:['wholeHouse','No tengo luz en toda la casa'],flicker:['flicker','Las luces parpadean o bajan de intensidad'],protection:['protection','La electricidad se corta cuando uso algo']};const x=map[value]||map.outlet;return safe(()=>typeof diagnostico==='function'?diagnostico(x[0],x[1]):chat('hogar',x[1]));}
+    if(kind==='understand'){const p={cuadro:'Quiero entender mi cuadro eléctrico. Soy principiante. Explicame qué puedo observar sin abrirlo ni desmontarlo y qué cosas deberían preocuparme.',puntos:'Quiero entender un enchufe o interruptor. Soy principiante. Explicame para qué sirve y qué señales visibles merecen atención, sin pedirme desmontar nada.',contador:'Quiero entender el contador eléctrico. Explicame qué puedo observar sin manipularlo.',instalacion:'Quiero entender algo visible de la instalación de mi casa. Soy principiante. Ayudame a identificarlo con palabras sencillas y no me hagas desmontar nada.'};return safe(()=>chat('hogar',p[value]||p.instalacion));}
+    if(kind==='save'){const m={bill:()=>W.eia09Bill?.(),consumo:()=>W.consumo?.(),power:()=>W.eia09Power?.(),tarifa:()=>W.eia09Contracts?.(),general:()=>W.eia09Efficiency?.()};return safe(m[value]||m.general)}
+    if(kind==='task'){const p={luz:'Quiero cambiar una bombilla o lámpara. Soy principiante. Antes de darme pasos, comprobá las condiciones básicas de seguridad y explicame si es una tarea sencilla.',mecanismo:'Quiero cambiar un enchufe o interruptor. Soy principiante. Primero decime qué información necesitás para valorar si es adecuado hacerlo o si conviene un profesional. No quiero desmontar nada todavía.',aparato:'Quiero instalar un aparato eléctrico. Soy principiante. Preguntame qué aparato es y cómo se conecta antes de decirme qué hacer. Si requiere una instalación fija, explicame que corresponde a un profesional.',mejora:'Quiero hacer una mejora eléctrica en mi casa. Soy principiante. Ayudame a definirla, pedir los datos correctos y separar lo sencillo de lo que necesita un profesional.'};return safe(()=>chat('hogar',p[value]||p.mejora));}
+    if(kind==='buy'){const p={aparato:'Quiero comprar un electrodoméstico para casa. Soy principiante. Ayudame a comparar lo que importa: uso, tamaño, consumo, conexión y mantenimiento. No me marees con especificaciones innecesarias.',luz:'Quiero comprar bombillas o iluminación para casa. Soy principiante. Ayudame a mirar solo los datos que realmente importan.',pequeno:'Quiero comprar un aparato eléctrico pequeño. Ayudame a elegirlo según uso, consumo, potencia y compatibilidad, explicándolo de forma sencilla.',presupuesto:'Quiero revisar un presupuesto relacionado con mi casa. Soy principiante. Explicame qué incluye, qué datos faltan y qué debería preguntar antes de aceptar.'};return safe(()=>chat('hogar',p[value]||p.aparato));}
+    if(kind==='photo')return photo(label);
+    safe(()=>chat('hogar','Tengo una duda sobre mi casa y no sé cómo explicarla. Guiame desde cero con una sola pregunta sencilla.'));
+  }
+  function free(){shell('💬 Contamelo con tus palabras','No hace falta saber cómo se llama nada. Escribilo como se lo contarías a alguien en casa.',`<div class="panel eia17-freebox"><label style="font-weight:900">¿Qué pasa o qué querés conseguir?</label><textarea id="eia17FreeText" placeholder="Ej.: en la cocina la luz funciona, pero el enchufe donde conecto la cafetera no."></textarea><div class="eia17-form-actions"><button class="btn" type="button" onclick="eia17FreeGo()">➡️ Ayudame a entenderlo</button><button class="btn alt" type="button" onclick="eia17Home('zones')">← Volver</button></div></div><div class="eia17-section-note">ElectroIA primero intenta entender tu situación. No tenés que usar palabras como voltios, diferencial, potencia o corriente.</div>`)}
+  function freeGo(){const t=document.getElementById('eia17FreeText')?.value.trim();if(!t)return alert('Contame aunque sea brevemente qué pasa.');record('Consulta con mis palabras','free');safe(()=>chat('hogar',`Esto es lo que me pasa en casa: ${t}. Soy principiante y no conozco términos eléctricos. Primero ayudame a entender y clasificar la situación. Haceme solo la siguiente pregunta necesaria y no me hagas manipular nada hasta comprobar que es seguro.`))}
+  function photo(kind='algo de mi casa'){shell('📷 Mostrame lo que estás viendo','La foto es opcional. Hacela solo desde una posición segura y nunca abras ni desmontes un equipo para fotografiarlo.',`<div class="panel"><div class="eia17-title" style="margin-top:0">¿Qué querés mostrar?</div><div class="eia17-photo-grid"><button class="eia17-photo-card" type="button" onclick="eia17PickPhoto('elemento')">🔎<b>Algo que no reconozco</b><small>Un enchufe, interruptor, cuadro o componente visible.</small></button><button class="eia17-photo-card" type="button" onclick="eia17PickPhoto('etiqueta')">🏷️<b>Una etiqueta</b><small>Marca, modelo, potencia u otros datos visibles.</small></button><button class="eia17-photo-card" type="button" onclick="eia17PickPhoto('aparato')">🌀<b>Un aparato</b><small>Querés saber qué es o cómo encaja con tu casa.</small></button><button class="eia17-photo-card" type="button" onclick="eia17PickPhoto('documento')">🧾<b>Una factura o presupuesto</b><small>Querés entender lo que aparece escrito.</small></button></div><input id="eia17PhotoInput" type="file" accept="image/*" capture="environment" class="hidden" onchange="eia17PhotoSelected(event)"><div id="eia17PhotoPreview" class="eia17-photo-preview"></div><div id="eia17PhotoResult"></div><div class="eia17-photo-disclaimer">⚠️ La foto sirve para orientar, no para certificar seguridad. Si hay humo, fuego, chispas, calor anormal, agua con electricidad o una descarga, no te acerques a hacer una foto: usá la asistencia de urgencia.</div><button class="btn alt eia17-back" type="button" onclick="eia17Home('zones')">← Volver</button></div>`)}
+  function pickPhoto(kind){const i=document.getElementById('eia17PhotoInput');if(i){i.dataset.kind=kind;i.click()}}
+  function selected(ev){const f=ev.target.files?.[0];if(!f)return;const url=URL.createObjectURL(f);const p=document.getElementById('eia17PhotoPreview');if(p)p.innerHTML=`<img src="${url}" alt="Foto seleccionada"><div style="text-align:center;margin-top:9px"><button class="btn" type="button" onclick="eia17AnalyzePhoto()">🤖 Mirar esta foto</button></div>`;window._eia17PhotoFile=f;record('Analizar una foto','photo:'+((ev.target.dataset||{}).kind||'elemento'))}
+  async function analyzePhoto(){const f=W._eia17PhotoFile;if(!f)return;const out=document.getElementById('eia17PhotoResult');if(out)out.innerHTML='<div class="eia17-photo-result">🤖 Estoy revisando solo lo que se puede ver en la foto…</div>';const rd=new FileReader();const data=await new Promise((res,rej)=>{rd.onload=()=>res(String(rd.result));rd.onerror=rej;rd.readAsDataURL(f)});const endpoint=(W.ELECTROIA_AI_CONFIG?.visionEndpoint)||'/api/vision';try{const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:data,filename:f.name,question:'Analizá esta foto para una persona que sabe poco o nada de electricidad. Identificá solo lo que sea visible y legible. Decí qué parece ser, qué datos se pueden leer, qué no se puede saber solo por la foto y qué información sencilla conviene aportar después. No concluyas que una instalación es segura solo por la foto. No pidas abrir ni desmontar nada.',mode:'hogar',ai_contract:'electroia-home-visual-v1717',local_first:true,request_source:'home_visual'} )});const raw=await r.text();let j={};try{j=JSON.parse(raw)}catch(_){j={error:raw}}if(!r.ok)throw new Error(j.error||'HTTP '+r.status);const ans=String(j.answer||j.message||'').trim()||'No pude sacar una lectura clara de la foto. Podemos seguir con una descripción sencilla.';if(out)out.innerHTML=`<div class="eia17-photo-result"><b>👀 Esto es lo que puedo ver</b><div style="margin-top:7px">${(typeof W.eiaRenderChat==='function'?W.eiaRenderChat(ans):escH(ans)).replace(/\n/g,'<br>')}</div></div><div class="eia17-form-actions"><button class="btn" type="button" onclick="eia17PhotoContinue()">💬 Seguir hablando de esto</button></div>`}catch(e){const local=location.protocol==='file:'||location.protocol==='content:'||location.protocol==='about:';if(out)out.innerHTML=local?'<div class="eia17-photo-result"><b>🌐 La IA necesita la versión online.</b><br>Esta copia local no puede conectarse al análisis de imágenes.</div>':'<div class="eia17-photo-result"><b>⚠️ No pude analizar la foto ahora.</b><br>Podés reintentarlo sin perder la imagen.</div>'}}
+  function photoContinue(){const result=document.getElementById('eia17PhotoResult')?.innerText||'';safe(()=>chat('hogar',`Quiero seguir con lo que aparece en una foto que acabo de aportar. Lo que ya se observó fue: ${result}. Soy principiante. No repitas lo ya visto; haceme solo la siguiente pregunta necesaria y usá lenguaje cotidiano.`))}
+  function resume(a,l){try{run(...decodeURIComponent(a).split(':').length===2?decodeURIComponent(a).split(':'):['free','general',decodeURIComponent(l)])}catch(_){safe(()=>chat('hogar',`Quiero retomar esta ayuda: ${decodeURIComponent(l)}. Guiame desde donde lo dejamos, sin tecnicismos y sin repetir preguntas innecesarias.`))}}
+  W.eia17Home=home;W.eia17OpenZone=openZone;W.eia17RunZone=runZone;W.eia17OpenNeed=openNeed;W.eia17RunNeed=runNeed;W.eia17OpenFree=free;W.eia17FreeGo=freeGo;W.eia17OpenPhoto=photo;W.eia17PickPhoto=pickPhoto;W.eia17PhotoSelected=selected;W.eia17AnalyzePhoto=analyzePhoto;W.eia17PhotoContinue=photoContinue;W.eia17Resume=resume;W.hogar=home;W.ELECTROIA_BUILD='V17.0.17-SUPER';
+
+  // Protección transversal: los chats generales de Hogar nunca reciben tarjetas visuales por coincidencia de palabras.
+  try{
+    const isGeneric=()=>['hogar','ia_directa'].includes(String(W.currentMode||''));
+    const purge=()=>{if(!isGeneric())return;document.querySelectorAll('#chat .eia-ai-visual-card,#chat .eia-final-visual,#chat .eia-master-visual,.eia-context-question-visual,.eia-context-visual').forEach(x=>x.remove());};
+    new MutationObserver(purge).observe(document.documentElement,{subtree:true,childList:true});
+    const prior=typeof W.eiaFinalDecorateAIAnswer==='function'?W.eiaFinalDecorateAIAnswer:null;
+    W.eiaFinalDecorateAIAnswer=function(container,answer){if(isGeneric())return;return prior?.apply(this,arguments)};
+  }catch(_){ }
+})();
+</script>
+
 </body></html>
