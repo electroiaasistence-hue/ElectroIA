@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta name="electroia-build" content="17.0.20-hogar">
+<meta name="electroia-build" content="17.0.22-hogar">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -6091,3 +6091,116 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
 </script>
 
 <script>window.ELECTROIA_BUILD='V17.0.21-SUPER';</script>
+
+
+<!-- ELECTROIA V17.0.22 · CLEAN LANDING / SECTION-FIRST HOME
+     Keeps the previous presentation and previous emergency entry.
+     The three white informational boxes and loose cross-section content are intentionally removed.
+     Existing Hogar / Profesional / diagnostic / PV / projects controllers remain intact.
+-->
+<script id="electroia-v220-landing">
+(function(){
+  'use strict';
+  const W=window;
+  function landingHome(){
+    try{
+      if(Array.isArray(W.electroStack)) W.electroStack.length=0;
+      if('electroView' in W) W.electroView='home';
+      if('currentMode' in W) W.currentMode='hogar';
+      W.nav?.('nHome');
+    }catch(_){ }
+    const app=W.document.getElementById('app');
+    if(!app)return;
+    app.innerHTML=(typeof W.head==='function'?W.head(false):'')+`<main class="wrap page">
+<section class="eia-brand-hero">
+<div class="eia-hero-copy">
+<div class="eia-logo-mark">⚡ ELECTROIA HOGAR · ASISTENTE ELÉCTRICO</div>
+<h1>Tu problema eléctrico.<br>Una solución sencilla.</h1>
+<div class="eia-slogan">Entendé qué pasa antes de llamar a un electricista.</div>
+<p class="eia-hero-desc">ElectroIA Hogar es un asistente inteligente pensado para cualquier persona. Le contás qué está pasando en tu casa y te guía con preguntas simples y comprobaciones seguras, paso a paso, aunque no sepas absolutamente nada de electricidad.</p>
+<div class="eia-free"><span style="font-size:22px">🆓</span><div><strong>Una ayuda gratuita para todos</strong>Antes de pagar una visita de urgencia que puede salir muy cara, podés intentar entender el problema, solucionarlo si es seguro o saber si realmente necesitás un profesional.</div></div>
+</div>
+<div class="eia-visual" aria-hidden="true"><div class="eia-house"><div class="eia-roof"></div><div class="eia-window"></div><div class="eia-door"></div></div><div class="eia-bolt">⚡</div></div>
+</section>
+
+<section class="eia-emergency-card" id="eiaEmergency">
+<button class="eia-emergency-toggle" onclick="toggleEmergency()" aria-expanded="false">
+<div class="eia-emergency-icon">🚨</div>
+<div class="eia-emergency-copy">
+<b>🚨 ¿TENÉS UNA URGENCIA ELÉCTRICA AHORA?</b>
+<span>Entrá acá y te guiamos paso a paso. Si hay peligro, te lo indicamos primero.</span>
+</div>
+<div class="eia-emergency-arrow">⌄</div>
+</button>
+<div class="eia-emergency-options" id="eiaEmergencyOptions">
+<p><b>Primero seguridad.</b> No hace falta que sepas electricidad. ElectroIA te hará una pregunta por vez, entenderá tus palabras y te dirá qué podés comprobar sin riesgo. La IA intervendrá cuando aporte valor.</p>
+<div class="eia-emergency-grid">
+<button class="btn" onclick="quickEmergency('⚡ Me salta el automático o diferencial')">⚡ Se me va la luz</button>
+<button class="btn" onclick="quickEmergency('💡 No tengo luz en el hogar')">💡 No tengo luz</button>
+<button class="btn" onclick="quickEmergency('🔌 Un enchufe no funciona')">🔌 Enchufe / aparato</button>
+<button class="btn" onclick="quickEmergency('🚨 Hay olor a quemado, chispas o algo caliente')">🔥 Huele / calienta</button>
+<button class="btn" onclick="quickEmergency('🚿 Hay agua cerca de algo eléctrico')">🚿 Hay agua cerca</button>
+<button class="btn" onclick="quickEmergency('❓ No sé qué pasa')">❓ No sé qué pasa</button>
+</div>
+<div class="eia-emergency-secondary">
+<button class="btn alt" onclick="urgenciaLocalNoTouch()">🙅 No quiero tocar nada</button>
+<button class="btn alt" onclick="urgenciaLocalTemporary()">🩹 Necesito apañarlo</button>
+</div>
+</div>
+</section>
+
+<section class="eia-v22-sections" aria-label="Secciones de ElectroIA">
+  <button class="eia-v22-section-card eia-v22-home" type="button" onclick="window.eia17Home?window.eia17Home('zones'):window.hogar?.()">
+    <div class="eia-v22-icon">🏠</div>
+    <div><div class="eia-v22-kicker">PARA TU CASA</div><h2>Modo Hogar</h2><p>Problemas, dudas, consumo, seguridad y tareas de tu vivienda. Todo ordenado dentro de esta sección.</p></div>
+    <span class="eia-v22-arrow">›</span>
+  </button>
+  <button class="eia-v22-section-card eia-v22-pro" type="button" onclick="window.prof?.()">
+    <div class="eia-v22-icon">🧰</div>
+    <div><div class="eia-v22-kicker">PARA PROFESIONALES</div><h2>Modo Profesional</h2><p>Diagnóstico técnico, cálculos, fotovoltaica, MPPT, baterías, proyectos y herramientas avanzadas.</p></div>
+    <span class="eia-v22-arrow">›</span>
+  </button>
+</section>
+
+</main>`;
+    W.scrollPageTop?.();
+  }
+  // The global name is deliberately redirected so every existing Inicio button returns here.
+  W.eiaV22Home=landingHome;
+  W.home=landingHome;
+  try{ home=landingHome; }catch(_){ }
+  // Replace only the public Hogar entry used by the landing card if an old alias points elsewhere.
+  if(typeof W.nav==='function') W.nav('nHome');
+  W.ELECTROIA_BUILD='V17.0.22-SUPER';
+  W.ELECTROIA_HOME_READY=true;
+})();
+</script>
+<style id="electroia-v220-landing-style">
+.eia-v22-sections{display:grid;gap:12px;margin-top:15px}
+.eia-v22-section-card{width:100%;display:grid;grid-template-columns:58px 1fr 22px;gap:12px;align-items:center;text-align:left;border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:16px;background:linear-gradient(135deg,#171d25,#222b35);color:#fff;box-shadow:0 10px 24px rgba(0,0,0,.18);cursor:pointer}
+.eia-v22-section-card.eia-v22-home{background:linear-gradient(135deg,#0879e8,#075ebd)}
+.eia-v22-section-card.eia-v22-pro{background:linear-gradient(135deg,#242a31,#15191e)}
+.eia-v22-icon{width:58px;height:58px;border-radius:16px;background:rgba(255,255,255,.14);display:grid;place-items:center;font-size:29px}
+.eia-v22-kicker{font-size:11px;font-weight:800;letter-spacing:.7px;opacity:.82;margin-bottom:2px}
+.eia-v22-section-card h2{margin:0 0 4px;font-size:22px;color:#fff}
+.eia-v22-section-card p{margin:0;color:rgba(255,255,255,.9);font-size:13px;line-height:1.42}
+.eia-v22-arrow{font-size:30px;color:rgba(255,255,255,.8);text-align:right}
+.eia-v22-note{margin:12px 3px 4px;text-align:center;color:#8994a0;font-size:12px;line-height:1.4}
+@media(max-width:450px){.eia-v22-section-card{grid-template-columns:50px 1fr 18px;padding:14px}.eia-v22-icon{width:50px;height:50px;font-size:25px}.eia-v22-section-card h2{font-size:20px}}
+</style>
+<script id="electroia-v221-final-boot">
+(function(){
+  'use strict';
+  const W=window;
+  function boot(){
+    if(W.__ELECTROIA_V22_BOOTED)return;
+    W.__ELECTROIA_V22_BOOTED=true;
+    W.ELECTROIA_BUILD='V17.0.22-SUPER';
+    W.ELECTROIA_HOME_READY=true;
+    if(typeof W.eiaV22Home==='function') W.eiaV22Home();
+  }
+  W.eiaV22Boot=boot;
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,0),{once:true});
+  else setTimeout(boot,0);
+})();
+</script>
