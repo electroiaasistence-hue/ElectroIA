@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta name="electroia-build" content="17.0.12-hogar">
+<meta name="electroia-build" content="17.0.19-hogar">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="electroia-build" content="17.0.12-hogar"><title>ElectroIA · Tu primera ayuda ante una urgencia eléctrica · Hogar · Usuario 16.5</title>
+<meta name="electroia-build" content="17.0.19-hogar"><title>ElectroIA · Tu primera ayuda en casa · Hogar · V17.0.19</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#000;color:#fff;font-family:"Segoe UI",Arial,sans-serif}body{padding-bottom:78px}.top{padding:18px 16px 14px;background:#000}
 .top .row>div:first-child{text-align:center;flex:1}
@@ -152,7 +152,7 @@
 @media(max-width:650px){.eia-pro-grid{grid-template-columns:1fr}}
 
 </style>
-<meta name="electroia-build-id" content="16.5-deep-audit">
+<meta name="electroia-build-id" content="17.0.19-super">
 
 <style id="electroia-v80-style">
 /* V8.2 — plataforma profesional conectada */
@@ -1471,7 +1471,7 @@ function goBack(){
 
 // Inicializar la aplicación después de declarar el sistema de navegación.
 window.electroView = electroView;
-home();
+/* V17.0.19: boot deferred until every controller/override is loaded. */
 </script>
 <script id="electroia-diagnostico-v62">
 /* V7.0 — Confirmación conversacional antes del diagnóstico final */
@@ -5852,7 +5852,7 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
     const r=recent();
     let recentHtml='';
     if(r.length){recentHtml=`<div class="eia17-recent"><div class="eia17-title">↩️ Podés continuar</div>${r.map(x=>`<button class="eia17-recent-item" type="button" onclick="eia17Resume('${encodeURIComponent(x.action)}','${encodeURIComponent(x.label)}')"><span>🕘</span><span><b>${escH(x.label)}</b><small>Volver a este tipo de ayuda</small></span><span class="eia17-arrow">›</span></button>`).join('')}</div>`}
-    app.innerHTML=head(true)+`<main class="wrap page eia17-home">${headTitle()}<div class="eia17-tabs" role="tablist"><button class="eia17-tab ${tab==='zones'?'active':''}" type="button" onclick="eia17Home('zones')">🏠 Por zonas</button><button class="eia17-tab ${tab==='needs'?'active':''}" type="button" onclick="eia17Home('needs')">✨ Por necesidad</button></div><div id="eia17HomeContent"></div>${homeFree}${homePhoto}${recentHtml}<div class="eia17-section-note">🚨 <b>¿Hay humo, fuego, chispas, olor fuerte a quemado, calor anormal, agua con electricidad o una descarga?</b> Salí de estas opciones y usá la asistencia de urgencia.</div><div class="eia17-pro-link">¿Sos electricista o técnico? <button type="button" onclick="prof()">Entrar al Modo Profesional →</button></div></main>`;
+    app.innerHTML=head(false)+`<main class="wrap page eia17-home">${headTitle()}<div class="eia17-tabs" role="tablist"><button class="eia17-tab ${tab==='zones'?'active':''}" type="button" onclick="eia17Home('zones')">🏠 Por zonas</button><button class="eia17-tab ${tab==='needs'?'active':''}" type="button" onclick="eia17Home('needs')">✨ Por necesidad</button></div><div id="eia17HomeContent"></div>${homeFree}${homePhoto}${recentHtml}<div class="eia17-section-note">🚨 <b>¿Hay humo, fuego, chispas, olor fuerte a quemado, calor anormal, agua con electricidad o una descarga?</b> Salí de estas opciones y usá la asistencia de urgencia.</div><div class="eia17-pro-link">¿Sos electricista o técnico? <button type="button" onclick="prof()">Entrar al Modo Profesional →</button></div></main>`;
     const h=document.getElementById('eia17HomeContent');if(!h)return;
     if(tab==='needs'){
       h.innerHTML=`<div class="eia17-title">✨ ¿Qué querés hacer?</div><div class="eia17-subtitle">Elegí lo que más se parezca a lo que te pasa. No necesitás saber ningún término técnico.</div><div class="eia17-grid">${Object.entries(needs).map(([k,v])=>`<button class="eia17-card ${k==='problem'?'coral':k==='understand'?'yellow':k==='save'?'green':k==='change'?'blue':k==='buy'?'purple':'teal'}" type="button" onclick="eia17OpenNeed('${k}')"><span class="eia17-ico">${v.title.slice(0,2)}</span><b>${escH(v.title.slice(3))}</b><small>${escH(v.desc)}</small><span class="eia17-arrow">›</span></button>`).join('')}</div>`;
@@ -5980,7 +5980,7 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
     }
     const payload={
       message:q,mode:String(mode||'hogar'),history:history(),
-      ai_contract:'electroia-home-chat-v17.0.18',local_first:true,request_source:'home_general_chat',
+      ai_contract:'electroia-home-chat-v17.0.19',local_first:true,request_source:'home_general_chat',
       context_bundle:JSON.stringify({area:'hogar',mode:String(mode||'hogar'),source:'consulta_general',principiante:true}),
       user_experience:{plain_language:true,answer_first:true,no_internal_metadata:true,no_code_or_json:true,no_unrequested_images:true,avoid_repetition:true,concise:true,max_user_facing_sections:3,write_like_a_calm_human_helper:true}
     };
@@ -6023,5 +6023,43 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
     return h;
   };
   setTimeout(()=>W.eiaRefreshAIStatus?.(),250);
+})();
+</script>
+
+<!-- ELECTROIA V17.0.19 · DETERMINISTIC STARTUP / ROUTING FIX
+     The urgent diagnostic controller/tree is not modified here.
+     This block only decides which already-loaded controller owns the initial Home screen.
+-->
+<script id="electroia-v190-boot">
+(function(){
+  'use strict';
+  const W=window;
+  function boot(){
+    if(W.__ELECTROIA_V190_BOOTED)return;
+    W.__ELECTROIA_V190_BOOTED=true;
+    W.ELECTROIA_BUILD='V17.0.19-SUPER';
+    W.ELECTROIA_HOME_READY=true;
+    try{
+      if(Array.isArray(W.electroStack)) W.electroStack.length=0;
+      if('electroGoingBack' in W) W.electroGoingBack=false;
+      if('currentMode' in W) W.currentMode='hogar';
+    }catch(_){ }
+    // The final V17 Home controller is exported only after all historical overrides load.
+    const finalHome=W.eia17Home||W.hogar;
+    if(typeof finalHome==='function'){
+      // Keep the existing inline onclick="home()" navigation pointed at the final controller.
+      W.home=finalHome;
+      try{ home=finalHome; }catch(_){ }
+      finalHome('zones');
+    }else if(typeof W.home==='function'){
+      W.home();
+    }
+  }
+  W.eia19Boot=boot;
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,0),{once:true});
+  }else{
+    setTimeout(boot,0);
+  }
 })();
 </script>
