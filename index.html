@@ -439,7 +439,7 @@
 <p>ElectroIA es una herramienta de orientación y no reemplaza a un electricista matriculado.</p>
 </div>
 </noscript>
-<div id="app"><header class="top"><div class="row"><div><div class="brand">⚡ ElectroIA</div><div class="tag">Tu primera ayuda ante una urgencia eléctrica</div></div><div style="text-align:right"><button class="btn alt" type="button" onclick="window.eiaToggleMenu?eiaToggleMenu():document.getElementById('eiaAccountOverlay')?.classList.add('show')">👤 Cuenta</button><div class="ver">Hogar · ElectroIA</div></div></div></header><main class="wrap page eia-static-startup-fallback"><section class="eia-brand-hero"><div class="eia-hero-copy"><div class="eia-logo-mark">⚡ ELECTROIA HOGAR · ASISTENTE ELÉCTRICO</div><h1>Tu problema eléctrico.<br>Una solución sencilla.</h1><div class="eia-slogan">Entendé qué pasa antes de llamar a un electricista.</div><p class="eia-hero-desc">ElectroIA Hogar es un asistente inteligente pensado para cualquier persona. Le contás qué está pasando en tu casa y te guía con preguntas simples y comprobaciones seguras, paso a paso, aunque no sepas absolutamente nada de electricidad.</p></div><div class="eia-visual" aria-hidden="true"><div class="eia-house"><div class="eia-roof"></div><div class="eia-window"></div><div class="eia-door"></div></div><div class="eia-bolt">⚡</div></div></section><section class="eia-emergency-card"><button type="button" class="eia-emergency-toggle" onclick="toggleEmergency()" aria-expanded="false" aria-label="Abrir guía de urgencia eléctrica"><div class="eia-emergency-icon">🚨</div><div class="eia-emergency-copy"><b>🚨 ¿TENÉS UNA URGENCIA ELÉCTRICA AHORA?</b><span>Entrá acá y te guiamos paso a paso. Si hay peligro, te lo indicamos primero.</span></div></button></section><section class="eia-v22-sections"><div class="eia-v22-section-card eia-v22-home" role="button" tabindex="0"><div class="eia-v22-icon">🏠</div><div><div class="eia-v22-kicker">PARA TU CASA</div><h2>Modo Hogar</h2></div></div><div class="eia-v22-section-card eia-v22-pro" role="button" tabindex="0"><div class="eia-v22-icon">🧰</div><div><div class="eia-v22-kicker">PARA PROFESIONALES</div><h2>Modo Profesional</h2></div></div></section></main></div>
+<div id="app"><header class="top"><div class="row"><div><div class="brand">⚡ ElectroIA</div><div class="tag">Tu primera ayuda ante una urgencia eléctrica</div></div><div style="text-align:right"><button class="btn alt" type="button" onclick="window.eiaToggleMenu?eiaToggleMenu():document.getElementById('eiaAccountOverlay')?.classList.add('show')">👤 Cuenta</button><div class="ver">Hogar · ElectroIA</div></div></div></header><main class="wrap page eia-static-startup-fallback"><section class="eia-brand-hero"><div class="eia-hero-copy"><div class="eia-logo-mark">⚡ ELECTROIA HOGAR · ASISTENTE ELÉCTRICO</div><h1>Tu problema eléctrico.<br>Una solución sencilla.</h1><div class="eia-slogan">Entendé qué pasa antes de llamar a un electricista.</div><p class="eia-hero-desc">ElectroIA Hogar es un asistente inteligente pensado para cualquier persona. Le contás qué está pasando en tu casa y te guía con preguntas simples y comprobaciones seguras, paso a paso, aunque no sepas absolutamente nada de electricidad.</p></div><div class="eia-visual" aria-hidden="true"><div class="eia-house"><div class="eia-roof"></div><div class="eia-window"></div><div class="eia-door"></div></div><div class="eia-bolt">⚡</div></div></section><section class="eia-emergency-card"><button type="button" class="eia-emergency-toggle" onclick="toggleEmergency(event)" aria-expanded="false" aria-label="Abrir guía de urgencia eléctrica"><div class="eia-emergency-icon">🚨</div><div class="eia-emergency-copy"><b>🚨 ¿TENÉS UNA URGENCIA ELÉCTRICA AHORA?</b><span>Entrá acá y te guiamos paso a paso. Si hay peligro, te lo indicamos primero.</span></div></button></section><section class="eia-v22-sections"><div class="eia-v22-section-card eia-v22-home" role="button" tabindex="0"><div class="eia-v22-icon">🏠</div><div><div class="eia-v22-kicker">PARA TU CASA</div><h2>Modo Hogar</h2></div></div><div class="eia-v22-section-card eia-v22-pro" role="button" tabindex="0"><div class="eia-v22-icon">🧰</div><div><div class="eia-v22-kicker">PARA PROFESIONALES</div><h2>Modo Profesional</h2></div></div></section></main></div>
 <script id="electroia-v320-a11y-offline">
 (function(){
   'use strict';
@@ -597,7 +597,7 @@ function home(){electroStack=[];electroView='home';nav('nHome');app.innerHTML=he
 <div><b>🛡️ Seguridad primero</b>Si hay riesgo, te lo decimos.</div>
 </div>
 <section class="eia-emergency-card" id="eiaEmergency">
-<button class="eia-emergency-toggle" onclick="toggleEmergency()" aria-expanded="false">
+<button class="eia-emergency-toggle" onclick="toggleEmergency(event)" aria-expanded="false">
 <div class="eia-emergency-icon">🚨</div>
 <div class="eia-emergency-copy">
 <b>🚨 ¿TENÉS UNA URGENCIA ELÉCTRICA AHORA?</b>
@@ -663,8 +663,19 @@ function home(){electroStack=[];electroView='home';nav('nHome');app.innerHTML=he
 <p style="margin:0;color:#d5d5d5">Gratis · Sencillo · Paso a paso · Pensado para todos</p>
 </div>
 </main>`;scrollPageTop()}
-function toggleEmergency(){
-  const card=document.getElementById('eiaEmergency');
+function toggleEmergency(ev){
+  // La tarjeta de urgencia existe con distintos id según la pantalla
+  // ('eiaEmergency' en la landing, 'eiaEmergencyHome' dentro del Modo Hogar).
+  // Buscar solo por un id hacía que el botón del Modo Hogar no hiciera nada.
+  let card=null;
+  try{
+    const origen = (ev && ev.target) || (typeof event!=='undefined' && event && event.target) || null;
+    if(origen && origen.closest) card=origen.closest('.eia-emergency-card');
+  }catch(_){ }
+  card = card
+      || document.getElementById('eiaEmergencyHome')
+      || document.getElementById('eiaEmergency')
+      || document.querySelector('.eia-emergency-card');
   const btn=card?.querySelector('.eia-emergency-toggle');
   if(!card)return;
   const open=!card.classList.contains('open');
@@ -4924,7 +4935,11 @@ sendText=async function(t,displayText=null){
 .eia-super-result{margin-top:12px;padding:16px;border:1px solid #e2c7cc;border-radius:18px;background:#fff2f3}.eia-super-result h2{font-size:22px;line-height:1.22;margin:8px 0}.eia-super-result p{line-height:1.5;margin:8px 0}.eia-super-actions{display:grid;gap:9px;margin-top:13px}.eia-super-actions button{width:100%;min-height:52px;border:0;border-radius:13px;padding:12px 14px;background:#1769e0;color:#fff;font:inherit;font-weight:850}.eia-super-actions button.secondary{background:#fff;color:#1769e0;border:1px solid #bad3ee}.eia-super-actions button.external{background:#fff;color:#26333f;border:1px solid #cbd6df}
 .eia-super-visual{margin-top:12px;padding:9px;border:1px solid #b8d4ee;border-radius:14px;background:#f5faff}.eia-super-visual button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:52px;padding:9px 10px;border:1px solid #c6d9eb;background:#fff;color:#1769e0;font:inherit;font-weight:850;text-align:left;border-radius:11px}.eia-super-visual button small{display:block;color:#687887;font-size:11px;font-weight:500;margin-top:2px}.eia-super-visual .media{display:none;margin-top:9px}.eia-super-visual.open .media{display:block}.eia-super-visual img{display:block;width:100%;max-height:360px;object-fit:contain;background:#eef2f5;border-radius:11px}.eia-super-visual .media-note{font-size:11px;color:#687887;line-height:1.35;margin-top:6px}
 .eia-super-resource{margin-top:12px;padding:12px 13px;border-radius:14px;border:1px solid #d8e1e8;background:#fff}.eia-super-resource h3{margin:0 0 6px;font-size:15px}.eia-super-resource p{margin:5px 0;color:#596875;font-size:13px;line-height:1.45}.eia-super-resource a{color:#1769e0;font-weight:800;text-decoration:none}.eia-super-chat .eia-super-stream{max-height:calc(100dvh - 255px);overflow:auto}.eia-super-composer{padding:11px 12px 13px;background:#fff;border-top:1px solid #dfe5ea}.eia-super-inputwrap{display:flex;gap:8px}.eia-super-input{flex:1;min-height:50px;max-height:130px;resize:none;border:1px solid #d6dee5;border-radius:16px;padding:12px;font:inherit;font-size:16px;color:#17212b;outline:none}.eia-super-send{width:52px;min-height:50px;border:0;border-radius:15px;background:#111;color:#fff;font-size:22px}.eia-super-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.eia-super-tool{min-height:45px;border:1px solid #d6dee5;border-radius:12px;background:#fff;font:inherit;font-weight:800;color:#27323c}.eia-super-status{text-align:center;font-size:11px;color:#75818d;margin-top:7px}.eia-super-local{padding:12px 13px;border:1px solid #bfd4e8;border-radius:13px;background:#f2f8ff;color:#324b60;line-height:1.45}.eia-super-local a{color:#1769e0;font-weight:900;text-decoration:none}
-.eia-super-knowledge{margin-top:12px;border:1px solid #dce4eb;border-radius:16px;background:#fff;overflow:hidden}.eia-super-knowledge summary{cursor:pointer;list-style:none;padding:13px 14px;font-weight:850}.eia-super-knowledge summary::-webkit-details-marker{display:none}.eia-super-knowledge .body{padding:0 14px 14px}.eia-super-knowledge ul{margin:8px 0 0 18px;padding:0}.eia-super-knowledge li{margin:6px 0;color:#4d5b67;font-size:13px;line-height:1.4}
+.eia-super-knowledge{margin-top:12px;border:1px solid #dce4eb;border-radius:16px;background:#fff;overflow:hidden}.eia-super-knowledge summary{cursor:pointer;list-style:none;padding:13px 14px;font-weight:850;color:#16202e}
+/* La tarjeta tiene fondo blanco pero el body de la app es oscuro: sin fijar el
+   color, el texto heredaba blanco y quedaba invisible. */
+.eia-super-knowledge,.eia-super-knowledge *{color:#16202e}
+.eia-super-knowledge .body,.eia-super-knowledge li{color:#33455e}.eia-super-knowledge summary::-webkit-details-marker{display:none}.eia-super-knowledge .body{padding:0 14px 14px}.eia-super-knowledge ul{margin:8px 0 0 18px;padding:0}.eia-super-knowledge li{margin:6px 0;color:#4d5b67;font-size:13px;line-height:1.4}
 @media(max-width:520px){.eia-super-shell{border-radius:20px}.eia-super-question .text{font-size:18.5px}.eia-super-option{min-height:60px;font-size:15px}.eia-super-chat .eia-super-stream{max-height:calc(100dvh - 235px)}}
 </style>
 <script id="electroia-v17-0-8-super-controller">
@@ -5745,7 +5760,7 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
     let recentHtml='';
     if(r.length){recentHtml=`<div class="eia17-recent"><div class="eia17-title">↩️ Podés continuar</div>${r.map(x=>`<button class="eia17-recent-item" type="button" onclick="eia17Resume('${encodeURIComponent(x.action)}','${encodeURIComponent(x.label)}')"><span>🕘</span><span><b>${escH(x.label)}</b><small>Volver a este tipo de ayuda</small></span><span class="eia17-arrow">›</span></button>`).join('')}</div>`}
     const emergencyHome=`<section class="eia-emergency-card" id="eiaEmergencyHome">
-      <button class="eia-emergency-toggle" type="button" onclick="toggleEmergency()" aria-expanded="false">
+      <button class="eia-emergency-toggle" type="button" onclick="toggleEmergency(event)" aria-expanded="false">
         <div class="eia-emergency-icon">🚨</div>
         <div class="eia-emergency-copy"><b>🚨 ¿TENÉS UNA URGENCIA ELÉCTRICA AHORA?</b><span>Si hay un problema urgente, entrá acá. Te guiamos paso a paso y comprobamos la seguridad primero.</span></div>
         <div class="eia-emergency-arrow">⌄</div>
@@ -6082,7 +6097,7 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
 </section>
 
 <section class="eia-emergency-card" id="eiaEmergency">
-<button class="eia-emergency-toggle" onclick="toggleEmergency()" aria-expanded="false">
+<button class="eia-emergency-toggle" onclick="toggleEmergency(event)" aria-expanded="false">
 <div class="eia-emergency-icon">🚨</div>
 <div class="eia-emergency-copy">
 <b>🚨 ¿TENÉS UNA URGENCIA ELÉCTRICA AHORA?</b>
@@ -6245,7 +6260,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
 
   function renderEmergency(){
     return `<section class="eia-emergency-card" id="eiaEmergency">
-      <button class="eia-emergency-toggle" type="button" onclick="toggleEmergency()" aria-expanded="false">
+      <button class="eia-emergency-toggle" type="button" onclick="toggleEmergency(event)" aria-expanded="false">
         <div class="eia-emergency-icon">🚨</div>
         <div class="eia-emergency-copy"><b>🚨 ¿TENÉS UNA URGENCIA ELÉCTRICA AHORA?</b><span>Entrá acá y te guiamos paso a paso. Si hay peligro, te lo indicamos primero.</span></div>
         <div class="eia-emergency-arrow">⌄</div>
@@ -6577,12 +6592,6 @@ ${W.sourcesBlock?W.sourcesBlock():''}
 .eia330-chip{display:inline-block;padding:4px 9px;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.04em}
 .eia330-chip.ok{background:#d7f0de;color:#14602f}
 .eia330-chip.bad{background:#fbd9d5;color:#8c1a12}
-#eia330Torch{position:fixed;inset:0;z-index:99999;background:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center}
-#eia330Torch.on{display:flex}
-#eia330Torch b{font-size:26px;color:#000}
-#eia330Torch p{font-size:17px;color:#111;max-width:460px;line-height:1.5;margin:0}
-#eia330Torch button{padding:15px 24px;font-size:17px;font-weight:800;border:2px solid #000;background:#000;color:#fff;border-radius:12px;cursor:pointer}
-body.eia330-torch-on .bottom{display:none!important}
 
 /* ---- CONTRASTE ----
    La app usa tema oscuro (body: fondo negro, texto blanco). Estas tarjetas
@@ -6617,12 +6626,7 @@ body.eia330-torch-on .bottom{display:none!important}
 .eia330-f{color:#41506a}
 </style>
 
-<div id="eia330Torch" role="dialog" aria-label="Modo linterna">
-  <b>🔦 Modo linterna</b>
-  <p>Pantalla al máximo brillo para que puedas ver el tablero. Subí el brillo del teléfono si hace falta.</p>
-  <p style="font-size:14px;color:#444"><b>Antes de tocar nada:</b> no trabajes con las manos mojadas, no toques cables pelados y, si ves chispas, olor a quemado o humo, cortá la llave general y llamá a un electricista.</p>
-  <button type="button" onclick="eia330Torch(false)">Salir del modo linterna</button>
-</div>
+<!-- [ElectroIA] Modo linterna eliminado a pedido. -->
 
 <script id="electroia-v330-funciones">
 (function(){
@@ -6919,11 +6923,7 @@ body.eia330-torch-on .bottom{display:none!important}
   /* ============================================================
      MODO LINTERNA
      ============================================================ */
-  W.eia330Torch=function(on){
-    var t=D.getElementById('eia330Torch'); if(!t) return;
-    t.classList.toggle('on',!!on);
-    D.body.classList.toggle('eia330-torch-on',!!on);
-  };
+  /* Modo linterna eliminado a pedido del usuario. */
 
   /* ============================================================
      COPIA DE SEGURIDAD
@@ -6966,10 +6966,6 @@ body.eia330-torch-on .bottom{display:none!important}
     app.innerHTML=cab+'<main class="wrap page">'+
       '<h1>⚙️ Ajustes</h1>'+
       '<p class="subtitle">Todo lo que guardes acá queda en este dispositivo y te sirve justo cuando lo necesitás.</p>'+
-
-      '<div class="eia330-card"><h3>🔦 Modo linterna</h3>'+
-      '<p class="eia330-sub">Pantalla en blanco al máximo para alumbrar el tablero si te quedaste sin luz.</p>'+
-      '<button class="eia330-btn" type="button" onclick="eia330Torch(true)">Encender linterna</button></div>'+
 
       W.eia330AvisoTest()+
 
@@ -7043,10 +7039,7 @@ body.eia330-torch-on .bottom{display:none!important}
           '</div>';
       }
       var cont = cs.length ? W.eia330Contactos() : '';
-      var luz='<div class="eia330-card"><h3>🔦 ¿Estás a oscuras?</h3>'+
-        '<p class="eia330-sub">Poné la pantalla en blanco al máximo para ver el tablero.</p>'+
-        '<button class="eia330-btn alt" type="button" onclick="eia330Torch(true)">Encender linterna</button></div>';
-      caja.innerHTML=luz+ficha+cont;
+      caja.innerHTML=ficha+cont;
       if(!caja.innerHTML.trim()) return;
       card.parentNode.insertBefore(caja,card.nextSibling);
     }catch(_){ }
@@ -8188,6 +8181,236 @@ body.eia330-torch-on .bottom{display:none!important}
   fijar('eia17Learning',W.eia350Inicio);
   fijar('eia17LearningLevel',function(){ return W.eia350Inicio(); });
   fijar('eia17LearningLesson',function(){ return W.eia350Inicio(); });
+})();
+</script>
+
+<style id="eia360-css">
+.eia360-pais{display:flex;gap:6px;margin:10px 0 4px}
+.eia360-pais button{flex:1;padding:8px;border-radius:9px;border:1px solid #c8d4e3;background:#fff;color:#22364f;font-weight:700;font-size:12.5px;cursor:pointer}
+.eia360-pais button.on{background:#1663c7;border-color:#1663c7;color:#fff}
+.eia360-emg{display:block;width:100%;margin:10px 0 4px;padding:15px;border:0;border-radius:13px;background:#b3182b;color:#fff;font-weight:900;font-size:16.5px;cursor:pointer;text-align:center;text-decoration:none;line-height:1.3}
+.eia360-emg small{display:block;font-weight:600;font-size:12.5px;opacity:.92;margin-top:3px}
+.eia-emergency-grid button{text-align:left}
+</style>
+
+<script id="electroia-v360-urgencia">
+(function(){
+  'use strict';
+  var W=window, D=document;
+
+  /* ============================================================
+     1. NÚMERO DE EMERGENCIA SEGÚN EL PAÍS
+     ------------------------------------------------------------
+     El código tenía 'tel:112' fijo, que es el número de España.
+     En Argentina no responde: allí es el 911 (emergencias) y el
+     100 (bomberos). Una persona con un incendio pulsando un número
+     que no atiende es un fallo de seguridad, no de comodidad.
+     Se resuelve por preferencia guardada y, si no hay, por zona
+     horaria del dispositivo.
+     ============================================================ */
+  var NUMEROS = {
+    ar: { emergencias:'911', bomberos:'100', etiqueta:'911 · Emergencias', pais:'Argentina' },
+    es: { emergencias:'112', bomberos:'112', etiqueta:'112 · Emergencias', pais:'España' }
+  };
+
+  function paisGuardado(){
+    try{
+      var d=JSON.parse(localStorage.getItem('eia350-progreso')||'{}');
+      if(d && (d.pais==='es'||d.pais==='ar')) return d.pais;
+    }catch(_){ }
+    return null;
+  }
+  function paisPorZona(){
+    try{
+      var tz=(Intl.DateTimeFormat().resolvedOptions().timeZone||'').toLowerCase();
+      if(tz.indexOf('argentina')>=0 || tz.indexOf('buenos_aires')>=0) return 'ar';
+      if(tz.indexOf('madrid')>=0 || tz.indexOf('canary')>=0 || tz.indexOf('ceuta')>=0) return 'es';
+      if(tz.indexOf('america/')===0) return 'ar';
+      if(tz.indexOf('europe/')===0) return 'es';
+    }catch(_){ }
+    return null;
+  }
+  function pais(){ return paisGuardado() || paisPorZona() || 'ar'; }
+  W.eia360Pais=function(){ return pais(); };
+  W.eia360FijarPais=function(p){
+    try{
+      var d=JSON.parse(localStorage.getItem('eia350-progreso')||'{}');
+      d.pais=(p==='es'?'es':'ar');
+      localStorage.setItem('eia350-progreso',JSON.stringify(d));
+    }catch(_){ }
+    actualizarBotones();
+  };
+  function numero(){ return NUMEROS[pais()]; }
+
+  /* Llamada de emergencia: reemplaza el tel:112 fijo.
+     Se protege con setter vacío porque hay dos bloques anteriores que asignan
+     eiaEmergencyCall='tel:112'; si alguno se re-ejecutara, volvería el número
+     equivocado y en una emergencia real eso no se puede permitir. */
+  function llamarEmergencias(){
+    var n=numero();
+    try{ W.location.href='tel:'+n.emergencias; }
+    catch(_){ alert('Llamá al '+n.emergencias); }
+  }
+  try{
+    Object.defineProperty(W,'eiaEmergencyCall',{
+      configurable:true, get:function(){ return llamarEmergencias; }, set:function(){}
+    });
+  }catch(_){ W.eiaEmergencyCall=llamarEmergencias; }
+
+  /* Reescribe cualquier botón que siga diciendo "112" si el país es otro,
+     y añade el selector de país dentro de la tarjeta de urgencia. */
+  function actualizarBotones(){
+    try{
+      var n=numero();
+      D.querySelectorAll('button, a').forEach(function(el){
+        if(el.dataset && el.dataset.eia360==='1') return;
+        var t=(el.textContent||'');
+        if(/Llamar al 112/.test(t) && n.emergencias!=='112'){
+          el.textContent = t.replace('Llamar al 112','Llamar al '+n.emergencias);
+        }
+      });
+    }catch(_){ }
+  }
+  W.eia360ActualizarBotones=actualizarBotones;
+
+  /* ============================================================
+     2. ENRUTAMIENTO DIRECTO DE LAS OPCIONES DE URGENCIA
+     ------------------------------------------------------------
+     La última versión de quickEmergency hacía start('start', …),
+     descartando la opción que el usuario acababa de elegir. Resultado:
+     la app volvía a preguntar "¿qué está pasando?" a alguien que ya
+     lo había dicho, en el peor momento posible.
+     Acá se restaura el enrutamiento al nodo correcto del árbol.
+     El filtro de seguridad (safetyGate) se mantiene siempre: es lo
+     primero que debe comprobarse y no se saltea.
+     ============================================================ */
+  function nodoDestino(texto){
+    var x=String(texto||'').toLowerCase();
+    if(/humo|fuego|chispa|quemado|caliente|calienta|descarga|calambre|agua/.test(x)) return 'danger';
+    if(/salta|autom[áa]tico|diferencial|disyuntor|t[ée]rmica|protecci[óo]n/.test(x)) return 'protection';
+    if(/toda la (casa|vivienda)|sin luz en toda|no tengo luz en toda/.test(x)) return 'wholeHouse';
+    if(/una zona|una habitaci[óo]n|parte de la casa|algunas luces/.test(x)) return 'partialZone';
+    if(/enchufe|toma|tomacorriente|aparato|electrodom/.test(x)) return 'outlet';
+    if(/parpade|titila|baja la luz|se ve floja/.test(x)) return 'flicker';
+    if(/bombilla|l[áa]mpara|luz no enciende|no enciende la luz/.test(x)) return 'light';
+    if(/zumbido|ruido|chasquido|chicharra/.test(x)) return 'soundCheck';
+    if(/no tengo luz|sin luz|se me va la luz|se corta/.test(x)) return 'wholeHouse';
+    return 'start';
+  }
+  W.eia360Nodo=nodoDestino;
+
+  function arrancar(nodo, problema){
+    // Se usa la implementación de arranque que esté vigente, en este orden.
+    if(typeof W.start==='function')      return W.start(nodo, problema, 'emergency');
+    if(typeof W.diagnostico==='function')return W.diagnostico(nodo, problema);
+    return null;
+  }
+
+  function quickEmergency(problema){
+    var texto=String(problema||'');
+    try{ if(typeof W.eiaAIPrepareGoal==='function') W.eiaAIPrepareGoal(texto); }catch(_){ }
+    var destino=nodoDestino(texto);
+    var r=arrancar(destino, texto);
+    try{ if(W.diag){ W.diag.entryKind='emergency'; W.diag.targetNode=destino; } }catch(_){ }
+    setTimeout(actualizarBotones,350);
+    return r;
+  }
+
+  /* Se fija con setter vacío: varios bloques anteriores reasignan
+     quickEmergency, y alguno podría hacerlo en cada render. */
+  function fijar(nombre, fn){
+    try{
+      Object.defineProperty(W,nombre,{configurable:true,get:function(){return fn;},set:function(){}});
+    }catch(_){ W[nombre]=fn; }
+  }
+  fijar('quickEmergency', quickEmergency);
+
+  /* ============================================================
+     3. OPCIONES DE URGENCIA BASADAS EN AVERÍAS REALES
+     ------------------------------------------------------------
+     Reordenadas por frecuencia real en viviendas (fuentes: Iberdrola,
+     Endesa y electricistas en activo). El peligro va primero porque
+     es lo único que no admite demora; el resto sigue el orden en que
+     la gente describe el problema, no el orden técnico.
+     ============================================================ */
+  var OPCIONES=[
+    {e:'🚨',t:'Huele a quemado, hay humo o chispas',s:'También si algo está muy caliente o alguien recibió una descarga',p:'🚨 Hay humo, olor a quemado, chispas o algo muy caliente',urg:true},
+    {e:'⚡',t:'Se me va la luz y salta algo en el cuadro',s:'La térmica o el diferencial se bajan solos',p:'⚡ Me salta el automático o el diferencial'},
+    {e:'🏠',t:'No tengo luz en toda la casa',s:'Nada funciona en ninguna habitación',p:'🏠 No tengo luz en toda la vivienda'},
+    {e:'💡',t:'Me quedé sin luz en una zona',s:'Solo una habitación o parte de la casa',p:'💡 No tengo luz en una zona de la casa'},
+    {e:'🔌',t:'Un enchufe o un aparato no funciona',s:'El resto de la casa está bien',p:'🔌 Un enchufe o aparato no funciona'},
+    {e:'🚿',t:'Hay agua cerca de algo eléctrico',s:'Filtración, inundación o humedad',p:'🚿 Hay agua en contacto con algo eléctrico',urg:true},
+    {e:'〰️',t:'La luz parpadea o baja de intensidad',s:'Sobre todo al encender algo',p:'〰️ La luz parpadea o baja de intensidad'},
+    {e:'❓',t:'No sé qué está pasando',s:'Te hago preguntas para averiguarlo',p:'❓ No sé qué pasa'}
+  ];
+
+  function escAttr(s){
+    return String(s==null?'':s)
+      .replace(/&/g,'&amp;').replace(/"/g,'&quot;')
+      .replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;');
+  }
+
+  // Delegación: un único listener para todas las opciones de urgencia.
+  D.addEventListener('click',function(ev){
+    var el=ev.target && ev.target.closest && ev.target.closest('[data-eia360-problema]');
+    if(!el) return;
+    ev.preventDefault(); ev.stopPropagation();
+    quickEmergency(el.getAttribute('data-eia360-problema')||'');
+  },true);
+
+  function tarjetaUrgencia(){
+    var n=numero(), p=pais();
+    var h='<div class="eia-emergency-options-inner">';
+    h+='<p style="margin:0 0 10px"><b>Primero la seguridad.</b> No hace falta que sepas de electricidad. '+
+       'Elegí lo que más se parezca a lo que está pasando.</p>';
+    h+='<div class="eia-emergency-grid">';
+    // Se usa un atributo data + delegación en vez de onclick inline: el texto del
+    // problema lleva comillas y emojis, y meterlo dentro de onclick="..." rompía
+    // el atributo HTML (provocaba 'Unexpected end of input').
+    h+=OPCIONES.map(function(o){
+      return '<button class="btn'+(o.urg?' emergency-chip':'')+'" type="button" '+
+        'data-eia360-problema="'+escAttr(o.p)+'">'+
+        o.e+' <b>'+escAttr(o.t)+'</b><br><small style="opacity:.85;font-weight:500">'+escAttr(o.s)+'</small></button>';
+    }).join('');
+    h+='</div>';
+    h+='<div class="eia-emergency-secondary">'+
+       '<button class="btn alt" type="button" onclick="urgenciaLocalNoTouch&&urgenciaLocalNoTouch()">🙅 No quiero tocar nada</button>'+
+       '<button class="btn alt" type="button" onclick="urgenciaLocalTemporary&&urgenciaLocalTemporary()">🩹 Necesito apañarlo hasta mañana</button>'+
+       '</div>';
+    h+='<div class="eia360-pais">'+
+       '<button type="button" data-eia360="1" class="'+(p==='ar'?'on':'')+'" onclick="eia360FijarPais(\'ar\')">🇦🇷 Argentina</button>'+
+       '<button type="button" data-eia360="1" class="'+(p==='es'?'on':'')+'" onclick="eia360FijarPais(\'es\')">🇪🇸 España</button>'+
+       '</div>'+
+       '<p style="font-size:11.5px;opacity:.8;margin:2px 0 0">El país define el número de emergencias y la normativa de referencia.</p>';
+    h+='</div>';
+    return h;
+  }
+
+  /* Sustituye el contenido de la tarjeta de urgencia allí donde aparezca,
+     sin tocar el botón que la despliega (ese ya funciona). */
+  function refrescarTarjeta(){
+    try{
+      D.querySelectorAll('.eia-emergency-options').forEach(function(cont){
+        if(cont.dataset.eia360==='1') return;
+        cont.dataset.eia360='1';
+        cont.innerHTML=tarjetaUrgencia();
+      });
+      actualizarBotones();
+    }catch(_){ }
+  }
+
+  try{
+    var app=D.getElementById('app');
+    if(app && W.MutationObserver){
+      var pend=null;
+      new MutationObserver(function(){
+        clearTimeout(pend);
+        pend=setTimeout(function(){ refrescarTarjeta(); },140);
+      }).observe(app,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',refrescarTarjeta);
+  else refrescarTarjeta();
 })();
 </script>
 
