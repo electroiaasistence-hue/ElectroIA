@@ -5894,10 +5894,77 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
         </div>
       </div>
     </section>`;
-    const extraHome=`<section class="eia-direct-ai-card"><div class="eia-direct-ai-copy"><div class="eia-direct-ai-kicker">💬 CONVERSACIÓN LIBRE</div><h2>Charlá directamente con la IA</h2><p>Contale lo que te pasa, pedile una explicación o hacé una pregunta. No hay un diagnóstico cerrado ni tenés que saber palabras técnicas.</p><button class="btn eia-direct-ai-btn" type="button" onclick="chat('ia_directa')">💬 Empezar a charlar con ElectroIA</button></div></section>
-    <section class="panel" style="margin-top:15px"><h2 style="margin-top:0">🏠 ¿Para qué sirve ElectroIA?</h2><p>Para ayudarte cuando algo eléctrico de tu casa no funciona y no sabés por dónde empezar. Puede ayudarte a <b>entender el problema, intentar resolverlo cuando sea seguro, apañar una situación de forma temporal</b> o prepararte para llamar a un electricista con la información clara.</p><p style="margin-bottom:0;color:#5f6b76">ElectroIA no reemplaza a un profesional. Si hay peligro, la prioridad es alejarte y pedir asistencia.</p></section>
-    <section class="eia-pro-card"><div class="eia-pro-inner"><span class="eia-pro-kicker">⚙️ PARA PROFESIONALES</span><h2>🧰 ¿Sos electricista o técnico?</h2><p>El Modo Profesional reúne las herramientas técnicas de ElectroIA sin mezclarlas con la experiencia sencilla de Hogar.</p><div class="eia-pro-grid"><div class="eia-pro-item"><b>💬 Consultas técnicas</b>Dudas de diagnóstico, funcionamiento y averías.</div><div class="eia-pro-item"><b>🧮 Cálculos</b>Ayuda para plantear y comprobar cálculos eléctricos.</div><div class="eia-pro-item"><b>☀️ Fotovoltaica</b>Strings, MPPT, baterías, producción y autoconsumo.</div></div><button class="btn eia-pro-btn" type="button" onclick="prof()">🧰 Entrar al Modo Profesional</button></div></section>
-    <div class="panel" style="text-align:center;background:#171717;color:#fff"><div style="font-size:13px;opacity:.75">⚡ ELECTROIA</div><h2 style="margin:7px 0">Entender el problema es el primer paso para solucionarlo.</h2><p style="margin:0;color:#d5d5d5">Gratis · Sencillo · Paso a paso · Pensado para todos</p></div>`;
+    const extraHome=`<section class="eia17-learn-entry" aria-label="Aprender electricidad desde cero"><div class="eia17-learn-entry-icon">📚</div><div><div class="eia17-kicker">APRENDER DESDE CERO</div><h2>Quiero aprender</h2><p>Un recorrido por niveles para entender electricidad doméstica sin conocimientos previos, con seguridad y referencias a la normativa española.</p><button class="btn" type="button" onclick="eia17Learning()">📚 Empezar a aprender</button></div></section>`
+    const learningLevels=[
+      {id:'l1',icon:'🌱',title:'Nivel 1 · Lo básico',desc:'Empezá por las ideas que explican todo lo demás.',lessons:[
+        ['⚡','Electricidad en palabras simples','Qué es la electricidad, para qué sirve y por qué puede ser peligrosa.'],
+        ['🔌','Voltaje, corriente y resistencia','Qué significa cada palabra y cómo se relacionan de forma sencilla.'],
+        ['🧮','Potencia y consumo','Qué significan W, kW y kWh y cómo se relacionan con los aparatos.'],
+        ['🔄','Circuito eléctrico','Cómo se cierra un circuito y por qué una interrupción lo detiene.'] ]},
+      {id:'l2',icon:'🛡️',title:'Nivel 2 · Seguridad primero',desc:'Antes de tocar nada, aprendé a reconocer riesgos.',lessons:[
+        ['🚫','Qué no tocar','Partes activas, conductores dañados, cuadros abiertos y equipos mojados.'],
+        ['💧','Agua y electricidad','Por qué aumenta el riesgo y qué hacer ante agua cerca de electricidad.'],
+        ['🔥','Calor, olor y humo','Señales de sobrecalentamiento o posible incendio.'],
+        ['🧤','Protección y aislamiento','Contacto directo, indirecto, aislamiento y protección de las personas.'] ]},
+      {id:'l3',icon:'🏠',title:'Nivel 3 · Conocer tu casa',desc:'Identificá lo que ves sin desmontar ni manipular.',lessons:[
+        ['📦','El cuadro eléctrico','Qué elementos podés reconocer sin abrirlo.'],
+        ['🛡️','Magnetotérmico','Qué protege y qué significa que dispare.'],
+        ['❤️','Interruptor diferencial','Qué riesgo ayuda a detectar y por qué es importante.'],
+        ['🌍','Toma de tierra','Qué función tiene y por qué protege frente a determinados fallos.'],
+        ['🔌','Enchufes, interruptores y luces','Qué señales visibles merecen atención.'] ]},
+      {id:'l4',icon:'🧭',title:'Nivel 4 · Entender los circuitos',desc:'Cómo se organiza una vivienda y por qué hay diferentes circuitos.',lessons:[
+        ['💡','Iluminación','Cómo funciona un circuito de iluminación a nivel básico.'],
+        ['🔌','Tomas de corriente','Para qué sirven y qué diferencias pueden existir entre circuitos.'],
+        ['🍳','Cargas de mayor potencia','Por qué algunos receptores necesitan circuitos específicos según la instalación.'],
+        ['🧩','Secciones y protecciones','Por qué conductor y protección deben estar coordinados.'] ]},
+      {id:'l5',icon:'🔎',title:'Nivel 5 · Observar averías',desc:'Aprendé a describir síntomas y alcance sin exponerte.',lessons:[
+        ['💡','Una luz no funciona','Diferenciar de forma lógica bombilla, interruptor, circuito o alimentación.'],
+        ['🔌','Un enchufe no funciona','Qué preguntas separan aparato, toma, circuito y protección.'],
+        ['⚡','Salta una protección','Qué información reunir cuando actúa una protección.'],
+        ['🌡️','Parpadeos, calor u olor','Cuándo son señales para dejar de probar y pedir ayuda.'],
+        ['🏠','No hay luz en parte o toda la casa','Cómo delimitar el alcance del problema.'] ]},
+      {id:'l6',icon:'💰',title:'Nivel 6 · Consumo y energía',desc:'Entendé la factura y cómo consume una vivienda.',lessons:[
+        ['📊','kW y kWh','Diferencia entre potencia y energía.'],
+        ['⏱️','Estimar consumo','Potencia en kW por horas de uso para estimar kWh.'],
+        ['💡','Ahorro real','Cómo usar menos energía sin confundir potencia con consumo.'],
+        ['🏷️','Datos de un aparato','Qué mirar en potencia, tensión, frecuencia y fabricante.'] ]},
+      {id:'l7',icon:'📐',title:'Nivel 7 · Instalación y normativa',desc:'Introducción al marco español sin crear una falsa habilitación.',lessons:[
+        ['📘','Qué es el REBT','Marco reglamentario de las instalaciones de baja tensión en España.'],
+        ['🧾','Qué son las ITC-BT','Instrucciones técnicas complementarias que concretan requisitos según la instalación.'],
+        ['✅','Verificación y conformidad','Qué significa comprobar que una instalación cumple sus requisitos.'],
+        ['👷','Cuándo corresponde un profesional','Cuándo la complejidad, el riesgo o la normativa aconsejan intervención profesional.'],
+        ['📚','Cómo comprobar una norma','Distinguir una explicación de una fuente oficial vigente.'] ]},
+      {id:'l8',icon:'🚀',title:'Nivel 8 · Puente a temas avanzados',desc:'Una puerta ordenada hacia los contenidos de nivel profesional.',lessons:[
+        ['☀️','Autoconsumo y fotovoltaica','Paneles, inversor, generación y autoconsumo a nivel conceptual.'],
+        ['🚗','Recarga de vehículo eléctrico','Qué es un punto de recarga y qué variables eléctricas intervienen.'],
+        ['🔋','Baterías','Capacidad, energía almacenada y función básica.'],
+        ['🧠','Pensamiento eléctrico','Cómo convertir un síntoma cotidiano en información útil para el diagnóstico.'] ]}
+    ];
+    function learningShell(content){
+      shell('📚 Aprender electricidad','Un camino progresivo para empezar desde cero. Leé, tocá una lección y avanzá a tu ritmo.','<div class="eia17-path"><span class="eia17-pill">🏠 Hogar</span><span class="eia17-pill">📚 Aprender</span></div>'+content+'<button class="btn alt eia17-back" type="button" onclick="eia17Home(\'zones\')">← Volver a Modo Hogar</button>');
+    }
+    function learningHome(){
+      let html='<div class="eia17-section-note"><b>Pensado para empezar desde cero.</b> Avanzá por niveles. Las lecciones explican conceptos y seguridad; no sustituyen formación profesional ni habilitan por sí solas a ejecutar trabajos reglamentarios.</div><div class="eia17-learning-levels">';
+      html+=learningLevels.map(function(l){return '<button class="eia17-learning-level" type="button" onclick="eia17LearningLevel(\''+l.id+'\')"><span class="eia17-learning-icon">'+l.icon+'</span><span><b>'+escH(l.title)+'</b><small>'+escH(l.desc)+'</small><em>'+l.lessons.length+' lecciones</em></span><span class="eia17-arrow">›</span></button>';}).join('');
+      html+='</div><div class="eia17-learning-sources"><b>📚 Referencias para normativa</b><p>La parte normativa se orienta al REBT y sus ITC-BT, contrastando el texto vigente del BOE y las Guías Técnicas de Aplicación del Ministerio de Industria. El texto consolidado del REBT consultado indica última actualización publicada el 03/09/2025.</p></div>';
+      learningShell(html);
+    }
+    function learningLevel(id){
+      const l=learningLevels.find(function(x){return x.id===id;}); if(!l)return learningHome();
+      let html='<div class="eia17-hero" style="margin-bottom:12px"><div class="eia17-kicker">'+l.icon+' NIVEL DE APRENDIZAJE</div><h2 style="margin:4px 0">'+escH(l.title)+'</h2><p>'+escH(l.desc)+'</p></div><div class="eia17-learning-lessons">';
+      html+=l.lessons.map(function(x,i){return '<button class="eia17-learning-lesson" type="button" onclick="eia17LearningLesson(\''+l.id+'\','+i+')"><span>'+x[0]+'</span><span><b>'+escH(x[1])+'</b><small>'+escH(x[2])+'</small></span><span class="eia17-arrow">›</span></button>';}).join('');
+      html+='</div><button class="btn alt eia17-back" type="button" onclick="eia17Learning()">← Volver a niveles</button>';
+      learningShell(html);
+    }
+    function learningLesson(id,i){
+      const l=learningLevels.find(function(x){return x.id===id;}); const x=l&&l.lessons[Number(i)]; if(!x)return learningLevel(id);
+      let html='<div class="eia17-learning-lesson-full"><div class="eia17-learning-bigicon">'+x[0]+'</div><div class="eia17-kicker">'+escH(l.title)+'</div><h2>'+escH(x[1])+'</h2><p>'+escH(x[2])+'</p><div class="eia17-learning-explain"><b>🧠 Idea clave</b><p>Antes de hacer nada, entendé el concepto y el riesgo. En Modo Hogar ElectroIA prioriza observar, comprender y decidir cuándo hace falta un profesional.</p></div>';
+      if(l.id==='l7')html+='<div class="eia17-section-note"><b>Normativa:</b> es una introducción. Para un requisito concreto hay que comprobar la ITC-BT aplicable y la redacción vigente en la fuente oficial.</div>';
+      html+='<div class="eia17-form-actions"><button class="btn" type="button" onclick="eia17LearnAI('+JSON.stringify(x[1])+')">🤖 Profundizar con ElectroIA</button><button class="btn alt" type="button" onclick="eia17LearningLevel(\''+l.id+'\')">← Volver al nivel</button></div></div>';
+      learningShell(html);
+    }
+    function learnAI(topic){ chat('hogar','Quiero aprender sobre '+topic+'. Soy principiante y no conozco términos eléctricos. Explicamelo con ejemplos cotidianos, comprobá qué ya sé y haceme una pregunta por vez.'); }
+    W.eia17Learning=learningHome; W.eia17LearningLevel=learningLevel; W.eia17LearningLesson=learningLesson; W.eia17LearnAI=learnAI;
     app.innerHTML=head(false)+`<main class="wrap page eia17-home">${headTitle()}${emergencyHome}<div class="eia17-tabs" role="tablist"><button class="eia17-tab ${tab==='zones'?'active':''}" type="button" onclick="eia17Home('zones')">🏠 Por zonas</button><button class="eia17-tab ${tab==='needs'?'active':''}" type="button" onclick="eia17Home('needs')">✨ Por necesidad</button></div><div id="eia17HomeContent"></div>${homeFree}${homePhoto}${recentHtml}${extraHome}</main>`;
     const h=document.getElementById('eia17HomeContent');if(!h)return;
     if(tab==='needs'){
@@ -6179,7 +6246,7 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
 </section>
 
 <section class="eia-v22-sections" aria-label="Secciones de ElectroIA">
-  <button class="eia-v22-section-card eia-v22-home" type="button" onclick="window.eiaV24HomeMode?.('zones')">
+  <button class="eia-v22-section-card eia-v22-home" type="button" onclick="window.eiaOpenHogarSection?.()">
     <div class="eia-v22-icon">🏠</div>
     <div><div class="eia-v22-kicker">PARA TU CASA</div><h2>Modo Hogar</h2><p>Problemas, dudas, consumo, seguridad y tareas de tu vivienda. Todo ordenado dentro de esta sección.</p></div>
     <span class="eia-v22-arrow">›</span>
@@ -6341,18 +6408,31 @@ ${W.sourcesBlock?W.sourcesBlock():''}
     if(!app)return;
     const zonesData=W.eia17Zones;
     const needsData=W.eia17Needs;
-    // Use the already-stable V17 renderer when available, then remove landing-only content.
+    // Enter Home as a real SPA section: clear the public Inicio DOM first, then render only Home.
+    // Do not append Home into the landing and do not rely on the old generic `home()` route.
     if(typeof W.eia17Home==='function'){
+      try{
+        app.replaceChildren();
+      }catch(_){
+        app.innerHTML='';
+      }
       W.eia17Home(tab);
       try{
         const root=app.querySelector('.eia17-home');
         if(root){
+          // A Home section must not contain or coexist with public Inicio cards.
+          app.querySelectorAll('.eia-brand-hero,.eia-v22-sections,.eia-v22-note,.eia-direct-ai-card,.eia-v23-direct-ai').forEach(el=>{
+            if(!root.contains(el)) el.remove();
+          });
           root.querySelectorAll('.eia-direct-ai-card,.eia-v23-direct-ai,.eia-v22-sections,.eia-v22-note').forEach(el=>el.remove());
           const panels=[...root.querySelectorAll('.panel')];
           panels.forEach(el=>el.remove());
           root.querySelectorAll('.eia-pro-card').forEach(el=>el.remove());
           const tail=[...root.children].filter(el=>String(el.textContent||'').includes('Entender el problema es el primer paso para solucionarlo.'));
           tail.forEach(el=>el.remove());
+          if(!root.querySelector('.eia17-section-entry-back')){
+            const back=document.createElement('button'); back.type='button'; back.className='btn alt eia17-back eia17-section-entry-back'; back.textContent='← Volver a Inicio'; back.onclick=function(){try{W.electroStack&&W.electroStack.splice(0);W.electroView='home';}catch(_){ } return typeof W.eiaV22Home==='function'?W.eiaV22Home():typeof W.home==='function'?W.home():undefined;}; root.appendChild(back);
+          }
         }
       }catch(_){ }
       // eia17Home uses enterView(); reset the state after painting so emergency Back returns here.
@@ -6393,12 +6473,20 @@ ${W.sourcesBlock?W.sourcesBlock():''}
   try{goBack=W.goBack;}catch(_){ }
 
   W.eiaV24HomeMode=homeMode;
+  W.eiaOpenHogarSection=function(){return homeMode('zones');};
   W.hogar=homeMode;
   W.ELECTROIA_BUILD='V17.0.24-SUPER';
   W.ELECTROIA_HOME_READY=true;
 })();
 </script>
 
+
+<style id="electroia-v300-learning-style">
+.eia17-learn-entry{display:grid;grid-template-columns:58px 1fr;gap:14px;align-items:start;margin-top:15px;padding:16px;border-radius:20px;border:1px solid #d7e1eb;background:linear-gradient(135deg,#f5f0ff,#eef5ff);color:#182432;box-shadow:0 8px 20px rgba(16,32,52,.07)}
+.eia17-learn-entry-icon{width:58px;height:58px;border-radius:16px;background:#fff;display:grid;place-items:center;font-size:28px}.eia17-learn-entry .eia17-kicker{color:#6f4fb1;margin-bottom:3px}.eia17-learn-entry h2{margin:0 0 5px;font-size:21px}.eia17-learn-entry p{margin:0 0 12px;color:#5d6977;font-size:13px;line-height:1.45}.eia17-learn-entry .btn{width:100%}
+.eia17-learning-levels,.eia17-learning-lessons{display:grid;gap:10px;margin-top:12px}.eia17-learning-level,.eia17-learning-lesson{width:100%;display:grid;grid-template-columns:48px 1fr 20px;gap:11px;align-items:center;text-align:left;border:1px solid #dbe3eb;border-radius:17px;padding:13px;background:#fff;color:#192532;cursor:pointer;font:inherit}.eia17-learning-level{grid-template-columns:50px 1fr 20px}.eia17-learning-icon{width:48px;height:48px;border-radius:14px;background:#f3f6fa;display:grid;place-items:center;font-size:25px}.eia17-learning-level b,.eia17-learning-lesson b{display:block;font-size:15px}.eia17-learning-level small,.eia17-learning-lesson small{display:block;color:#667382;font-size:12.5px;line-height:1.35;margin-top:4px}.eia17-learning-level em{display:block;font-style:normal;color:#1769db;font-size:11px;font-weight:800;margin-top:6px}.eia17-learning-lesson>span:first-child{font-size:24px}.eia17-learning-lesson-full h2{margin:5px 0 8px;font-size:25px}.eia17-learning-lesson-full>p{font-size:15px;line-height:1.55;color:#445260}.eia17-learning-bigicon{width:72px;height:72px;border-radius:20px;background:#eef5ff;display:grid;place-items:center;font-size:38px;margin-bottom:12px}.eia17-learning-explain{margin-top:14px;padding:14px;border-radius:16px;background:#f8fafc;border:1px solid #dbe4ec;color:#263544}.eia17-learning-explain p{margin:6px 0 0;color:#596877;font-size:13px;line-height:1.48}.eia17-learning-sources{margin-top:14px;padding:13px;border-radius:15px;background:#f7f9fb;border:1px solid #dde5ed;color:#526171;font-size:12px;line-height:1.45}.eia17-learning-sources p{margin:6px 0 0}.eia17-learning-sources b{color:#283746}
+@media(max-width:450px){.eia17-learn-entry{grid-template-columns:50px 1fr;padding:14px}.eia17-learn-entry-icon{width:50px;height:50px;font-size:25px}.eia17-learning-level,.eia17-learning-lesson{grid-template-columns:44px 1fr 18px;padding:12px}.eia17-learning-icon{width:44px;height:44px;font-size:23px}}
+</style>
 <style id="electroia-v240-home-mode-style">
 .eia-fallback-note{margin:14px 2px;color:#7b8794;font-size:13px;text-align:center}
 </style>
@@ -6466,6 +6554,130 @@ ${W.sourcesBlock?W.sourcesBlock():''}
   // Sources are public Start information only; strip them from diagnostic/Pro/Hogar subviews.
   const cleanSources=()=>{const a=app();if(!a)return;const pub=!!a.querySelector('.eia-brand-hero')&&W.electroView==='home';if(!pub)a.querySelectorAll('.eia-super-knowledge').forEach(x=>x.remove());};
   try{new MutationObserver(cleanSources).observe(document.documentElement,{subtree:true,childList:true});cleanSources();}catch(_){}
+})();
+</script>
+<script id="electroia-v300-version-marker">(function(){window.ELECTROIA_BUILD='V17.0.31-SUPER';window.ELECTROIA_HOME_READY=true;})();</script>
+<!-- ELECTROIA V17.0.31 · SECTION ISOLATION / EXPLICIT BACK NAVIGATION
+     Navigation-only patch. Public Inicio, Modo Hogar and Modo Profesional are separate views.
+     Emergency / diagnostic tree is intentionally untouched.
+-->
+<script id="electroia-v310-section-isolation">
+(function(){
+  'use strict';
+  const W=window;
+  const app=()=>W.document.getElementById('app');
+  const landing=()=>{
+    try{ if(typeof W.eiaV22Home==='function') return W.eiaV22Home(); }
+    catch(e){ console.warn('EIA V31 landing',e); }
+    try{ if(typeof W.home==='function') return W.home(); }catch(_){ }
+  };
+  const top=()=>{try{W.scrollTo?.({top:0,left:0,behavior:'instant'});W.document.documentElement.scrollTop=0;W.document.body.scrollTop=0}catch(_){}
+  };
+  function addBack(main,label='← Volver a Inicio'){
+    if(!main || main.querySelector(':scope > .eia-v31-back')) return;
+    const b=W.document.createElement('button');
+    b.type='button'; b.className='btn alt eia-v31-back'; b.textContent=label;
+    b.style.cssText='width:100%;margin:0 0 12px;border-radius:12px;font-weight:800;position:relative;z-index:6';
+    b.addEventListener('click',()=>landing(),{once:false});
+    main.insertBefore(b,main.firstChild);
+  }
+  function isolatePublic(){
+    const a=app(); if(!a)return;
+    // Remove any stale section nodes that older renderers might have left outside the active view.
+    [...a.children].forEach(el=>{
+      if(!el.matches('header.top,main.wrap.page')) el.remove();
+    });
+    const mains=[...a.querySelectorAll(':scope > main.wrap.page')];
+    if(mains.length>1){
+      const keep=mains.find(m=>m.querySelector('.eia-brand-hero'))||mains[mains.length-1];
+      mains.forEach(m=>{if(m!==keep)m.remove()});
+    }
+  }
+  function openHome(){
+    const a=app(); if(!a)return;
+    try{if(Array.isArray(W.electroStack))W.electroStack.length=0;W.electroView='hogarSection';W.currentMode='hogar';W.electroGoingBack=false;}catch(_){ }
+    try{a.replaceChildren();}catch(_){a.innerHTML='';}
+    try{
+      if(typeof W.eia17Home==='function') W.eia17Home('zones');
+      else if(typeof W.eiaOpenHogarSection==='function') W.eiaOpenHogarSection();
+      else return landing();
+    }catch(e){console.warn('EIA V31 Home',e); return landing();}
+    const main=a.querySelector('main.eia17-home');
+    if(main){
+      // Home is one independent section; never allow public-start cards inside it.
+      main.querySelectorAll('.eia-brand-hero,.eia-v22-sections,.eia-v22-note,.eia-direct-ai-card,.eia-v23-direct-ai').forEach(x=>x.remove());
+      addBack(main);
+    }
+    // eia17Home internally uses enterView(); overwrite that transient view with our explicit section id.
+    try{if(Array.isArray(W.electroStack))W.electroStack.length=0;W.electroView='hogarSection';W.currentMode='hogar';}catch(_){ }
+    top();
+  }
+  function openPro(){
+    const a=app(); if(!a)return;
+    try{if(Array.isArray(W.electroStack))W.electroStack.length=0;W.electroView='proSection';W.currentMode='profesional';W.electroGoingBack=false;}catch(_){ }
+    try{a.replaceChildren();}catch(_){a.innerHTML='';}
+    try{if(typeof W.prof==='function') W.prof(); else return landing();}
+    catch(e){console.warn('EIA V31 Pro',e);return landing();}
+    const main=a.querySelector('main.wrap.page');
+    if(main){
+      addBack(main);
+      main.querySelectorAll('.eia-brand-hero,.eia-v22-sections,.eia-direct-ai-card,.eia-v23-direct-ai').forEach(x=>x.remove());
+    }
+    try{if(Array.isArray(W.electroStack))W.electroStack.length=0;W.electroView='proSection';W.currentMode='profesional';}catch(_){ }
+    top();
+  }
+  W.eiaV31OpenHome=openHome;
+  W.eiaV31OpenPro=openPro;
+  W.eiaV31GoHome=landing;
+
+  // Capture-phase routing wins over every historical inline handler in the single-file app.
+  // This is the key fix: tapping Modo Hogar can no longer fall through to the old landing renderer.
+  try{
+    W.document.addEventListener('click',function(ev){
+      const el=ev.target?.closest?.('.eia-v22-home');
+      const pro=ev.target?.closest?.('.eia-v22-pro');
+      if(el && app()?.querySelector('.eia-brand-hero')){
+        ev.preventDefault(); ev.stopPropagation(); ev.stopImmediatePropagation();
+        openHome(); return;
+      }
+      if(pro && app()?.querySelector('.eia-brand-hero')){
+        ev.preventDefault(); ev.stopPropagation(); ev.stopImmediatePropagation();
+        openPro();
+      }
+    },true);
+  }catch(_){ }
+
+  const priorBack=W.goBack;
+  W.goBack=function(){
+    const stack=W.electroStack;
+    try{
+      if(W.electroView==='hogarSection' || W.electroView==='proSection') return landing();
+      if(Array.isArray(stack) && stack.length){
+        const prev=stack[stack.length-1];
+        if(prev==='hogarSection' || prev==='hogarMode' || prev==='hogarV17') { stack.pop(); return openHome(); }
+        if(prev==='proSection' || prev==='prof') { stack.pop(); return openPro(); }
+      }
+    }catch(_){ }
+    return typeof priorBack==='function'?priorBack.apply(this,arguments):landing();
+  };
+  try{goBack=W.goBack;}catch(_){ }
+
+  // Public Start must not be reinterpreted as a section after the user returns.
+  W.addEventListener?.('pageshow',()=>setTimeout(()=>{
+    try{
+      const a=app();
+      if(W.electroView==='home' && a && a.querySelector('.eia-brand-hero')) isolatePublic();
+    }catch(_){ }
+  },0),{once:false});
+
+  try{
+    const style=W.document.createElement('style');style.id='electroia-v310-section-style';style.textContent=`
+      .eia-v31-back{box-shadow:0 4px 12px rgba(0,0,0,.12)}
+      .eia17-home>.eia-v31-back,.wrap.page>.eia-v31-back{font-size:14px}
+    `;W.document.head.appendChild(style);
+  }catch(_){ }
+  W.ELECTROIA_BUILD='V17.0.31-SUPER';
+  W.ELECTROIA_HOME_READY=true;
 })();
 </script>
 </body></html>
