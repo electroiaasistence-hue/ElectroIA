@@ -7393,4 +7393,711 @@ body.eia330-torch-on .bottom{display:none!important}
 })();
 </script>
 
+<style id="eia350-css">
+.eia350-wrap{padding-bottom:20px}
+.eia350-hero{background:linear-gradient(140deg,#241a4d,#4b2d87 60%,#6a3fb5);border-radius:18px;padding:17px;margin:10px 0 14px}
+.eia350-hero h1{margin:0 0 5px;font-size:21px;color:#fff}
+.eia350-hero p{margin:0;font-size:13.5px;line-height:1.5;color:#e3dcff}
+.eia350-pais{display:flex;gap:7px;margin:12px 0}
+.eia350-pais button{flex:1;padding:9px;border-radius:10px;border:1px solid #3a4759;background:#141c27;color:#c8d4e3;font-weight:700;font-size:13px;cursor:pointer}
+.eia350-pais button.on{background:#1663c7;border-color:#1663c7;color:#fff}
+.eia350-prog{background:#111923;border:1px solid #2b3748;border-radius:13px;padding:12px;margin-bottom:13px}
+.eia350-prog b{color:#eaf1fa;font-size:14px}
+.eia350-bar{height:9px;background:#26303e;border-radius:99px;overflow:hidden;margin-top:8px}
+.eia350-bar i{display:block;height:100%;background:linear-gradient(90deg,#2f9e5c,#4fd18b);border-radius:99px;transition:width .4s}
+.eia350-prog span{display:block;margin-top:7px;font-size:12.5px;color:#9db0c6}
+.eia350-lv{width:100%;text-align:left;display:grid;grid-template-columns:46px 1fr 26px;gap:11px;align-items:center;background:#fff;border:1px solid #d9e2ee;border-radius:15px;padding:13px;margin-bottom:9px;cursor:pointer}
+.eia350-lv .ic{width:46px;height:46px;border-radius:13px;background:#eef3fb;display:flex;align-items:center;justify-content:center;font-size:23px}
+.eia350-lv b{display:block;font-size:15.5px;color:#12203a;margin-bottom:2px}
+.eia350-lv small{display:block;font-size:12.5px;color:#55687f;line-height:1.4}
+.eia350-lv .fl{font-size:19px;color:#546b88}
+.eia350-lv.done{border-color:#9ed9b4;background:#f4fdf7}
+.eia350-lv .badge{display:inline-block;margin-top:5px;font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;background:#e4ebf5;color:#3d5675}
+.eia350-lv.done .badge{background:#d5f2e0;color:#15683a}
+.eia350-ls{width:100%;text-align:left;display:grid;grid-template-columns:34px 1fr 22px;gap:10px;align-items:center;background:#fff;border:1px solid #dde5ef;border-radius:12px;padding:11px;margin-bottom:7px;cursor:pointer}
+.eia350-ls b{display:block;font-size:14.5px;color:#12203a}
+.eia350-ls small{display:block;font-size:12px;color:#55687f}
+.eia350-ls.done{background:#f4fdf7;border-color:#9ed9b4}
+.eia350-doc{background:#fff;border:1px solid #dde5ef;border-radius:16px;padding:17px;color:#1b2736}
+.eia350-doc h2{margin:0 0 4px;font-size:19px;color:#0f1b2b}
+.eia350-doc .kick{font-size:11.5px;font-weight:800;letter-spacing:.07em;color:#6a3fb5;margin-bottom:7px}
+.eia350-doc p{font-size:14.5px;line-height:1.62;margin:0 0 11px;color:#243449}
+.eia350-doc h3{font-size:15.5px;margin:17px 0 7px;color:#0f1b2b}
+.eia350-doc ul{margin:0 0 11px;padding-left:19px;font-size:14px;line-height:1.65;color:#243449}
+.eia350-doc li{margin-bottom:4px}
+.eia350-key{background:#f1f5fc;border-left:4px solid #1663c7;border-radius:0 10px 10px 0;padding:11px 13px;margin:13px 0}
+.eia350-key b{display:block;font-size:13px;color:#134a94;margin-bottom:4px}
+.eia350-key p{margin:0;font-size:13.5px;color:#22364f}
+.eia350-danger{background:#fdeceb;border-left:4px solid #c0392b;border-radius:0 10px 10px 0;padding:11px 13px;margin:13px 0}
+.eia350-danger b{display:block;font-size:13px;color:#96150a;margin-bottom:4px}
+.eia350-danger p{margin:0;font-size:13.5px;color:#5f1a12}
+.eia350-norm{background:#fff8e8;border-left:4px solid #d9a200;border-radius:0 10px 10px 0;padding:11px 13px;margin:13px 0}
+.eia350-norm b{display:block;font-size:13px;color:#7a5800;margin-bottom:4px}
+.eia350-norm p{margin:0;font-size:13.2px;color:#5c4400}
+.eia350-tab{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+.eia350-tab th,.eia350-tab td{border:1px solid #d9e2ee;padding:7px;text-align:left;color:#243449}
+.eia350-tab th{background:#eef3fb;font-weight:800;color:#12203a}
+.eia350-q{background:#fff;border:1px solid #dde5ef;border-radius:14px;padding:15px;margin-bottom:11px}
+.eia350-q .num{font-size:11.5px;font-weight:800;color:#6a3fb5;letter-spacing:.06em}
+.eia350-q p.pre{font-size:15px;font-weight:700;color:#0f1b2b;margin:6px 0 11px;line-height:1.45}
+.eia350-op{display:block;width:100%;text-align:left;padding:11px 13px;border:1.5px solid #d9e2ee;border-radius:11px;background:#fff;margin-bottom:7px;font-size:14px;color:#22364f;cursor:pointer;line-height:1.4}
+.eia350-op:hover{border-color:#9fb8d6}
+.eia350-op.sel{border-color:#1663c7;background:#eef4fd}
+.eia350-op.ok{border-color:#2f9e5c;background:#eafaf0;color:#14602f;font-weight:700}
+.eia350-op.no{border-color:#c0392b;background:#fdeeec;color:#8c1a12}
+.eia350-fb{margin-top:9px;padding:11px;border-radius:10px;font-size:13.5px;line-height:1.5}
+.eia350-fb.ok{background:#eafaf0;color:#14602f;border:1px solid #b6e5c8}
+.eia350-fb.no{background:#fdeeec;color:#8c1a12;border:1px solid #f0c2bc}
+.eia350-btn{display:block;width:100%;margin-top:11px;padding:13px;border:0;border-radius:12px;background:#1663c7;color:#fff;font-weight:800;font-size:15px;cursor:pointer}
+.eia350-btn.alt{background:#eef3fa;color:#1c3252;border:1px solid #ccd9ea}
+.eia350-btn.go{background:#6a3fb5}
+.eia350-res{background:#fff;border:1px solid #dde5ef;border-radius:16px;padding:20px;text-align:center;color:#1b2736}
+.eia350-res .pct{font-size:44px;font-weight:900;margin:5px 0;color:#0f1b2b}
+.eia350-res.ok .pct{color:#14602f}
+.eia350-res.no .pct{color:#b3182b}
+.eia350-res p{font-size:14px;color:#42566f;margin:7px 0 0;line-height:1.55}
+</style>
+
+<script id="electroia-v350-aprender">
+(function(){
+  'use strict';
+  var W=window,D=document;
+
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  /* ---------------- progreso y país ---------------- */
+  var CLAVE='eia350-progreso';
+  function leer(){ try{ return JSON.parse(localStorage.getItem(CLAVE)||'{}')||{}; }catch(_){ return {}; } }
+  function guardar(d){ try{ localStorage.setItem(CLAVE,JSON.stringify(d)); return true; }catch(_){ return false; } }
+  function pais(){ var d=leer(); return d.pais==='es'?'es':'ar'; }
+  W.eia350Pais=function(p){ var d=leer(); d.pais=(p==='es'?'es':'ar'); guardar(d); NIVELES=construirNiveles(); W.eia350Inicio(); };
+  function hecho(lid){ var d=leer(); return !!(d.lecciones&&d.lecciones[lid]); }
+  function marcar(lid,pct){
+    var d=leer(); d.lecciones=d.lecciones||{}; d.lecciones[lid]={pct:pct,fecha:new Date().toISOString()}; guardar(d);
+  }
+  function notaNivel(nid){ var d=leer(); return (d.examenes&&d.examenes[nid])||null; }
+
+  /* =========================================================
+     CONTENIDO
+     ---------------------------------------------------------
+     Fuentes: IEC 60364-5-52 y IEC 60479-1 (efectos de la
+     corriente), AEA 90364 para Argentina, REBT / ITC-BT para
+     España. El contenido es formativo: no habilita a ejecutar
+     instalaciones ni sustituye a un profesional matriculado.
+     ========================================================= */
+  var AR='ar', ES='es';
+  function n(txt){ return '<div class="eia350-norm"><b>📘 NORMATIVA</b><p>'+txt+'</p></div>'; }
+  function key(t){ return '<div class="eia350-key"><b>💡 IDEA CLAVE</b><p>'+t+'</p></div>'; }
+  function dang(t){ return '<div class="eia350-danger"><b>⚠️ SEGURIDAD</b><p>'+t+'</p></div>'; }
+
+  /* Se construye como función porque varias lecciones cambian según el país.
+     Al cambiar de país hay que reconstruirlo, si no queda el contenido viejo. */
+  function construirNiveles(){ return [
+  {id:'n1',ic:'🌱',t:'Nivel 1 · Fundamentos',d:'Las cuatro ideas que explican todo lo demás.',ls:[
+    {id:'n1l1',ic:'⚡',t:'Qué es la electricidad',
+     s:'Electrones, conductores y aislantes, en palabras simples.',
+     html:'<p>La electricidad es el movimiento de <b>electrones</b> a través de un material. Si empujás electrones por un cable, tenés corriente eléctrica; si no se mueven, no pasa nada.</p>'+
+      '<p>Los materiales se dividen en dos grupos según cómo se portan frente a ese movimiento:</p>'+
+      '<ul><li><b>Conductores:</b> dejan pasar los electrones con facilidad. Los metales (cobre, aluminio) son los típicos. También el agua con sales minerales y <b>el cuerpo humano</b>.</li>'+
+      '<li><b>Aislantes:</b> se oponen al paso. El plástico que recubre los cables, la goma, el vidrio seco, la cerámica.</li></ul>'+
+      '<p>Toda instalación eléctrica es, en el fondo, un camino de conductores rodeado de aislantes. Cuando el aislante falla —un cable pelado, humedad, un empalme mal hecho— la electricidad busca otro camino. Si ese camino sos vos, tenés un accidente.</p>'+
+      key('La electricidad no "elige" hacerte daño: simplemente circula por donde encuentra camino. Tu seguridad depende de que ese camino nunca seas vos.')+
+      dang('Tu cuerpo es un conductor porque está lleno de agua con sales. Por eso las manos mojadas, los pies descalzos sobre piso húmedo y los baños multiplican el riesgo.'),
+     q:[{p:'¿Cuál de estos materiales es un CONDUCTOR?',o:['El plástico de un cable','La goma de un guante','El cobre','El vidrio seco'],c:2,
+        e:'El cobre es el conductor más usado en instalaciones. Plástico, goma y vidrio son aislantes.'},
+       {p:'¿Por qué el cuerpo humano conduce electricidad?',o:['Porque tiene huesos','Porque contiene agua con sales minerales','Porque tiene grasa','No conduce electricidad'],c:1,
+        e:'El agua con sales del organismo lo convierte en conductor. Por eso la humedad aumenta el riesgo.'},
+       {p:'Un cable tiene el plástico rajado y se ve el metal. ¿Qué falló?',o:['El conductor','El aislante','La corriente','La tensión'],c:1,
+        e:'Falló el aislante. El conductor sigue funcionando, pero ahora la electricidad tiene un camino hacia afuera.'}]},
+
+    {id:'n1l2',ic:'🔌',t:'Tensión, corriente y resistencia',
+     s:'Las tres magnitudes básicas y la Ley de Ohm.',
+     html:'<p>Tres palabras que vas a escuchar siempre. La analogía del agua ayuda a entenderlas:</p>'+
+      '<ul><li><b>Tensión (V, voltios):</b> la presión que empuja los electrones. Como la presión del agua en un caño.</li>'+
+      '<li><b>Corriente (I, amperios):</b> la cantidad de electrones que pasan por segundo. Como el caudal de agua.</li>'+
+      '<li><b>Resistencia (R, ohmios Ω):</b> la dificultad que opone el material. Como un caño estrecho que frena el agua.</li></ul>'+
+      '<h3>La Ley de Ohm</h3>'+
+      '<p>Las tres se relacionan con una fórmula sencilla:</p>'+
+      '<p style="text-align:center;font-size:19px;font-weight:800;color:#134a94">V = I × R</p>'+
+      '<p>De ahí salen las otras dos: <b>I = V / R</b> y <b>R = V / I</b>.</p>'+
+      '<p><b>Ejemplo:</b> un aparato con 46 Ω de resistencia conectado a 230 V consume I = 230 / 46 = <b>5 A</b>.</p>'+
+      key('Si la resistencia baja, la corriente sube. Un cortocircuito es exactamente eso: la resistencia se vuelve casi cero y la corriente se dispara.'),
+     q:[{p:'Si la tensión es 230 V y la resistencia 46 Ω, ¿cuánta corriente circula?',o:['0,2 A','5 A','46 A','276 A'],c:1,
+        e:'I = V / R = 230 / 46 = 5 A.'},
+       {p:'En la analogía del agua, la corriente (amperios) equivale a…',o:['La presión','El caudal','El caño','La canilla'],c:1,
+        e:'La corriente es el caudal: cuántos electrones pasan por segundo. La presión es la tensión.'},
+       {p:'Si la resistencia de un circuito baja mucho de golpe, la corriente…',o:['Baja también','Se mantiene igual','Sube mucho','Se vuelve cero'],c:2,
+        e:'Con I = V/R, al bajar R la corriente sube. Eso es un cortocircuito y por eso existen las protecciones.'}]},
+
+    {id:'n1l3',ic:'🧮',t:'Potencia y energía: W, kW y kWh',
+     s:'La diferencia que casi nadie tiene clara y que explica tu factura.',
+     html:'<p>Son dos cosas distintas y confundirlas lleva a decisiones equivocadas.</p>'+
+      '<ul><li><b>Potencia (W, vatios):</b> cuánta energía consume un aparato <i>mientras está funcionando</i>. Es una foto del instante.</li>'+
+      '<li><b>Energía (kWh, kilovatio-hora):</b> potencia por tiempo. Es lo que realmente te cobran.</li></ul>'+
+      '<p>Fórmula: <b>P = V × I</b> (en corriente continua o cargas resistivas). Y para la energía: <b>kWh = (W × horas) / 1000</b>.</p>'+
+      '<h3>Ejemplo que aclara todo</h3>'+
+      '<table class="eia350-tab"><tr><th>Aparato</th><th>Potencia</th><th>Uso diario</th><th>Consumo/mes</th></tr>'+
+      '<tr><td>Lámpara LED</td><td>10 W</td><td>5 h</td><td>1,5 kWh</td></tr>'+
+      '<tr><td>Termotanque</td><td>2000 W</td><td>3 h</td><td>180 kWh</td></tr>'+
+      '<tr><td>Heladera</td><td>150 W</td><td>24 h*</td><td>~54 kWh</td></tr></table>'+
+      '<p style="font-size:12.5px;color:#55687f">* La heladera no consume todo el tiempo: el compresor arranca y para. Por eso el consumo real es menor que el cálculo directo.</p>'+
+      key('Un aparato de mucha potencia usado poco tiempo puede gastar menos que uno de poca potencia encendido todo el día. Lo que pagás es kWh, no watts.'),
+     q:[{p:'Un aparato de 2000 W usado 3 horas por día consume al mes (30 días):',o:['6 kWh','60 kWh','180 kWh','600 kWh'],c:2,
+        e:'(2000 × 3) / 1000 = 6 kWh por día. 6 × 30 = 180 kWh al mes.'},
+       {p:'¿Qué te cobra la distribuidora en la factura?',o:['Los watts de tus aparatos','Los kWh consumidos','Los amperios','Los voltios'],c:1,
+        e:'Te cobran energía (kWh). La potencia contratada puede tener un cargo fijo aparte, pero el consumo se mide en kWh.'},
+       {p:'Lámpara de 10 W encendida 10 h vs. plancha de 2000 W usada 5 minutos. ¿Cuál gasta más?',o:['La lámpara','La plancha','Igual','No se puede saber'],c:0,
+        e:'Lámpara: 10 W × 10 h = 100 Wh. Plancha: 2000 W × 0,083 h ≈ 166 Wh. La plancha gasta más. ¡Ojo! Este es el error típico: hay que calcular, no intuir.',
+        fix:true}]},
+
+    {id:'n1l4',ic:'🔄',t:'Fase, neutro y tierra',
+     s:'Los tres cables y para qué sirve cada uno.',
+     html:'<p>En una instalación doméstica típica vas a encontrar tres conductores. Entender qué hace cada uno es la base de todo diagnóstico.</p>'+
+      '<ul><li><b>Fase (o vivo):</b> trae la tensión. Es el peligroso: tocarlo con el cuerpo haciendo camino a tierra produce la descarga.</li>'+
+      '<li><b>Neutro:</b> es el retorno, cierra el circuito. Normalmente está cerca del potencial de tierra, pero <b>no asumas que es seguro tocarlo</b>.</li>'+
+      '<li><b>Tierra (PE, protección):</b> no lleva corriente en funcionamiento normal. Es un camino de escape para que, si un aparato tiene una falla, la corriente se vaya a tierra y no por tu cuerpo.</li></ul>'+
+      '<h3>Colores normalizados</h3>'+
+      (pais()===ES
+        ? '<table class="eia350-tab"><tr><th>Conductor</th><th>Color (España)</th></tr>'+
+          '<tr><td>Fase</td><td>Marrón, negro o gris</td></tr>'+
+          '<tr><td>Neutro</td><td>Azul</td></tr>'+
+          '<tr><td>Tierra (PE)</td><td>Verde-amarillo</td></tr></table>'
+        : '<table class="eia350-tab"><tr><th>Conductor</th><th>Color (Argentina)</th></tr>'+
+          '<tr><td>Fase</td><td>Marrón, negro o rojo</td></tr>'+
+          '<tr><td>Neutro</td><td>Celeste</td></tr>'+
+          '<tr><td>Tierra (PE)</td><td>Verde-amarillo</td></tr></table>')+
+      dang('El verde-amarillo se usa EXCLUSIVAMENTE para tierra. Nunca, bajo ninguna circunstancia, se usa para otra cosa. Si ves un verde-amarillo llevando corriente, la instalación está mal hecha y es peligrosa.')+
+      n(pais()===ES
+        ? 'En España los colores están definidos en la ITC-BT-19 del REBT. En instalaciones antiguas podés encontrar otros colores: no confíes solo en el color, verificá siempre con instrumento.'
+        : 'En Argentina los colores los define la AEA 90364. En instalaciones viejas podés encontrar otros colores: no confíes solo en el color, verificá siempre con instrumento.'),
+     q:[{p:'¿De qué color es SIEMPRE el conductor de tierra?',o:['Azul o celeste','Marrón','Verde-amarillo','Negro'],c:2,
+        e:'El verde-amarillo está reservado exclusivamente para el conductor de protección (tierra), en Argentina y en España.'},
+       {p:'En funcionamiento normal, el conductor de tierra…',o:['Lleva la misma corriente que la fase','No lleva corriente','Lleva la mitad','Lleva más corriente'],c:1,
+        e:'La tierra no conduce en condiciones normales. Solo actúa cuando hay una falla, dando camino a la corriente de fuga.'},
+       {p:'¿Es seguro tocar el neutro?',o:['Sí, siempre','No: puede estar a tensión si hay una falla o está mal conectado','Solo si está mojado','Sí, si no hay aparatos encendidos'],c:1,
+        e:'Nunca asumas que el neutro es seguro. Una inversión de conexiones o una falla puede dejarlo a tensión.'}]}
+  ]},
+
+  {id:'n2',ic:'🛡️',t:'Nivel 2 · Seguridad',d:'Por qué la electricidad mata y cómo no ser la víctima.',ls:[
+    {id:'n2l1',ic:'💀',t:'Qué le hace la corriente al cuerpo',
+     s:'Los umbrales reales, en miliamperios.',
+     html:'<p>Lo que hace daño no es el voltaje: es la <b>corriente</b> que atraviesa el cuerpo, y el <b>tiempo</b> que circula. La norma IEC 60479-1 define estos umbrales para corriente alterna de 50 Hz:</p>'+
+      '<table class="eia350-tab"><tr><th>Corriente</th><th>Efecto</th></tr>'+
+      '<tr><td>0,5 mA</td><td>Umbral de percepción: empezás a sentir el hormigueo</td></tr>'+
+      '<tr><td>~10 mA</td><td><b>Umbral de no soltar</b>: los músculos se contraen y no podés soltar</td></tr>'+
+      '<tr><td>25–30 mA</td><td>Dificultad respiratoria, contracción del diafragma</td></tr>'+
+      '<tr><td>~50 mA y más</td><td>Riesgo de <b>fibrilación ventricular</b>, la causa principal de muerte por electrocución</td></tr></table>'+
+      '<p>Para dimensionar: <b>30 mA es 0,03 amperios</b>. Un secador de pelo consume 30 veces más. Con una corriente que ni siquiera enciende una lámpara se puede matar a una persona.</p>'+
+      '<h3>El tiempo importa tanto como la corriente</h3>'+
+      '<p>Los efectos de 200 mA durante 50 milisegundos son comparables a los de 20 mA durante 1 segundo. Por eso las protecciones no solo detectan: <b>tienen que cortar rápido</b>.</p>'+
+      key('El umbral de no soltar (~10 mA) explica por qué las víctimas quedan "pegadas": los músculos se contraen y la mano se cierra sobre el conductor. No es que no quieran soltarse, es que no pueden.')+
+      dang('Nunca agarres con las manos a alguien que está recibiendo una descarga: la corriente pasaría también por vos. Primero cortá la corriente desde el tablero.'),
+     q:[{p:'¿A partir de qué corriente aproximada una persona ya NO puede soltarse?',o:['0,5 mA','10 mA','100 mA','1 A'],c:1,
+        e:'El umbral de no soltar está en torno a los 10 mA en corriente alterna. Por encima, la contracción muscular impide soltar.'},
+       {p:'¿Qué es lo más determinante del daño de una descarga?',o:['Solo el voltaje','La corriente y el tiempo de exposición','El color del cable','La marca del aparato'],c:1,
+        e:'El daño depende de la corriente que atraviesa el cuerpo y de cuánto tiempo circula. Por eso importa que la protección corte rápido.'},
+       {p:'Ves a alguien electrocutado agarrado a un cable. ¿Qué hacés primero?',o:['Lo agarro y tiro','Corto la corriente en el tablero','Le tiro agua','Llamo y espero'],c:1,
+        e:'Cortar la corriente primero. Si lo tocás, la corriente pasa también por vos y habrá dos víctimas. El agua empeora todo.'}]},
+
+    {id:'n2l2',ic:'🤝',t:'Contacto directo e indirecto',
+     s:'Dos formas de recibir una descarga, dos protecciones distintas.',
+     html:'<p>La normativa distingue dos situaciones, y cada una se previene de manera diferente:</p>'+
+      '<h3>Contacto directo</h3>'+
+      '<p>Tocás una parte que <b>normalmente está bajo tensión</b>: un cable pelado, un borne, el interior de un portalámparas.</p>'+
+      '<p><b>Protección:</b> aislamiento, barreras, envolventes, tapas. Que no puedas llegar a lo que está vivo.</p>'+
+      '<h3>Contacto indirecto</h3>'+
+      '<p>Tocás una parte metálica que <b>normalmente NO debería tener tensión</b>, pero la tiene por una falla: la carcasa del lavarropas, el marco de una luminaria, un caño metálico.</p>'+
+      '<p><b>Protección:</b> puesta a tierra + interruptor diferencial trabajando juntos. La tierra da camino a la fuga, el diferencial la detecta y corta.</p>'+
+      key('El contacto indirecto es más traicionero: nada se ve mal. El lavarropas parece normal hasta que lo tocás descalzo sobre el piso mojado. Por eso la tierra y el diferencial no son opcionales.'),
+     q:[{p:'Tocás la carcasa metálica del lavarropas y sentís corriente. Es un contacto…',o:['Directo','Indirecto','Ninguno','Ambos'],c:1,
+        e:'Indirecto: la carcasa no debería tener tensión. La tiene por una falla de aislamiento.'},
+       {p:'¿Qué protege contra el contacto indirecto?',o:['Solo el aislamiento de los cables','Puesta a tierra + diferencial','La térmica sola','El color de los cables'],c:1,
+        e:'La puesta a tierra da camino a la corriente de falla y el diferencial la detecta y corta. La térmica sola no protege a las personas.'},
+       {p:'Meter un destornillador en un enchufe y tocar la parte metálica sería un contacto…',o:['Indirecto','Directo','Sin riesgo','Solo peligroso si llueve'],c:1,
+        e:'Directo: estás tocando una parte que normalmente está bajo tensión.'}]},
+
+    {id:'n2l3',ic:'🧯',t:'Las reglas antes de tocar nada',
+     s:'El protocolo que usa un profesional, adaptado a tu casa.',
+     html:'<p>En el oficio existen las llamadas <b>cinco reglas de oro</b> para trabajar sin tensión. Aunque vos no vayas a trabajar en la instalación, entenderlas te dice por qué un electricista tarda lo que tarda:</p>'+
+      '<ul><li><b>1. Cortar</b> todas las fuentes de tensión.</li>'+
+      '<li><b>2. Bloquear</b> los dispositivos de corte para que nadie los vuelva a subir.</li>'+
+      '<li><b>3. Verificar ausencia de tensión</b> con instrumento, no por suposición.</li>'+
+      '<li><b>4. Poner a tierra y en cortocircuito</b> (en instalaciones de cierta entidad).</li>'+
+      '<li><b>5. Señalizar</b> y delimitar la zona de trabajo.</li></ul>'+
+      '<h3>Tu versión doméstica</h3>'+
+      '<p>Si vas a cambiar una lámpara o revisar algo simple:</p>'+
+      '<ul><li>Bajá la llave del circuito correspondiente, no solo el interruptor de pared.</li>'+
+      '<li>Avisá a quien esté en casa, para que nadie la vuelva a subir.</li>'+
+      '<li>Comprobá que efectivamente no hay tensión antes de tocar.</li>'+
+      '<li>Manos secas, calzado con suela, nunca descalzo sobre piso húmedo.</li></ul>'+
+      dang('Si hay humo, olor a quemado, chispas, un cable caliente o alguien recibió una descarga: no investigues. Cortá la llave general y llamá a un electricista. Esos síntomas no son para diagnosticar por tu cuenta.'),
+     q:[{p:'Antes de tocar un punto de luz, ¿alcanza con apagar el interruptor de pared?',o:['Sí, es lo mismo','No: hay que bajar la llave del circuito en el tablero','Solo de noche','Sí, si la lámpara está fría'],c:1,
+        e:'El interruptor de pared puede estar cortando el neutro en instalaciones mal hechas, dejando la fase viva. Siempre desde el tablero.'},
+       {p:'La tercera regla de oro es verificar ausencia de tensión. ¿Por qué importa?',o:['Por costumbre','Porque cortar la llave equivocada es un error frecuente','Para que tarde más','Para no gastar el instrumento'],c:1,
+        e:'Los tableros mal rotulados son muy comunes. Verificar con instrumento es lo único que confirma que ese punto está sin tensión.'},
+       {p:'Sentís olor a quemado en un enchufe. ¿Qué hacés?',o:['Lo desarmo para ver','Corto la corriente y llamo a un electricista','Le pongo cinta','Lo uso menos'],c:1,
+        e:'Olor a quemado indica sobrecalentamiento y riesgo de incendio. Se corta y se llama a un profesional.'}]}
+  ]},
+
+  {id:'n3',ic:'📦',t:'Nivel 3 · El tablero',d:'Qué hay adentro y qué hace cada cosa.',ls:[
+    {id:'n3l1',ic:'🛡️',t:'La térmica (interruptor termomagnético)',
+     s:'Protege al cable, no a vos.',
+     html:'<p>Es la llave que "salta" cuando conectás demasiadas cosas. Tiene <b>dos mecanismos</b> en un solo aparato:</p>'+
+      '<ul><li><b>Térmico (bimetálico):</b> actúa ante una <b>sobrecarga</b> sostenida. Tarda: puede ser segundos o minutos.</li>'+
+      '<li><b>Magnético:</b> actúa ante un <b>cortocircuito</b>. Es instantáneo.</li></ul>'+
+      '<p>Esto explica algo que confunde: si la térmica salta <b>al instante</b>, sospechá cortocircuito. Si salta <b>después de un rato</b> de tener todo encendido, es sobrecarga.</p>'+
+      '<h3>Curvas B, C y D</h3>'+
+      '<table class="eia350-tab"><tr><th>Curva</th><th>Dispara a</th><th>Uso típico</th></tr>'+
+      '<tr><td>B</td><td>3–5 × In</td><td>Cargas resistivas: estufas, iluminación</td></tr>'+
+      '<tr><td>C</td><td>5–10 × In</td><td>Uso general doméstico y comercial</td></tr>'+
+      '<tr><td>D</td><td>10–20 × In</td><td>Motores con arranque fuerte</td></tr></table>'+
+      key('La térmica protege AL CABLE de sobrecalentarse. No protege a las personas: una corriente de 30 mA que puede matarte es invisible para una térmica de 16 A.')+
+      dang('Nunca reemplaces una térmica que salta por otra de mayor amperaje "para que no moleste". La térmica está dimensionada para el cable que hay detrás. Poner una más grande significa que el cable puede recalentarse sin que nada corte: así empiezan los incendios.')+
+      n(pais()===ES
+        ? 'En España la curva C es la habitual en viviendas. La coordinación cable-protección se rige por la ITC-BT-22 y las secciones por la ITC-BT-19.'
+        : 'En Argentina la curva C es la más usada en uso doméstico y comercial. La regla básica de la AEA es que In del interruptor nunca supere la Iz del cable que protege.'),
+     q:[{p:'La térmica salta EN EL INSTANTE en que enchufás algo. Lo más probable es:',o:['Sobrecarga','Cortocircuito','Fuga a tierra','Bajo consumo'],c:1,
+        e:'El disparo instantáneo es del mecanismo magnético, que responde a cortocircuitos. La sobrecarga tarda.'},
+       {p:'¿A quién protege principalmente una térmica?',o:['A las personas','Al cable de la instalación','A la distribuidora','Al medidor'],c:1,
+        e:'Protege el conductor contra sobrecargas y cortocircuitos. La protección de las personas es tarea del diferencial y la puesta a tierra.'},
+       {p:'Tu térmica de 16 A salta seguido. ¿Qué NO hay que hacer?',o:['Repartir la carga en otro circuito','Cambiarla por una de 25 A','Revisar qué aparato la hace saltar','Llamar a un electricista'],c:1,
+        e:'Subir el amperaje deja el cable sin protección: puede recalentarse hasta incendiarse. La térmica salta por una razón.'}]},
+
+    {id:'n3l2',ic:'❤️',t:'El diferencial (disyuntor)',
+     s:'La protección que te salva la vida.',
+     html:'<p>El interruptor diferencial —en Argentina también llamado <b>disyuntor</b>— hace algo distinto de la térmica: compara la corriente que <b>entra</b> por la fase con la que <b>vuelve</b> por el neutro.</p>'+
+      '<p>En condiciones normales, ambas son iguales. Si no lo son, significa que parte de la corriente se está yendo por otro camino: la tierra, una cañería… o <b>una persona</b>. Ante esa diferencia, corta.</p>'+
+      '<h3>Por qué 30 mA</h3>'+
+      '<p>La sensibilidad estándar para protección de personas es de <b>30 mA</b>. No es un número arbitrario: está por debajo del umbral donde aparece el riesgo de fibrilación ventricular, y por encima de las fugas naturales de una instalación sana (que harían saltar la protección todo el tiempo).</p>'+
+      '<h3>El botón TEST</h3>'+
+      '<p>Todos los diferenciales tienen un botón marcado <b>T</b> o <b>TEST</b>. Al apretarlo se simula una fuga y el aparato debe cortar al instante.</p>'+
+      '<ul><li>Probalo <b>una vez al mes</b>.</li><li>Si corta: bien, subí la palanca de nuevo.</li>'+
+      '<li><b>Si NO corta: llamá a un electricista ya.</b> El diferencial está fallado y no te está protegiendo.</li></ul>'+
+      key('Es la única comprobación de seguridad que cualquier persona puede y debe hacer en su casa. Toma cinco segundos y es la diferencia entre tener protección y creer que la tenés.')+
+      n(pais()===ES
+        ? 'El REBT exige al menos un diferencial de 30 mA cada 5 circuitos (ITC-BT-25). En electrificación elevada, como mínimo dos.'
+        : 'La AEA 90364 exige diferencial de 30 mA, con especial énfasis en zonas húmedas. El valor de puesta a tierra Ra debe ser ≤40 Ω con diferencial de 30 mA, aunque en la práctica se recomienda ≤10 Ω.'),
+     q:[{p:'¿Qué compara un interruptor diferencial?',o:['La tensión de entrada y salida','La corriente que entra por la fase y la que vuelve por el neutro','La temperatura del cable','El consumo en kWh'],c:1,
+        e:'Compara corriente de ida y vuelta. Si hay diferencia, hay fuga, y corta.'},
+       {p:'El diferencial no corta al apretar el botón TEST. ¿Qué significa?',o:['Que está bien','Que está fallado y hay que llamar a un electricista','Que hay que apretar más fuerte','Que no hay consumo'],c:1,
+        e:'Si no corta en el test, no te está protegiendo. Es una situación a resolver de inmediato.'},
+       {p:'¿Cada cuánto conviene probar el diferencial?',o:['Una vez al mes','Una vez cada 10 años','Solo al mudarse','Nunca'],c:0,
+        e:'Una vez al mes es la recomendación habitual. Es rápido y es la única verificación que podés hacer vos.'}]},
+
+    {id:'n3l3',ic:'🌍',t:'La puesta a tierra',
+     s:'El requisito más ignorado y más peligroso de omitir.',
+     html:'<p>La puesta a tierra es un camino conductor que conecta las partes metálicas de los aparatos con el terreno. En funcionamiento normal no hace nada. Su momento llega cuando aparece una falla.</p>'+
+      '<h3>Qué pasa sin tierra</h3>'+
+      '<p>Un lavarropas con una falla de aislamiento deja su carcasa con tensión. Sin tierra, esa tensión se queda ahí, esperando. El día que lo tocás descalzo, <b>tu cuerpo es el camino a tierra</b>.</p>'+
+      '<h3>Qué pasa con tierra</h3>'+
+      '<p>La corriente de falla se va por el conductor de protección. El diferencial detecta el desequilibrio y corta antes de que alguien toque nada.</p>'+
+      key('Tierra y diferencial funcionan en equipo. La tierra da el camino, el diferencial detecta y corta. Uno sin el otro deja huecos de protección.')+
+      dang('Una instalación sin tierra es peligrosa aunque todo "funcione bien". Los aparatos andan igual; lo que falta es la protección para el día que algo falle. Es muy común en construcciones antiguas.')+
+      n(pais()===ES
+        ? 'En España la puesta a tierra se regula en la ITC-BT-18 y ITC-BT-26. Todas las tomas de corriente de una vivienda deben disponer de conductor de protección.'
+        : 'En Argentina la AEA 90364 (cláusula 411) exige sistema TN-S: el conductor de protección (PE, verde-amarillo) separado del neutro desde el tablero principal. Ra ≤40 Ω con diferencial de 30 mA; recomendado ≤10 Ω. La medición con telurímetro y certificado profesional son obligatorios antes de energizar.'),
+     q:[{p:'En funcionamiento normal, la puesta a tierra…',o:['Lleva corriente permanentemente','No hace nada hasta que hay una falla','Reduce el consumo','Aumenta la tensión'],c:1,
+        e:'Solo actúa ante una falla, dando camino a la corriente para que el diferencial la detecte.'},
+       {p:'Una casa sin puesta a tierra pero con los aparatos funcionando bien:',o:['Está correcta','Es peligrosa: le falta protección ante fallas','Consume más','Consume menos'],c:1,
+        e:'Que funcione no significa que sea segura. Falta la protección para el momento en que un aparato falle.'},
+       {p:'¿Por qué tierra y diferencial se complementan?',o:['No se complementan','La tierra da camino a la fuga y el diferencial la detecta y corta','Hacen lo mismo','La tierra reemplaza al diferencial'],c:1,
+        e:'Trabajan juntos: sin tierra, muchas fallas no generan la fuga que el diferencial necesita detectar a tiempo.'}]}
+  ]},
+
+  {id:'n4',ic:'🧭',t:'Nivel 4 · Los circuitos de la casa',d:'Por qué se divide y cómo se organiza.',ls:[
+    {id:'n4l1',ic:'🧩',t:'Por qué la casa se divide en circuitos',
+     s:'No es capricho: es seguridad y comodidad.',
+     html:'<p>Podrías alimentar toda una casa con un solo cable grueso y una sola llave. Nadie lo hace, por tres razones:</p>'+
+      '<ul><li><b>Seguridad:</b> cada circuito lleva un cable dimensionado para su carga, protegido por una llave acorde.</li>'+
+      '<li><b>Aislar fallas:</b> si hay un problema en la cocina, no te quedás sin luz en toda la casa.</li>'+
+      '<li><b>Diagnóstico:</b> saber qué circuito saltó te dice dónde está el problema.</li></ul>'+
+      '<h3>La lógica del dimensionado</h3>'+
+      '<p>Cada circuito es una cadena coherente: <b>carga prevista → sección de cable → calibre de protección</b>. Si cambiás un eslabón sin los otros, rompés la coherencia. Por eso no se cambia una térmica por una más grande.</p>'+
+      key('La regla que ordena todo: la protección nunca puede ser mayor que lo que aguanta el cable. In del interruptor ≤ Iz del conductor.'),
+     q:[{p:'¿Por qué se divide la instalación en varios circuitos?',o:['Para gastar más cable','Por seguridad, para aislar fallas y facilitar el diagnóstico','Por estética','Lo exige la distribuidora sin motivo'],c:1,
+        e:'Permite dimensionar cada cable según su carga, aislar averías y localizar problemas.'},
+       {p:'La regla de coordinación básica dice que:',o:['El interruptor debe ser mayor que la capacidad del cable','El interruptor no puede superar la capacidad del cable','No hay relación','Depende del color'],c:1,
+        e:'In ≤ Iz. Si la protección es mayor que lo que aguanta el cable, el cable puede recalentarse sin que nada corte.'}]},
+
+    {id:'n4l2',ic:'📋',t:'Los circuitos según la normativa',
+     s:pais()===ES?'Los circuitos C1 a C5 del REBT.':'Circuitos y secciones mínimas según AEA.',
+     html:(pais()===ES
+      ? '<p>En España, la <b>ITC-BT-25</b> del REBT define los circuitos mínimos de una vivienda según su grado de electrificación.</p>'+
+        '<h3>Electrificación básica (5.750 W): 5 circuitos mínimos</h3>'+
+        '<table class="eia350-tab"><tr><th>Circuito</th><th>Destino</th><th>Sección</th><th>Protección</th></tr>'+
+        '<tr><td>C1</td><td>Iluminación</td><td>1,5 mm²</td><td>10 A</td></tr>'+
+        '<tr><td>C2</td><td>Tomas de uso general y frigorífico</td><td>2,5 mm²</td><td>16 A</td></tr>'+
+        '<tr><td>C3</td><td>Cocina y horno</td><td>6 mm²</td><td>25 A</td></tr>'+
+        '<tr><td>C4</td><td>Lavadora, lavavajillas y termo</td><td>4 mm²</td><td>20 A</td></tr>'+
+        '<tr><td>C5</td><td>Tomas de baños y auxiliares de cocina</td><td>2,5 mm²</td><td>16 A</td></tr></table>'+
+        '<h3>Electrificación elevada (9.200 W)</h3>'+
+        '<p>Añade circuitos adicionales: C6 (más iluminación), C7 (más tomas), C8 (calefacción), C9 (aire acondicionado), C10 (secadora), C11 (automatización) y C12 (adicionales).</p>'+
+        '<p>C1 admite un máximo de 30 puntos de luz; C2, un máximo de 20 tomas. Superado ese número, hay que desdoblar el circuito.</p>'+
+        n('Se debe instalar como mínimo un interruptor diferencial cada 5 circuitos. En electrificación elevada, eso implica al menos dos diferenciales.')
+      : '<p>En Argentina, la <b>AEA 90364</b> (sección 771 para viviendas) establece los criterios. Las secciones mínimas más consultadas en obra:</p>'+
+        '<table class="eia350-tab"><tr><th>Circuito</th><th>Sección mínima</th></tr>'+
+        '<tr><td>Iluminación</td><td>1,5 mm²</td></tr>'+
+        '<tr><td>Tomacorrientes de uso general</td><td>2,5 mm²</td></tr>'+
+        '<tr><td>Aire acondicionado</td><td>2,5 mm² (circuito exclusivo)</td></tr>'+
+        '<tr><td>Cocina eléctrica / horno</td><td>4 mm² (circuito exclusivo)</td></tr>'+
+        '<tr><td>Ducha eléctrica</td><td>4 mm²</td></tr></table>'+
+        '<h3>Circuitos exclusivos</h3>'+
+        '<p>Los grandes consumidores —aire acondicionado, cocina eléctrica, termotanque o calefón eléctrico— deben tener <b>circuito propio</b>, no compartido con tomas generales.</p>'+
+        '<h3>Caída de tensión</h3>'+
+        '<p>El límite es del <b>5% total</b> desde el medidor hasta el punto final (cláusula 313). En la práctica se reparte: hasta 3% en la línea principal y hasta 2% en el circuito terminal.</p>'+
+        n('La AEA 90364 está basada en IEC 60364, adaptada a Argentina. Además, cada distribuidora provincial (EDENOR, EDESUR, EPEC, EPE…) tiene su propio Reglamento de Conexión con requisitos adicionales que hay que verificar.'))+
+      key('Conocer estos circuitos te sirve para dos cosas: entender tu tablero y detectar cuando algo está mal hecho, como una cocina eléctrica colgada del circuito de tomas generales.'),
+     q:(pais()===ES
+      ? [{p:'¿Qué sección corresponde al circuito C1 (iluminación)?',o:['1,5 mm²','2,5 mm²','4 mm²','6 mm²'],c:0,e:'C1 usa 1,5 mm² con protección de 10 A.'},
+         {p:'¿Cuántos circuitos mínimos exige la electrificación básica?',o:['3','5','9','12'],c:1,e:'Cinco circuitos: C1 a C5.'},
+         {p:'El circuito C3 está destinado a:',o:['Iluminación','Cocina y horno','Baños','Secadora'],c:1,e:'C3 alimenta cocina y horno, con 6 mm² y protección de 25 A.'}]
+      : [{p:'¿Qué sección mínima corresponde a los tomacorrientes de uso general?',o:['1 mm²','1,5 mm²','2,5 mm²','6 mm²'],c:2,e:'2,5 mm² para tomas de uso general; 1,5 mm² es para iluminación.'},
+         {p:'Un aire acondicionado debe conectarse:',o:['A cualquier toma libre','A un circuito exclusivo','Al circuito de iluminación','Directo al medidor'],c:1,e:'Los grandes consumidores requieren circuito exclusivo.'},
+         {p:'¿Cuál es el límite de caída de tensión total según AEA?',o:['1%','3%','5%','10%'],c:2,e:'5% total desde el medidor al punto final (cláusula 313).'}]
+     )},
+
+    {id:'n4l3',ic:'🔍',t:'Cómo leer tu propio tablero',
+     s:'Identificar qué es cada llave, sin abrir nada.',
+     html:'<p>Podés reconocer los elementos de tu tablero <b>sin abrirlo ni tocar nada</b>. Mirá la tapa frontal:</p>'+
+      '<ul><li><b>La llave más grande, arriba o a un costado:</b> el interruptor general. Corta todo.</li>'+
+      '<li><b>Una llave con botón T o TEST:</b> el diferencial. Suele ser más ancha que las demás.</li>'+
+      '<li><b>Varias llaves iguales en fila, con números (10, 16, 20, 25):</b> las térmicas de cada circuito. El número es su corriente nominal en amperios.</li></ul>'+
+      '<h3>Hacé tu mapa</h3>'+
+      '<p>Un ejercicio que vale oro el día de una urgencia:</p>'+
+      '<ul><li>Con ayuda de otra persona, bajá una térmica por vez.</li>'+
+      '<li>Recorré la casa y anotá qué dejó de funcionar.</li>'+
+      '<li>Escribí ese rótulo junto a cada llave, o guardalo en la ficha "Mi instalación" de ElectroIA.</li></ul>'+
+      key('Un tablero rotulado convierte una urgencia a oscuras en algo manejable. Es media hora de trabajo que agradecés durante años.')+
+      dang('Mirar y bajar llaves es seguro. Abrir la tapa del tablero, no: detrás hay partes bajo tensión aunque las llaves estén bajas. Eso es trabajo de electricista.'),
+     q:[{p:'¿Cómo identificás el diferencial a simple vista?',o:['Es el más chico','Tiene un botón marcado T o TEST','Es de color rojo','Está siempre abajo'],c:1,
+        e:'El botón de prueba T/TEST es la marca distintiva del diferencial.'},
+       {p:'El número 16 en una térmica indica:',o:['El año de fabricación','Su corriente nominal en amperios','La cantidad de enchufes','Los metros de cable'],c:1,
+        e:'Es la corriente nominal (In) en amperios: el valor a partir del cual protege al cable.'},
+       {p:'¿Es seguro abrir la tapa del tablero para mirar?',o:['Sí, si bajás las llaves','No: detrás hay partes con tensión aunque las llaves estén bajas','Sí, siempre','Solo de día'],c:1,
+        e:'La acometida llega con tensión al tablero aunque las llaves estén bajas. Abrirlo es trabajo de profesional.'}]}
+  ]},
+
+  {id:'n5',ic:'🔎',t:'Nivel 5 · Diagnosticar averías',d:'El método para encontrar el problema sin exponerte.',ls:[
+    {id:'n5l1',ic:'🧠',t:'El método de descarte',
+     s:'Cómo piensa un electricista frente a una falla.',
+     html:'<p>Un buen diagnóstico no es adivinar: es <b>ir partiendo el problema en mitades</b> hasta acorralarlo.</p>'+
+      '<h3>Las tres preguntas que ordenan todo</h3>'+
+      '<ul><li><b>¿Qué alcance tiene?</b> ¿Un aparato, una habitación, toda la casa, todo el edificio? Eso solo ya descarta la mitad de las causas.</li>'+
+      '<li><b>¿Cuándo pasa?</b> ¿Siempre, al encender algo concreto, cuando llueve, después de un rato?</li>'+
+      '<li><b>¿Qué cambió?</b> ¿Un aparato nuevo, una reforma, una tormenta, humedad?</li></ul>'+
+      '<h3>Ejemplo aplicado</h3>'+
+      '<p>"No anda la luz del baño". Aplicando el método:</p>'+
+      '<ul><li>¿Solo esa luz, o también los enchufes del baño? → separa lámpara de circuito.</li>'+
+      '<li>¿Saltó alguna llave en el tablero? → separa falla de protección disparada.</li>'+
+      '<li>¿Los vecinos tienen luz? → separa problema interno de corte general.</li></ul>'+
+      key('Cada respuesta elimina un grupo entero de causas. Por eso ElectroIA te hace preguntas en vez de darte una respuesta inmediata: sin acotar el alcance, cualquier diagnóstico es una adivinanza.'),
+     q:[{p:'¿Cuál es la primera pregunta útil ante una avería?',o:['¿De qué marca es el aparato?','¿Qué alcance tiene el problema?','¿Cuánto costó?','¿Hace cuánto que vivís ahí?'],c:1,
+        e:'El alcance (un aparato, una zona, toda la casa) descarta de entrada grupos enteros de causas.'},
+       {p:'No hay luz en tu casa. Mirás la calle y los vecinos tampoco tienen. Eso indica:',o:['Falla en tu tablero','Corte general de la distribuidora','Tu diferencial está roto','Tu cable está cortado'],c:1,
+        e:'Si el alcance excede tu vivienda, el problema no está en tu instalación.'}]},
+
+    {id:'n5l2',ic:'⚡',t:'Salta la térmica: sobrecarga o cortocircuito',
+     s:'Cómo distinguirlos por el comportamiento.',
+     html:'<p>La térmica tiene dos mecanismos, y cuál actuó te dice mucho:</p>'+
+      '<table class="eia350-tab"><tr><th></th><th>Sobrecarga</th><th>Cortocircuito</th></tr>'+
+      '<tr><td><b>Cuándo salta</b></td><td>Tras un rato con varias cosas encendidas</td><td>Al instante, al conectar o encender</td></tr>'+
+      '<tr><td><b>Causa</b></td><td>Más consumo del que aguanta el circuito</td><td>Fase y neutro en contacto directo</td></tr>'+
+      '<tr><td><b>Qué hacer</b></td><td>Repartir la carga en otros circuitos</td><td>Desconectar todo y probar de a uno</td></tr></table>'+
+      '<h3>Procedimiento seguro</h3>'+
+      '<ul><li>Desenchufá todo lo del circuito afectado.</li>'+
+      '<li>Subí la llave. ¿Se mantiene? El problema está en algún aparato.</li>'+
+      '<li>Enchufá de a uno, esperando entre cada uno. El que la haga saltar es el culpable.</li>'+
+      '<li>¿Salta con todo desenchufado? El problema está en la instalación: electricista.</li></ul>'+
+      dang('Si la llave no sube, o sube y salta al instante con todo desconectado, o notás olor a quemado: pará. Hay una falla en la instalación que necesita un profesional.'),
+     q:[{p:'La térmica salta después de 20 minutos con la estufa, el microondas y la pava encendidos. Es:',o:['Cortocircuito','Sobrecarga','Fuga a tierra','Falla del diferencial'],c:1,
+        e:'Disparo lento tras acumular consumo = sobrecarga. Hay que repartir la carga.'},
+       {p:'Con todos los aparatos desenchufados, la térmica sigue saltando. Significa:',o:['Un aparato está fallado','La falla está en la instalación: llamar a un electricista','Falta consumo','La térmica es muy grande'],c:1,
+        e:'Si no hay aparatos conectados, el problema está en el cableado. No es para resolver por cuenta propia.'}]},
+
+    {id:'n5l3',ic:'💧',t:'Salta el diferencial: hay una fuga',
+     s:'Por qué es más serio que una térmica que salta.',
+     html:'<p>Cuando salta el <b>diferencial</b>, no es un problema de consumo: es que hay corriente yéndose por donde no debe. Eso es una <b>fuga</b>, y merece más atención que una térmica saltada.</p>'+
+      '<h3>Causas frecuentes</h3>'+
+      '<ul><li><b>Humedad:</b> la causa más común. Lluvia que entra, filtración, un toma exterior mojado.</li>'+
+      '<li><b>Un aparato con aislamiento deteriorado:</b> termotanques, lavarropas y calefactores son habituales por su antigüedad y por trabajar con agua.</li>'+
+      '<li><b>Un cable dañado</b> dentro de la pared, a veces por un clavo o un tornillo.</li>'+
+      '<li><b>El propio diferencial</b>, si ya tiene muchos años.</li></ul>'+
+      '<h3>Cómo acotarlo</h3>'+
+      '<p>Mismo método: desconectá todo del circuito, subí el diferencial y andá reconectando de a uno. Si vuelve a saltar con un aparato concreto, ese aparato tiene una fuga y no debe usarse hasta que lo revisen.</p>'+
+      key('Que el diferencial salte es una mala noticia con una buena noticia adentro: significa que está funcionando. El problema de verdad sería que hubiera fuga y no saltara.')+
+      dang('Nunca dejes un diferencial bajado "porque salta". Sin él, la próxima fuga encuentra camino por una persona. Si no podés mantenerlo arriba, llamá a un electricista: estás ante una falla real.'),
+     q:[{p:'Que salte el diferencial indica:',o:['Demasiado consumo','Una fuga de corriente','Falta de tensión','Un cable muy grueso'],c:1,
+        e:'El diferencial responde a corriente que se va por un camino indebido, no al consumo.'},
+       {p:'El diferencial salta cada vez que llueve. La causa más probable es:',o:['Sobrecarga','Humedad entrando en la instalación','Un cable demasiado grueso','Bajo consumo'],c:1,
+        e:'La humedad crea caminos de fuga. Es la causa más frecuente de disparos intermitentes.'},
+       {p:'El diferencial salta y no podés subirlo. ¿Qué NO debés hacer?',o:['Desconectar aparatos y probar','Dejarlo bajado y puentearlo para tener luz','Llamar a un electricista','Anotar cuándo empezó'],c:1,
+        e:'Anular el diferencial elimina la protección contra electrocución. Es de las cosas más peligrosas que se pueden hacer en una instalación.'}]}
+  ]},
+
+  {id:'n6',ic:'💰',t:'Nivel 6 · Consumo y factura',d:'Entender qué pagás y dónde se va la energía.',ls:[
+    {id:'n6l1',ic:'📊',t:'Potencia contratada vs. energía consumida',
+     s:'Los dos conceptos que aparecen en tu factura.',
+     html:'<p>En la factura conviven dos cosas distintas:</p>'+
+      '<ul><li><b>Potencia contratada (kW):</b> el máximo que podés usar <i>a la vez</i>. Es como el ancho de la cañería.</li>'+
+      '<li><b>Energía consumida (kWh):</b> lo que efectivamente usaste en el período. Es el agua que pasó.</li></ul>'+
+      '<p>Si superás la potencia contratada, salta la protección general aunque hayas consumido poca energía en el mes. Y al revés: podés tener potencia de sobra y una factura alta por tener muchas cosas encendidas muchas horas.</p>'+
+      '<h3>Calcular el consumo de un aparato</h3>'+
+      '<p><b>kWh = (vatios × horas de uso) / 1000</b></p>'+
+      '<p>Ejemplo: un aire de 1.500 W usado 6 h por día durante 30 días → (1500 × 6 × 30) / 1000 = <b>270 kWh</b>.</p>'+
+      key('Bajar el consumo no es apagar el aparato de más watts: es reducir watts × horas. Un termotanque encendido todo el día pesa más que una plancha potente usada diez minutos.'),
+     q:[{p:'La potencia contratada se mide en:',o:['kWh','kW','Amperios','Ohmios'],c:1,
+        e:'La potencia se mide en kW; la energía consumida, en kWh.'},
+       {p:'Un aparato de 1.500 W usado 6 h/día durante 30 días consume:',o:['27 kWh','270 kWh','2.700 kWh','9 kWh'],c:1,
+        e:'(1500 × 6 × 30) / 1000 = 270 kWh.'},
+       {p:'Salta la llave general al encender el horno con todo lo demás prendido, pero tu factura es baja. Probablemente:',o:['Consumís demasiada energía','Superaste la potencia contratada','El medidor está roto','Tenés una fuga'],c:1,
+        e:'Es un problema de simultaneidad: superaste el máximo instantáneo, no el consumo acumulado.'}]}
+  ]},
+
+  {id:'n7',ic:'📐',t:'Nivel 7 · Dimensionado (profesional)',d:'Los tres criterios para elegir un conductor.',ls:[
+    {id:'n7l1',ic:'🌡️',t:'Ampacidad y factores de corrección',
+     s:'El primer criterio: que el cable no se recaliente.',
+     html:'<p>La <b>ampacidad</b> (Iz) es la corriente máxima que un conductor puede llevar de forma continua sin superar la temperatura de su aislación: 70 °C para PVC, 90 °C para XLPE.</p>'+
+      '<p>Las tablas normalizadas (IEC 60364-5-52) dan valores en <b>condiciones de referencia</b>: 30 °C de temperatura ambiente y un solo circuito sin agrupar. Fuera de esas condiciones hay que corregir.</p>'+
+      '<h3>Factores de corrección</h3>'+
+      '<p><b>Iz real = Iz tabla × k₁ (temperatura) × k₂ (agrupamiento)</b></p>'+
+      '<table class="eia350-tab"><tr><th>Temperatura</th><th>k₁ (PVC)</th></tr>'+
+      '<tr><td>30 °C</td><td>1,00</td></tr><tr><td>35 °C</td><td>0,94</td></tr>'+
+      '<tr><td>40 °C</td><td>0,87</td></tr><tr><td>45 °C</td><td>0,79</td></tr>'+
+      '<tr><td>50 °C</td><td>0,71</td></tr></table>'+
+      '<table class="eia350-tab"><tr><th>Circuitos agrupados</th><th>k₂</th></tr>'+
+      '<tr><td>1</td><td>1,00</td></tr><tr><td>2</td><td>0,80</td></tr>'+
+      '<tr><td>3</td><td>0,70</td></tr><tr><td>4</td><td>0,65</td></tr>'+
+      '<tr><td>6</td><td>0,57</td></tr></table>'+
+      '<p><b>Ejemplo:</b> un cable con Iz de tabla 24 A, a 40 °C y con 3 circuitos agrupados: 24 × 0,87 × 0,70 = <b>14,6 A</b>. Perdió casi el 40%.</p>'+
+      key('El agrupamiento es el factor que más se olvida y el que más castiga. Seis circuitos en el mismo caño dejan cada cable al 57% de su capacidad.')+
+      n(pais()===ES
+        ? 'Las tablas de la ITC-BT-19 del REBT derivan de IEC 60364-5-52. Verificá siempre la redacción vigente.'
+        : 'En Argentina rigen IRAM NM 247-3 e IRAM 2178, y la AEA 90364-5-523. En zonas cálidas (NOA, NEA, Cuyo) se recomienda diseñar con 35–40 °C, no con 30 °C.'),
+     q:[{p:'Iz de tabla 24 A, a 40 °C (k₁=0,87) y 3 circuitos agrupados (k₂=0,70). La Iz corregida es:',o:['24 A','20,9 A','14,6 A','16,8 A'],c:2,
+        e:'24 × 0,87 × 0,70 = 14,6 A. Los factores se multiplican entre sí.'},
+       {p:'Las tablas de ampacidad suponen, por defecto:',o:['40 °C y 3 circuitos','30 °C y un solo circuito','20 °C y 2 circuitos','Cualquier condición'],c:1,
+        e:'Condiciones de referencia: 30 °C de ambiente y circuito único sin agrupar.'},
+       {p:'¿Cuál de estos factores castiga más la capacidad de un cable?',o:['Pasar de 30 a 35 °C','Agrupar 6 circuitos','Usar cobre en vez de aluminio','La longitud'],c:1,
+        e:'Agrupar 6 circuitos deja k₂ = 0,57: una pérdida del 43%, mayor que la de temperatura moderada.'}]},
+
+    {id:'n7l2',ic:'📉',t:'Caída de tensión y coordinación',
+     s:'Los otros dos criterios que definen la sección.',
+     html:'<h3>Criterio 2: caída de tensión</h3>'+
+      '<p>Aunque el cable aguante la corriente, si es largo la tensión llega baja al final. Los motores sufren, las lámparas parpadean.</p>'+
+      '<p>Monofásico: <b>ΔV = 2 × L × I × ρ / S</b><br>Trifásico equilibrado: <b>ΔV = √3 × L × I × ρ / S</b></p>'+
+      '<p>Donde ρ (cobre) ≈ 0,0175 Ω·mm²/m, L en metros, S en mm².</p>'+
+      (pais()===ES
+        ? '<p>Límites habituales en España: 3% en circuitos de alumbrado y 5% en los demás usos, para instalaciones interiores de vivienda.</p>'
+        : '<p>Límite en Argentina (AEA cláusula 313): <b>5% total</b> desde el medidor hasta el punto más alejado; en la práctica, hasta 3% en la línea principal y 2% en el terminal.</p>')+
+      '<h3>Criterio 3: coordinación con la protección</h3>'+
+      '<p>La condición que debe cumplirse siempre:</p>'+
+      '<p style="text-align:center;font-size:17px;font-weight:800;color:#134a94">Ib ≤ In ≤ Iz</p>'+
+      '<ul><li><b>Ib:</b> corriente de diseño (lo que realmente va a consumir el circuito).</li>'+
+      '<li><b>In:</b> corriente nominal de la protección.</li>'+
+      '<li><b>Iz:</b> ampacidad corregida del conductor.</li></ul>'+
+      '<p>Se añade la condición <b>I₂ ≤ 1,45 × Iz</b>, donde I₂ es la corriente de funcionamiento de la protección. Para interruptores según IEC 60898, I₂ = 1,45 × In, con lo que se cumple automáticamente si In ≤ Iz.</p>'+
+      key('La sección final es la MAYOR de las tres exigencias: ampacidad, caída de tensión y cortocircuito. Cumplir una sola no alcanza.')+
+      dang('Este contenido es formativo. El dimensionado de una instalación real debe verificarlo y firmarlo un profesional matriculado, con la norma vigente delante.'),
+     q:[{p:'La condición de coordinación correcta es:',o:['In ≤ Ib ≤ Iz','Ib ≤ In ≤ Iz','Iz ≤ In ≤ Ib','Ib ≤ Iz ≤ In'],c:1,
+        e:'Ib ≤ In ≤ Iz: la protección debe ser mayor que el consumo previsto pero nunca superar lo que aguanta el cable.'},
+       {p:'En un circuito monofásico, la caída de tensión se calcula con el coeficiente:',o:['2','√3','1','1,45'],c:0,
+        e:'Monofásico usa 2 (ida y vuelta). El trifásico equilibrado usa √3.'},
+       {p:'Un cable cumple ampacidad pero la caída de tensión da 7% en 80 m. ¿Qué hacés?',o:['Lo dejo, la ampacidad alcanza','Aumento la sección','Subo el calibre de la térmica','Acorto el cable a la mitad y listo'],c:1,
+        e:'Hay que cumplir los tres criterios. Si la caída excede el límite, se aumenta la sección.'}]}
+  ]},
+
+  {id:'n8',ic:'📘',t:'Nivel 8 · Normativa y verificación',d:'El marco legal y cómo se comprueba una instalación.',ls:[
+    {id:'n8l1',ic:'⚖️',t:pais()===ES?'El REBT y las ITC-BT':'La AEA 90364',
+     s:'Qué regula y cómo está organizada.',
+     html:(pais()===ES
+      ? '<p>El <b>REBT</b> (Reglamento Electrotécnico para Baja Tensión) es la norma que rige las instalaciones eléctricas de baja tensión en España. Se desarrolla en <b>ITC-BT</b> (Instrucciones Técnicas Complementarias), cada una dedicada a un aspecto.</p>'+
+        '<table class="eia350-tab"><tr><th>ITC</th><th>Contenido</th></tr>'+
+        '<tr><td>ITC-BT-10</td><td>Previsión de cargas</td></tr>'+
+        '<tr><td>ITC-BT-18</td><td>Puesta a tierra</td></tr>'+
+        '<tr><td>ITC-BT-19</td><td>Instalaciones interiores: secciones y caídas</td></tr>'+
+        '<tr><td>ITC-BT-22/23/24</td><td>Protección: sobreintensidad, sobretensión, contactos</td></tr>'+
+        '<tr><td>ITC-BT-25</td><td>Viviendas: número de circuitos</td></tr>'+
+        '<tr><td>ITC-BT-27</td><td>Baños: volúmenes de protección</td></tr></table>'
+      : '<p>La <b>Reglamentación AEA 90364</b> para la ejecución de instalaciones eléctricas en inmuebles es la norma base en todo el territorio argentino. Publicada en 2006 por la Asociación Electrotécnica Argentina, está basada en IEC 60364 y adaptada a los usos del país, con actualizaciones vigentes hasta 2025.</p>'+
+        '<table class="eia350-tab"><tr><th>Parte</th><th>Contenido</th></tr>'+
+        '<tr><td>Parte 1</td><td>Principios fundamentales</td></tr>'+
+        '<tr><td>Parte 4</td><td>Protección para la seguridad</td></tr>'+
+        '<tr><td>Parte 5</td><td>Elección e instalación de equipos</td></tr>'+
+        '<tr><td>Parte 6</td><td>Verificación (ed. 2025)</td></tr>'+
+        '<tr><td>7-771</td><td>Viviendas, oficinas y locales unitarios</td></tr>'+
+        '<tr><td>7-701</td><td>Baños: zonas y grados IP</td></tr></table>'+
+        '<p>Además de la AEA, cada distribuidora provincial tiene su <b>Reglamento de Conexión</b> con exigencias propias sobre acometida, medidor y poder de corte mínimo.</p>')+
+      key('Ninguna app, esta incluida, reemplaza la norma. Lo que aprendas acá te da criterio para entender y preguntar mejor, no habilitación para ejecutar.')+
+      dang('Trabajar en instalaciones eléctricas requiere matrícula profesional. Este contenido es formativo y no habilita a ejecutar ni certificar instalaciones.'),
+     q:(pais()===ES
+      ? [{p:'¿Qué ITC-BT regula el número de circuitos en viviendas?',o:['ITC-BT-18','ITC-BT-19','ITC-BT-25','ITC-BT-27'],c:2,e:'La ITC-BT-25 define los circuitos C1 a C12 y los grados de electrificación.'},
+         {p:'Las ITC-BT son:',o:['Leyes autonómicas','Instrucciones Técnicas Complementarias que desarrollan el REBT','Normas europeas','Recomendaciones opcionales'],c:1,e:'Desarrollan y concretan los requisitos del REBT.'}]
+      : [{p:'La AEA 90364 está basada en:',o:['La norma NEC de EE.UU.','La norma internacional IEC 60364','El REBT español','Ninguna norma previa'],c:1,e:'Está basada en IEC 60364, adaptada a los usos y costumbres de Argentina.'},
+         {p:'¿Qué sección de la AEA trata viviendas y locales unitarios?',o:['Parte 1','7-701','7-771','Parte 6'],c:2,e:'La 7-771 cubre viviendas, oficinas y locales unitarios.'},
+         {p:'Además de la AEA, ¿qué hay que verificar antes de ejecutar una obra?',o:['Nada más','El Reglamento de Conexión de la distribuidora local','Solo el precio de los materiales','La norma NEC'],c:1,e:'Cada distribuidora provincial tiene requisitos propios de conexión.'}])}
+  ]}
+  ]; }
+  var NIVELES=construirNiveles();
+
+  /* =========================================================
+     RENDER
+     ========================================================= */
+  function shell(html){
+    var app=D.getElementById('app'); if(!app) return;
+    var cab=(typeof W.head==='function')?W.head(true):'';
+    app.innerHTML=cab+'<main class="wrap page eia350-wrap">'+html+'</main>';
+    try{ W.scrollTo(0,0); }catch(_){ }
+    if(W.eiaEtiquetarCampos) W.eiaEtiquetarCampos();
+  }
+  function totalLecciones(){ return NIVELES.reduce(function(a,n){ return a+n.ls.length; },0); }
+  function hechasTotal(){
+    var c=0; NIVELES.forEach(function(n){ n.ls.forEach(function(l){ if(hecho(l.id)) c++; }); }); return c;
+  }
+
+  W.eia350Inicio=function(){
+    var tot=totalLecciones(), hec=hechasTotal(), pct=tot?Math.round(hec/tot*100):0;
+    var p=pais();
+    var h='<div class="eia350-hero"><h1>📚 Aprender electricidad</h1>'+
+      '<p>Ocho niveles, desde qué es un electrón hasta cómo se dimensiona un conductor. Cada lección termina con ejercicios, y cada nivel con un examen.</p></div>'+
+      '<div class="eia350-pais">'+
+        '<button type="button" class="'+(p==='ar'?'on':'')+'" onclick="eia350Pais(\'ar\')">🇦🇷 Argentina · AEA</button>'+
+        '<button type="button" class="'+(p==='es'?'on':'')+'" onclick="eia350Pais(\'es\')">🇪🇸 España · REBT</button>'+
+      '</div>'+
+      '<div class="eia350-prog"><b>Tu progreso</b><div class="eia350-bar"><i style="width:'+pct+'%"></i></div>'+
+      '<span>'+hec+' de '+tot+' lecciones · '+pct+'%</span></div>';
+
+    h+=NIVELES.map(function(nv){
+      var d=nv.ls.filter(function(l){ return hecho(l.id); }).length;
+      var comp=d===nv.ls.length;
+      var nota=notaNivel(nv.id);
+      return '<button type="button" class="eia350-lv'+(comp?' done':'')+'" onclick="eia350Nivel(\''+nv.id+'\')">'+
+        '<span class="ic">'+nv.ic+'</span><span><b>'+esc(nv.t)+'</b><small>'+esc(nv.d)+'</small>'+
+        '<span class="badge">'+d+'/'+nv.ls.length+' lecciones'+(nota?' · examen '+nota.pct+'%':'')+'</span></span>'+
+        '<span class="fl" aria-hidden="true">›</span></button>';
+    }).join('');
+    shell(h);
+  };
+
+  W.eia350Nivel=function(nid){
+    var nv=NIVELES.find(function(x){ return x.id===nid; }); if(!nv) return W.eia350Inicio();
+    var todas=nv.ls.every(function(l){ return hecho(l.id); });
+    var nota=notaNivel(nid);
+    var h='<div class="eia350-hero"><h1>'+nv.ic+' '+esc(nv.t)+'</h1><p>'+esc(nv.d)+'</p></div>';
+    h+=nv.ls.map(function(l,i){
+      return '<button type="button" class="eia350-ls'+(hecho(l.id)?' done':'')+'" onclick="eia350Leccion(\''+nid+'\','+i+')">'+
+        '<span style="font-size:20px">'+(hecho(l.id)?'✅':l.ic)+'</span>'+
+        '<span><b>'+esc(l.t)+'</b><small>'+esc(l.s)+'</small></span><span style="color:#546b88" aria-hidden="true">›</span></button>';
+    }).join('');
+    h+='<button class="eia350-btn go" type="button" onclick="eia350Examen(\''+nid+'\')">'+
+       '📝 Examen del nivel'+(nota?' · mejor nota '+nota.pct+'%':'')+'</button>';
+    if(!todas) h+='<p style="font-size:12.5px;color:#9db0c6;text-align:center;margin-top:8px">Podés rendir el examen cuando quieras, pero conviene leer las lecciones primero.</p>';
+    h+='<button class="eia350-btn alt" type="button" onclick="eia350Inicio()">← Volver a niveles</button>';
+    shell(h);
+  };
+
+  W.eia350Leccion=function(nid,i){
+    var nv=NIVELES.find(function(x){ return x.id===nid; }); if(!nv) return W.eia350Inicio();
+    var l=nv.ls[i]; if(!l) return W.eia350Nivel(nid);
+    var h='<div class="eia350-doc"><div class="kick">'+esc(nv.t)+'</div><h2>'+l.ic+' '+esc(l.t)+'</h2>'+l.html+'</div>';
+    h+='<button class="eia350-btn" type="button" onclick="eia350Ejercicios(\''+nid+'\','+i+')">✏️ Hacer los ejercicios ('+l.q.length+')</button>';
+    h+='<button class="eia350-btn alt" type="button" onclick="eia350Nivel(\''+nid+'\')">← Volver al nivel</button>';
+    shell(h);
+  };
+
+  /* ---------------- ejercicios ---------------- */
+  var TEST=null;
+  W.eia350Ejercicios=function(nid,i){
+    var nv=NIVELES.find(function(x){ return x.id===nid; }); var l=nv&&nv.ls[i];
+    if(!l) return W.eia350Inicio();
+    TEST={tipo:'leccion',nid:nid,i:i,lid:l.id,pre:l.q.slice(),resp:[],titulo:l.t};
+    pintarPregunta(0);
+  };
+  W.eia350Examen=function(nid){
+    var nv=NIVELES.find(function(x){ return x.id===nid; }); if(!nv) return W.eia350Inicio();
+    var banco=[];
+    nv.ls.forEach(function(l){ l.q.forEach(function(q){ banco.push(q); }); });
+    /* mezcla y toma hasta 8 */
+    for(var j=banco.length-1;j>0;j--){ var k=Math.floor(Math.random()*(j+1)); var t=banco[j]; banco[j]=banco[k]; banco[k]=t; }
+    TEST={tipo:'examen',nid:nid,pre:banco.slice(0,Math.min(8,banco.length)),resp:[],titulo:nv.t};
+    pintarPregunta(0);
+  };
+
+  function pintarPregunta(idx){
+    if(!TEST) return W.eia350Inicio();
+    if(idx>=TEST.pre.length) return resultado();
+    var q=TEST.pre[idx];
+    var h='<div class="eia350-hero"><h1>'+(TEST.tipo==='examen'?'📝 Examen':'✏️ Ejercicios')+'</h1>'+
+      '<p>'+esc(TEST.titulo)+' · pregunta '+(idx+1)+' de '+TEST.pre.length+'</p></div>'+
+      '<div class="eia350-q"><div class="num">PREGUNTA '+(idx+1)+'</div><p class="pre">'+esc(q.p)+'</p>'+
+      q.o.map(function(op,k){
+        return '<button type="button" class="eia350-op" id="op'+k+'" onclick="eia350Responder('+idx+','+k+')">'+esc(op)+'</button>';
+      }).join('')+
+      '<div id="e350fb"></div></div>';
+    shell(h);
+  }
+
+  W.eia350Responder=function(idx,k){
+    var q=TEST.pre[idx];
+    if(TEST.resp[idx]!==undefined) return;
+    TEST.resp[idx]=k;
+    var bien=(k===q.c);
+    for(var j=0;j<q.o.length;j++){
+      var b=D.getElementById('op'+j); if(!b) continue;
+      b.disabled=true;
+      if(j===q.c) b.className='eia350-op ok';
+      else if(j===k) b.className='eia350-op no';
+    }
+    var fb=D.getElementById('e350fb');
+    if(fb){
+      fb.innerHTML='<div class="eia350-fb '+(bien?'ok':'no')+'"><b>'+(bien?'✅ Correcto.':'❌ No es correcta.')+'</b> '+esc(q.e)+'</div>'+
+        '<button class="eia350-btn" type="button" onclick="eia350Siguiente('+(idx+1)+')">'+
+        (idx+1>=TEST.pre.length?'Ver resultado':'Siguiente pregunta')+'</button>';
+      try{ fb.scrollIntoView({behavior:'smooth',block:'nearest'}); }catch(_){ }
+    }
+  };
+  W.eia350Siguiente=function(i){ pintarPregunta(i); };
+
+  function resultado(){
+    var ok=0;
+    TEST.pre.forEach(function(q,i){ if(TEST.resp[i]===q.c) ok++; });
+    var pct=Math.round(ok/TEST.pre.length*100);
+    var aprobado=pct>=70;
+
+    if(TEST.tipo==='leccion'){ marcar(TEST.lid,pct); }
+    else {
+      var d=leer(); d.examenes=d.examenes||{};
+      var prev=d.examenes[TEST.nid];
+      if(!prev||prev.pct<pct) d.examenes[TEST.nid]={pct:pct,fecha:new Date().toISOString()};
+      guardar(d);
+    }
+
+    var msg = pct===100 ? 'Perfecto. Dominás este contenido.'
+      : aprobado ? 'Aprobado. Repasá lo que fallaste y seguí adelante.'
+      : 'Todavía no. Volvé a leer la lección: no es un problema, es parte de aprender.';
+
+    var h='<div class="eia350-res '+(aprobado?'ok':'no')+'">'+
+      '<div style="font-size:40px">'+(pct===100?'🏆':aprobado?'✅':'📖')+'</div>'+
+      '<div class="pct">'+pct+'%</div>'+
+      '<b style="color:#0f1b2b">'+ok+' de '+TEST.pre.length+' correctas</b>'+
+      '<p>'+esc(msg)+'</p></div>';
+
+    if(TEST.tipo==='leccion'){
+      var nv=NIVELES.find(function(x){ return x.id===TEST.nid; });
+      var sig=TEST.i+1;
+      if(nv&&nv.ls[sig]) h+='<button class="eia350-btn" type="button" onclick="eia350Leccion(\''+TEST.nid+'\','+sig+')">Siguiente lección →</button>';
+      h+='<button class="eia350-btn alt" type="button" onclick="eia350Leccion(\''+TEST.nid+'\','+TEST.i+')">Releer la lección</button>';
+    } else {
+      h+='<button class="eia350-btn" type="button" onclick="eia350Examen(\''+TEST.nid+'\')">Repetir el examen</button>';
+    }
+    h+='<button class="eia350-btn alt" type="button" onclick="eia350Nivel(\''+TEST.nid+'\')">← Volver al nivel</button>';
+    shell(h);
+  }
+
+  /* Reemplaza la sección de aprender anterior (la última asignación gana) */
+  W.aprender=W.eia350Inicio;
+  W.eia17Learning=W.eia350Inicio;
+})();
+</script>
+
 </body></html>
