@@ -364,7 +364,87 @@
 </style>
 </head>
 <body data-eia09-urgency-hash="e3628976edd07b32769fe6381ad0017869807964c3d282c7a9cb9c9502702215">
-<div id="app"><header class="top"><div class="row"><div><div class="brand">⚡ ElectroIA</div><div class="tag">Tu primera ayuda ante una urgencia eléctrica</div></div><div style="text-align:right"><button class="btn alt" type="button" onclick="window.eiaToggleMenu?eiaToggleMenu():document.getElementById('eiaAccountOverlay')?.classList.add('show')">👤 Cuenta</button><div class="ver">Hogar · ElectroIA</div></div></div></header><main class="wrap page eia-static-startup-fallback"><section class="eia-brand-hero"><div class="eia-hero-copy"><div class="eia-logo-mark">⚡ ELECTROIA HOGAR · ASISTENTE ELÉCTRICO</div><h1>Tu problema eléctrico.<br>Una solución sencilla.</h1><div class="eia-slogan">Entendé qué pasa antes de llamar a un electricista.</div><p class="eia-hero-desc">ElectroIA Hogar es un asistente inteligente pensado para cualquier persona. Le contás qué está pasando en tu casa y te guía con preguntas simples y comprobaciones seguras, paso a paso, aunque no sepas absolutamente nada de electricidad.</p></div><div class="eia-visual" aria-hidden="true"><div class="eia-house"><div class="eia-roof"></div><div class="eia-window"></div><div class="eia-door"></div></div><div class="eia-bolt">⚡</div></div></section><section class="eia-emergency-card"><div class="eia-emergency-toggle"><div class="eia-emergency-icon">🚨</div><div class="eia-emergency-copy"><b>🚨 ¿TENÉS UNA URGENCIA ELÉCTRICA AHORA?</b><span>Entrá acá y te guiamos paso a paso. Si hay peligro, te lo indicamos primero.</span></div></div></section><section class="eia-v22-sections"><div class="eia-v22-section-card eia-v22-home"><div class="eia-v22-icon">🏠</div><div><div class="eia-v22-kicker">PARA TU CASA</div><h2>Modo Hogar</h2></div></div><div class="eia-v22-section-card eia-v22-pro"><div class="eia-v22-icon">🧰</div><div><div class="eia-v22-kicker">PARA PROFESIONALES</div><h2>Modo Profesional</h2></div></div></section></main></div>
+<div id="app"><header class="top"><div class="row"><div><div class="brand">⚡ ElectroIA</div><div class="tag">Tu primera ayuda ante una urgencia eléctrica</div></div><div style="text-align:right"><button class="btn alt" type="button" onclick="window.eiaToggleMenu?eiaToggleMenu():document.getElementById('eiaAccountOverlay')?.classList.add('show')">👤 Cuenta</button><div class="ver">Hogar · ElectroIA</div></div></div></header><main class="wrap page eia-static-startup-fallback"><section class="eia-brand-hero"><div class="eia-hero-copy"><div class="eia-logo-mark">⚡ ELECTROIA HOGAR · ASISTENTE ELÉCTRICO</div><h1>Tu problema eléctrico.<br>Una solución sencilla.</h1><div class="eia-slogan">Entendé qué pasa antes de llamar a un electricista.</div><p class="eia-hero-desc">ElectroIA Hogar es un asistente inteligente pensado para cualquier persona. Le contás qué está pasando en tu casa y te guía con preguntas simples y comprobaciones seguras, paso a paso, aunque no sepas absolutamente nada de electricidad.</p></div><div class="eia-visual" aria-hidden="true"><div class="eia-house"><div class="eia-roof"></div><div class="eia-window"></div><div class="eia-door"></div></div><div class="eia-bolt">⚡</div></div></section><section class="eia-emergency-card"><button type="button" class="eia-emergency-toggle" onclick="toggleEmergency()" aria-expanded="false" aria-label="Abrir guía de urgencia eléctrica"><div class="eia-emergency-icon">🚨</div><div class="eia-emergency-copy"><b>🚨 ¿TENÉS UNA URGENCIA ELÉCTRICA AHORA?</b><span>Entrá acá y te guiamos paso a paso. Si hay peligro, te lo indicamos primero.</span></div></button></section><section class="eia-v22-sections"><div class="eia-v22-section-card eia-v22-home" role="button" tabindex="0"><div class="eia-v22-icon">🏠</div><div><div class="eia-v22-kicker">PARA TU CASA</div><h2>Modo Hogar</h2></div></div><div class="eia-v22-section-card eia-v22-pro" role="button" tabindex="0"><div class="eia-v22-icon">🧰</div><div><div class="eia-v22-kicker">PARA PROFESIONALES</div><h2>Modo Profesional</h2></div></div></section></main></div>
+<script id="electroia-v320-a11y-offline">
+(function(){
+  'use strict';
+  var W=window,D=document;
+
+  /* 1) Accesibilidad: las tarjetas Hogar/Profesional se activan por delegación de
+     clic, así que con teclado no respondían. Enter/Espacio ahora emiten un clic. */
+  D.addEventListener('keydown',function(ev){
+    if(ev.key!=='Enter' && ev.key!==' ' && ev.key!=='Spacebar') return;
+    var el=ev.target && ev.target.closest && ev.target.closest('[role="button"][tabindex]');
+    if(!el) return;
+    ev.preventDefault();
+    el.click();
+  });
+
+  /* 1b) Etiquetas accesibles. Varios campos solo tienen placeholder (que los
+     lectores de pantalla no siempre anuncian, y que desaparece al escribir) o son
+     inputs de archivo ocultos disparados por un botón. Se completa aria-label
+     únicamente donde falta, sin tocar la maquetación ni los que ya están dentro
+     de un <label>. Se vuelve a pasar tras cada render porque la app reescribe
+     innerHTML constantemente. */
+  var ETIQUETAS_ARCHIVO={diagPhoto:'Adjuntar una foto del problema',photo:'Adjuntar una foto',p80Photo:'Adjuntar una foto al proyecto',eiaPvFiles1711:'Adjuntar archivos de la instalación'};
+  function etiquetar(){
+    try{
+      D.querySelectorAll('input,textarea,select').forEach(function(c){
+        if(c.getAttribute('aria-label')) return;
+        if(c.closest('label')) return;
+        if(c.id && D.querySelector('label[for="'+CSS.escape(c.id)+'"]')) return;
+        var t=ETIQUETAS_ARCHIVO[c.id] || c.getAttribute('placeholder') ||
+              (c.type==='file' ? 'Seleccionar archivo' : '');
+        if(t) c.setAttribute('aria-label',t);
+      });
+    }catch(_){ }
+  }
+  W.eiaEtiquetarCampos=etiquetar;
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',etiquetar); else etiquetar();
+  try{
+    var appEl=D.getElementById('app');
+    if(appEl && W.MutationObserver){
+      var pend=null;
+      new MutationObserver(function(){
+        clearTimeout(pend); pend=setTimeout(etiquetar,120);
+      }).observe(appEl,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+
+  /* 2) Aviso de falta de conexión. El diagnóstico guiado es 100% local y sigue
+     funcionando sin internet; solo la IA, la voz y las fotos necesitan red. */
+  function banner(){
+    var b=D.getElementById('eiaOfflineBar');
+    if(!b){
+      b=D.createElement('div');
+      b.id='eiaOfflineBar';
+      b.setAttribute('role','status');
+      b.setAttribute('aria-live','polite');
+      b.innerHTML='📶 <b>Sin conexión.</b> Podés seguir usando el diagnóstico guiado paso a paso. El chat con IA, la voz y el análisis de fotos vuelven cuando recuperes internet.';
+      D.body.appendChild(b);
+    }
+    return b;
+  }
+  function sync(){
+    try{
+      var off = (W.navigator && W.navigator.onLine===false);
+      var b=banner();
+      b.style.display = off ? 'block' : 'none';
+      D.body.classList.toggle('eia-offline',!!off);
+    }catch(_){ }
+  }
+  W.addEventListener('online',sync);
+  W.addEventListener('offline',sync);
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',sync); else sync();
+})();
+</script>
+
+<style id="eia320-a11y-offline-css">
+#eiaOfflineBar{display:none;position:fixed;left:0;right:0;bottom:64px;z-index:9998;margin:0 auto;max-width:640px;padding:11px 14px;border-radius:12px;background:#3a2c05;color:#ffe9a8;border:1px solid #7a5f10;font-size:13.5px;line-height:1.45;box-shadow:0 8px 22px rgba(0,0,0,.35)}
+.eia-v22-section-card[role="button"]{cursor:pointer}
+.eia-v22-section-card[role="button"]:focus-visible,.eia-emergency-toggle:focus-visible{outline:3px solid #7cc4ff;outline-offset:3px}
+</style>
+
 <script id="electroia-v270-early-start-guard">
 (function(){
   'use strict';
@@ -1101,10 +1181,7 @@ function monoChecklist(){enterView('monoChecklist');nav('nHome');app.innerHTML=h
 function saveMonoChecklist(){const checks=[...document.querySelectorAll('.check-row input')].map(x=>x.checked);localStorage.setItem('electroia_mono_check_v77',JSON.stringify({date:new Date().toISOString(),checks,notes:document.getElementById('monoNotes')?.value||''}));alert('✅ Revisión guardada en este dispositivo.');}
 function promptForCalcAI(){const c=eiaAIState().calculation;return 'Quiero interpretar un cálculo de ElectroIA. Resultado: '+(c?.result||'no disponible')+'. Tipo: '+(c?.type||'no indicado')+'. Datos: '+JSON.stringify(c?.data||{})+'. Revisá unidades, supuestos, límites y qué debería comprobarse antes de usarlo en una instalación real.'}
 function showCalc(id,html){const e=document.getElementById(id);if(e)e.innerHTML='<div class="calc-result">'+html+'<div class="calc-toolbar"><button class="mini-btn" onclick="eiaAIRequest(\'calculation_review\',{prompt:promptForCalcAI()})">🤖 Interpretar con IA</button></div></div>'}
-function calcCurrentPro(){let w=+document.getElementById('cpW').value,v=+document.getElementById('cpV').value,pf=+document.getElementById('cpPF').value,t=document.getElementById('cpT').value;if(!(w>0&&v>0&&pf>0&&pf<=1))return showCalc('cpOut','Revisá los valores.');let i=t==='single'?w/(v*pf):w/(Math.sqrt(3)*v*pf);showCalc('cpOut',`Corriente calculada: <b>${i.toFixed(2)} A</b><br><span class="confidence">Resultado matemático. La selección de protección/conductor requiere más datos.</span><div class="calc-toolbar"><button class="mini-btn" onclick="useCalcInDiag('Corriente calculada: ${i.toFixed(2)} A')">🔎 Llevar a diagnóstico</button></div>`)}
-function calcDropPro(){let v=+document.getElementById('cdV').value,i=+document.getElementById('cdI').value,l=+document.getElementById('cdL').value,sx=+document.getElementById('cdS').value,r=document.getElementById('cdM').value==='cu'?0.0175:0.0282;if(!(v>0&&i>0&&l>0&&sx>0))return showCalc('cdOut','Revisá los valores.');let d=2*l*i*r/sx;showCalc('cdOut',`Caída aproximada: <b>${d.toFixed(2)} V</b> · <b>${(d/v*100).toFixed(2)} %</b><div class="calc-toolbar"><button class="mini-btn" onclick="useCalcInDiag('Caída aproximada: ${d.toFixed(2)} V (${(d/v*100).toFixed(2)} %)')">🔎 Llevar a diagnóstico</button></div>`)}
-function calcSectionPro(){let i=+document.getElementById('csI').value,l=+document.getElementById('csL').value,p=+document.getElementById('csP').value,v=+document.getElementById('csV').value,r=document.getElementById('csM').value==='cu'?0.0175:0.0282;if(!(i>0&&l>0&&p>0&&v>0))return showCalc('csOut','Revisá los valores.');let s=(2*l*i*r)/(v*p/100);let std=[1.5,2.5,4,6,10,16,25,35,50,70,95,120];let pick=std.find(x=>x>=s)||std.at(-1);showCalc('csOut',`Sección mínima matemática aproximada: <b>${s.toFixed(2)} mm²</b><br>Sección normalizada siguiente: <b>${pick} mm²</b><br><span class="confidence">Orientativo: falta comprobar ampacidad y condiciones reales.</span><div class="calc-toolbar"><button class="mini-btn" onclick="useCalcInDiag('Sección matemática aproximada: ${s.toFixed(2)} mm²; normalizada siguiente: ${pick} mm²')">🔎 Llevar a diagnóstico</button></div>`)}
-function calcShortPro(){let v=+document.getElementById('ccV').value,z=+document.getElementById('ccZ').value;if(!(v>0&&z>0))return showCalc('ccOut','Revisá los valores.');showCalc('ccOut',`Corriente de cortocircuito aproximada: <b>${(v/z).toFixed(0)} A</b><br><span class="confidence">Modelo simplificado. El cálculo real depende de la impedancia completa del lazo/red.</span>`)}
+<!-- [ElectroIA] Eliminadas calcCurrentPro/calcDropPro/calcSectionPro/calcShortPro: sin invocación ni campos de formulario (cpW/cdV/csI/ccV no existen en el DOM). El motor activo es calcPro80/doPower80/doDrop80/doSection80. -->
 function useCalcInDiag(text){eiaAIPrepareCalculation('Resultado eléctrico',text,{});alert('✅ Resultado preparado para el diagnóstico.\n\n'+text+'\n\nElectroIA ya lo dejó disponible en el contexto de esta sesión; la IA podrá usarlo cuando intervenga.');}
 function pv(){enterView('pv');currentMode='profesional';app.innerHTML=head(true)+`<main class="wrap page">
 <h1>☀️ Fotovoltaica PRO</h1>
@@ -1605,7 +1682,22 @@ function eiaProjectStorageKey(){
     return id?EIA80_KEY+'__user_'+encodeURIComponent(String(id)):EIA80_KEY+'__guest';
   }catch(_){return EIA80_KEY+'__guest'}
 }
-function eia80Save(ps){localStorage.setItem(eiaProjectStorageKey(),JSON.stringify(ps))}
+function eia80Save(ps){
+  // localStorage tiene un límite (~5 MB). Las fotos de proyecto son base64 y lo
+  // agotan rápido. Sin este control, setItem lanza QuotaExceededError, el guardado
+  // falla en silencio y el usuario cree que su proyecto quedó guardado.
+  try{
+    localStorage.setItem(eiaProjectStorageKey(),JSON.stringify(ps));
+    return true;
+  }catch(e){
+    const esCuota = e && (e.name==='QuotaExceededError' || e.name==='NS_ERROR_DOM_QUOTA_REACHED' || e.code===22);
+    console.warn('EIA eia80Save',e);
+    alert(esCuota
+      ? '⚠️ No se pudo guardar: se agotó el espacio de almacenamiento de este dispositivo.\n\nLas fotos ocupan mucho lugar. Borrá alguna foto o algún proyecto que ya no necesites e intentá de nuevo.'
+      : '⚠️ No se pudo guardar el proyecto en este dispositivo.');
+    return false;
+  }
+}
 async function eiaSyncProjectToServer(project){
   try{
     const store=window.eiaAccountStorage;
@@ -1681,9 +1773,9 @@ function calcPro80(){enterView('calcPro');nav('nHome');currentMode='profesional'
 
 <div class="pro-calc-section-title"><b>📐 Conductores y cortocircuito</b><span>Dimensionamiento matemático orientativo</span></div>
 <div class="v80-calc-layout">
-<div class="v80-calc-card"><h3>📉 Caída de tensión</h3><p>Calculá la caída aproximada en un circuito de dos conductores.</p><div class="field-row"><label><span class="calc-field-caption">Tensión (V)</span><input id="v80DV" type="number" value="230" placeholder="Tensión (V)"></label><label><span class="calc-field-caption">Corriente (A)</span><input id="v80DI" type="number" value="16" placeholder="Corriente (A)"></label></div><div class="field-row"><label><span class="calc-field-caption">Longitud (m)</span><input id="v80DL" type="number" value="25" placeholder="Longitud (m)"></label><label><span class="calc-field-caption">Sección (mm²)</span><input id="v80DS" type="number" value="2.5" placeholder="Sección (mm²)"></label></div><label><span class="calc-field-caption">Material</span><select id="v80DM"><option value="cu">Cobre</option><option value="al">Aluminio</option></select></label><button class="btn" onclick="doDrop80()">Calcular caída</button><div id="v80DropOut"></div></div>
+<div class="v80-calc-card"><h3>📉 Caída de tensión</h3><p>Calculá la caída aproximada en un circuito de dos conductores.</p><div class="field-row"><label><span class="calc-field-caption">Tensión (V)</span><input id="v80DV" type="number" value="230" placeholder="Tensión (V)"></label><label><span class="calc-field-caption">Corriente (A)</span><input id="v80DI" type="number" value="16" placeholder="Corriente (A)"></label></div><div class="field-row"><label><span class="calc-field-caption">Longitud (m)</span><input id="v80DL" type="number" value="25" placeholder="Longitud (m)"></label><label><span class="calc-field-caption">Sección (mm²)</span><input id="v80DS" type="number" value="2.5" placeholder="Sección (mm²)"></label></div><div class="field-row"><label><span class="calc-field-caption">Material</span><select id="v80DM"><option value="cu">Cobre</option><option value="al">Aluminio</option></select></label><label><span class="calc-field-caption">Sistema</span><select id="v80DT"><option value="single">Monofásico</option><option value="three">Trifásico equilibrado</option></select></label></div><button class="btn" onclick="doDrop80()">Calcular caída</button><div id="v80DropOut"></div></div>
 
-<div class="v80-calc-card"><h3>📏 Sección orientativa por caída</h3><p>Estimá una sección matemática a partir de corriente, longitud y caída máxima.</p><div class="field-row"><label><span class="calc-field-caption">Corriente (A)</span><input id="v80SI" type="number" value="16" placeholder="Corriente (A)"></label><label><span class="calc-field-caption">Longitud (m)</span><input id="v80SL" type="number" value="20" placeholder="Longitud (m)"></label></div><div class="field-row"><label><span class="calc-field-caption">Caída máx. (%)</span><input id="v80SP" type="number" value="3" placeholder="Caída máx. (%)"></label><label><span class="calc-field-caption">Tensión (V)</span><input id="v80SV" type="number" value="230" placeholder="Tensión (V)"></label></div><label><span class="calc-field-caption">Material</span><select id="v80SM"><option value="cu">Cobre</option><option value="al">Aluminio</option></select></label><button class="btn" onclick="doSection80()">Estimar sección</button><div id="v80SectionOut"></div></div>
+<div class="v80-calc-card"><h3>📏 Sección orientativa por caída</h3><p>Estimá una sección matemática a partir de corriente, longitud y caída máxima.</p><div class="field-row"><label><span class="calc-field-caption">Corriente (A)</span><input id="v80SI" type="number" value="16" placeholder="Corriente (A)"></label><label><span class="calc-field-caption">Longitud (m)</span><input id="v80SL" type="number" value="20" placeholder="Longitud (m)"></label></div><div class="field-row"><label><span class="calc-field-caption">Caída máx. (%)</span><input id="v80SP" type="number" value="3" placeholder="Caída máx. (%)"></label><label><span class="calc-field-caption">Tensión (V)</span><input id="v80SV" type="number" value="230" placeholder="Tensión (V)"></label></div><div class="field-row"><label><span class="calc-field-caption">Material</span><select id="v80SM"><option value="cu">Cobre</option><option value="al">Aluminio</option></select></label><label><span class="calc-field-caption">Sistema</span><select id="v80ST"><option value="single">Monofásico</option><option value="three">Trifásico equilibrado</option></select></label></div><button class="btn" onclick="doSection80()">Estimar sección</button><div id="v80SectionOut"></div></div>
 
 <div class="v80-calc-card"><h3>💥 Corriente de cortocircuito</h3><p>Estimación simplificada a partir de tensión e impedancia.</p><div class="field-row"><label><span class="calc-field-caption">Tensión (V)</span><input id="v80CV" type="number" value="230" placeholder="Tensión (V)"></label><label><span class="calc-field-caption">Impedancia (Ω)</span><input id="v80CZ" type="number" step="0.001" value="0.08" placeholder="Impedancia (Ω)"></label></div><button class="btn" onclick="doShort80()">Calcular cortocircuito</button><div id="v80ShortOut"></div></div>
 
@@ -1704,8 +1796,8 @@ function doResistors80(){const a=+v80R1.value,b=+v80R2.value,c=+v80R3.value,mode
 function calcOut80(id,html){const e=document.getElementById(id);if(e)e.innerHTML=`<div class="v80-result">${html}<div class="calc-toolbar"><button class="mini-btn" onclick="eiaAIRequest('calculation_review',{prompt:promptForCalcAI()})">🤖 Interpretar con IA</button></div></div>`}
 function saveCalc80(type,result,data){const p=projectPick();if(!p){alert('Abrí un proyecto para guardar este cálculo.');return}p.x.calculations=p.x.calculations||[];p.x.calculations.push({type,result,date:new Date().toLocaleString('es-ES'),data});eia80Save(p.ps);alert('✅ Cálculo guardado en el proyecto.')}
 function doCurrent80(){const w=+v80W.value,v=+v80V.value,pf=+v80PF.value,t=v80T.value;if(!(w>0&&v>0&&pf>0&&pf<=1))return calcOut80('v80CurrentOut','Revisá los valores.');const i=t==='single'?w/(v*pf):w/(Math.sqrt(3)*v*pf);const r=`${i.toFixed(2)} A`;calcOut80('v80CurrentOut',`Corriente: <strong>${r}</strong><div class="v80-actions"><button class="v80-primary" onclick="saveCalc80('Potencia → corriente','${r}',{potencia:${w},tension:${v}})">💾 Guardar</button><button class="v80-secondary" onclick="diagProWith80('Corriente calculada: ${r}')">🔎 Diagnóstico</button></div>`)}
-function doDrop80(){const v=+v80DV.value,i=+v80DI.value,l=+v80DL.value,s=+v80DS.value,r=document.getElementById('v80DM').value==='cu'?0.0175:0.0282;if(!(v>0&&i>0&&l>0&&s>0))return calcOut80('v80DropOut','Revisá los valores.');const d=2*l*i*r/s,p=d/v*100;const res=`${d.toFixed(2)} V · ${p.toFixed(2)} %`;calcOut80('v80DropOut',`Caída aproximada: <strong>${res}</strong><div class="v80-actions"><button class="v80-primary" onclick="saveCalc80('Caída de tensión','${res}',{tension:${v},corriente:${i},longitud:${l},seccion:${s}})">💾 Guardar</button><button class="v80-secondary" onclick="diagProWith80('Caída aproximada: ${res}')">🔎 Diagnóstico</button></div>`)}
-function doSection80(){const i=+v80SI.value,l=+v80SL.value,p=+v80SP.value,v=+v80SV.value,r=document.getElementById('v80SM').value==='cu'?0.0175:0.0282;if(!(i>0&&l>0&&p>0&&v>0))return calcOut80('v80SectionOut','Revisá los valores.');const s=(2*l*i*r)/(v*p/100),std=[1.5,2.5,4,6,10,16,25,35,50,70,95,120],pick=std.find(x=>x>=s)||std.at(-1);calcOut80('v80SectionOut',`Mínimo matemático: <strong>${s.toFixed(2)} mm²</strong><br>Siguiente sección normalizada: <strong>${pick} mm²</strong><div class="v80-actions"><button class="v80-primary" onclick="saveCalc80('Sección orientativa','${pick} mm²',{corriente:${i},longitud:${l},caida:${p},tension:${v}})">💾 Guardar</button><button class="v80-secondary" onclick="diagProWith80('Sección matemática: ${s.toFixed(2)} mm²; siguiente normalizada: ${pick} mm²')">🔎 Diagnóstico</button></div>`)}
+function doDrop80(){const v=+v80DV.value,i=+v80DI.value,l=+v80DL.value,s=+v80DS.value,r=document.getElementById('v80DM').value==='cu'?0.0175:0.0282;if(!(v>0&&i>0&&l>0&&s>0))return calcOut80('v80DropOut','Revisá los valores.');const sist=(document.getElementById('v80DT')||{}).value==='three'?'three':'single';const k=sist==='three'?Math.sqrt(3):2;const d=k*l*i*r/s,p=d/v*100;const res=`${d.toFixed(2)} V · ${p.toFixed(2)} %`;const nota=sist==='three'?'Trifásico equilibrado: √3·L·I·ρ/S, sobre tensión de línea.':'Monofásico: 2·L·I·ρ/S (ida y vuelta), sobre tensión fase-neutro.';calcOut80('v80DropOut',`Caída aproximada: <strong>${res}</strong><br><span class="confidence">${nota} Cálculo orientativo: solo considera resistencia (no reactancia ni temperatura). Verificá con la norma vigente.</span><div class="v80-actions"><button class="v80-primary" onclick="saveCalc80('Caída de tensión','${res}',{tension:${v},corriente:${i},longitud:${l},seccion:${s}})">💾 Guardar</button><button class="v80-secondary" onclick="diagProWith80('Caída aproximada: ${res}')">🔎 Diagnóstico</button></div>`)}
+function doSection80(){const i=+v80SI.value,l=+v80SL.value,p=+v80SP.value,v=+v80SV.value,r=document.getElementById('v80SM').value==='cu'?0.0175:0.0282;if(!(i>0&&l>0&&p>0&&v>0))return calcOut80('v80SectionOut','Revisá los valores.');const sist=(document.getElementById('v80ST')||{}).value==='three'?'three':'single';const k=sist==='three'?Math.sqrt(3):2;const s=(k*l*i*r)/(v*p/100),std=[1.5,2.5,4,6,10,16,25,35,50,70,95,120],pick=std.find(x=>x>=s)||std.at(-1);const nota=sist==='three'?'Trifásico equilibrado (√3·L·I·ρ/S), sobre tensión de línea.':'Monofásico (2·L·I·ρ/S), sobre tensión fase-neutro.';calcOut80('v80SectionOut',`Mínimo matemático: <strong>${s.toFixed(2)} mm²</strong><br>Siguiente sección normalizada: <strong>${pick} mm²</strong><br><span class="confidence">⚠️ ${nota} Dimensionado <b>solo por caída de tensión</b>: NO comprueba ampacidad, agrupamiento, temperatura ni coordinación con la protección. La sección definitiva debe verificarse con la norma vigente.</span><div class="v80-actions"><button class="v80-primary" onclick="saveCalc80('Sección orientativa','${pick} mm²',{corriente:${i},longitud:${l},caida:${p},tension:${v}})">💾 Guardar</button><button class="v80-secondary" onclick="diagProWith80('Sección matemática: ${s.toFixed(2)} mm²; siguiente normalizada: ${pick} mm²')">🔎 Diagnóstico</button></div>`)}
 function doShort80(){const v=+v80CV.value,z=+v80CZ.value;if(!(v>0&&z>0))return calcOut80('v80ShortOut','Revisá los valores.');const i=v/z,res=`${i.toFixed(0)} A`;calcOut80('v80ShortOut',`Corriente de cortocircuito orientativa: <strong>${res}</strong><div class="v80-actions"><button class="v80-primary" onclick="saveCalc80('Cortocircuito orientativo','${res}',{tension:${v},impedancia:${z}})">💾 Guardar</button></div>`)}
 function diagProWith80(extra){diagPro();setTimeout(()=>{const e=document.getElementById('dpSymptom');if(e)e.value=extra},80)}
 
@@ -5254,135 +5346,7 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
 })();
 </script>
 
-<script>
-/* V17.0.12 — Modo Hogar rediseñado para principiantes.
-   Objetivo: que la persona elija QUÉ necesita, no que tenga que conocer electricidad.
-   No modifica el diagnóstico/urgencia: solo reemplaza la navegación no urgente de Hogar. */
-(function(){
-  const W=window;
-  const escH=W.esc||function(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))};
-  const go=(fn)=>{try{if(typeof fn==='function')fn()}catch(e){console.warn('EIA hogar action',e)}};
-  function shell(title,sub,content){
-    enterView('hogarV12');nav('nHome');
-    app.innerHTML=head(true)+`<main class="wrap page eia12-home"><div class="eia12-top"><div class="eia12-kicker">MODO HOGAR</div><h1>${title}</h1><p>${sub}</p></div>${content}</main>`;
-    try{scrollPageTop()}catch(_){window.scrollTo(0,0)}
-  }
-  function card(icon,title,desc,onclick,cls=''){
-    return `<button class="eia12-card ${cls}" type="button" onclick="${onclick}"><span class="eia12-icon">${icon}</span><span class="eia12-card-copy"><b>${title}</b><small>${desc}</small></span><span class="eia12-arrow">›</span></button>`;
-  }
-  function back(){W.hogar();}
-
-  const style=`
-  <style id="eia12-home-style">
-  .eia12-home{padding-bottom:40px}.eia12-top{padding:20px 18px 18px;border-radius:22px;background:linear-gradient(135deg,#0879e8,#1554b7);box-shadow:0 10px 28px rgba(0,0,0,.22);margin-bottom:16px}.eia12-kicker{font-size:11px;font-weight:900;letter-spacing:.12em;opacity:.82;color:#dcecff}.eia12-top h1{font-size:27px;line-height:1.1;margin:6px 0;color:#fff}.eia12-top p{margin:0;color:#f3f7ff;line-height:1.48;font-size:15px}.eia12-question{font-size:20px;margin:18px 2px 9px}.eia12-grid{display:grid;gap:10px}.eia12-card{width:100%;display:flex;align-items:center;text-align:left;gap:12px;border:1px solid #dbe3ec;background:#fff;color:#18212b;border-radius:17px;padding:14px 13px;box-shadow:0 5px 16px rgba(0,0,0,.08);font:inherit;cursor:pointer}.eia12-card:active{transform:scale(.99)}.eia12-icon{width:43px;height:43px;border-radius:13px;display:grid;place-items:center;font-size:23px;background:#eef5ff;flex:0 0 43px}.eia12-card-copy{display:flex;flex-direction:column;gap:4px;min-width:0}.eia12-card-copy b{font-size:16px}.eia12-card-copy small{font-size:13px;line-height:1.35;color:#657181}.eia12-arrow{margin-left:auto;font-size:27px;color:#7c8a99}.eia12-soft{background:#f7f9fc;border-style:dashed}.eia12-note{margin-top:14px;padding:13px 14px;border-radius:15px;background:#f1f5f9;color:#5f6c7b;font-size:13px;line-height:1.45}.eia12-safe{background:#fff7ed;border-color:#fed7aa}.eia12-minihead{font-size:14px;font-weight:800;margin:18px 2px 8px}.eia12-path{display:flex;gap:7px;flex-wrap:wrap;margin:-5px 2px 14px}.eia12-pill{padding:6px 9px;border-radius:999px;background:#edf3fb;color:#476078;font-size:12px;font-weight:700}.eia12-choice{display:block;text-align:left;width:100%;border:1px solid #d9e1ea;background:#fff;border-radius:15px;padding:13px;margin-bottom:9px;font:inherit;cursor:pointer;color:#18212b}.eia12-choice b{display:block;font-size:15px;margin-bottom:3px}.eia12-choice small{color:#687585;line-height:1.35}.eia12-textbox{width:100%;box-sizing:border-box;min-height:105px;border:1px solid #cfd8e3;border-radius:13px;padding:12px;font:inherit;background:#fff;color:#18212b}.eia12-actionrow{display:grid;gap:9px;margin-top:10px}.eia12-actionrow .btn{width:100%}
-  </style>`;
-  if(!document.getElementById('eia12-home-style'))document.head.insertAdjacentHTML('beforeend',style);
-
-  function home(){
-    enterView('hogar');nav('nHome');
-    app.innerHTML=head(true)+`<main class="wrap page eia12-home">
-      <div class="eia12-top"><div class="eia12-kicker">ELECTROIA · PARA TU CASA</div><h1>🏠 ¿Qué necesitás hacer?</h1><p>No hace falta saber electricidad. Elegí lo que más se parece a lo que querés resolver y te llevamos al camino correcto.</p></div>
-      <div class="eia12-grid">
-        ${card('⚠️','Tengo un problema','Algo no funciona, se corta, salta una llave o no sé qué está pasando.','eia12Open(\'problema\')','eia12-safe')}
-        ${card('🔎','Quiero entender algo de mi casa','Quiero saber qué es una llave, un botón, un contador, un enchufe o algo que estoy viendo.','eia12Open(\'entender\')')}
-        ${card('💶','Quiero gastar menos','Quiero entender mi factura, saber qué consume más o revisar mi potencia/tarifa.','eia12Open(\'ahorro\')')}
-        ${card('🔧','Quiero hacer o cambiar algo','Antes de tocar nada, quiero saber qué tan difícil es y qué debería tener en cuenta.','eia12Open(\'hacer\')')}
-        ${card('🛒','Voy a comprar o instalar algo','Quiero elegir un aparato o preparar una instalación sin comprar a ciegas.','eia12Open(\'comprar\')')}
-        ${card('📚','Quiero aprender','Quiero entender electricidad desde cero, con ejemplos de casa y sin tecnicismos.','eia12Open(\'aprender\')')}
-      </div>
-      <div class="eia12-minihead">🤷 ¿No sabés cuál elegir?</div>
-      <button class="eia12-card eia12-soft" type="button" onclick="eia12Open('noSe')"><span class="eia12-icon">💬</span><span class="eia12-card-copy"><b>Contame con tus palabras</b><small>Escribí lo que ves o lo que querés conseguir. No necesitás usar términos eléctricos.</small></span><span class="eia12-arrow">›</span></button>
-      <div class="eia12-note">🚨 <b>Si hay humo, fuego, chispas, olor fuerte a quemado, agua con electricidad o una descarga, no sigas por estas opciones.</b> Usá la asistencia de urgencia del inicio y priorizá tu seguridad.</div>
-    </main>`;
-    try{scrollPageTop()}catch(_){window.scrollTo(0,0)}
-  }
-
-  function menu(title,sub,items){
-    shell(title,sub,`<div class="eia12-path"><span class="eia12-pill">🏠 Hogar</span><span class="eia12-pill">${escH(title.replace(/^[^\p{L}\p{N}]*/u,''))}</span></div><div class="eia12-grid">${items.join('')}</div><button class="btn alt" style="width:100%;margin-top:14px" onclick="eia12HomeBack()">← Volver</button>`);
-  }
-
-  function open(kind){
-    if(kind==='problema')return menu('⚠️ Tengo un problema','Primero elegí el tipo de problema. Después ElectroIA te lleva al diagnóstico o a seguridad.',[
-      card('💡','No funciona algo','Una luz, enchufe, aparato o parte de la casa no funciona.','eia12Problem(\'outlet\')'),
-      card('⚡','Salta una llave del cuadro','Una protección baja o vuelve a saltar cuando intento usar algo.','eia12Problem(\'protection\')'),
-      card('🏠','No tengo luz en una parte de la casa','Solo una zona o algunos puntos se quedaron sin corriente.','eia12Problem(\'zone\')'),
-      card('💡','Las luces parpadean o bajan','Quiero saber qué puede estar pasando y qué comprobar sin riesgo.','eia12Problem(\'flicker\')'),
-      card('❓','No sé qué está pasando','Contame el síntoma y ElectroIA intentará llevarte por el camino correcto.','eia12Problem(\'other\')'),
-      card('🚨','Hay algo peligroso','Humo, fuego, chispas, olor fuerte, calor, agua o descarga.','eia12Danger()','eia12-safe')
-    ]);
-    if(kind==='entender')return menu('🔎 Quiero entender algo de mi casa','No necesitás desmontar nada. Elegí qué querés reconocer o entender.',[
-      card('🛡️','Mi cuadro eléctrico','Qué son las llaves, el diferencial y los automáticos, y qué se puede mirar sin abrir nada.','eia12Understand(\'cuadro\')'),
-      card('🔌','Un enchufe o interruptor','Qué hace, cómo distinguirlos y qué señales visibles deberían preocupar.','eia12Understand(\'puntos\')'),
-      card('📟','El contador','Qué información da y qué significa cuando el suministro se corta aunque el cuadro parezca normal.','eia12Understand(\'contador\')'),
-      card('🏠','Algo de la instalación','Quiero entender un cable, una caja, una toma o una parte de mi vivienda sin tocarla.','eia12Understand(\'instalacion\')'),
-      card('📷','Quiero mostrar lo que estoy viendo','La foto es opcional. Primero decidimos qué merece la pena identificar.','eia12Understand(\'foto\')')
-    ]);
-    if(kind==='ahorro')return menu('💶 Quiero gastar menos','Empezá por lo que más te interese. No hace falta conocer vatios ni términos técnicos.',[
-      card('🧾','No entiendo mi factura','Ver qué pagaste, qué significan los datos y detectar si algo merece una revisión.','eia12Go(\'eia09Bill\')'),
-      card('🔌','Quiero saber qué gasta más','Podemos calcular un aparato y después ampliar el análisis a toda la casa.','eia12Go(\'consumo\')'),
-      card('⚡','¿Tengo demasiada o poca potencia?','Una estimación sencilla para entender si merece la pena revisar la potencia contratada.','eia12Go(\'eia09Power\')'),
-      card('💶','Quiero revisar mi tarifa','Entender PVPC, mercado libre, permanencia y qué comparar antes de cambiar.','eia12Go(\'eia09Contracts\')'),
-      card('🌱','Quiero una revisión para ahorrar','Ordenar hábitos y equipos para detectar dónde tiene más sentido actuar.','eia12Go(\'eia09Efficiency\')')
-    ]);
-    if(kind==='hacer')return menu('🔧 Quiero hacer o cambiar algo','Antes de hacer nada, te ayudamos a valorar la tarea y sus límites de seguridad.',[
-      card('💡','Cambiar una lámpara o bombilla','Una tarea doméstica sencilla, empezando por las comprobaciones de seguridad.','eia12Task(\'luz\')'),
-      card('🔌','Cambiar un enchufe o interruptor','Primero valoramos el tipo de instalación y si corresponde hacerlo por tu cuenta.','eia12Task(\'mecanismo\')'),
-      card('🌀','Instalar un aparato','Termo, ventilador, horno, aire u otro equipo: primero identificamos qué instalación necesita.','eia12Task(\'aparato\')'),
-      card('🏗️','Reformar o ampliar la instalación','Ordenar necesidades, circuitos y preguntas para el instalador.','eia12Task(\'reforma\')'),
-      card('➕','Es otra cosa','Explicame la tarea con palabras normales y vemos por dónde empezar.','eia12Task(\'otra\')')
-    ]);
-    if(kind==='comprar')return menu('🛒 Voy a comprar o instalar algo','Antes de elegir, podemos comprobar qué necesitás realmente y qué datos conviene mirar.',[
-      card('☀️','Paneles / solar','Valorar consumo, espacio, autoconsumo, batería y presupuestos.','eia12Go(\'pv\')'),
-      card('🚗','Cargador para coche eléctrico','Qué potencia, instalación y condiciones conviene revisar antes de comprar.','eia12Go(\'eia09EV\')'),
-      card('🌡️','Aire, termo u otro equipo','Decime qué querés instalar y para qué; te ayudamos a preparar la consulta sin asumir datos.','eia12ProductAI()'),
-      card('🏠','Quiero comparar un presupuesto','Podemos ordenar una oferta y detectar qué información falta antes de decidir.','eia12BudgetAI()')
-    ]);
-    if(kind==='aprender')return menu('📚 Quiero aprender','Lecciones cortas, desde cero y con ejemplos de casa.',[
-      card('⚡','Lo básico','Voltios, amperios, vatios y kWh explicados sin fórmulas complicadas.','eia12Learn(\'basico\')'),
-      card('🛡️','Entender el cuadro','Diferencial, automático e interruptor general: qué hacen y qué NO hacer.','eia12Learn(\'cuadro\')'),
-      card('🔌','Enchufes, luces y aparatos','Cómo pensar un problema doméstico sin tener conocimientos previos.','eia12Learn(\'casa\')'),
-      card('🧾','Factura y consumo','Qué estás pagando y cómo relacionarlo con el uso de tu casa.','eia12Learn(\'factura\')'),
-      card('☀️','Solar','Conceptos básicos de placas, inversor, batería y autoconsumo.','eia12Learn(\'solar\')'),
-      card('🎓','Curso desde cero','Una lección cada vez, sin avanzar hasta que entiendas la anterior.','eia12Learn(\'curso\')')
-    ]);
-    if(kind==='noSe')return shell('💬 Contame qué necesitás','No uses palabras técnicas si no las sabés. Escribilo como se lo contarías a alguien de confianza.',`<div class="panel"><label style="font-weight:800">¿Qué pasa o qué querés conseguir?</label><textarea id="eia12Free" class="eia12-textbox" placeholder="Ej.: desde ayer una luz del baño no enciende, pero las demás sí."></textarea><div class="eia12-actionrow"><button class="btn" onclick="eia12FreeGo()">➡️ Ayudame a entenderlo</button><button class="btn alt" onclick="eia12HomeBack()">← Volver</button></div></div><div class="eia12-note">La conversación libre es el último recurso: primero intentamos llevarte a una herramienta concreta cuando podemos.</div>`);
-  }
-
-  function problem(k){
-    if(k==='flicker')return go(()=>diagnostico('flicker','Las luces parpadean o bajan de intensidad'));
-    if(k==='other')return go(()=>diagnostico('other','Es otro problema eléctrico'));
-    return go(()=>diagnostico(k,k==='zone'?'No tengo luz en una parte de la casa':k==='protection'?'Me salta el automático o el diferencial':'Un enchufe o aparato no funciona'));
-  }
-  function danger(){go(()=>safety())}
-  function understand(k){
-    if(k==='cuadro')return go(()=>cuadro());
-    if(k==='foto')return shell('📷 Mostrar lo que veo','La foto no es obligatoria. Primero decime qué querés identificar y después decidimos si una imagen aporta algo.',`<div class="eia12-grid">${card('🛡️','Un elemento del cuadro','Una llave, botón o mando que no reconocés.','eia12VisualAI(\'cuadro\')')}${card('🔌','Un enchufe o interruptor','Quiero saber qué es o qué estoy viendo.','eia12VisualAI(\'enchufe o interruptor\')')}${card('📟','Una pantalla o contador','Quiero interpretar lo que aparece.','eia12VisualAI(\'contador o pantalla\')')}${card('➕','Otra cosa','Explicame qué querés identificar y decidimos si hace falta una foto.','eia12VisualAI(\'otra cosa de mi instalación\')')}</div><button class="btn alt" style="width:100%;margin-top:14px" onclick="eia12HomeBack()">← Volver</button>`);
-    const prompts={puntos:'Quiero entender un enchufe o interruptor de mi casa. Soy principiante. Explicame qué es, qué señales visibles son normales o preocupantes y qué NO debo desmontar.',contador:'Quiero entender el contador eléctrico de mi casa de forma sencilla. Explicame qué puedo mirar sin manipularlo y qué significa si tengo suministro cortado.',instalacion:'Quiero entender una parte de la instalación de mi casa. Soy principiante. Preguntame primero qué estoy viendo y explicame solo lo necesario, sin indicarme desmontar nada.'};
-    return go(()=>chat('hogar',prompts[k]||prompts.instalacion));
-  }
-  function task(k){
-    const prompts={luz:'Quiero cambiar una lámpara o bombilla. Soy principiante. Antes de darme pasos, comprobá si es una tarea adecuada y explicame las comprobaciones de seguridad. No quiero tocar cables.',mecanismo:'Quiero cambiar un enchufe o interruptor. Soy principiante. Primero quiero saber qué tipo de instalación tengo, qué riesgos hay y cuándo debo llamar a un profesional. No me indiques desmontar nada todavía.',aparato:'Quiero instalar un aparato eléctrico en casa. Soy principiante. Preguntame qué aparato es, cómo se conecta y qué datos necesitamos antes de decirme qué hacer.',reforma:'Quiero reformar o ampliar la instalación eléctrica de mi vivienda. Ayudame a ordenar necesidades, circuitos, potencia y preguntas para un instalador.',otra:'Tengo que hacer una tarea eléctrica en casa pero no sé si es segura. Te la voy a explicar con mis palabras y quiero que me ayudes a valorar qué información falta.'};
-    go(()=>chat('hogar',prompts[k]));
-  }
-  function learn(k){
-    const prompts={basico:'Explicame voltaje, corriente, potencia y energía desde cero, con ejemplos de casa y sin fórmulas complicadas.',cuadro:'Explicame desde cero cómo funciona un cuadro eléctrico doméstico: general, diferencial y automáticos. Quiero poder reconocerlos sin desmontar nada.',casa:'Quiero aprender a entender problemas de enchufes, luces y aparatos en casa. Enseñame una forma sencilla de pensar el problema sin tocar nada peligroso.',factura:'Explicame una factura eléctrica desde cero: consumo, potencia, total y los términos que realmente necesito entender.',solar:'Explicame desde cero cómo funcionan paneles solares, inversor, batería y autoconsumo, con un ejemplo doméstico.',curso:'Quiero un curso de electricidad doméstica desde cero. Haceme una lección corta cada vez, preguntame si entendí y no avances hasta que te diga que sí.'};
-    go(()=>chat('hogar',prompts[k]));
-  }
-  function goName(name){
-    const map={eia09Bill:W.eia09Bill,eia09Power:W.eia09Power,eia09Contracts:W.eia09Contracts,eia09Efficiency:W.eia09Efficiency,eia09EV:W.eia09EV,pv:W.pv,consumo:W.consumo};
-    go(map[name]);
-  }
-  function productAI(){shell('🛒 Preparar una compra','Antes de preguntarle a la IA, reunimos solo los datos que pueden cambiar la recomendación.',`<div class="panel"><label>¿Qué querés comprar o instalar?</label><input id="eia12Product" class="eia12-textbox" style="min-height:48px" placeholder="Ej.: termo eléctrico de 80 litros"><label style="display:block;margin-top:12px">¿Qué querés conseguir?</label><textarea id="eia12Goal" class="eia12-textbox" placeholder="Ej.: gastar menos, tener agua caliente para 3 personas…"></textarea><label style="display:block;margin-top:12px">Datos que conozcas (opcional)</label><textarea id="eia12Specs" class="eia12-textbox" placeholder="Marca, potencia, medidas, instalación actual…"></textarea><div class="eia12-actionrow"><button class="btn" onclick="eia12ProductAsk()">🤖 Preparar consulta</button><button class="btn alt" onclick="eia12HomeBack()">← Volver</button></div></div>`)}
-  function productAsk(){const p=document.getElementById('eia12Product')?.value.trim(),g=document.getElementById('eia12Goal')?.value.trim(),s=document.getElementById('eia12Specs')?.value.trim();if(!p)return alert('Decime primero qué querés comprar o instalar.');go(()=>chat('hogar',`Quiero comprar o instalar: ${p}. Objetivo: ${g||'No lo sé todavía'}. Datos que conozco: ${s||'ninguno'}. Soy principiante. Ayudame a identificar qué características importan, qué datos faltan y qué preguntas debería hacer antes de comprar. No me recomiendes una marca concreta sin datos suficientes.`))}
-  function budgetAI(){shell('🧾 Revisar un presupuesto','Podés copiar los datos de la oferta o contarme qué te han presupuestado. No hace falta entender la parte técnica.',`<div class="panel"><label>¿Qué te han presupuestado?</label><textarea id="eia12Budget" class="eia12-textbox" placeholder="Ej.: cambio de cuadro, 12 circuitos, diferencial, mano de obra…"></textarea><div class="eia12-actionrow"><button class="btn" onclick="eia12BudgetAsk()">🤖 Ayudame a revisarlo</button><button class="btn alt" onclick="eia12HomeBack()">← Volver</button></div></div>`)}
-  function budgetAsk(){const b=document.getElementById('eia12Budget')?.value.trim();if(!b)return alert('Pegá o escribí primero lo que aparece en el presupuesto.');go(()=>chat('hogar',`Quiero revisar un presupuesto eléctrico. Esto es lo que me han ofrecido: ${b}. Soy una persona sin conocimientos técnicos. Ayudame a entender qué incluye, qué datos faltan, qué preguntas debo hacer y qué partes deberían ser verificadas por un profesional. No afirmes que un precio es bueno o malo sin suficiente contexto.`))}
-  function visualAI(target){shell('📷 Mostrar lo que veo','Primero definimos qué querés averiguar. La foto será opcional y solo tendrá sentido si aporta información.',`<div class="panel"><h3 style="margin-top:0">Querés identificar: ${escH(target)}</h3><p style="color:#657181;line-height:1.45">Podés describirlo con palabras. Si después una foto ayuda, ElectroIA te indicará qué imagen conviene aportar.</p><div class="eia12-actionrow"><button class="btn" onclick="eia12VisualStart('${escH(target).replace(/'/g,"&#39;")}')">💬 Empezar sin foto</button><button class="btn alt" onclick="eia12HomeBack()">← Volver</button></div></div>`)}
-  function visualStart(t){go(()=>chat('hogar',`Quiero identificar ${t} en mi casa. Soy principiante. Primero haceme preguntas sencillas para saber qué es. Si una foto puede ayudar, pedímela solo cuando realmente aporte información.`))}
-  function freeGo(){const t=document.getElementById('eia12Free')?.value.trim();if(!t)return alert('Contame aunque sea brevemente qué pasa.');go(()=>chat('hogar',`Esto es lo que veo/quiero resolver en mi casa: ${t}. Soy principiante y no conozco términos eléctricos. Primero ayudame a clasificar el problema y haceme solo la siguiente pregunta necesaria. No me hagas manipular nada hasta comprobar que es seguro.`))}
-
-  W.hogar=home;W.eia12Open=open;W.eia12HomeBack=back;W.eia12Problem=problem;W.eia12Danger=danger;W.eia12Understand=understand;W.eia12Task=task;W.eia12Learn=learn;W.eia12Go=goName;W.eia12ProductAI=productAI;W.eia12ProductAsk=productAsk;W.eia12BudgetAI=budgetAI;W.eia12BudgetAsk=budgetAsk;W.eia12VisualAI=visualAI;W.eia12VisualStart=visualStart;W.eia12FreeGo=freeGo;
-})();
-</script>
+<!-- [ElectroIA] Bloque eliminado por muerto/no alcanzable: home v12 (Modo Hogar rediseñado, script sin id, comentario 'V17.0.12') (verificado el 2025 contra window.home/window.hogar). Ver historial de git para el contenido original. -->
 
 
 <script id="electroia-v17-0-14-chat-surface-fix">
@@ -5565,177 +5529,10 @@ main.wrap.page:has(.eia09-shell),main.wrap.page:has(.eia09-form),main.wrap.page:
 </script>
 
 
-<script id="electroia-v17-0-15-home-zones">
-/* V17.0.16 — Modo Hogar: fusión visual + navegación por zonas.
-   Principio: una persona que sabe poco de electricidad piensa en su casa y en lo que necesita,
-   no en categorías técnicas. Solar, cargador EV, MPPT, strings, reformas y herramientas PRO
-   no se muestran dentro de Modo Hogar. La urgencia/diagnóstico existente no se modifica.
-*/
-(function(){
-  'use strict';
-  const W=window;
-  const escH=W.esc||function(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))};
-  const safe=(fn)=>{try{if(typeof fn==='function')fn()}catch(e){console.warn('EIA home V15',e)}};
-  const zoneNames={
-    entrada:'Entrada / pasillo', salon:'Salón / comedor', cocina:'Cocina', bano:'Baño / lavadero',
-    dormitorio:'Dormitorio', exterior:'Exterior / garaje', toda:'Toda la casa'
-  };
-  const zoneIcons={entrada:'🚪',salon:'🛋️',cocina:'🍳',bano:'🚿',dormitorio:'🛏️',exterior:'🌳',toda:'🏠'};
-  const needIcons={problema:'⚠️',entender:'🔎',ahorro:'💶',hacer:'🧰',comprar:'🛒',foto:'📷'};
-
-  const style=`<style id="eia15-home-style">
-  .eia15-home{padding-bottom:38px}
-  .eia15-hero{padding:20px 18px 18px;border-radius:24px;background:linear-gradient(135deg,#0b77e3 0%,#1650b8 100%);box-shadow:0 12px 30px rgba(18,70,140,.22);margin-bottom:14px;color:#fff}
-  .eia15-hero-kicker{font-size:11px;font-weight:900;letter-spacing:.11em;opacity:.86}
-  .eia15-hero h1{font-size:28px;line-height:1.08;margin:6px 0 7px;color:#fff}
-  .eia15-hero p{font-size:15px;line-height:1.45;margin:0;color:#f3f7ff}
-  .eia15-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#eaf0f7;border-radius:14px;padding:5px;margin-bottom:14px}
-  .eia15-tab{border:0;background:transparent;border-radius:11px;padding:10px 8px;font:800 14px inherit;color:#586679;cursor:pointer}
-  .eia15-tab.active{background:#fff;color:#0a66d8;box-shadow:0 3px 10px rgba(0,0,0,.08)}
-  .eia15-title{font-size:19px;font-weight:900;margin:4px 2px 9px;color:#1b2733}
-  .eia15-subtitle{font-size:13px;line-height:1.42;color:#687688;margin:-3px 2px 11px}
-  .eia15-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .eia15-zone,.eia15-need{position:relative;display:flex;flex-direction:column;align-items:flex-start;text-align:left;border:1px solid #dce4ec;border-radius:19px;background:#fff;padding:14px;min-height:132px;box-shadow:0 6px 18px rgba(10,31,55,.08);font:inherit;color:#17212b;cursor:pointer;overflow:hidden}
-  .eia15-zone:nth-child(1){background:#fff6f5}.eia15-zone:nth-child(2){background:#fff9e8}.eia15-zone:nth-child(3){background:#eef9f1}.eia15-zone:nth-child(4){background:#f0f6ff}.eia15-zone:nth-child(5){background:#f4efff}.eia15-zone:nth-child(6){background:#edf9fb}.eia15-zone:nth-child(7){background:#f5f7fa;grid-column:1/-1;min-height:94px}
-  .eia15-need:nth-child(1){background:#fff1ef}.eia15-need:nth-child(2){background:#fff8df}.eia15-need:nth-child(3){background:#ebfaf0}.eia15-need:nth-child(4){background:#eef5ff}.eia15-need:nth-child(5){background:#f5efff}.eia15-need:nth-child(6){background:#edf9fb}
-  .eia15-zone:active,.eia15-need:active{transform:scale(.99)}
-  .eia15-ico{font-size:27px;line-height:1;margin-bottom:9px}.eia15-zone b,.eia15-need b{font-size:15px;line-height:1.18}.eia15-zone small,.eia15-need small{font-size:12.5px;line-height:1.34;color:#647180;margin-top:6px}
-  .eia15-arrow{position:absolute;right:12px;bottom:10px;font-size:24px;color:#7c8997}
-  .eia15-free{margin-top:14px;border:1px solid #d8e1ea;border-radius:18px;background:#fff;padding:13px 14px;display:flex;align-items:center;gap:11px;box-shadow:0 5px 15px rgba(0,0,0,.06);cursor:pointer;text-align:left;color:#17212b;font:inherit;width:100%}
-  .eia15-free .eia15-ico{margin:0;font-size:24px}.eia15-free b{font-size:15px}.eia15-free small{display:block;margin-top:3px;color:#687585;line-height:1.35}
-  .eia15-note{margin-top:13px;padding:12px 13px;border-radius:15px;background:#f6f8fb;color:#657182;font-size:12.5px;line-height:1.45}
-  .eia15-back{margin-top:14px;width:100%}
-  .eia15-path{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 12px}.eia15-pill{padding:6px 9px;border-radius:999px;background:#eaf2fc;color:#45617a;font-size:12px;font-weight:800}
-  .eia15-section{margin-top:16px}
-  @media(max-width:380px){.eia15-grid{gap:8px}.eia15-zone,.eia15-need{padding:12px}.eia15-hero h1{font-size:25px}}
-  </style>`;
-  if(!document.getElementById('eia15-home-style'))document.head.insertAdjacentHTML('beforeend',style);
-
-  function shell(title,sub,content){
-    enterView('hogarV15');nav('nHome');
-    app.innerHTML=head(true)+`<main class="wrap page eia15-home"><div class="eia15-hero"><div class="eia15-hero-kicker">MODO HOGAR</div><h1>${title}</h1><p>${sub}</p></div>${content}</main>`;
-    try{scrollPageTop()}catch(_){window.scrollTo(0,0)}
-  }
-  function card(icon,title,desc,onclick,cls=''){
-    return `<button type="button" class="eia15-zone ${cls}" onclick="${onclick}"><span class="eia15-ico">${icon}</span><b>${title}</b><small>${desc}</small><span class="eia15-arrow">›</span></button>`;
-  }
-  function need(icon,title,desc,onclick,cls=''){
-    return `<button type="button" class="eia15-need ${cls}" onclick="${onclick}"><span class="eia15-ico">${icon}</span><b>${title}</b><small>${desc}</small><span class="eia15-arrow">›</span></button>`;
-  }
-  function back(){home();}
-
-  function home(tab='zones'){
-    enterView('hogar');nav('nHome');
-    app.innerHTML=head(true)+`<main class="wrap page eia15-home">
-      <div class="eia15-hero"><div class="eia15-hero-kicker">ELECTROIA · PARA TU CASA</div><h1>🏠 ¿Dónde está lo que necesitás?</h1><p>Pensá en tu casa, no en electricidad. Elegí una zona o, si te resulta más fácil, decime qué querés conseguir.</p></div>
-      <div class="eia15-tabs" role="tablist">
-        <button class="eia15-tab ${tab==='zones'?'active':''}" type="button" onclick="eia15Home('zones')">🏠 Por zonas</button>
-        <button class="eia15-tab ${tab==='needs'?'active':''}" type="button" onclick="eia15Home('needs')">✨ Por necesidad</button>
-      </div>
-      <div id="eia15HomeContent"></div>
-    </main>`;
-    const host=document.getElementById('eia15HomeContent');
-    if(!host)return;
-    if(tab==='needs'){
-      host.innerHTML=`<div class="eia15-title">¿Qué querés hacer?</div><div class="eia15-subtitle">Elegí la opción que más se parezca a lo que te pasa. No necesitás saber ningún término técnico.</div><div class="eia15-grid">
-        ${need(needIcons.problema,'Tengo un problema','Algo dejó de funcionar o se comporta raro.','eia15OpenNeed(\'problema\')')}
-        ${need(needIcons.entender,'Quiero entender algo','Hay algo en casa que no sé qué es o para qué sirve.','eia15OpenNeed(\'entender\')')}
-        ${need(needIcons.ahorro,'Quiero gastar menos','Factura, consumo o dudas sobre lo que estoy pagando.','eia15OpenNeed(\'ahorro\')')}
-        ${need(needIcons.hacer,'Quiero hacer o cambiar algo','Quiero saber cómo abordarlo y si conviene hacerlo yo.','eia15OpenNeed(\'hacer\')')}
-        ${need(needIcons.comprar,'Voy a comprar algo','Un aparato para casa, una luz o algo que quiero elegir bien.','eia15OpenNeed(\'comprar\')')}
-        ${need(needIcons.foto,'Quiero mostrar lo que veo','Una foto puede ayudar, pero solo la usaremos si aporta.','eia15OpenNeed(\'foto\')')}
-      </div>`;
-    }else{
-      host.innerHTML=`<div class="eia15-title">Elegí una zona de tu casa</div><div class="eia15-subtitle">Entrá donde ocurre lo que te preocupa o donde querés hacer un cambio.</div><div class="eia15-grid">
-        ${card(zoneIcons.entrada,'Entrada / pasillo','Luces, interruptores o algo que no funciona al entrar.','eia15OpenZone(\'entrada\')')}
-        ${card(zoneIcons.salon,'Salón / comedor','Luces, enchufes, televisión, ventilador u otros aparatos.','eia15OpenZone(\'salon\')')}
-        ${card(zoneIcons.cocina,'Cocina','Horno, vitro, nevera, enchufes, luces o pequeños aparatos.','eia15OpenZone(\'cocina\')')}
-        ${card(zoneIcons.bano,'Baño / lavadero','Termo, lavadora, luces, enchufes o humedad cerca de electricidad.','eia15OpenZone(\'bano\')')}
-        ${card(zoneIcons.dormitorio,'Dormitorio','Luz, enchufes, cargadores y pequeños aparatos.','eia15OpenZone(\'dormitorio\')')}
-        ${card(zoneIcons.exterior,'Exterior / garaje','Luces exteriores, enchufes o equipos del exterior.','eia15OpenZone(\'exterior\')')}
-        ${card(zoneIcons.toda,'Toda la casa','No es una sola zona o querés revisar algo general.','eia15OpenZone(\'toda\')')}
-      </div>`;
-    }
-    host.insertAdjacentHTML('beforeend',`<button class="eia15-free" type="button" onclick="eia15OpenNeed('libre')"><span class="eia15-ico">💬</span><span><b>¿No sabés cuál elegir?</b><small>Contamelo con tus palabras y ElectroIA te guía desde cero.</small></span><span class="eia15-arrow">›</span></button><div class="eia15-note">🚨 <b>Si hay humo, fuego, chispas, olor fuerte a quemado, agua con electricidad o una descarga, no sigas por estas opciones.</b> Usá la asistencia de urgencia.</div>`);
-    try{scrollPageTop()}catch(_){window.scrollTo(0,0)}
-  }
-
-  const zoneItems={
-    entrada:[['💡','La luz no funciona','Una lámpara o luz de esta zona dejó de funcionar.','problem'],['🔘','Quiero entender el interruptor','No sé qué hace o qué estoy viendo.','understand'],['🧰','Quiero cambiar algo','Quiero hacer un cambio sencillo y saber primero si me conviene.','task'],['📷','Quiero mostrar lo que veo','Primero describimos lo que querés identificar.','photo']],
-    salon:[['💡','Una luz no funciona','Luces o lámparas del salón.','problem'],['🔌','Un enchufe o aparato no funciona','Algo conectado aquí dejó de funcionar.','problem'],['🔎','Quiero entender algo','Quiero saber qué estoy viendo sin desmontar nada.','understand'],['🛒','Quiero comprar un aparato','Quiero elegirlo bien antes de comprar.','buy'],['📷','Quiero mostrar lo que veo','Una foto solo si realmente ayuda.','photo']],
-    cocina:[['⚠️','Algo no funciona','Horno, vitro, nevera, enchufe o luz.','problem'],['🔌','Salta una llave cuando uso algo','Quiero saber cómo orientarme sin tocar nada peligroso.','problem'],['🔎','Quiero entender un aparato','Quiero saber qué necesita o qué significa algo que veo.','understand'],['🛒','Voy a comprar un aparato','Quiero saber qué mirar antes de elegirlo.','buy'],['📷','Quiero mostrar lo que veo','Podés enseñar una etiqueta, pantalla o zona visible.','photo']],
-    bano:[['💧','Hay agua cerca de electricidad','Quiero saber qué hacer de forma segura.','danger'],['⚠️','Algo no funciona','Luz, termo, lavadora, extractor u otro aparato.','problem'],['🔎','Quiero entender algo','Quiero identificar algo sin desmontarlo.','understand'],['🛒','Voy a comprar un aparato','Quiero elegirlo sin equivocarme.','buy'],['📷','Quiero mostrar lo que veo','Una foto solo cuando aporte.','photo']],
-    dormitorio:[['💡','Una luz no funciona','Lámpara o luz del dormitorio.','problem'],['🔌','Un enchufe o aparato falla','Cargador, lámpara u otro aparato.','problem'],['🔎','Quiero entender algo','Algo no sé qué es o para qué sirve.','understand'],['🧰','Quiero cambiar algo','Quiero valorar una tarea antes de tocar nada.','task'],['📷','Quiero mostrar lo que veo','Podés enseñar lo que estás viendo.','photo']],
-    exterior:[['⚠️','Algo no funciona','Luz exterior, enchufe o equipo.','problem'],['💧','Hay agua o humedad','Quiero saber qué precauciones tomar.','danger'],['🔎','Quiero entender algo','Quiero identificar un elemento visible.','understand'],['🧰','Quiero hacer un cambio','Quiero saber si requiere profesional.','task'],['📷','Quiero mostrar lo que veo','Foto opcional y solo si ayuda.','photo']],
-    toda:[['🏠','Tengo un problema general','Afecta a varias zonas o no sé dónde está el origen.','problem'],['💶','Quiero ahorrar en toda la casa','Factura, consumo o hábitos.','save'],['🔎','Quiero entender mi instalación','Quiero orientarme sin tocar nada.','understand'],['🧰','Quiero hacer una mejora','Quiero ordenar qué puedo mejorar y qué debe hacer un profesional.','task'],['🛒','Voy a comprar algo para casa','Quiero elegir un aparato con criterio.','buy'],['📷','Quiero mostrar lo que veo','Una foto solo si puede aclarar la situación.','photo']]
-  };
-  const actionLabel={problem:'⚠️ Problema',understand:'🔎 Entender',task:'🧰 Hacer o cambiar',buy:'🛒 Comprar',photo:'📷 Mostrar',danger:'🚨 Seguridad',save:'💶 Ahorrar'};
-  function zoneMenu(z){
-    const title=zoneNames[z]||'Mi casa',items=zoneItems[z]||zoneItems.toda;
-    shell(zoneIcons[z]+' '+title,'Elegí lo que querés resolver en esta zona. No hace falta saber electricidad.',`<div class="eia15-path"><span class="eia15-pill">🏠 Hogar</span><span class="eia15-pill">${escH(title)}</span></div><div class="eia15-grid">${items.map((it,i)=>card(it[0],it[1],it[2],`eia15RunZone('${z}','${i}')`)).join('')}</div><button class="btn alt eia15-back" type="button" onclick="eia15Home('zones')">← Volver a zonas</button>`);
-  }
-  function runZone(z,i){const it=(zoneItems[z]||[])[Number(i)];if(!it)return;routeNeed(it[3],zoneNames[z]+' — '+it[1]);}
-
-  function needMenu(k){
-    const map={
-      problema:[['💡','No funciona una luz o lámpara','Alguna luz dejó de funcionar.','problem:light'],['🔌','No funciona un enchufe o aparato','Algo conectado ya no funciona.','problem:outlet'],['⚡','Salta una llave del cuadro','Una llave baja o vuelve a saltar.','problem:protection'],['🏠','No tengo luz en una zona','Solo una parte de la casa quedó sin corriente.','problem:zone'],['💡','Las luces parpadean o bajan','Quiero saber qué puede estar pasando.','problem:flicker'],['🚨','Hay algo peligroso','Humo, fuego, chispas, olor fuerte, calor, agua o descarga.','danger']],
-      entender:[['🛡️','Mi cuadro eléctrico','Qué son las llaves y qué puedo mirar sin abrir nada.','understand:cuadro'],['🔌','Un enchufe o interruptor','Qué es y qué señales visibles deberían preocupar.','understand:puntos'],['📟','El contador','Qué significa lo que aparece y qué puedo mirar.','understand:contador'],['🏠','Algo de la instalación','Quiero entenderlo sin desmontar nada.','understand:instalacion'],['📷','Quiero mostrar algo','Primero vemos qué querés identificar; la foto es opcional.','photo']],
-      ahorro:[['🧾','No entiendo mi factura','Te ayudamos a leerla sin tecnicismos.','save:bill'],['🔌','Quiero saber qué gasta más','Empezamos por un aparato y ampliamos si hace falta.','save:consumo'],['⚡','¿Tengo demasiada potencia?','Una explicación sencilla antes de cambiar nada.','save:power'],['💶','Quiero revisar mi tarifa','Entender qué tenés contratado y qué conviene comparar.','save:tarifa'],['🌱','Quiero una revisión para ahorrar','Ordenamos las oportunidades más sencillas.','save:general']],
-      hacer:[['💡','Cambiar una bombilla o lámpara','Primero comprobamos si es una tarea sencilla.','task:luz'],['🧰','Cambiar un enchufe o interruptor','Primero valoramos el riesgo y si corresponde a un profesional.','task:mecanismo'],['🌀','Instalar un aparato con enchufe','Primero identificamos el aparato y su conexión.','task:aparato'],['🏠','Hacer una mejora en casa','Te ayudamos a ordenar la idea y detectar cuándo hace falta un profesional.','task:mejora'],['📷','Mostrar lo que quiero hacer','Podés enseñar el elemento antes de decidir.','photo']],
-      comprar:[['🧊','Frigorífico / lavadora / aparato','Qué mirar para elegir bien y cuánto puede consumir.','buy:aparato'],['💡','Bombillas / luces','Qué tipo te conviene y qué datos importan.','buy:luz'],['🌬️','Ventilador / aparato pequeño','Qué comprobar antes de comprar o enchufar.','buy:pequeno'],['🧾','Quiero comparar un presupuesto','Entender qué incluye sin necesitar conocimientos técnicos.','buy:presupuesto']],
-      foto:[['🛡️','Algo del cuadro','Querés identificar algo visible sin abrirlo.','photo:cuadro'],['🔌','Un enchufe / interruptor','Querés mostrar qué estás viendo.','photo:enchufe'],['📟','Una pantalla / contador','Querés entender lo que aparece.','photo:contador'],['🏠','Otra cosa de casa','Decime qué querés averiguar y vemos si una foto ayuda.','photo:otra']]
-    };
-    const items=map[k]||map.entender;
-    shell(k==='problema'?'⚠️ Tengo un problema':k==='entender'?'🔎 Quiero entender algo':k==='ahorro'?'💶 Quiero gastar menos':k==='hacer'?'🧰 Quiero hacer o cambiar algo':k==='comprar'?'🛒 Voy a comprar algo':'📷 Quiero mostrar lo que veo','Elegí el caso que más se parezca a lo que te pasa.',`<div class="eia15-grid">${items.map(it=>card(it[0],it[1],it[2],`eia15RunNeed('${it[3]}')`,it[3]==='danger'?'eia15-danger':'')).join('')}</div><button class="btn alt eia15-back" type="button" onclick="eia15Home('needs')">← Volver</button>`);
-  }
-  function openNeed(k){if(k==='libre')return free();needMenu(k)}
-  function runNeed(code){const [k,v]=String(code).split(':');routeNeed(k,v||'general')}
-
-  function routeNeed(kind,value){
-    if(kind==='danger')return safe(()=>typeof safety==='function'?safety():chat('hogar','Tengo una situación que puede ser peligrosa. Necesito orientación de seguridad y no quiero tocar nada.'));
-    if(kind==='problem'){
-      const map={light:['outlet','Tengo una luz o lámpara que no funciona'],outlet:['outlet','Tengo un enchufe o aparato que no funciona'],protection:['protection','Me salta una llave del cuadro'],zone:['zone','No tengo luz en una zona de la casa'],flicker:['flicker','Las luces parpadean o bajan']};
-      const x=map[value]||map.outlet;return safe(()=>typeof diagnostico==='function'?diagnostico(x[0],x[1]):chat('hogar',x[1]));
-    }
-    if(kind==='understand'){
-      const prompts={cuadro:'Quiero entender mi cuadro eléctrico. Soy principiante. Explicame qué son las llaves y qué puedo observar sin abrir ni desmontar nada.',puntos:'Quiero entender un enchufe o interruptor de mi casa. Soy principiante. Explicame qué es y qué señales visibles deberían preocupar.',contador:'Quiero entender el contador eléctrico de mi casa. Explicame qué puedo mirar sin manipularlo y qué significa si el suministro está cortado.',instalacion:'Quiero entender una parte visible de la instalación de mi casa. Soy principiante. Primero ayudame a identificarla y no me hagas desmontar nada.'};
-      return safe(()=>chat('hogar',prompts[value]||'Quiero entender algo de mi instalación de casa. Soy principiante y no conozco términos técnicos. Guiame con preguntas sencillas.'));
-    }
-    if(kind==='save'){
-      const map={bill:()=>W.eia09Bill?.(),consumo:()=>W.consumo?.(),power:()=>W.eia09Power?.(),tarifa:()=>W.eia09Contracts?.(),general:()=>W.eia09Efficiency?.()};
-      return safe(map[value]||map.general);
-    }
-    if(kind==='task'){
-      const prompts={luz:'Quiero cambiar una bombilla o lámpara. Soy principiante. Antes de darme pasos, comprobá si la tarea es adecuada y decime las comprobaciones básicas de seguridad. No quiero tocar cables.',mecanismo:'Quiero cambiar un enchufe o interruptor. Soy principiante. Primero quiero saber si es apropiado que lo haga, qué riesgos hay y cuándo debo llamar a un profesional. No me hagas desmontar nada todavía.',aparato:'Quiero instalar un aparato eléctrico en casa. Soy principiante. Preguntame qué aparato es y cómo se conecta antes de indicarme qué hacer. Si requiere instalación fija, decime que corresponde a un profesional.',mejora:'Quiero hacer una mejora eléctrica en mi casa. Soy principiante. Ayudame a definir lo que necesito y a distinguir lo que puedo resolver con seguridad de lo que necesita un profesional.'};
-      return safe(()=>chat('hogar',prompts[value]||prompts.mejora));
-    }
-    if(kind==='buy'){
-      const prompts={aparato:'Quiero comprar un aparato eléctrico para casa. Soy principiante. Ayudame a elegir qué características debo mirar, qué datos de mi casa importan y qué preguntas debería hacer antes de comprar.',luz:'Quiero comprar bombillas o luces para casa. Soy principiante. Ayudame a saber qué datos mirar y a elegir sin tecnicismos.',pequeno:'Quiero comprar un ventilador o aparato eléctrico pequeño para casa. Ayudame a comparar consumo, potencia y funciones importantes de forma sencilla.',presupuesto:'Quiero revisar un presupuesto relacionado con mi casa. Explicame qué incluye, qué datos faltan y qué debería preguntar antes de aceptar.'};
-      return safe(()=>chat('hogar',prompts[value]||prompts.aparato));
-    }
-    if(kind==='photo'){
-      const target={cuadro:'algo visible del cuadro eléctrico',enchufe:'un enchufe o interruptor',contador:'una pantalla o contador',otra:'algo de mi casa'}[value]||'algo de mi casa';
-      return safe(()=>chat('hogar',`Quiero identificar ${target}. Soy principiante. Primero haceme preguntas sencillas para entender qué estoy viendo. Si una foto realmente aporta información, pedímela después; no la muestres ni la exijas automáticamente.`));
-    }
-    safe(()=>chat('hogar','Tengo una duda sobre mi casa y no conozco términos eléctricos. Ayudame a empezar con una sola pregunta sencilla.'));
-  }
-  function free(){
-    shell('💬 Contame con tus palabras','No necesitás saber cómo se llama lo que estás viendo. Escribilo como se lo contarías a un amigo.',`<div class="panel"><label style="font-weight:800">¿Qué pasa o qué querés conseguir?</label><textarea id="eia15Free" class="eia15-textbox" placeholder="Ej.: en la cocina la luz funciona, pero el enchufe de la cafetera no."></textarea><div class="eia12-actionrow"><button class="btn" type="button" onclick="eia15FreeGo()">➡️ Ayudame a entenderlo</button><button class="btn alt" type="button" onclick="eia15Home('zones')">← Volver</button></div></div><div class="eia15-note">ElectroIA primero intenta entender tu situación. No tenés que usar palabras como voltios, diferencial o potencia.</div>`);
-  }
-  function freeGo(){const t=document.getElementById('eia15Free')?.value.trim();if(!t)return alert('Contame aunque sea brevemente qué pasa.');safe(()=>chat('hogar',`Esto es lo que me pasa en casa: ${t}. Soy principiante y no conozco términos eléctricos. Primero ayudame a clasificarlo y haceme solo la siguiente pregunta necesaria. No me hagas manipular nada hasta comprobar que es seguro.`))}
-
-  W.eia15Home=home;W.eia15OpenZone=zoneMenu;W.eia15RunZone=runZone;W.eia15OpenNeed=openNeed;W.eia15RunNeed=runNeed;W.eia15FreeGo=freeGo;W.hogar=home;
-  W.ELECTROIA_BUILD='V17.0.16-SUPER';
-})();
-</script>
+<!-- [ElectroIA] Bloque eliminado por muerto/no alcanzable: electroia-v17-0-15-home-zones (home v15, zonas/necesidades) (verificado el 2025 contra window.home/window.hogar). Ver historial de git para el contenido original. -->
 
 
-<style id="eia16-home-polish">
-.eia15-home{padding-bottom:118px}
-.eia15-title{color:#f5f8fc}
-.eia15-subtitle{color:#c8d2de}
-.eia15-path .eia15-pill{background:#172332;color:#d9e5f2;border:1px solid #2d3b4b}
-</style>
+<!-- [ElectroIA] Estilo "eia16-home-polish" eliminado: aplicaba únicamente a clases .eia15-* cuyo generador de HTML fue removido arriba. -->
 
 <script id="electroia-v17-0-17-home-ux">
 /* V17.0.17 — Modo Hogar final: casa primero, lenguaje humano, evidencia opcional.
@@ -6680,4 +6477,864 @@ ${W.sourcesBlock?W.sourcesBlock():''}
   W.ELECTROIA_HOME_READY=true;
 })();
 </script>
+<style id="eia330-css">
+.eia330-card{background:#fff;border:1px solid #dde4ee;border-radius:16px;padding:15px;margin:12px 0;box-shadow:0 4px 14px rgba(20,35,60,.06)}
+.eia330-card h3{margin:0 0 4px;font-size:17px}
+.eia330-card .eia330-sub{color:#5b6b80;font-size:13px;margin:0 0 12px;line-height:1.45}
+.eia330-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+@media(max-width:520px){.eia330-grid{grid-template-columns:1fr}}
+.eia330-f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:700;color:#41506a}
+.eia330-f input,.eia330-f select,.eia330-f textarea{font:inherit;font-weight:500;padding:10px;border:1px solid #ccd6e2;border-radius:9px;background:#fff;color:#16202e;width:100%;box-sizing:border-box}
+.eia330-btn{display:inline-block;width:100%;margin-top:11px;padding:12px;border:0;border-radius:11px;background:#1663c7;color:#fff;font-weight:800;font-size:14.5px;cursor:pointer}
+.eia330-btn.alt{background:#eef3fa;color:#1c3252;border:1px solid #ccd9ea}
+.eia330-btn.danger{background:#b3182b}
+.eia330-out{margin-top:12px;padding:13px;border-radius:12px;background:#f3f7fc;border:1px solid #d8e4f2;font-size:14px;line-height:1.55}
+.eia330-ok{background:#eaf7ee;border-color:#b9e2c6}
+.eia330-bad{background:#fdeceb;border-color:#f3c0bb}
+.eia330-warn{background:#fff6e2;border-color:#f0d79a}
+.eia330-note{font-size:12px;color:#5b6b80;line-height:1.5;margin-top:9px;display:block}
+.eia330-item{display:flex;gap:10px;align-items:center;padding:11px;border:1px solid #e0e7f1;border-radius:12px;margin-bottom:8px;background:#fff}
+.eia330-item .g{flex:1;min-width:0}
+.eia330-item b{display:block;font-size:14.5px}
+.eia330-item span{font-size:12.5px;color:#5b6b80}
+.eia330-call{background:#0f9d58;color:#fff;border:0;border-radius:10px;padding:10px 13px;font-weight:800;text-decoration:none;font-size:14px}
+.eia330-x{background:#fdeceb;color:#b3182b;border:1px solid #f3c0bb;border-radius:9px;padding:8px 10px;font-weight:800;cursor:pointer}
+.eia330-chip{display:inline-block;padding:4px 9px;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.04em}
+.eia330-chip.ok{background:#d7f0de;color:#14602f}
+.eia330-chip.bad{background:#fbd9d5;color:#8c1a12}
+#eia330Torch{position:fixed;inset:0;z-index:99999;background:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center}
+#eia330Torch.on{display:flex}
+#eia330Torch b{font-size:26px;color:#000}
+#eia330Torch p{font-size:17px;color:#111;max-width:460px;line-height:1.5;margin:0}
+#eia330Torch button{padding:15px 24px;font-size:17px;font-weight:800;border:2px solid #000;background:#000;color:#fff;border-radius:12px;cursor:pointer}
+body.eia330-torch-on .bottom{display:none!important}
+</style>
+
+<div id="eia330Torch" role="dialog" aria-label="Modo linterna">
+  <b>🔦 Modo linterna</b>
+  <p>Pantalla al máximo brillo para que puedas ver el tablero. Subí el brillo del teléfono si hace falta.</p>
+  <p style="font-size:14px;color:#444"><b>Antes de tocar nada:</b> no trabajes con las manos mojadas, no toques cables pelados y, si ves chispas, olor a quemado o humo, cortá la llave general y llamá a un electricista.</p>
+  <button type="button" onclick="eia330Torch(false)">Salir del modo linterna</button>
+</div>
+
+<script id="electroia-v330-funciones">
+(function(){
+  'use strict';
+  var W=window,D=document;
+
+  /* ============================================================
+     ALMACENAMIENTO
+     ============================================================ */
+  var CLAVE='eia330-datos';
+  function leer(){
+    try{ return JSON.parse(localStorage.getItem(CLAVE)||'{}')||{}; }catch(_){ return {}; }
+  }
+  function guardar(d){
+    try{ localStorage.setItem(CLAVE,JSON.stringify(d)); return true; }
+    catch(e){
+      var cuota = e && (e.name==='QuotaExceededError' || e.name==='NS_ERROR_DOM_QUOTA_REACHED' || e.code===22);
+      alert(cuota
+        ? '⚠️ No se pudo guardar: se llenó el almacenamiento del dispositivo. Borrá alguna foto o proyecto que ya no uses.'
+        : '⚠️ No se pudo guardar en este dispositivo.');
+      return false;
+    }
+  }
+  function esc(s){
+    return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function num(id){ var e=D.getElementById(id); return e?parseFloat(String(e.value).replace(',','.')):NaN; }
+  function val(id){ var e=D.getElementById(id); return e?e.value:''; }
+  function pintar(id,html,clase){
+    var e=D.getElementById(id); if(!e) return;
+    e.className='eia330-out'+(clase?' '+clase:'');
+    e.innerHTML=html;
+  }
+  W.eia330Leer=leer; W.eia330Guardar=guardar;
+
+  /* ============================================================
+     BLOQUE PRO — DIMENSIONADO DE CONDUCTOR SEGÚN IEC 60364-5-52
+     ------------------------------------------------------------
+     Tabla B.52.2: PVC, cobre, DOS conductores cargados (monofásico).
+     Valores de referencia: 30 °C aire, circuito único sin agrupar.
+     AEA 90364 (Argentina, cláusula 771.16) y REBT ITC-BT-19 (España)
+     derivan de esta norma, pero pueden tener desviaciones nacionales.
+     NO se incluye la tabla de TRES conductores cargados (B.52.4):
+     sus valores son MENORES, así que usar esta tabla para trifásico
+     daría un cable subdimensionado. Por eso el trifásico se bloquea.
+     ============================================================ */
+  var SECCIONES=[1.5,2.5,4,6,10,16,25,35,50,70,95,120,150,185,240];
+  var B52_2_PVC_CU={
+    /* mm²  : {A1, A2, B1, B2, C, E, F} */
+    1.5:{A1:14.5,A2:14,B1:17.5,B2:16.5,C:19.5,E:22,F:24},
+    2.5:{A1:19.5,A2:18.5,B1:24,B2:23,C:27,E:30,F:33},
+    4:{A1:26,A2:25,B1:32,B2:30,C:36,E:40,F:45},
+    6:{A1:34,A2:32,B1:41,B2:38,C:46,E:51,F:57},
+    10:{A1:46,A2:43,B1:57,B2:52,C:63,E:70,F:76},
+    16:{A1:61,A2:57,B1:76,B2:69,C:85,E:94,F:101},
+    25:{A1:80,A2:75,B1:101,B2:90,C:112,E:119,F:131},
+    35:{A1:99,A2:92,B1:125,B2:111,C:138,E:148,F:162},
+    50:{A1:119,A2:110,B1:151,B2:133,C:168,E:180,F:196},
+    70:{A1:151,A2:139,B1:192,B2:168,C:213,E:232,F:251},
+    95:{A1:182,A2:167,B1:232,B2:201,C:258,E:282,F:304},
+    120:{A1:210,A2:192,B1:269,B2:232,C:299,E:328,F:352},
+    150:{A1:240,A2:219,B1:300,B2:258,C:344,E:379,F:406},
+    185:{A1:273,A2:248,B1:341,B2:294,C:392,E:434,F:463},
+    240:{A1:320,A2:291,B1:400,B2:344,C:461,E:514,F:546}
+  };
+  /* Tabla B.52.14 — corrección por temperatura ambiente del aire (PVC 70 °C) */
+  var K_TEMP_PVC={10:1.22,15:1.17,20:1.12,25:1.06,30:1.00,35:0.94,40:0.87,45:0.79,50:0.71,55:0.61,60:0.50};
+  /* Tabla B.52.17 — corrección por agrupamiento (haz en conducto/canal) */
+  var K_GRUPO={1:1.00,2:0.80,3:0.70,4:0.65,5:0.60,6:0.57,7:0.54,8:0.52,9:0.50,12:0.45,16:0.41,20:0.38};
+  function kGrupo(n){
+    if(n<=9) return K_GRUPO[n]||1;
+    if(n<=12) return 0.45;
+    if(n<=16) return 0.41;
+    return 0.38;
+  }
+  /* Calibres normalizados habituales de interruptores automáticos (IEC 60898) */
+  var CALIBRES=[6,10,13,16,20,25,32,40,50,63,80,100,125];
+
+  W.eia330Dimensionar=function(){
+    var ib=num('e330Ib'), long=num('e330L'), caida=num('e330Caida'),
+        v=num('e330V'), tamb=num('e330T'), circ=parseInt(val('e330N'),10)||1,
+        metodo=val('e330M'), sistema=val('e330S');
+
+    if(!(ib>0&&long>0&&caida>0&&v>0)) return pintar('e330Out','Revisá los valores: corriente, longitud, caída y tensión deben ser mayores que cero.','eia330-bad');
+    if(!(tamb>=10&&tamb<=60)) return pintar('e330Out','La temperatura ambiente debe estar entre 10 y 60 °C (rango de la tabla B.52.14 para PVC).','eia330-bad');
+
+    if(sistema==='three'){
+      return pintar('e330Out',
+        '<b>⛔ Trifásico no disponible en esta herramienta.</b><br><br>La tabla cargada es la <b>B.52.2 (dos conductores cargados)</b>. Para tres conductores cargados corresponde la tabla <b>B.52.4</b>, cuyos valores son <b>menores</b>. Aplicar esta tabla a un circuito trifásico daría un conductor <b>subdimensionado</b>, con riesgo de sobrecalentamiento.<br><br>Consultá la tabla B.52.4 de IEC 60364-5-52, la 771.16 de AEA 90364 o la ITC-BT-19 del REBT.',
+        'eia330-bad');
+    }
+
+    /* 1) Interruptor: primer calibre normalizado >= Ib */
+    var inProt=null;
+    for(var c=0;c<CALIBRES.length;c++){ if(CALIBRES[c]>=ib){ inProt=CALIBRES[c]; break; } }
+    if(inProt===null) return pintar('e330Out','La corriente de diseño supera los calibres contemplados (hasta 125 A).','eia330-bad');
+
+    /* 2) Factores de corrección */
+    var claves=Object.keys(K_TEMP_PVC).map(Number).sort(function(a,b){return a-b;});
+    var kt=null;
+    for(var i=0;i<claves.length;i++){ if(tamb<=claves[i]){ kt=K_TEMP_PVC[claves[i]]; break; } }
+    if(kt===null) kt=0.50;
+    var kg=kGrupo(circ), k=kt*kg;
+
+    /* 3) Sección mínima por AMPACIDAD: It_tabla >= In / k  */
+    var itNecesaria=inProt/k, secAmp=null, izAmp=0;
+    for(var s=0;s<SECCIONES.length;s++){
+      var sec=SECCIONES[s], it=B52_2_PVC_CU[sec][metodo];
+      if(it>=itNecesaria){ secAmp=sec; izAmp=it*k; break; }
+    }
+    if(secAmp===null) return pintar('e330Out','Ninguna sección de la tabla (hasta 240 mm²) cubre esa corriente en esas condiciones. Revisá el método de instalación, el agrupamiento o dividí la carga en varios circuitos.','eia330-bad');
+
+    /* 4) Sección mínima por CAÍDA DE TENSIÓN (monofásico: 2·L·I·ρ/S) */
+    var rho=0.0175; /* cobre a ~20 °C, Ω·mm²/m */
+    var sCaida=(2*long*ib*rho)/(v*caida/100), secCaida=null;
+    for(var q=0;q<SECCIONES.length;q++){ if(SECCIONES[q]>=sCaida){ secCaida=SECCIONES[q]; break; } }
+    if(secCaida===null) return pintar('e330Out','La caída de tensión exige una sección mayor a 240 mm². Revisá la longitud o subí la caída admisible.','eia330-bad');
+
+    /* 5) Sección final: la mayor de las dos */
+    var secFinal=Math.max(secAmp,secCaida);
+    var izFinal=B52_2_PVC_CU[secFinal][metodo]*k;
+    var dFinal=2*long*ib*rho/secFinal, pFinal=dFinal/v*100;
+    var manda = secCaida>secAmp ? 'la caída de tensión' : (secAmp>secCaida ? 'la ampacidad' : 'ambos criterios por igual');
+
+    /* 6) Coordinación IEC 60364-4-43: Ib ≤ In ≤ Iz, e I2 ≤ 1,45·Iz */
+    var c1 = ib<=inProt, c2 = inProt<=izFinal;
+    var i2 = 1.45*inProt;           /* IEC 60898: I2 = 1,45·In */
+    var c3 = i2 <= 1.45*izFinal;    /* equivale a In ≤ Iz */
+    var ok = c1&&c2&&c3;
+
+    function chip(b){ return '<span class="eia330-chip '+(b?'ok':'bad')+'">'+(b?'CUMPLE':'NO CUMPLE')+'</span>'; }
+
+    pintar('e330Out',
+      '<b>Sección recomendada: '+secFinal+' mm²</b> (cobre, PVC)<br>'+
+      'Protección sugerida: <b>'+inProt+' A</b><br><br>'+
+      '<b>Criterio que manda:</b> '+manda+'.<br>'+
+      '<table style="width:100%;border-collapse:collapse;margin-top:9px;font-size:13.5px">'+
+      '<tr><td style="padding:4px 0">Por ampacidad</td><td style="text-align:right"><b>'+secAmp+' mm²</b></td></tr>'+
+      '<tr><td style="padding:4px 0">Por caída de tensión</td><td style="text-align:right"><b>'+secCaida+' mm²</b> (mínimo teórico '+sCaida.toFixed(2)+')</td></tr>'+
+      '<tr><td style="padding:4px 0">Iz corregida</td><td style="text-align:right"><b>'+izFinal.toFixed(1)+' A</b></td></tr>'+
+      '<tr><td style="padding:4px 0">Caída real</td><td style="text-align:right"><b>'+dFinal.toFixed(2)+' V · '+pFinal.toFixed(2)+' %</b></td></tr>'+
+      '</table>'+
+      '<div style="margin-top:11px;padding-top:10px;border-top:1px solid #d8e4f2">'+
+      '<b>Coordinación con la protección</b><br>'+
+      'Ib ≤ In: '+ib.toFixed(1)+' ≤ '+inProt+' A '+chip(c1)+'<br>'+
+      'In ≤ Iz: '+inProt+' ≤ '+izFinal.toFixed(1)+' A '+chip(c2)+'<br>'+
+      'I₂ ≤ 1,45·Iz: '+i2.toFixed(1)+' ≤ '+(1.45*izFinal).toFixed(1)+' A '+chip(c3)+
+      '</div>'+
+      '<div style="margin-top:10px;padding:9px;border-radius:9px;background:'+(ok?'#eaf7ee':'#fdeceb')+'"><b>'+(ok?'✅ La combinación conductor + protección cumple los tres criterios.':'⚠️ La combinación NO cumple. Subí la sección o bajá el calibre de la protección.')+'</b></div>'+
+      '<span class="eia330-note"><b>Factores aplicados:</b> temperatura k₁='+kt+' ('+tamb+' °C) · agrupamiento k₂='+kg+' ('+circ+' circuito'+(circ>1?'s':'')+') · k total='+k.toFixed(3)+'.<br>'+
+      '<b>Base:</b> IEC 60364-5-52, tabla B.52.2 (PVC, cobre, dos conductores cargados), factores B.52.14 y B.52.17. AEA 90364 (771.16) y REBT (ITC-BT-19) derivan de esta norma pero pueden tener desviaciones nacionales.<br>'+
+      '<b>No contempla:</b> cortocircuito (verificación adiabática), conductor de protección, armónicos, cables enterrados (métodos D), aluminio ni XLPE. <b>Resultado orientativo: verificá siempre con la norma vigente y tu criterio profesional.</b></span>',
+      ok?'eia330-ok':'eia330-warn');
+  };
+
+  /* Inyectar la herramienta en la pantalla de cálculos PRO */
+  function tarjetaDimensionado(){
+    return ''+
+    '<div class="eia330-card" id="e330DimCard">'+
+      '<h3>🧠 Dimensionado completo de conductor</h3>'+
+      '<p class="eia330-sub">Combina <b>ampacidad</b> (tablas IEC 60364-5-52), <b>caída de tensión</b> y <b>coordinación con la protección</b>. Es el cálculo que las otras herramientas hacen por separado.</p>'+
+      '<div class="eia330-grid">'+
+        '<label class="eia330-f">Corriente de diseño Ib (A)<input id="e330Ib" type="number" step="0.1" value="16"></label>'+
+        '<label class="eia330-f">Tensión (V)<input id="e330V" type="number" value="230"></label>'+
+        '<label class="eia330-f">Longitud (m)<input id="e330L" type="number" step="0.1" value="25"></label>'+
+        '<label class="eia330-f">Caída máx. admisible (%)<input id="e330Caida" type="number" step="0.1" value="3"></label>'+
+        '<label class="eia330-f">Temperatura ambiente (°C)<input id="e330T" type="number" value="30"></label>'+
+        '<label class="eia330-f">Circuitos agrupados<input id="e330N" type="number" min="1" value="1"></label>'+
+        '<label class="eia330-f">Sistema<select id="e330S"><option value="single">Monofásico</option><option value="three">Trifásico</option></select></label>'+
+        '<label class="eia330-f">Método de instalación<select id="e330M">'+
+          '<option value="A1">A1 · conductores en tubo en pared aislante</option>'+
+          '<option value="A2">A2 · cable multiconductor en tubo en pared aislante</option>'+
+          '<option value="B1" selected>B1 · conductores en tubo sobre pared</option>'+
+          '<option value="B2">B2 · cable multiconductor en tubo sobre pared</option>'+
+          '<option value="C">C · cable grapeado directo a pared</option>'+
+          '<option value="E">E · cable multiconductor en bandeja perforada</option>'+
+          '<option value="F">F · unipolares en contacto en bandeja</option>'+
+        '</select></label>'+
+      '</div>'+
+      '<button class="eia330-btn" type="button" onclick="eia330Dimensionar()">Calcular sección y protección</button>'+
+      '<div id="e330Out" class="eia330-out">Completá los datos y pulsá calcular.</div>'+
+    '</div>';
+  }
+
+  /* Se inserta al final de la página de cálculos PRO cuando aparece */
+  function inyectarPro(){
+    try{
+      var ancla=D.getElementById('v80SectionOut');
+      if(!ancla || D.getElementById('e330DimCard')) return;
+      var cont=ancla.closest('.v80-calc-layout')||ancla.closest('main');
+      if(!cont) return;
+      var caja=D.createElement('div');
+      caja.innerHTML=tarjetaDimensionado();
+      cont.parentNode.insertBefore(caja.firstChild,cont.nextSibling);
+      if(W.eiaEtiquetarCampos) W.eiaEtiquetarCampos();
+    }catch(_){ }
+  }
+
+  /* ============================================================
+     BLOQUE HOGAR — CONTACTOS DE EMERGENCIA
+     ============================================================ */
+  W.eia330GuardarContacto=function(){
+    var n=val('e330CN').trim(), t=val('e330CT').trim(), r=val('e330CR');
+    if(!n||!t) return alert('Poné al menos un nombre y un teléfono.');
+    var d=leer(); d.contactos=d.contactos||[];
+    d.contactos.push({nombre:n,tel:t,rol:r});
+    if(guardar(d)){ D.getElementById('e330CN').value=''; D.getElementById('e330CT').value=''; W.eia330Ajustes(); }
+  };
+  W.eia330BorrarContacto=function(i){
+    var d=leer(); if(!d.contactos) return;
+    if(!confirm('¿Borrar este contacto?')) return;
+    d.contactos.splice(i,1); if(guardar(d)) W.eia330Ajustes();
+  };
+  function listaContactos(){
+    var d=leer(), cs=d.contactos||[];
+    if(!cs.length) return '<p class="eia330-sub">Todavía no cargaste ningún contacto. Guardalos ahora, con calma: en una urgencia no vas a querer buscar el número.</p>';
+    return cs.map(function(c,i){
+      return '<div class="eia330-item"><div class="g"><b>'+esc(c.nombre)+'</b><span>'+esc(c.rol||'Contacto')+' · '+esc(c.tel)+'</span></div>'+
+        '<a class="eia330-call" href="tel:'+encodeURIComponent(c.tel)+'">📞 Llamar</a>'+
+        '<button class="eia330-x" type="button" onclick="eia330BorrarContacto('+i+')" aria-label="Borrar contacto">✕</button></div>';
+    }).join('');
+  }
+  W.eia330Contactos=function(){
+    var d=leer(), cs=d.contactos||[];
+    if(!cs.length) return '';
+    return '<div class="eia330-card"><h3>📞 Tus contactos de emergencia</h3>'+listaContactos()+'</div>';
+  };
+
+  /* ============================================================
+     BLOQUE HOGAR — MI INSTALACIÓN
+     ============================================================ */
+  W.eia330GuardarInstalacion=function(){
+    var d=leer();
+    d.instalacion={
+      tablero:val('e330ITablero'), general:val('e330IGeneral'),
+      diferencial:val('e330IDif'), circuitos:val('e330ICirc'),
+      distribuidora:val('e330IDist'), suministro:val('e330ISum')
+    };
+    if(guardar(d)) alert('✅ Guardado. Vas a encontrarlo en Ajustes y durante una urgencia.');
+  };
+
+  /* ============================================================
+     BLOQUE HOGAR — HISTORIAL DE AVERÍAS
+     ============================================================ */
+  W.eia330GuardarAveria=function(){
+    var q=val('e330AQ').trim(), s=val('e330AS').trim();
+    if(!q) return alert('Contá brevemente qué pasó.');
+    var d=leer(); d.averias=d.averias||[];
+    d.averias.unshift({fecha:new Date().toISOString(),que:q,solucion:s});
+    if(d.averias.length>50) d.averias=d.averias.slice(0,50);
+    if(guardar(d)){ D.getElementById('e330AQ').value=''; D.getElementById('e330AS').value=''; W.eia330Ajustes(); }
+  };
+  W.eia330BorrarAveria=function(i){
+    var d=leer(); if(!d.averias) return;
+    if(!confirm('¿Borrar este registro?')) return;
+    d.averias.splice(i,1); if(guardar(d)) W.eia330Ajustes();
+  };
+  function listaAverias(){
+    var d=leer(), as=d.averias||[];
+    if(!as.length) return '<p class="eia330-sub">Cuando resuelvas algo, anotalo. La próxima vez que pase algo parecido vas a tener la pista.</p>';
+    return as.map(function(a,i){
+      var f='';
+      try{ f=new Date(a.fecha).toLocaleDateString('es-AR',{day:'2-digit',month:'short',year:'numeric'}); }catch(_){ }
+      return '<div class="eia330-item"><div class="g"><b>'+esc(a.que)+'</b><span>'+esc(f)+(a.solucion?' · '+esc(a.solucion):'')+'</span></div>'+
+        '<button class="eia330-x" type="button" onclick="eia330BorrarAveria('+i+')" aria-label="Borrar registro">✕</button></div>';
+    }).join('');
+  }
+
+  /* ============================================================
+     BLOQUE HOGAR — RECORDATORIO DEL TEST DEL DIFERENCIAL
+     ============================================================ */
+  W.eia330TestHecho=function(){
+    var d=leer(); d.ultimoTest=new Date().toISOString();
+    if(guardar(d)) W.eia330Ajustes();
+  };
+  function estadoTest(){
+    var d=leer();
+    if(!d.ultimoTest) return {dias:null,texto:'Nunca registraste la prueba.'};
+    var dif=Math.floor((Date.now()-new Date(d.ultimoTest).getTime())/86400000);
+    return {dias:dif,texto:'Última prueba hace '+dif+' día'+(dif===1?'':'s')+'.'};
+  }
+  W.eia330AvisoTest=function(){
+    var e=estadoTest();
+    if(e.dias!==null && e.dias<30) return '';
+    return '<div class="eia330-card" style="border-color:#f0d79a;background:#fff9ec">'+
+      '<h3>🧪 Probá el diferencial</h3>'+
+      '<p class="eia330-sub">'+esc(e.texto)+' Se recomienda probarlo una vez al mes: es la única comprobación de seguridad que podés hacer vos.</p>'+
+      '<p class="eia330-sub"><b>Cómo:</b> apretá el botón <b>T</b> (o TEST) del diferencial del tablero. Debe cortar la luz al instante. Volvé a subir la palanca. <b>Si no corta, llamá a un electricista: esa protección es la que te cuida de una descarga.</b></p>'+
+      '<button class="eia330-btn alt" type="button" onclick="eia330TestHecho()">Ya lo probé y cortó bien</button></div>';
+  };
+
+  /* ============================================================
+     MODO LINTERNA
+     ============================================================ */
+  W.eia330Torch=function(on){
+    var t=D.getElementById('eia330Torch'); if(!t) return;
+    t.classList.toggle('on',!!on);
+    D.body.classList.toggle('eia330-torch-on',!!on);
+  };
+
+  /* ============================================================
+     COPIA DE SEGURIDAD
+     ============================================================ */
+  W.eia330Exportar=function(){
+    try{
+      var todo={ version:'v330', fecha:new Date().toISOString(), datos:leer() };
+      try{ todo.proyectos=JSON.parse(localStorage.getItem(W.eiaProjectStorageKey?W.eiaProjectStorageKey():'')||'null'); }catch(_){ }
+      var b=new Blob([JSON.stringify(todo,null,2)],{type:'application/json'});
+      var u=URL.createObjectURL(b), a=D.createElement('a');
+      a.href=u; a.download='electroia-copia-'+new Date().toISOString().slice(0,10)+'.json';
+      D.body.appendChild(a); a.click(); D.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(u); },1500);
+    }catch(e){ alert('No se pudo generar la copia.'); }
+  };
+  W.eia330Importar=function(ev){
+    var f=ev&&ev.target&&ev.target.files&&ev.target.files[0]; if(!f) return;
+    var rd=new FileReader();
+    rd.onload=function(){
+      try{
+        var j=JSON.parse(rd.result);
+        if(!j||!j.datos) throw new Error('formato');
+        if(!confirm('Esto va a reemplazar los contactos, la ficha de instalación y el historial guardados en este dispositivo. ¿Seguir?')) return;
+        if(guardar(j.datos)){ alert('✅ Datos restaurados.'); W.eia330Ajustes(); }
+      }catch(_){ alert('El archivo no tiene el formato esperado.'); }
+    };
+    rd.readAsText(f);
+  };
+
+  /* ============================================================
+     PANTALLA DE AJUSTES (reemplaza la que estaba casi vacía)
+     ============================================================ */
+  W.eia330Ajustes=function(){
+    var app=D.getElementById('app'); if(!app) return;
+    if(typeof W.enterView==='function'){ try{ W.enterView('settings'); }catch(_){ } }
+    if(typeof W.nav==='function'){ try{ W.nav('nSettings'); }catch(_){ } }
+    var d=leer(), ins=d.instalacion||{}, e=estadoTest();
+    var cab=(typeof W.head==='function')?W.head(true):'';
+
+    app.innerHTML=cab+'<main class="wrap page">'+
+      '<h1>⚙️ Ajustes</h1>'+
+      '<p class="subtitle">Todo lo que guardes acá queda en este dispositivo y te sirve justo cuando lo necesitás.</p>'+
+
+      '<div class="eia330-card"><h3>🔦 Modo linterna</h3>'+
+      '<p class="eia330-sub">Pantalla en blanco al máximo para alumbrar el tablero si te quedaste sin luz.</p>'+
+      '<button class="eia330-btn" type="button" onclick="eia330Torch(true)">Encender linterna</button></div>'+
+
+      W.eia330AvisoTest()+
+
+      '<div class="eia330-card"><h3>📞 Contactos de emergencia</h3>'+
+      '<p class="eia330-sub">Tu electricista y la distribuidora, a un toque. Cargalos ahora que estás tranquilo.</p>'+
+      listaContactos()+
+      '<div class="eia330-grid" style="margin-top:10px">'+
+        '<label class="eia330-f">Nombre<input id="e330CN" placeholder="Ej.: Juan, electricista"></label>'+
+        '<label class="eia330-f">Teléfono<input id="e330CT" type="tel" placeholder="Ej.: 11 5555 5555"></label>'+
+      '</div>'+
+      '<label class="eia330-f" style="margin-top:9px">Tipo<select id="e330CR">'+
+        '<option>Electricista</option><option>Distribuidora eléctrica</option>'+
+        '<option>Administración / consorcio</option><option>Emergencias</option><option>Otro</option>'+
+      '</select></label>'+
+      '<button class="eia330-btn" type="button" onclick="eia330GuardarContacto()">Guardar contacto</button></div>'+
+
+      '<div class="eia330-card"><h3>🏠 Mi instalación</h3>'+
+      '<p class="eia330-sub">Anotá esto una vez, con luz y tiempo. En una urgencia no vas a andar buscando dónde está el tablero.</p>'+
+      '<label class="eia330-f">¿Dónde está el tablero?<input id="e330ITablero" value="'+esc(ins.tablero||'')+'" placeholder="Ej.: pasillo, arriba de la puerta"></label>'+
+      '<label class="eia330-f" style="margin-top:9px">Llave general<input id="e330IGeneral" value="'+esc(ins.general||'')+'" placeholder="Ej.: la primera de la izquierda"></label>'+
+      '<label class="eia330-f" style="margin-top:9px">Diferencial (disyuntor)<input id="e330IDif" value="'+esc(ins.diferencial||'')+'" placeholder="Ej.: el del botón T, segundo"></label>'+
+      '<label class="eia330-f" style="margin-top:9px">Qué protege cada térmica<textarea id="e330ICirc" rows="4" placeholder="Ej.: 1 luces, 2 tomas cocina, 3 aire, 4 termotanque">'+esc(ins.circuitos||'')+'</textarea></label>'+
+      '<label class="eia330-f" style="margin-top:9px">Distribuidora<input id="e330IDist" value="'+esc(ins.distribuidora||'')+'" placeholder="Ej.: Edenor / Edesur / Iberdrola"></label>'+
+      '<label class="eia330-f" style="margin-top:9px">N.º de suministro o cliente<input id="e330ISum" value="'+esc(ins.suministro||'')+'" placeholder="Lo encontrás en la factura"></label>'+
+      '<button class="eia330-btn" type="button" onclick="eia330GuardarInstalacion()">Guardar mi instalación</button></div>'+
+
+      '<div class="eia330-card"><h3>📒 Historial de averías</h3>'+
+      '<p class="eia330-sub">Lo que ya te pasó y cómo se resolvió.</p>'+
+      listaAverias()+
+      '<label class="eia330-f" style="margin-top:10px">¿Qué pasó?<input id="e330AQ" placeholder="Ej.: saltaba la térmica al usar el horno"></label>'+
+      '<label class="eia330-f" style="margin-top:9px">¿Cómo se resolvió? (opcional)<input id="e330AS" placeholder="Ej.: cambió el horno de circuito"></label>'+
+      '<button class="eia330-btn" type="button" onclick="eia330GuardarAveria()">Guardar en el historial</button></div>'+
+
+      '<div class="eia330-card"><h3>💾 Copia de seguridad</h3>'+
+      '<p class="eia330-sub">Los datos viven solo en este dispositivo: si borrás la caché o cambiás de teléfono, se pierden. Descargá una copia cada tanto.</p>'+
+      '<button class="eia330-btn alt" type="button" onclick="eia330Exportar()">Descargar copia</button>'+
+      '<button class="eia330-btn alt" type="button" onclick="document.getElementById(\'e330File\').click()">Restaurar desde archivo</button>'+
+      '<input id="e330File" type="file" accept="application/json,.json" style="display:none" onchange="eia330Importar(event)" aria-label="Elegir archivo de copia">'+
+      '<span class="eia330-note">'+esc(e.texto)+'</span></div>'+
+
+      '<div class="eia330-card"><h3>👤 Cuenta</h3>'+
+      '<p class="eia330-sub">Iniciá sesión para guardar proyectos, o seguí sin cuenta.</p>'+
+      '<button class="eia330-btn alt" type="button" onclick="window.eiaToggleMenu?eiaToggleMenu():document.getElementById(\'eiaAccountOverlay\')?.classList.add(\'show\')">Abrir cuenta</button></div>'+
+
+    '</main>';
+    if(W.eiaEtiquetarCampos) W.eiaEtiquetarCampos();
+  };
+  /* Última asignación gana: reemplaza la pantalla de Ajustes anterior */
+  W.settings=W.eia330Ajustes;
+
+  /* ============================================================
+     ENGANCHE EN URGENCIA — contactos + linterna donde más sirven
+     ============================================================ */
+  function inyectarUrgencia(){
+    try{
+      var card=D.querySelector('.eia-emergency-card');
+      if(!card) return;
+      /* solo dentro de una pantalla de urgencia/diagnóstico ya abierta */
+      var abierta=D.querySelector('.eia-emergency-options,#eiaEmergencyOptions');
+      if(!abierta || D.getElementById('e330UrgBox')) return;
+      var caja=D.createElement('div');
+      caja.id='e330UrgBox';
+      var d=leer(), ins=d.instalacion||{}, cs=d.contactos||[];
+      var ficha='';
+      if(ins.tablero||ins.general||ins.diferencial||ins.circuitos){
+        ficha='<div class="eia330-card"><h3>🏠 Tu instalación</h3>'+
+          (ins.tablero?'<p class="eia330-sub"><b>Tablero:</b> '+esc(ins.tablero)+'</p>':'')+
+          (ins.general?'<p class="eia330-sub"><b>Llave general:</b> '+esc(ins.general)+'</p>':'')+
+          (ins.diferencial?'<p class="eia330-sub"><b>Diferencial:</b> '+esc(ins.diferencial)+'</p>':'')+
+          (ins.circuitos?'<p class="eia330-sub"><b>Térmicas:</b> '+esc(ins.circuitos)+'</p>':'')+
+          '</div>';
+      }
+      var cont = cs.length ? W.eia330Contactos() : '';
+      var luz='<div class="eia330-card"><h3>🔦 ¿Estás a oscuras?</h3>'+
+        '<p class="eia330-sub">Poné la pantalla en blanco al máximo para ver el tablero.</p>'+
+        '<button class="eia330-btn alt" type="button" onclick="eia330Torch(true)">Encender linterna</button></div>';
+      caja.innerHTML=luz+ficha+cont;
+      if(!caja.innerHTML.trim()) return;
+      card.parentNode.insertBefore(caja,card.nextSibling);
+    }catch(_){ }
+  }
+
+  /* ============================================================
+     ENGANCHES AUTOMÁTICOS
+     ============================================================ */
+  try{
+    var app=D.getElementById('app');
+    if(app && W.MutationObserver){
+      var pend=null;
+      new MutationObserver(function(){
+        clearTimeout(pend);
+        pend=setTimeout(function(){ inyectarPro(); inyectarUrgencia(); },150);
+      }).observe(app,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+})();
+</script>
+
+<style id="eia340-css">
+.eia340-plan{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:12px 0}
+@media(max-width:520px){.eia340-plan{grid-template-columns:1fr}}
+.eia340-p{border:2px solid #dde4ee;border-radius:16px;padding:15px;background:#fff}
+.eia340-p.dest{border-color:#1663c7;box-shadow:0 8px 24px rgba(22,99,199,.14)}
+.eia340-p h4{margin:0 0 3px;font-size:16px}
+.eia340-p .precio{font-size:25px;font-weight:900;margin:6px 0 2px}
+.eia340-p .per{font-size:12px;color:#5b6b80;margin-bottom:10px}
+.eia340-p ul{margin:0;padding-left:17px;font-size:13.5px;line-height:1.75;color:#33455e}
+.eia340-lock{border:1px dashed #b9c7da;border-radius:14px;padding:16px;text-align:center;background:#f7fafd;margin:12px 0}
+.eia340-lock b{display:block;font-size:15.5px;margin-bottom:5px}
+.eia340-lock p{font-size:13px;color:#5b6b80;margin:0 0 11px;line-height:1.5}
+.eia340-free{background:#eaf7ee;border:1px solid #b9e2c6;border-radius:12px;padding:11px;font-size:13px;color:#16602f;line-height:1.5;margin:11px 0}
+.eia340-row{display:grid;grid-template-columns:1fr 74px 92px 34px;gap:6px;align-items:center;margin-bottom:6px}
+.eia340-row input{font:inherit;padding:8px;border:1px solid #ccd6e2;border-radius:8px;width:100%;box-sizing:border-box}
+.eia340-head{display:grid;grid-template-columns:1fr 74px 92px 34px;gap:6px;font-size:11px;font-weight:800;color:#5b6b80;margin-bottom:5px;letter-spacing:.03em}
+.eia340-tot{display:flex;justify-content:space-between;padding:11px;background:#16324f;color:#fff;border-radius:11px;font-weight:800;margin-top:10px;font-size:15px}
+.eia340-cta{background:linear-gradient(140deg,#0c5f36,#12ae5f);color:#fff;border-radius:16px;padding:16px;margin:13px 0}
+.eia340-cta h3{margin:0 0 5px;font-size:17px;color:#fff}
+.eia340-cta p{margin:0 0 12px;font-size:13.5px;line-height:1.5;opacity:.95}
+.eia340-cta button{width:100%;padding:13px;border:0;border-radius:11px;background:#fff;color:#0c5f36;font-weight:900;font-size:15px;cursor:pointer}
+</style>
+
+<script id="electroia-v340-monetizacion">
+(function(){
+  'use strict';
+  var W=window,D=document;
+  var API=(typeof W.API==='string'&&W.API)||'/api';
+
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function token(){ try{ return localStorage.getItem('eiaToken')||localStorage.getItem('token')||''; }catch(_){ return ''; } }
+  function cab(){ var t=token(); return t?{'Authorization':'Bearer '+t,'Content-Type':'application/json'}:{'Content-Type':'application/json'}; }
+
+  /* ============================================================
+     ESTADO DEL PLAN
+     ============================================================ */
+  var PLAN={plan:'free',funciones:{pdf:false,presupuestos:false},ia:null,proyectos:null};
+  W.eia340Plan=function(){ return PLAN; };
+  W.eia340EsPro=function(){ return PLAN.plan==='pro'; };
+
+  W.eia340CargarPlan=function(){
+    if(!token()){ PLAN={plan:'free',funciones:{pdf:false,presupuestos:false},ia:null,proyectos:null}; return Promise.resolve(PLAN); }
+    return fetch(API+'/plan',{headers:cab()})
+      .then(function(r){ return r.ok?r.json():null; })
+      .then(function(j){ if(j) PLAN=j; return PLAN; })
+      .catch(function(){ return PLAN; });
+  };
+
+  /* Bloque que se muestra cuando una herramienta es PRO */
+  function bloqueo(titulo,texto){
+    return '<div class="eia340-lock"><b>🔒 '+esc(titulo)+'</b><p>'+esc(texto)+'</p>'+
+      '<button class="eia330-btn" type="button" onclick="eia340VerPlanes()">Ver el plan PRO</button></div>';
+  }
+
+  /* ============================================================
+     PANTALLA DE PLANES
+     ============================================================ */
+  W.eia340VerPlanes=function(){
+    var app=D.getElementById('app'); if(!app) return;
+    if(typeof W.enterView==='function'){ try{ W.enterView('planes'); }catch(_){ } }
+    var cabecera=(typeof W.head==='function')?W.head(true):'';
+    var esPro=W.eia340EsPro();
+
+    app.innerHTML=cabecera+'<main class="wrap page">'+
+      '<h1>⚡ Planes de ElectroIA</h1>'+
+
+      '<div class="eia340-free">'+
+        '<b>La seguridad no se cobra.</b> El diagnóstico de urgencia, las advertencias de peligro y la '+
+        'indicación de cortar la corriente o llamar a un electricista son gratuitas, para siempre y sin cuenta. '+
+        'El plan PRO cubre herramientas de trabajo, no tu seguridad.'+
+      '</div>'+
+
+      '<div class="eia340-plan">'+
+        '<div class="eia340-p'+(esPro?'':' dest')+'">'+
+          '<h4>Gratis</h4><div class="precio">$0</div><div class="per">siempre</div>'+
+          '<ul>'+
+            '<li>Diagnóstico de urgencia completo</li>'+
+            '<li>Guía paso a paso sin cuenta</li>'+
+            '<li>Contactos, ficha de instalación e historial</li>'+
+            '<li>Todas las calculadoras</li>'+
+            '<li>Hasta 3 proyectos guardados</li>'+
+            '<li>40 consultas de IA al mes</li>'+
+          '</ul>'+
+        '</div>'+
+        '<div class="eia340-p'+(esPro?' dest':'')+'">'+
+          '<h4>PRO '+(esPro?'· tu plan actual':'')+'</h4>'+
+          '<div class="precio" id="e340Precio">—</div><div class="per">por mes</div>'+
+          '<ul>'+
+            '<li>Todo lo del plan gratuito</li>'+
+            '<li><b>Memoria técnica en PDF</b> con tus datos</li>'+
+            '<li><b>Presupuestos</b> con materiales y mano de obra</li>'+
+            '<li>Proyectos ilimitados y sincronizados</li>'+
+            '<li>1500 consultas de IA al mes</li>'+
+          '</ul>'+
+          (esPro
+            ? '<div class="eia330-out eia330-ok" style="margin-top:11px">✅ Plan activo'+(PLAN.vence?' hasta '+esc(new Date(PLAN.vence).toLocaleDateString('es-AR')):'')+'</div>'
+            : '<button class="eia330-btn" type="button" onclick="eia340Contratar()" style="margin-top:11px">Pasar a PRO</button>')+
+        '</div>'+
+      '</div>'+
+
+      (token()? '<div class="eia330-card"><h3>📊 Tu consumo este mes</h3><div id="e340Uso" class="eia330-out">Cargando…</div></div>'
+              : '<div class="eia330-card"><h3>👤 Necesitás una cuenta</h3><p class="eia330-sub">Creá una cuenta gratis para guardar proyectos y ver tu consumo.</p>'+
+                '<button class="eia330-btn alt" type="button" onclick="window.eiaToggleMenu?eiaToggleMenu():document.getElementById(\'eiaAccountOverlay\')?.classList.add(\'show\')">Crear cuenta</button></div>')+
+
+    '</main>';
+
+    /* El precio se lee del servidor: no se fija en el frontend */
+    fetch(API+'/plan/precio').then(function(r){return r.ok?r.json():null;}).then(function(j){
+      var e=D.getElementById('e340Precio');
+      if(e) e.textContent=(j&&j.etiqueta)?j.etiqueta:'Consultar';
+    }).catch(function(){
+      var e=D.getElementById('e340Precio'); if(e) e.textContent='Consultar';
+    });
+
+    if(token()){
+      W.eia340CargarPlan().then(function(p){
+        var e=D.getElementById('e340Uso'); if(!e) return;
+        var ia=p.ia||{usado:0,limite:0}, pr=p.proyectos||{usado:0,limite:null};
+        e.innerHTML='Consultas de IA: <b>'+ia.usado+' / '+ia.limite+'</b><br>'+
+          'Proyectos: <b>'+pr.usado+(pr.limite?' / '+pr.limite:' (sin límite)')+'</b>'+
+          '<span class="eia330-note">Si agotás las consultas de IA, el diagnóstico guiado y las advertencias de seguridad siguen funcionando igual.</span>';
+      });
+    }
+  };
+
+  W.eia340Contratar=function(){
+    if(!token()){
+      alert('Primero creá tu cuenta o iniciá sesión.');
+      if(W.eiaToggleMenu) W.eiaToggleMenu();
+      return;
+    }
+    fetch(API+'/billing/checkout',{method:'POST',headers:cab(),body:'{}'})
+      .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
+      .then(function(x){
+        if(x.ok && x.j && x.j.url){ W.location.href=x.j.url; return; }
+        alert('El pago online todavía no está habilitado.\n\n'+((x.j&&x.j.mensaje)||'Escribinos para activar tu plan PRO manualmente.'));
+      })
+      .catch(function(){ alert('No se pudo conectar. Probá de nuevo en un momento.'); });
+  };
+
+  /* ============================================================
+     PRESUPUESTOS (PRO)
+     ============================================================ */
+  var PRESU={items:[],mano:0,horas:0};
+
+  W.eia340AddItem=function(){ PRESU.items.push({d:'',c:1,p:0}); W.eia340Presupuesto(true); };
+  W.eia340DelItem=function(i){ PRESU.items.splice(i,1); W.eia340Presupuesto(true); };
+  W.eia340SyncItem=function(i,campo,v){
+    if(!PRESU.items[i]) return;
+    PRESU.items[i][campo]= campo==='d' ? v : (parseFloat(String(v).replace(',','.'))||0);
+    W.eia340Totales();
+  };
+  W.eia340Totales=function(){
+    var mat=PRESU.items.reduce(function(a,it){ return a+(it.c*it.p); },0);
+    var hE=D.getElementById('e340Horas'), vE=D.getElementById('e340Valor');
+    var horas=hE?(parseFloat(String(hE.value).replace(',','.'))||0):0;
+    var valor=vE?(parseFloat(String(vE.value).replace(',','.'))||0):0;
+    PRESU.horas=horas; PRESU.mano=horas*valor;
+    var t=D.getElementById('e340Total');
+    if(t) t.innerHTML='<span>TOTAL</span><span>'+(mat+PRESU.mano).toFixed(2)+'</span>';
+    var m=D.getElementById('e340Desglose');
+    if(m) m.innerHTML='Materiales: <b>'+mat.toFixed(2)+'</b> · Mano de obra: <b>'+PRESU.mano.toFixed(2)+'</b> ('+horas+' h)';
+  };
+
+  W.eia340Presupuesto=function(interno){
+    if(!W.eia340EsPro()){
+      var app0=D.getElementById('app');
+      if(app0 && !interno){
+        app0.innerHTML=((typeof W.head==='function')?W.head(true):'')+'<main class="wrap page"><h1>🧾 Presupuestos</h1>'+
+          bloqueo('Los presupuestos son parte del plan PRO','Armá el listado de materiales y mano de obra, y entregáselo al cliente en PDF con tus datos.')+'</main>';
+      }
+      return;
+    }
+    var app=D.getElementById('app'); if(!app) return;
+    if(!interno && typeof W.enterView==='function'){ try{ W.enterView('presupuesto'); }catch(_){ } }
+    if(!PRESU.items.length) PRESU.items=[{d:'',c:1,p:0}];
+
+    var filas=PRESU.items.map(function(it,i){
+      return '<div class="eia340-row">'+
+        '<input value="'+esc(it.d)+'" placeholder="Material o tarea" aria-label="Descripción" oninput="eia340SyncItem('+i+',\'d\',this.value)">'+
+        '<input type="number" step="0.01" value="'+it.c+'" aria-label="Cantidad" oninput="eia340SyncItem('+i+',\'c\',this.value)">'+
+        '<input type="number" step="0.01" value="'+it.p+'" aria-label="Precio unitario" oninput="eia340SyncItem('+i+',\'p\',this.value)">'+
+        '<button class="eia330-x" type="button" onclick="eia340DelItem('+i+')" aria-label="Quitar línea">✕</button></div>';
+    }).join('');
+
+    app.innerHTML=((typeof W.head==='function')?W.head(true):'')+'<main class="wrap page">'+
+      '<h1>🧾 Presupuesto</h1>'+
+      '<div class="eia330-card">'+
+        '<h3>Datos del trabajo</h3>'+
+        '<label class="eia330-f">Cliente<input id="e340Cliente" placeholder="Nombre del cliente"></label>'+
+        '<label class="eia330-f" style="margin-top:9px">Trabajo<input id="e340Obra" placeholder="Ej.: renovación de tablero"></label>'+
+      '</div>'+
+      '<div class="eia330-card">'+
+        '<h3>Materiales y tareas</h3>'+
+        '<div class="eia340-head"><span>DESCRIPCIÓN</span><span>CANT.</span><span>P. UNIT.</span><span></span></div>'+
+        filas+
+        '<button class="eia330-btn alt" type="button" onclick="eia340AddItem()">+ Agregar línea</button>'+
+      '</div>'+
+      '<div class="eia330-card">'+
+        '<h3>Mano de obra</h3>'+
+        '<div class="eia330-grid">'+
+          '<label class="eia330-f">Horas<input id="e340Horas" type="number" step="0.5" value="'+PRESU.horas+'" oninput="eia340Totales()"></label>'+
+          '<label class="eia330-f">Valor por hora<input id="e340Valor" type="number" step="0.01" value="0" oninput="eia340Totales()"></label>'+
+        '</div>'+
+        '<div id="e340Desglose" class="eia330-note"></div>'+
+        '<div id="e340Total" class="eia340-tot"><span>TOTAL</span><span>0.00</span></div>'+
+        '<button class="eia330-btn" type="button" onclick="eia340ImprimirPresupuesto()">📄 Generar PDF</button>'+
+      '</div>'+
+    '</main>';
+    W.eia340Totales();
+    if(W.eiaEtiquetarCampos) W.eiaEtiquetarCampos();
+  };
+
+  /* ============================================================
+     SALIDA A PDF — usa la impresión del navegador (sin librerías)
+     ============================================================ */
+  function abrirImpresion(titulo,cuerpo){
+    var v=W.open('','_blank');
+    if(!v){ alert('El navegador bloqueó la ventana. Permití las ventanas emergentes para generar el PDF.'); return; }
+    v.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><title>'+esc(titulo)+'</title>'+
+      '<style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:34px;color:#16202e;line-height:1.55}'+
+      'h1{font-size:21px;margin:0 0 3px}h2{font-size:15px;margin:20px 0 7px;border-bottom:1px solid #ccd6e2;padding-bottom:4px}'+
+      'table{width:100%;border-collapse:collapse;font-size:13px;margin-top:7px}'+
+      'th,td{border:1px solid #ccd6e2;padding:7px;text-align:left}th{background:#f1f5fa}'+
+      '.tot{font-weight:800;font-size:16px;text-align:right;margin-top:12px}'+
+      '.pie{margin-top:26px;font-size:11px;color:#5b6b80;border-top:1px solid #ccd6e2;padding-top:9px;line-height:1.5}'+
+      '@media print{body{margin:14px}}</style></head><body>'+cuerpo+
+      '<div class="pie">Generado con ElectroIA el '+esc(new Date().toLocaleString('es-AR'))+'.<br>'+
+      'Documento orientativo: los cálculos deben ser verificados y firmados por un profesional matriculado conforme a la norma vigente.</div>'+
+      '</body></html>');
+    v.document.close();
+    setTimeout(function(){ try{ v.focus(); v.print(); }catch(_){ } },450);
+  }
+
+  W.eia340ImprimirPresupuesto=function(){
+    if(!W.eia340EsPro()) return W.eia340VerPlanes();
+    var cli=(D.getElementById('e340Cliente')||{}).value||'—';
+    var obra=(D.getElementById('e340Obra')||{}).value||'—';
+    var mat=0;
+    var filas=PRESU.items.filter(function(i){return i.d||i.p;}).map(function(i){
+      var st=i.c*i.p; mat+=st;
+      return '<tr><td>'+esc(i.d)+'</td><td>'+i.c+'</td><td>'+i.p.toFixed(2)+'</td><td>'+st.toFixed(2)+'</td></tr>';
+    }).join('');
+    abrirImpresion('Presupuesto',
+      '<h1>Presupuesto</h1><div><b>Cliente:</b> '+esc(cli)+' · <b>Trabajo:</b> '+esc(obra)+'</div>'+
+      '<h2>Materiales y tareas</h2>'+
+      '<table><tr><th>Descripción</th><th>Cant.</th><th>P. unit.</th><th>Subtotal</th></tr>'+(filas||'<tr><td colspan="4">Sin líneas</td></tr>')+'</table>'+
+      '<h2>Mano de obra</h2><table><tr><th>Horas</th><th>Importe</th></tr><tr><td>'+PRESU.horas+'</td><td>'+PRESU.mano.toFixed(2)+'</td></tr></table>'+
+      '<div class="tot">TOTAL: '+(mat+PRESU.mano).toFixed(2)+'</div>');
+  };
+
+  /* Memoria técnica: vuelca los cálculos guardados del proyecto */
+  W.eia340MemoriaTecnica=function(){
+    if(!W.eia340EsPro()){ W.eia340VerPlanes(); return; }
+    var p=null;
+    try{ p=(typeof W.projectPick==='function')?W.projectPick():null; }catch(_){ }
+    if(!p||!p.x) return alert('Abrí un proyecto primero para generar su memoria técnica.');
+    var x=p.x, cs=x.calculations||[];
+    var filas=cs.map(function(c){
+      return '<tr><td>'+esc(c.title||c.tipo||'Cálculo')+'</td><td>'+esc(c.result||c.valor||'')+'</td><td>'+esc(c.date||'')+'</td></tr>';
+    }).join('');
+    abrirImpresion('Memoria técnica',
+      '<h1>Memoria técnica</h1>'+
+      '<div><b>Proyecto:</b> '+esc(x.name||'—')+' · <b>Cliente:</b> '+esc(x.client||'—')+'</div>'+
+      '<div><b>Ubicación:</b> '+esc(x.location||'—')+' · <b>Tipo:</b> '+esc(x.type||'—')+'</div>'+
+      '<h2>Cálculos realizados</h2>'+
+      '<table><tr><th>Cálculo</th><th>Resultado</th><th>Fecha</th></tr>'+
+      (filas||'<tr><td colspan="3">Todavía no hay cálculos guardados en este proyecto.</td></tr>')+'</table>'+
+      (x.notes?'<h2>Observaciones</h2><div>'+esc(x.notes)+'</div>':'')+
+      '<h2>Base normativa</h2><div style="font-size:12.5px">Los cálculos de sección y caída de tensión siguen el método de IEC 60364-5-52. '+
+      'AEA 90364 (Argentina) y REBT (España) derivan de esa norma, con posibles desviaciones nacionales que deben verificarse.</div>');
+  };
+
+  /* ============================================================
+     DERIVACIÓN A ELECTRICISTA (Hogar) — se ofrece DESPUÉS del
+     diagnóstico, nunca en lugar de una advertencia de seguridad.
+     ============================================================ */
+  W.eia340PedirTecnico=function(){
+    var app=D.getElementById('app'); if(!app) return;
+    var resumen='';
+    try{ if(typeof W.eia83ContextText==='function') resumen=W.eia83ContextText()||''; }catch(_){ }
+    app.innerHTML=((typeof W.head==='function')?W.head(true):'')+'<main class="wrap page">'+
+      '<h1>👷 Que te contacte un electricista</h1>'+
+      '<p class="subtitle">Dejanos cómo ubicarte y le pasamos tu caso a un profesional de tu zona.</p>'+
+      '<div class="eia330-card">'+
+        '<label class="eia330-f">Tu nombre<input id="e340LN" placeholder="Nombre"></label>'+
+        '<label class="eia330-f" style="margin-top:9px">Teléfono o email<input id="e340LC" placeholder="Cómo te contactamos"></label>'+
+        '<label class="eia330-f" style="margin-top:9px">Zona<input id="e340LZ" placeholder="Barrio, ciudad"></label>'+
+        '<label class="eia330-f" style="margin-top:9px">¿Qué pasa?<textarea id="e340LR" rows="4">'+esc(resumen)+'</textarea></label>'+
+        '<label class="eia330-f" style="margin-top:9px">Urgencia<select id="e340LU"><option value="urgente">Es urgente</option><option value="normal" selected>Puede esperar</option></select></label>'+
+        '<button class="eia330-btn" type="button" onclick="eia340EnviarLead()">Enviar solicitud</button>'+
+        '<div id="e340LOut" class="eia330-note">Tus datos se usan solo para ponerte en contacto con un electricista.</div>'+
+      '</div>'+
+      '<div class="eia330-out eia330-warn"><b>Si hay peligro ahora</b> (humo, olor a quemado, chispas, cable pelado, alguien recibió una descarga), '+
+      'no esperes una respuesta: cortá la llave general si podés hacerlo con seguridad y llamá a emergencias o a la distribuidora.</div>'+
+    '</main>';
+    if(W.eiaEtiquetarCampos) W.eiaEtiquetarCampos();
+  };
+
+  W.eia340EnviarLead=function(){
+    var c=(D.getElementById('e340LC')||{}).value||'';
+    if(!c.trim()){ alert('Necesitamos un teléfono o email para poder contactarte.'); return; }
+    var cuerpo={
+      nombre:(D.getElementById('e340LN')||{}).value||'',
+      contacto:c,
+      zona:(D.getElementById('e340LZ')||{}).value||'',
+      resumen:(D.getElementById('e340LR')||{}).value||'',
+      urgencia:(D.getElementById('e340LU')||{}).value||'normal'
+    };
+    var out=D.getElementById('e340LOut');
+    if(out) out.textContent='Enviando…';
+    fetch(API+'/leads',{method:'POST',headers:cab(),body:JSON.stringify(cuerpo)})
+      .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
+      .then(function(x){
+        if(!out) return;
+        out.className='eia330-out '+(x.ok?'eia330-ok':'eia330-bad');
+        out.textContent = x.ok
+          ? '✅ Listo. Un electricista de tu zona va a contactarte. Si es urgente y nadie responde, llamá directamente a un profesional.'
+          : 'No se pudo enviar ahora. Probá de nuevo o llamá directamente a un electricista.';
+      })
+      .catch(function(){
+        if(out){ out.className='eia330-out eia330-bad'; out.textContent='Sin conexión. Probá más tarde o llamá directamente a un electricista.'; }
+      });
+  };
+
+  /* Tarjeta de derivación, al final de un diagnóstico de Hogar */
+  function inyectarDerivacion(){
+    try{
+      if(D.getElementById('e340CtaBox')) return;
+      var fin=D.querySelector('.diag-output, .eia-final-options, .eia17-photo-result');
+      if(!fin) return;
+      var caja=D.createElement('div');
+      caja.id='e340CtaBox';
+      caja.innerHTML='<div class="eia340-cta"><h3>👷 ¿Preferís que lo vea un profesional?</h3>'+
+        '<p>Te ponemos en contacto con un electricista de tu zona. Sin costo para vos.</p>'+
+        '<button type="button" onclick="eia340PedirTecnico()">Que me contacten</button></div>';
+      fin.parentNode.insertBefore(caja,fin.nextSibling);
+    }catch(_){ }
+  }
+
+  /* Accesos PRO en la pantalla de cálculos */
+  function inyectarPro340(){
+    try{
+      if(D.getElementById('e340ProBox')) return;
+      var card=D.getElementById('e330DimCard'); if(!card) return;
+      var caja=D.createElement('div');
+      caja.id='e340ProBox';
+      caja.innerHTML= W.eia340EsPro()
+        ? '<div class="eia330-card"><h3>📄 Entregables</h3>'+
+          '<p class="eia330-sub">Generá los documentos para tu cliente.</p>'+
+          '<button class="eia330-btn" type="button" onclick="eia340Presupuesto()">🧾 Armar presupuesto</button>'+
+          '<button class="eia330-btn alt" type="button" onclick="eia340MemoriaTecnica()">📄 Memoria técnica del proyecto</button></div>'
+        : '<div class="eia330-card"><h3>📄 Entregables</h3>'+
+          bloqueo('Presupuestos y memoria técnica en PDF','Pasá los cálculos a un documento con tus datos, listo para entregar al cliente.')+'</div>';
+      card.parentNode.insertBefore(caja,card.nextSibling);
+    }catch(_){ }
+  }
+
+  /* ============================================================
+     ARRANQUE
+     ============================================================ */
+  W.eia340CargarPlan();
+  try{
+    var app=D.getElementById('app');
+    if(app && W.MutationObserver){
+      var pend=null;
+      new MutationObserver(function(){
+        clearTimeout(pend);
+        pend=setTimeout(function(){ inyectarPro340(); inyectarDerivacion(); },200);
+      }).observe(app,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+})();
+</script>
+
 </body></html>
