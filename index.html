@@ -1,13 +1,70 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta name="electroia-build" content="17.0.24-super">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="electroia-build" content="17.0.28-hogar"><title>ElectroIA · Tu primera ayuda en casa · Hogar · V17.0.28</title>
+<title>ElectroIA · Diagnóstico eléctrico y ayuda en urgencias</title>
+<meta name="description" content="Resolvé una urgencia eléctrica paso a paso, entendé tu tablero y aprendé desde cero. Calculadoras profesionales según AEA 90364 y REBT. Gratis y sin registro.">
+<link rel="canonical" href="https://electro-ia.com/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="ElectroIA">
+<meta name="theme-color" content="#0b1220">
+<meta name="electroia-build" content="17.0.31">
+
+<!-- Redes sociales: define cómo se ve el enlace al compartirlo -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ElectroIA">
+<meta property="og:locale" content="es_AR">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:url" content="https://electro-ia.com/">
+<meta property="og:title" content="ElectroIA · Diagnóstico eléctrico y ayuda en urgencias">
+<meta property="og:description" content="Te guía paso a paso ante una urgencia eléctrica, te enseña desde cero y trae calculadoras profesionales. Gratis y sin registro.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ElectroIA · Diagnóstico eléctrico y ayuda en urgencias">
+<meta name="twitter:description" content="Urgencias eléctricas paso a paso, aprendizaje desde cero y herramientas profesionales.">
+
+<!-- El documento se sirve sin caché porque es una SPA de un solo archivo, pero
+     se permite revalidación para no volver a bajar 1,8 MB en cada visita. -->
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+
+<link rel="alternate" hreflang="es-ar" href="https://electro-ia.com/">
+<link rel="alternate" hreflang="es-es" href="https://electro-ia.com/">
+<link rel="alternate" hreflang="x-default" href="https://electro-ia.com/">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@graph":[
+    {
+      "@type":"WebApplication",
+      "name":"ElectroIA",
+      "url":"https://electro-ia.com/",
+      "applicationCategory":"UtilitiesApplication",
+      "operatingSystem":"Web",
+      "inLanguage":"es",
+      "description":"Asistente de electricidad: diagnóstico guiado de urgencias para el hogar y herramientas de cálculo para profesionales.",
+      "offers":{"@type":"Offer","price":"0","priceCurrency":"ARS","description":"El diagnóstico de urgencia y las advertencias de seguridad son gratuitos."}
+    },
+    {
+      "@type":"FAQPage",
+      "mainEntity":[
+        {"@type":"Question","name":"¿Por qué salta la térmica de mi casa?",
+         "acceptedAnswer":{"@type":"Answer","text":"Si salta al instante suele ser un cortocircuito; si salta tras un rato con varios aparatos encendidos, suele ser una sobrecarga. Nunca hay que reemplazarla por una de mayor amperaje: está dimensionada para el cable que protege."}},
+        {"@type":"Question","name":"¿Por qué salta el disyuntor o diferencial?",
+         "acceptedAnswer":{"@type":"Answer","text":"Indica una fuga de corriente: parte de la corriente se va por un camino indebido, a menudo por humedad o por un aparato con el aislamiento deteriorado. Nunca debe anularse: es la protección que evita una electrocución."}},
+        {"@type":"Question","name":"¿Cada cuánto hay que probar el diferencial?",
+         "acceptedAnswer":{"@type":"Answer","text":"Una vez al mes, apretando el botón T o TEST. Debe cortar la corriente al instante. Si no corta, la protección está fallada y hay que llamar a un electricista."}},
+        {"@type":"Question","name":"¿Qué sección de cable corresponde a los tomacorrientes?",
+         "acceptedAnswer":{"@type":"Answer","text":"La sección mínima habitual para tomas de uso general es 2,5 mm², y 1,5 mm² para iluminación. La sección definitiva debe verificarse por ampacidad, caída de tensión y coordinación con la protección según la norma vigente."}},
+        {"@type":"Question","name":"¿Qué hago si no hay luz en toda la casa?",
+         "acceptedAnswer":{"@type":"Answer","text":"Primero comprobá si los vecinos también están sin luz: si es así, es un corte de la distribuidora. Si solo es tu vivienda, revisá si alguna protección del tablero está bajada. Si hay humo, olor a quemado o chispas, cortá la llave general y llamá a un electricista."}}
+      ]
+    }
+  ]
+}
+</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#000;color:#fff;font-family:"Segoe UI",Arial,sans-serif}body{padding-bottom:78px}.top{padding:18px 16px 14px;background:#000}
 .top .row>div:first-child{text-align:center;flex:1}
@@ -364,6 +421,24 @@
 </style>
 </head>
 <body data-eia09-urgency-hash="e3628976edd07b32769fe6381ad0017869807964c3d282c7a9cb9c9502702215">
+<noscript>
+<div style="max-width:720px;margin:0 auto;padding:20px;color:#eaf1fa;font-family:system-ui,Segoe UI,Arial,sans-serif;line-height:1.6">
+<h1>ElectroIA · Diagnóstico eléctrico y ayuda en urgencias</h1>
+<p>ElectroIA necesita JavaScript para funcionar. Activalo en tu navegador para usar el diagnóstico guiado.</p>
+<h2>Qué hacer ante una urgencia eléctrica</h2>
+<p><strong>Si hay humo, olor a quemado, chispas o alguien recibió una descarga:</strong> cortá la llave general si podés hacerlo con seguridad y llamá a un electricista o a emergencias. No toques a una persona que esté recibiendo una descarga sin cortar antes la corriente.</p>
+<h2>Preguntas frecuentes</h2>
+<h3>¿Por qué salta la térmica?</h3>
+<p>Si salta al instante suele ser un cortocircuito. Si salta tras un rato con varios aparatos encendidos, suele ser una sobrecarga. Nunca la reemplaces por una de mayor amperaje: está dimensionada para el cable que protege.</p>
+<h3>¿Por qué salta el disyuntor o diferencial?</h3>
+<p>Indica una fuga de corriente, a menudo por humedad o por un aparato con el aislamiento deteriorado. Nunca debe anularse: es la protección que evita una electrocución.</p>
+<h3>¿Cada cuánto hay que probar el diferencial?</h3>
+<p>Una vez al mes, con el botón T o TEST. Debe cortar al instante. Si no corta, llamá a un electricista.</p>
+<h3>¿Qué sección de cable corresponde a los tomacorrientes?</h3>
+<p>Habitualmente 2,5 mm² para tomas de uso general y 1,5 mm² para iluminación. La sección definitiva debe verificarse por ampacidad, caída de tensión y coordinación con la protección, según AEA 90364 en Argentina o el REBT en España.</p>
+<p>ElectroIA es una herramienta de orientación y no reemplaza a un electricista matriculado.</p>
+</div>
+</noscript>
 <div id="app"><header class="top"><div class="row"><div><div class="brand">⚡ ElectroIA</div><div class="tag">Tu primera ayuda ante una urgencia eléctrica</div></div><div style="text-align:right"><button class="btn alt" type="button" onclick="window.eiaToggleMenu?eiaToggleMenu():document.getElementById('eiaAccountOverlay')?.classList.add('show')">👤 Cuenta</button><div class="ver">Hogar · ElectroIA</div></div></div></header><main class="wrap page eia-static-startup-fallback"><section class="eia-brand-hero"><div class="eia-hero-copy"><div class="eia-logo-mark">⚡ ELECTROIA HOGAR · ASISTENTE ELÉCTRICO</div><h1>Tu problema eléctrico.<br>Una solución sencilla.</h1><div class="eia-slogan">Entendé qué pasa antes de llamar a un electricista.</div><p class="eia-hero-desc">ElectroIA Hogar es un asistente inteligente pensado para cualquier persona. Le contás qué está pasando en tu casa y te guía con preguntas simples y comprobaciones seguras, paso a paso, aunque no sepas absolutamente nada de electricidad.</p></div><div class="eia-visual" aria-hidden="true"><div class="eia-house"><div class="eia-roof"></div><div class="eia-window"></div><div class="eia-door"></div></div><div class="eia-bolt">⚡</div></div></section><section class="eia-emergency-card"><button type="button" class="eia-emergency-toggle" onclick="toggleEmergency()" aria-expanded="false" aria-label="Abrir guía de urgencia eléctrica"><div class="eia-emergency-icon">🚨</div><div class="eia-emergency-copy"><b>🚨 ¿TENÉS UNA URGENCIA ELÉCTRICA AHORA?</b><span>Entrá acá y te guiamos paso a paso. Si hay peligro, te lo indicamos primero.</span></div></button></section><section class="eia-v22-sections"><div class="eia-v22-section-card eia-v22-home" role="button" tabindex="0"><div class="eia-v22-icon">🏠</div><div><div class="eia-v22-kicker">PARA TU CASA</div><h2>Modo Hogar</h2></div></div><div class="eia-v22-section-card eia-v22-pro" role="button" tabindex="0"><div class="eia-v22-icon">🧰</div><div><div class="eia-v22-kicker">PARA PROFESIONALES</div><h2>Modo Profesional</h2></div></div></section></main></div>
 <script id="electroia-v320-a11y-offline">
 (function(){
@@ -8094,9 +8169,25 @@ body.eia330-torch-on .bottom{display:none!important}
     shell(h);
   }
 
-  /* Reemplaza la sección de aprender anterior (la última asignación gana) */
-  W.aprender=W.eia350Inicio;
-  W.eia17Learning=W.eia350Inicio;
+  /* Reemplaza la sección de aprender anterior.
+     No alcanza con asignar una vez: el renderizador del Modo Hogar (eia17Home)
+     vuelve a asignar W.eia17Learning=learningHome CADA VEZ que se dibuja esa
+     pantalla, pisando esta versión. Por eso se definen como propiedades con
+     setter vacío: las reasignaciones posteriores se ignoran en silencio (sin
+     lanzar error, que rompería el resto de aquella función). */
+  function fijar(nombre,fn){
+    try{
+      Object.defineProperty(W,nombre,{
+        configurable:true,
+        get:function(){ return fn; },
+        set:function(){ /* se ignora: esta versión es la vigente */ }
+      });
+    }catch(_){ W[nombre]=fn; }
+  }
+  fijar('aprender',W.eia350Inicio);
+  fijar('eia17Learning',W.eia350Inicio);
+  fijar('eia17LearningLevel',function(){ return W.eia350Inicio(); });
+  fijar('eia17LearningLesson',function(){ return W.eia350Inicio(); });
 })();
 </script>
 
