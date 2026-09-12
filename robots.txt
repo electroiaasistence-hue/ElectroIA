@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Endpoints de API: no aportan nada a la indexación y no deben rastrearse.
+Disallow: /api/
+
+Sitemap: https://electro-ia.com/sitemap.xml

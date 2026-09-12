@@ -1,0 +1,16 @@
+{
+  "name": "ElectroIA · Asistencia eléctrica",
+  "short_name": "ElectroIA",
+  "description": "Diagnóstico eléctrico guiado para urgencias en el hogar y herramientas de cálculo para profesionales.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#000000",
+  "theme_color": "#0b1220",
+  "lang": "es",
+  "categories": ["utilities", "education", "productivity"],
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
