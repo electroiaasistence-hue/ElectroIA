@@ -6992,7 +6992,21 @@ body.eia330-torch-on .bottom{display:none!important}
 
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-  function token(){ try{ return localStorage.getItem('eiaToken')||localStorage.getItem('token')||''; }catch(_){ return ''; } }
+  /* El token vive dentro del objeto de sesión que guarda el sistema de cuentas
+     (electroia_session_v1 y sus variantes históricas), no como una cadena suelta. */
+  var CLAVES_SESION=['electroia_session_v1','electroia_user','eia_user','currentUser','electroia_session','eia_session'];
+  function token(){
+    for(var i=0;i<CLAVES_SESION.length;i++){
+      try{
+        var raw=localStorage.getItem(CLAVES_SESION[i]);
+        if(!raw) continue;
+        var v=JSON.parse(raw);
+        if(v && v.token) return v.token;
+      }catch(_){ }
+    }
+    /* respaldo por si alguna versión guardó el token suelto */
+    try{ return localStorage.getItem('eiaToken')||localStorage.getItem('token')||''; }catch(_){ return ''; }
+  }
   function cab(){ var t=token(); return t?{'Authorization':'Bearer '+t,'Content-Type':'application/json'}:{'Content-Type':'application/json'}; }
 
   /* ============================================================
