@@ -10847,4 +10847,286 @@ ${W.sourcesBlock?W.sourcesBlock():''}
 })();
 </script>
 
+<style id="eia450-css">
+.eia450-card{background:#fff;border:1px solid #d9e2ee;border-radius:16px;padding:15px;margin:11px 0;color:#1b2736}
+.eia450-card,.eia450-card *{color:#1b2736}
+.eia450-card h3{margin:0 0 4px;font-size:16.5px;color:#0f1b2b}
+.eia450-card .sub{font-size:12.8px;color:#55687f;margin:0 0 12px;line-height:1.45}
+.eia450-btn{display:block;width:100%;margin-top:9px;padding:12px;border:0;border-radius:11px;background:#0b63c7;color:#fff;font-weight:800;font-size:14.5px;cursor:pointer}
+.eia450-card .eia450-btn{color:#fff}
+/* El .alt debe fijar su color aquí y no solo dentro de la tarjeta:
+   fuera de ella heredaba el blanco de .eia450-btn y quedaba en 1,11. */
+.eia450-btn.alt,.eia450-card .eia450-btn.alt{background:#eef3fa;border:1px solid #ccd9ea;color:#1c3252}
+.eia450-drop{border:2px dashed #b9c7da;border-radius:13px;padding:22px 14px;text-align:center;background:#f8fbfe;cursor:pointer}
+.eia450-drop b{display:block;font-size:15px;color:#0f1b2b;margin-bottom:4px}
+.eia450-drop small{font-size:12.5px;color:#55687f;line-height:1.5}
+.eia450-kpi{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:11px 0}
+.eia450-k{background:#f2f7fd;border:1px solid #d8e4f2;border-radius:12px;padding:11px}
+.eia450-k .v{font-size:21px;font-weight:900;color:#0f1b2b;line-height:1.1}
+.eia450-k .l{font-size:11.5px;color:#55687f;margin-top:3px;line-height:1.35}
+.eia450-bar{display:flex;align-items:flex-end;gap:3px;height:120px;margin:12px 0;padding:0 2px}
+.eia450-bar i{flex:1;background:linear-gradient(180deg,#4f9be8,#0b63c7);border-radius:3px 3px 0 0;min-height:2px;position:relative}
+.eia450-bar i.punta{background:linear-gradient(180deg,#e8734f,#c0392b)}
+.eia450-ejes{display:flex;justify-content:space-between;font-size:10px;color:#55687f;margin-top:-8px}
+.eia450-ok{background:#eafaf0;border:1px solid #b6e5c8;border-radius:11px;padding:12px;font-size:13.5px;color:#14602f;line-height:1.55;margin:10px 0}
+.eia450-warn{background:#fff6e2;border:1px solid #f0d79a;border-radius:11px;padding:12px;font-size:13.5px;color:#6b4a00;line-height:1.55;margin:10px 0}
+.eia450-bad{background:#fdeeec;border:1px solid #f0c2bc;border-radius:11px;padding:12px;font-size:13.5px;color:#8c1a12;line-height:1.55;margin:10px 0}
+.eia450-nota{display:block;font-size:11.8px;color:#55687f;line-height:1.5;margin-top:9px}
+.eia450-paso{display:flex;gap:10px;margin-bottom:9px;font-size:13.5px;line-height:1.5;color:#243449}
+.eia450-paso .n{flex:0 0 22px;height:22px;border-radius:50%;background:#0b63c7;color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center}
+</style>
+
+<script id="electroia-v450-consumo">
+(function(){
+  'use strict';
+  var W=window,D=document;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function shell(html){
+    var app=D.getElementById('app'); if(!app) return;
+    var cab=(typeof W.head==='function')?W.head(false):'';
+    app.innerHTML=cab+'<main class="wrap page">'+html+'</main>';
+    try{ W.scrollTo(0,0); }catch(_){ }
+    if(W.eiaEtiquetarCampos) W.eiaEtiquetarCampos();
+  }
+
+  /* ============================================================
+     ANÁLISIS DE CONSUMO REAL
+     ------------------------------------------------------------
+     Es la única ventaja verdadera que tenían los competidores de
+     monitorización (LuzIA, redOS): leen el contador inteligente.
+     En España, Datadis —la plataforma oficial y gratuita de las
+     distribuidoras— permite descargar la curva horaria en CSV.
+
+     DECISIÓN DE DISEÑO: el usuario sube el CSV; no se le piden sus
+     credenciales de Datadis. Integrar la API obligaría a custodiar
+     usuario y contraseña de un servicio oficial, lo que multiplica
+     el riesgo y la responsabilidad para una ganancia pequeña. El
+     fichero se procesa ENTERAMENTE en el navegador: no se envía a
+     ningún servidor. Es más privado y funciona igual.
+
+     El análisis estrella es la potencia contratada: comparar la
+     máxima realmente demandada con la contratada es dinero directo
+     en el bolsillo, todos los meses, y ningún competidor lo
+     presenta como acción concreta.
+     ============================================================ */
+
+  var DATOS=null;
+
+  W.eia450Consumo=function(){
+    shell('<h1>📊 Analizar mi consumo real</h1>'+
+      '<p class="subtitle">Con los datos de tu propio contador sabemos si estás pagando más potencia de la que usás.</p>'+
+
+      '<div class="eia450-card"><h3>1. Descargá tus datos</h3>'+
+      '<p class="sub">Son tuyos y son gratuitos. Se piden en Datadis, la plataforma oficial de las distribuidoras españolas.</p>'+
+      '<div class="eia450-paso"><span class="n">1</span><span>Entrá en <b>datadis.es</b> y registrate con tu DNI (es gratis).</span></div>'+
+      '<div class="eia450-paso"><span class="n">2</span><span>Elegí tu suministro y pulsá <b>Descargar</b>.</span></div>'+
+      '<div class="eia450-paso"><span class="n">3</span><span>Pedí el <b>consumo horario</b> en formato <b>CSV</b>, del último año.</span></div>'+
+      '<div class="eia450-paso"><span class="n">4</span><span>Te llega por correo en unos minutos. Volvé acá y subilo.</span></div>'+
+      '<span class="eia450-nota">En Argentina todavía no existe una plataforma equivalente unificada. Si tu distribuidora te permite descargar el consumo horario en CSV, probá igual: el analizador acepta varios formatos.</span>'+
+      '</div>'+
+
+      '<div class="eia450-card"><h3>2. Subí el archivo</h3>'+
+      '<p class="sub">Se analiza en tu propio teléfono. El archivo no se envía a ningún servidor.</p>'+
+      '<div class="eia450-drop" onclick="document.getElementById(\'e450File\').click()" role="button" tabindex="0">'+
+      '<b>📁 Elegir el archivo CSV</b><small>También vale un .txt separado por punto y coma o coma</small></div>'+
+      '<input type="file" id="e450File" accept=".csv,.txt,text/csv" style="display:none" aria-label="Archivo de consumo" onchange="eia450Cargar(event)">'+
+      '<div id="e450Out"></div>'+
+      '</div>'+
+      '<div id="e450Res"></div>'+
+      '<button class="eia450-btn alt" type="button" onclick="home&&home()">← Volver a Inicio</button>');
+  };
+
+  function aviso(html,cls){
+    var e=D.getElementById('e450Out'); if(!e) return;
+    e.innerHTML='<div class="eia450-'+(cls||'warn')+'">'+html+'</div>';
+  }
+
+  /* Lector tolerante: Datadis ha cambiado de formato y cada
+     distribuidora exporta con matices. Se detectan las columnas por
+     nombre y, si no hay cabecera reconocible, por contenido. */
+  function analizar(texto){
+    var lineas=String(texto||'').split(/\r?\n/).filter(function(l){ return l.trim(); });
+    if(lineas.length<5) return {error:'El archivo parece vacío o demasiado corto.'};
+    var sep=(lineas[0].match(/;/g)||[]).length >= (lineas[0].match(/,/g)||[]).length ? ';' : ',';
+    var cab=lineas[0].toLowerCase().split(sep).map(function(x){ return x.replace(/^"|"$/g,'').trim(); });
+
+    function buscar(nombres){
+      for(var i=0;i<cab.length;i++){
+        for(var j=0;j<nombres.length;j++){ if(cab[i].indexOf(nombres[j])>=0) return i; }
+      }
+      return -1;
+    }
+    var iCon=buscar(['consumo','kwh','ai','activa','valor']);
+    var iFec=buscar(['fecha','date','dia']);
+    var iHor=buscar(['hora','hour']);
+    if(iCon<0) return {error:'No se encontró la columna de consumo. Comprobá que el archivo sea el de consumo horario.'};
+
+    var puntos=[], porHora=new Array(24).fill(0), cuentaHora=new Array(24).fill(0);
+    var dias={}, maxKwh=0, maxCuando='';
+    for(var k=1;k<lineas.length;k++){
+      var c=lineas[k].split(sep).map(function(x){ return x.replace(/^"|"$/g,'').trim(); });
+      if(c.length<=iCon) continue;
+      var v=parseFloat(String(c[iCon]).replace(',','.'));
+      if(isNaN(v)||v<0) continue;
+      puntos.push(v);
+      var h=-1;
+      if(iHor>=0){
+        var mh=String(c[iHor]).match(/(\d{1,2})/);
+        if(mh) h=parseInt(mh[1],10)%24;
+      }
+      if(h>=0){ porHora[h]+=v; cuentaHora[h]++; }
+      if(iFec>=0){ var f=String(c[iFec]); dias[f]=(dias[f]||0)+v; }
+      if(v>maxKwh){ maxKwh=v; maxCuando=(iFec>=0?c[iFec]:'')+(iHor>=0?' '+c[iHor]+'h':''); }
+    }
+    if(puntos.length<24) return {error:'Se leyeron muy pocos registros ('+puntos.length+'). ¿Seguro que es el archivo de consumo horario?'};
+
+    var total=puntos.reduce(function(a,b){ return a+b; },0);
+    var nDias=Object.keys(dias).length || Math.round(puntos.length/24);
+    var medioDia=total/(nDias||1);
+
+    // Consumo de base: el mínimo sostenido de madrugada (aparatos siempre encendidos)
+    var madrugada=[];
+    if(iHor>=0){ for(var hh=2;hh<=5;hh++){ if(cuentaHora[hh]) madrugada.push(porHora[hh]/cuentaHora[hh]); } }
+    var base=madrugada.length? madrugada.reduce(function(a,b){return a+b;},0)/madrugada.length : null;
+
+    return {
+      registros:puntos.length, dias:nDias, total:total,
+      medioDia:medioDia, medioMes:medioDia*30,
+      maxKwh:maxKwh, maxCuando:maxCuando,
+      porHora:porHora, cuentaHora:cuentaHora, base:base,
+      tieneHora:iHor>=0
+    };
+  }
+
+  W.eia450Cargar=function(ev){
+    var f=ev&&ev.target&&ev.target.files&&ev.target.files[0];
+    if(!f) return;
+    if(f.size>12*1024*1024) return aviso('El archivo es muy grande (más de 12 MB). Pedí un rango de fechas más corto.','bad');
+    aviso('Leyendo el archivo…');
+    var rd=new FileReader();
+    rd.onload=function(){
+      var r=analizar(rd.result);
+      if(r.error){ return aviso('⚠️ '+esc(r.error),'bad'); }
+      DATOS=r;
+      aviso('✅ Leídos <b>'+r.registros+'</b> registros de <b>'+r.dias+'</b> días.','ok');
+      pintar(r);
+    };
+    rd.onerror=function(){ aviso('No se pudo leer el archivo.','bad'); };
+    rd.readAsText(f,'utf-8');
+  };
+
+  function pintar(r){
+    var cont=D.getElementById('e450Res'); if(!cont) return;
+    // Potencia media del pico horario: kWh en una hora ≈ kW medios de esa hora.
+    var picoKW=r.maxKwh;
+    var sugerida=Math.ceil(picoKW*1.25*10)/10;   // margen del 25% sobre el pico medido
+
+    var barras='';
+    if(r.tieneHora){
+      var maxH=Math.max.apply(null,r.porHora.map(function(v,i){ return r.cuentaHora[i]?v/r.cuentaHora[i]:0; }));
+      barras='<div class="eia450-bar">'+r.porHora.map(function(v,i){
+        var m=r.cuentaHora[i]?v/r.cuentaHora[i]:0;
+        var alt=maxH? Math.round(m/maxH*100):0;
+        var punta=(i>=10&&i<=13)||(i>=18&&i<=21);
+        return '<i class="'+(punta?'punta':'')+'" style="height:'+Math.max(alt,2)+'%" title="'+i+'h: '+m.toFixed(3)+' kWh"></i>';
+      }).join('')+'</div>'+
+      '<div class="eia450-ejes"><span>0h</span><span>6h</span><span>12h</span><span>18h</span><span>23h</span></div>';
+    }
+
+    cont.innerHTML=
+      '<div class="eia450-card"><h3>Tu consumo</h3>'+
+      '<div class="eia450-kpi">'+
+        '<div class="eia450-k"><div class="v">'+r.medioDia.toFixed(2)+'</div><div class="l">kWh al día (media)</div></div>'+
+        '<div class="eia450-k"><div class="v">'+r.medioMes.toFixed(0)+'</div><div class="l">kWh al mes (estimado)</div></div>'+
+        '<div class="eia450-k"><div class="v">'+r.maxKwh.toFixed(2)+'</div><div class="l">hora de mayor consumo</div></div>'+
+        '<div class="eia450-k"><div class="v">'+r.dias+'</div><div class="l">días analizados</div></div>'+
+      '</div>'+
+      (r.tieneHora? '<h3 style="margin-top:14px">Tu día medio</h3>'+
+        '<p class="sub">En rojo, las franjas de tarifa punta (más caras) en España.</p>'+barras : '')+
+      (r.base!==null? '<div class="eia450-warn"><b>Consumo de base: '+r.base.toFixed(3)+' kWh/h de madrugada.</b><br>'+
+        'Es lo que gasta tu casa con todos durmiendo: nevera, router, standby. '+
+        'Equivale a unos <b>'+(r.base*24*30).toFixed(0)+' kWh al mes</b> ('+Math.round(r.base*24*30/(r.medioMes||1)*100)+'% de tu factura) '+
+        'sin que nadie esté usando nada.</div>':'')+
+      '</div>'+
+
+      '<div class="eia450-card"><h3>⚡ ¿Estás pagando potencia de más?</h3>'+
+      '<p class="sub">Comparamos lo que realmente demandaste con lo que tenés contratado.</p>'+
+      '<label class="eia450-k" style="display:block;margin-bottom:10px">'+
+      '<span class="l" style="margin:0 0 5px">Tu potencia contratada (kW) · figura en la factura</span>'+
+      '<input id="e450Pot" type="number" step="0.1" placeholder="Ej.: 4.6" '+
+      'style="font:inherit;font-size:17px;font-weight:800;padding:9px;border:1px solid #ccd6e2;border-radius:9px;width:100%;box-sizing:border-box;color:#0f1b2b">'+
+      '</label>'+
+      '<button class="eia450-btn" type="button" onclick="eia450Potencia('+picoKW+','+sugerida+')">Comparar</button>'+
+      '<div id="e450Pot2"></div>'+
+      '<span class="eia450-nota"><b>Cómo se calcula:</b> el consumo de una hora en kWh equivale a la potencia media de esa hora en kW. '+
+      'Tu hora más alta fue de <b>'+r.maxKwh.toFixed(2)+' kWh</b>'+(r.maxCuando?' ('+esc(r.maxCuando)+')':'')+'. '+
+      'Es una media horaria: los picos instantáneos son mayores, por eso se aplica un margen del 25%. '+
+      'Antes de cambiar la potencia, confirmalo con tu comercializadora o un electricista.</span>'+
+      '</div>';
+  }
+
+  W.eia450Potencia=function(pico,sugerida){
+    var e=D.getElementById('e450Pot2'); if(!e) return;
+    var c=parseFloat(String((D.getElementById('e450Pot')||{}).value||'').replace(',','.'));
+    if(!(c>0)){ e.innerHTML='<div class="eia450-bad">Escribí tu potencia contratada, la encontrás en la factura.</div>'; return; }
+    var margen=c-sugerida;
+    if(sugerida>c){
+      e.innerHTML='<div class="eia450-bad"><b>Tu potencia se queda corta.</b><br>'+
+        'Llegaste a demandar unos <b>'+pico.toFixed(2)+' kW</b> de media en una hora y tenés contratados <b>'+c+' kW</b>. '+
+        'Por eso te salta el contador cuando juntás varios aparatos. Con margen convendrían unos <b>'+sugerida.toFixed(1)+' kW</b>.</div>';
+    } else if(margen>=1){
+      e.innerHTML='<div class="eia450-ok"><b>Podrías bajar la potencia contratada.</b><br>'+
+        'Tu máximo real fue de <b>'+pico.toFixed(2)+' kW</b>. Con margen de seguridad bastarían <b>'+sugerida.toFixed(1)+' kW</b>, '+
+        'y estás pagando <b>'+c+' kW</b>: te sobran '+margen.toFixed(1)+' kW.<br><br>'+
+        'La potencia se paga <b>todos los días del año, se use o no</b>. Bajarla se pide a tu comercializadora.</div>'+
+        '<div class="eia450-warn">Antes de bajarla, pensá si vas a sumar algo de mucho consumo (aire, coche eléctrico, inducción). '+
+        'Volver a subirla suele tener coste y un plazo de espera.</div>';
+    } else {
+      e.innerHTML='<div class="eia450-ok"><b>Tu potencia está bien ajustada.</b><br>'+
+        'Tu máximo real fue de <b>'+pico.toFixed(2)+' kW</b> y tenés <b>'+c+' kW</b>: el margen es razonable. '+
+        'No conviene bajarla más o te saltaría el contador.</div>';
+    }
+  };
+
+  /* Acceso: en Hogar (ahorro) y en Profesional (dimensionar y justificar) */
+  function inyectar(){
+    try{
+      if(!D.getElementById('e450Tile')){
+        var grids=D.querySelectorAll('.eia370-grid');
+        if(grids.length){
+          var g=grids[0];
+          var b=D.createElement('button');
+          b.id='e450Tile'; b.type='button'; b.className='eia370-t';
+          b.setAttribute('onclick','eia450Consumo()');
+          b.innerHTML='<span class="ic">📊</span><b>Analizar consumo real</b><span>Curva horaria del contador y ajuste de potencia.</span>';
+          g.appendChild(b);
+        }
+      }
+      // En Ajustes, para el usuario doméstico
+      if(!D.getElementById('e450Ajustes')){
+        var cards=D.querySelectorAll('.eia330-card');
+        if(cards.length && D.querySelector('h1') && /Ajustes/.test(D.querySelector('h1').textContent||'')){
+          var c=D.createElement('div');
+          c.id='e450Ajustes'; c.className='eia330-card';
+          c.innerHTML='<h3>📊 Analizar mi consumo</h3>'+
+            '<p class="eia330-sub">Subí la curva horaria de tu contador y te decimos si estás pagando más potencia de la que usás.</p>'+
+            '<button class="eia330-btn alt" type="button" onclick="eia450Consumo()">Analizar mi consumo</button>';
+          cards[0].parentNode.insertBefore(c,cards[0]);
+        }
+      }
+    }catch(_){ }
+  }
+  try{
+    var app=D.getElementById('app');
+    if(app && W.MutationObserver){
+      var t=null;
+      new MutationObserver(function(){ clearTimeout(t); t=setTimeout(inyectar,230); })
+        .observe(app,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',inyectar); else inyectar();
+})();
+</script>
+
 </body></html>
