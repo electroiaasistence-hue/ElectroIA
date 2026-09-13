@@ -8414,4 +8414,509 @@ ${W.sourcesBlock?W.sourcesBlock():''}
 })();
 </script>
 
+<style id="eia370-css">
+.eia370-wrap{padding-bottom:24px}
+.eia370-hero{background:linear-gradient(140deg,#10243d,#16406e 60%,#1663c7);border-radius:18px;padding:16px;margin:10px 0 14px}
+.eia370-hero h1{margin:0 0 4px;font-size:21px;color:#fff}
+.eia370-hero p{margin:0;font-size:13.5px;line-height:1.5;color:#cfe0f5}
+.eia370-sec{font-size:11.5px;font-weight:800;letter-spacing:.08em;color:#8fa8c4;margin:16px 0 8px}
+.eia370-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+@media(max-width:400px){.eia370-grid{grid-template-columns:1fr}}
+.eia370-t{display:block;text-align:left;background:#fff;border:1px solid #d9e2ee;border-radius:15px;padding:13px;cursor:pointer;width:100%}
+.eia370-t .ic{font-size:23px;display:block;margin-bottom:5px}
+.eia370-t b{display:block;font-size:14.5px;color:#12203a;margin-bottom:2px}
+.eia370-t span{display:block;font-size:12px;color:#55687f;line-height:1.4}
+.eia370-t.big{grid-column:1/-1}
+.eia370-t.pri{background:linear-gradient(140deg,#1663c7,#2b83e8);border-color:#1663c7}
+.eia370-t.pri b,.eia370-t.pri span{color:#fff}
+.eia370-t.pri span{opacity:.92}
+.eia370-card{background:#fff;border:1px solid #d9e2ee;border-radius:16px;padding:15px;margin:11px 0;color:#1b2736}
+.eia370-card,.eia370-card *{color:#1b2736}
+.eia370-card h3{margin:0 0 4px;font-size:16.5px;color:#0f1b2b}
+.eia370-card .sub{font-size:12.8px;color:#55687f;margin:0 0 12px;line-height:1.45}
+.eia370-f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:700;color:#41506a;margin-bottom:9px}
+.eia370-f input,.eia370-f select{font:inherit;font-weight:500;padding:10px;border:1px solid #ccd6e2;border-radius:9px;background:#fff;color:#16202e;width:100%;box-sizing:border-box}
+.eia370-g2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.eia370-btn{display:block;width:100%;margin-top:9px;padding:12px;border:0;border-radius:11px;background:#1663c7;color:#fff;font-weight:800;font-size:14.5px;cursor:pointer}
+.eia370-btn.alt{background:#eef3fa;color:#1c3252;border:1px solid #ccd9ea}
+.eia370-out{margin-top:11px;padding:13px;border-radius:12px;background:#f3f7fc;border:1px solid #d8e4f2;font-size:14px;line-height:1.55;color:#1b2736}
+.eia370-out.ok{background:#eafaf0;border-color:#b6e5c8}
+.eia370-out.bad{background:#fdeeec;border-color:#f0c2bc}
+.eia370-out.warn{background:#fff6e2;border-color:#f0d79a}
+.eia370-out b,.eia370-out strong{color:#0f1b2b}
+.eia370-nota{display:block;font-size:11.8px;color:#55687f;line-height:1.5;margin-top:9px}
+.eia370-tab{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:9px}
+.eia370-tab th,.eia370-tab td{border:1px solid #d9e2ee;padding:6px 7px;text-align:left;color:#243449}
+.eia370-tab th{background:#eef3fb;font-weight:800;color:#12203a;position:sticky;top:0}
+.eia370-tab tr:nth-child(even) td{background:#fafcfe}
+.eia370-scroll{max-height:52vh;overflow:auto;border-radius:10px;border:1px solid #e3eaf3}
+.eia370-tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px;padding-bottom:3px}
+.eia370-tabs button{flex:0 0 auto;padding:8px 13px;border-radius:99px;border:1px solid #ccd9ea;background:#fff;color:#22364f;font-weight:700;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.eia370-tabs button.on{background:#1663c7;border-color:#1663c7;color:#fff}
+.eia370-chip{display:inline-block;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:800}
+.eia370-chip.ok{background:#d7f0de;color:#14602f}
+.eia370-chip.bad{background:#fbd9d5;color:#8c1a12}
+.eia370-item{border:1px solid #e0e7f1;border-radius:11px;padding:10px;margin-bottom:7px;background:#fff}
+.eia370-item b{display:block;font-size:14px;color:#12203a}
+.eia370-item small{font-size:12px;color:#55687f}
+</style>
+
+<script id="electroia-v370-profesional">
+(function(){
+  'use strict';
+  var W=window,D=document;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function num(id){var e=D.getElementById(id);return e?parseFloat(String(e.value).replace(',','.')):NaN;}
+  function val(id){var e=D.getElementById(id);return e?e.value:'';}
+  function out(id,html,cls){var e=D.getElementById(id);if(!e)return;e.className='eia370-out'+(cls?' '+cls:'');e.innerHTML=html;}
+  function pais(){ try{ return (typeof W.eia360Pais==='function' && W.eia360Pais()==='es')?'es':'ar'; }catch(_){ return 'ar'; } }
+
+  function shell(html){
+    var app=D.getElementById('app'); if(!app) return;
+    var cab=(typeof W.head==='function')?W.head(true):'';
+    app.innerHTML=cab+'<main class="wrap page eia370-wrap">'+html+'</main>';
+    try{ W.scrollTo(0,0); }catch(_){ }
+    if(W.eiaEtiquetarCampos) W.eiaEtiquetarCampos();
+  }
+  function volver(){ return '<button class="eia370-btn alt" type="button" onclick="eia370Menu()">← Volver al Modo Profesional</button>'; }
+
+  /* ============================================================
+     MENÚ PRINCIPAL
+     ------------------------------------------------------------
+     El menú anterior tenía 16 tarjetas, de las cuales 11 abrían el
+     chat con un texto prellenado en vez de una herramienta. Varias
+     eran duplicados ("Cálculos eléctricos", "Cálculos", "Comprobar
+     cálculo"). Acá se agrupa por tarea real y cada tarjeta lleva a
+     una herramienta que calcula; la IA queda como segunda opinión
+     DESPUÉS del cálculo, no en lugar de él.
+     ============================================================ */
+  W.eia370Menu=function(){
+    if(typeof W.enterView==='function'){ try{ W.enterView('prof'); }catch(_){ } }
+    if(typeof W.nav==='function'){ try{ W.nav('nHome'); }catch(_){ } }
+    try{ W.currentMode='profesional'; }catch(_){ }
+
+    function t(fn,ic,tit,sub,cls){
+      return '<button class="eia370-t'+(cls?' '+cls:'')+'" type="button" onclick="'+fn+'">'+
+        '<span class="ic">'+ic+'</span><b>'+tit+'</b><span>'+sub+'</span></button>';
+    }
+    shell(
+      '<div class="eia370-hero"><h1>🧰 Modo Profesional</h1>'+
+      '<p>Herramientas de cálculo y verificación con trazabilidad normativa. Los resultados son orientativos: la validación final es tuya.</p></div>'+
+
+      '<div class="eia370-sec">CÁLCULO Y VERIFICACIÓN</div>'+
+      '<div class="eia370-grid">'+
+        t('eia370Dimensionar()','📐','Dimensionar conductor','Ampacidad + caída + coordinación, en un solo paso.','big pri')+
+        t('eia370Corto()','⚡','Cortocircuito','Verificación adiabática de la sección.')+
+        t('eia370Tierra()','🌍','Puesta a tierra','Resistencia, tensión de contacto y corte.')+
+        t('calcPro80&&calcPro80()','🧮','Calculadoras','Potencia, corriente, caída y sección.')+
+        t('eia370Mediciones()','📊','Mediciones','Registrar y contrastar valores medidos.')+
+      '</div>'+
+
+      '<div class="eia370-sec">CONSULTA RÁPIDA</div>'+
+      '<div class="eia370-grid">'+
+        t('eia370Tablas()','📖','Tablas de referencia','Ampacidad, calibres, IP, colores y secciones.','big')+
+      '</div>'+
+
+      '<div class="eia370-sec">TRABAJO</div>'+
+      '<div class="eia370-grid">'+
+        t('diagPro&&diagPro()','🔎','Diagnóstico PRO','Síntoma → hipótesis → comprobación.')+
+        t('monoDom&&monoDom()','🏠','Ficha de vivienda','Circuitos, datos y checklist.')+
+        t('projects&&projects()','📁','Proyectos','Datos, fotos, cálculos y notas.')+
+        t('pv&&pv()','☀️','Fotovoltaica','Strings, MPPT, baterías y producción.')+
+      '</div>'+
+
+      '<div class="eia370-sec">APOYO</div>'+
+      '<div class="eia370-grid">'+
+        t('eia370ConsultaIA()','🤖','Consultar a ElectroIA','Segunda opinión sobre un caso ya planteado.','big')+
+      '</div>'+
+
+      '<button class="eia370-btn alt" type="button" onclick="home&&home()">← Volver a Inicio</button>'
+    );
+  };
+
+  /* ============================================================
+     TABLAS DE REFERENCIA (sin IA, sin conexión)
+     ------------------------------------------------------------
+     Es lo que un electricista consulta a diario. Valores de
+     IEC 60364-5-52 (de la que derivan AEA 90364 y REBT).
+     ============================================================ */
+  var AMPACIDAD={ /* PVC, cobre, 2 conductores cargados, 30 °C, tabla B.52.2 */
+    1.5:[14.5,14,17.5,16.5,19.5,22,24], 2.5:[19.5,18.5,24,23,27,30,33],
+    4:[26,25,32,30,36,40,45], 6:[34,32,41,38,46,51,57],
+    10:[46,43,57,52,63,70,76], 16:[61,57,76,69,85,94,101],
+    25:[80,75,101,90,112,119,131], 35:[99,92,125,111,138,148,162],
+    50:[119,110,151,133,168,180,196], 70:[151,139,192,168,213,232,251],
+    95:[182,167,232,201,258,282,304], 120:[210,192,269,232,299,328,352],
+    150:[240,219,300,258,344,379,406], 185:[273,248,341,294,392,434,463],
+    240:[320,291,400,344,461,514,546]};
+
+  var TABLAS={
+    ampacidad:{t:'Corriente admisible (Iz)',
+      d:'PVC · cobre · dos conductores cargados · 30 °C ambiente · circuito único. Tabla B.52.2 de IEC 60364-5-52.',
+      html:function(){
+        var h='<div class="eia370-scroll"><table class="eia370-tab"><tr><th>mm²</th><th>A1</th><th>A2</th><th>B1</th><th>B2</th><th>C</th><th>E</th><th>F</th></tr>';
+        Object.keys(AMPACIDAD).forEach(function(s){
+          h+='<tr><td><b>'+s+'</b></td>'+AMPACIDAD[s].map(function(v){return '<td>'+v+'</td>';}).join('')+'</tr>';
+        });
+        return h+'</table></div>'+
+        '<span class="eia370-nota"><b>Métodos:</b> A1 conductores en tubo en pared aislante · A2 cable multi en tubo en pared aislante · B1 conductores en tubo sobre pared · B2 cable multi en tubo sobre pared · C grapeado a pared · E cable multi en bandeja perforada · F unipolares en contacto.<br><b>Para tres conductores cargados (trifásico)</b> corresponde la tabla B.52.4, cuyos valores son menores. No está incluida: usar esta para trifásico daría un conductor subdimensionado.</span>';
+      }},
+    correccion:{t:'Factores de corrección',
+      d:'Se multiplican entre sí: Iz real = Iz tabla × k₁ × k₂.',
+      html:function(){
+        return '<table class="eia370-tab"><tr><th>Temperatura ambiente</th><th>k₁ (PVC)</th><th>k₁ (XLPE)</th></tr>'+
+        '<tr><td>10 °C</td><td>1,22</td><td>1,15</td></tr><tr><td>15 °C</td><td>1,17</td><td>1,12</td></tr>'+
+        '<tr><td>20 °C</td><td>1,12</td><td>1,08</td></tr><tr><td>25 °C</td><td>1,06</td><td>1,04</td></tr>'+
+        '<tr><td><b>30 °C (referencia)</b></td><td><b>1,00</b></td><td><b>1,00</b></td></tr>'+
+        '<tr><td>35 °C</td><td>0,94</td><td>0,96</td></tr><tr><td>40 °C</td><td>0,87</td><td>0,91</td></tr>'+
+        '<tr><td>45 °C</td><td>0,79</td><td>0,87</td></tr><tr><td>50 °C</td><td>0,71</td><td>0,82</td></tr>'+
+        '<tr><td>55 °C</td><td>0,61</td><td>0,76</td></tr><tr><td>60 °C</td><td>0,50</td><td>0,71</td></tr></table>'+
+        '<table class="eia370-tab" style="margin-top:12px"><tr><th>Circuitos agrupados</th><th>k₂</th></tr>'+
+        '<tr><td>1</td><td>1,00</td></tr><tr><td>2</td><td>0,80</td></tr><tr><td>3</td><td>0,70</td></tr>'+
+        '<tr><td>4</td><td>0,65</td></tr><tr><td>5</td><td>0,60</td></tr><tr><td>6</td><td>0,57</td></tr>'+
+        '<tr><td>7</td><td>0,54</td></tr><tr><td>8</td><td>0,52</td></tr><tr><td>9</td><td>0,50</td></tr>'+
+        '<tr><td>12</td><td>0,45</td></tr><tr><td>16</td><td>0,41</td></tr><tr><td>20 o más</td><td>0,38</td></tr></table>'+
+        '<span class="eia370-nota">El agrupamiento es el factor que más castiga y el que más se olvida: seis circuitos en el mismo caño dejan cada cable al 57 % de su capacidad.</span>';
+      }},
+    curvas:{t:'Curvas de disparo',
+      d:'Interruptores automáticos según IEC 60898.',
+      html:function(){
+        return '<table class="eia370-tab"><tr><th>Curva</th><th>Disparo magnético</th><th>Uso típico</th></tr>'+
+        '<tr><td><b>B</b></td><td>3–5 × In</td><td>Cargas resistivas: iluminación, estufas, líneas largas</td></tr>'+
+        '<tr><td><b>C</b></td><td>5–10 × In</td><td>Uso general doméstico y comercial</td></tr>'+
+        '<tr><td><b>D</b></td><td>10–20 × In</td><td>Motores y cargas con fuerte pico de arranque</td></tr></table>'+
+        '<h4 style="margin:14px 0 4px;font-size:14px">Calibres normalizados (A)</h4>'+
+        '<p style="font-size:13px;margin:0">6 · 10 · 13 · 16 · 20 · 25 · 32 · 40 · 50 · 63 · 80 · 100 · 125</p>'+
+        '<h4 style="margin:14px 0 4px;font-size:14px">Sensibilidad de diferenciales</h4>'+
+        '<table class="eia370-tab"><tr><th>IΔn</th><th>Función</th></tr>'+
+        '<tr><td>10 mA</td><td>Protección reforzada (quirófanos, zonas críticas)</td></tr>'+
+        '<tr><td><b>30 mA</b></td><td><b>Protección de personas</b> (obligatorio en vivienda)</td></tr>'+
+        '<tr><td>100–300 mA</td><td>Protección contra incendios, selectividad</td></tr></table>'+
+        '<span class="eia370-nota">El valor I₂ (corriente convencional de funcionamiento) es 1,45 × In para interruptores IEC 60898. Por eso, si se cumple In ≤ Iz, la condición I₂ ≤ 1,45 × Iz se cumple automáticamente.</span>';
+      }},
+    circuitos:{t:'Circuitos de vivienda',
+      d:'Secciones mínimas y protección por circuito.',
+      html:function(){
+        if(pais()==='es'){
+          return '<p style="font-size:13px;margin:0 0 8px"><b>España · REBT ITC-BT-25</b> · Electrificación básica (5.750 W)</p>'+
+          '<table class="eia370-tab"><tr><th>C</th><th>Destino</th><th>mm²</th><th>ICP</th></tr>'+
+          '<tr><td>C1</td><td>Iluminación</td><td>1,5</td><td>10 A</td></tr>'+
+          '<tr><td>C2</td><td>Tomas uso general y frigorífico</td><td>2,5</td><td>16 A</td></tr>'+
+          '<tr><td>C3</td><td>Cocina y horno</td><td>6</td><td>25 A</td></tr>'+
+          '<tr><td>C4</td><td>Lavadora, lavavajillas y termo</td><td>4</td><td>20 A</td></tr>'+
+          '<tr><td>C5</td><td>Tomas baños y auxiliares cocina</td><td>2,5</td><td>16 A</td></tr></table>'+
+          '<p style="font-size:13px;margin:12px 0 6px"><b>Electrificación elevada (9.200 W)</b> añade C6 a C12: más iluminación y tomas, calefacción, aire acondicionado, secadora, automatización.</p>'+
+          '<span class="eia370-nota">C1 admite máximo 30 puntos de luz; C2, máximo 20 tomas. Mínimo un diferencial cada 5 circuitos.<br><b>Caída máxima:</b> 3 % en alumbrado, 5 % en los demás usos.</span>';
+        }
+        return '<p style="font-size:13px;margin:0 0 8px"><b>Argentina · AEA 90364 · sección 771</b></p>'+
+        '<table class="eia370-tab"><tr><th>Circuito</th><th>Sección mínima</th></tr>'+
+        '<tr><td>Iluminación (IUG)</td><td>1,5 mm²</td></tr>'+
+        '<tr><td>Tomacorrientes uso general (TUG)</td><td>2,5 mm²</td></tr>'+
+        '<tr><td>Aire acondicionado</td><td>2,5 mm² · circuito exclusivo</td></tr>'+
+        '<tr><td>Cocina eléctrica / horno</td><td>4 mm² · circuito exclusivo</td></tr>'+
+        '<tr><td>Ducha eléctrica</td><td>4 mm²</td></tr></table>'+
+        '<span class="eia370-nota">Los grandes consumidores (aire, cocina eléctrica, termotanque) requieren circuito exclusivo.<br><b>Caída máxima:</b> 5 % total desde el medidor (cláusula 313); en la práctica hasta 3 % en línea principal y 2 % en terminal.<br>Verificar además el Reglamento de Conexión de la distribuidora local.</span>';
+      }},
+    colores:{t:'Colores e IP',
+      d:'Identificación de conductores y grados de protección.',
+      html:function(){
+        var es=pais()==='es';
+        return '<table class="eia370-tab"><tr><th>Conductor</th><th>Color</th></tr>'+
+        '<tr><td>Fase</td><td>'+(es?'Marrón, negro o gris':'Marrón, negro o rojo')+'</td></tr>'+
+        '<tr><td>Neutro</td><td>'+(es?'Azul':'Celeste')+'</td></tr>'+
+        '<tr><td>Protección (PE)</td><td><b>Verde-amarillo</b> (exclusivo)</td></tr></table>'+
+        '<h4 style="margin:14px 0 4px;font-size:14px">Grados IP</h4>'+
+        '<table class="eia370-tab"><tr><th>Código</th><th>Sólidos / Agua</th></tr>'+
+        '<tr><td>IP20</td><td>Dedos / sin protección · interior seco</td></tr>'+
+        '<tr><td>IP44</td><td>&gt;1 mm / salpicaduras · baños, exterior protegido</td></tr>'+
+        '<tr><td>IP54</td><td>Polvo limitado / salpicaduras</td></tr>'+
+        '<tr><td>IP65</td><td>Estanco al polvo / chorros de agua</td></tr>'+
+        '<tr><td>IP67</td><td>Estanco al polvo / inmersión temporal</td></tr></table>'+
+        '<h4 style="margin:14px 0 4px;font-size:14px">Volúmenes en baño</h4>'+
+        '<table class="eia370-tab"><tr><th>Volumen</th><th>Exigencia</th></tr>'+
+        '<tr><td>0 (interior bañera/ducha)</td><td>IPX7 · solo MBTS ≤12 V</td></tr>'+
+        '<tr><td>1 (hasta 2,25 m altura)</td><td>IPX4 · equipos muy limitados</td></tr>'+
+        '<tr><td>2 (0,6 m alrededor del 1)</td><td>IPX4 · luminarias clase II</td></tr></table>'+
+        '<span class="eia370-nota">El verde-amarillo se usa exclusivamente para el conductor de protección. Si aparece llevando corriente, la instalación está mal ejecutada.</span>';
+      }},
+    resistividad:{t:'Datos de cálculo',
+      d:'Constantes y fórmulas de uso frecuente.',
+      html:function(){
+        return '<table class="eia370-tab"><tr><th>Magnitud</th><th>Valor</th></tr>'+
+        '<tr><td>ρ cobre (20 °C)</td><td>0,0175 Ω·mm²/m</td></tr>'+
+        '<tr><td>ρ aluminio (20 °C)</td><td>0,0282 Ω·mm²/m</td></tr>'+
+        '<tr><td>k adiabático · Cu / PVC</td><td>115</td></tr>'+
+        '<tr><td>k adiabático · Cu / XLPE</td><td>143</td></tr>'+
+        '<tr><td>k adiabático · Al / PVC</td><td>76</td></tr>'+
+        '<tr><td>Temp. máx. servicio PVC</td><td>70 °C</td></tr>'+
+        '<tr><td>Temp. máx. servicio XLPE</td><td>90 °C</td></tr></table>'+
+        '<h4 style="margin:14px 0 5px;font-size:14px">Fórmulas</h4>'+
+        '<table class="eia370-tab"><tr><th>Cálculo</th><th>Fórmula</th></tr>'+
+        '<tr><td>Caída monofásica</td><td>ΔV = 2·L·I·ρ / S</td></tr>'+
+        '<tr><td>Caída trifásica</td><td>ΔV = √3·L·I·ρ / S</td></tr>'+
+        '<tr><td>Potencia monofásica</td><td>P = V·I·cos φ</td></tr>'+
+        '<tr><td>Potencia trifásica</td><td>P = √3·V·I·cos φ</td></tr>'+
+        '<tr><td>Sección por cortocircuito</td><td>S ≥ I·√t / k</td></tr>'+
+        '<tr><td>Coordinación</td><td>Ib ≤ In ≤ Iz</td></tr></table>';
+      }}
+  };
+
+  var tablaActiva='ampacidad';
+  W.eia370Tabla=function(k){ tablaActiva=k; W.eia370Tablas(); };
+  W.eia370Tablas=function(){
+    var t=TABLAS[tablaActiva]||TABLAS.ampacidad;
+    shell('<div class="eia370-hero"><h1>📖 Tablas de referencia</h1>'+
+      '<p>Consulta inmediata, sin conexión y sin IA.</p></div>'+
+      '<div class="eia370-tabs">'+Object.keys(TABLAS).map(function(k){
+        return '<button type="button" class="'+(k===tablaActiva?'on':'')+'" onclick="eia370Tabla(\''+k+'\')">'+esc(TABLAS[k].t)+'</button>';
+      }).join('')+'</div>'+
+      '<div class="eia370-card"><h3>'+esc(t.t)+'</h3><p class="sub">'+esc(t.d)+'</p>'+t.html()+'</div>'+
+      volver());
+  };
+
+  /* ============================================================
+     CORTOCIRCUITO — verificación adiabática
+     S ≥ I·√t / k   (IEC 60364-4-43)
+     ============================================================ */
+  var K_ADIAB={cu_pvc:115,cu_xlpe:143,al_pvc:76,al_xlpe:94};
+  W.eia370Corto=function(){
+    shell('<div class="eia370-hero"><h1>⚡ Verificación de cortocircuito</h1>'+
+      '<p>Comprueba que la sección soporta la corriente de falla durante el tiempo de corte, sin que la aislación supere su temperatura límite.</p></div>'+
+      '<div class="eia370-card">'+
+      '<div class="eia370-g2">'+
+        '<label class="eia370-f">Icc presunta (kA)<input id="e370Icc" type="number" step="0.1" value="6"></label>'+
+        '<label class="eia370-f">Tiempo de corte (s)<input id="e370T" type="number" step="0.01" value="0.1"></label>'+
+        '<label class="eia370-f">Sección instalada (mm²)<input id="e370S" type="number" step="0.5" value="2.5"></label>'+
+        '<label class="eia370-f">Conductor / aislación<select id="e370K">'+
+          '<option value="cu_pvc">Cobre · PVC (k=115)</option>'+
+          '<option value="cu_xlpe">Cobre · XLPE (k=143)</option>'+
+          '<option value="al_pvc">Aluminio · PVC (k=76)</option>'+
+          '<option value="al_xlpe">Aluminio · XLPE (k=94)</option>'+
+        '</select></label>'+
+      '</div>'+
+      '<button class="eia370-btn" type="button" onclick="eia370CalcCorto()">Verificar</button>'+
+      '<div id="e370CortoOut" class="eia370-out">Completá los datos y pulsá verificar.</div>'+
+      '</div>'+volver());
+  };
+  W.eia370CalcCorto=function(){
+    var icc=num('e370Icc'), t=num('e370T'), s=num('e370S'), k=K_ADIAB[val('e370K')]||115;
+    if(!(icc>0&&t>0&&s>0)) return out('e370CortoOut','Revisá los valores: todos deben ser mayores que cero.','bad');
+    if(t>5) return out('e370CortoOut','La comprobación adiabática es válida para tiempos de corte de hasta 5 segundos. Para tiempos mayores hace falta un cálculo térmico completo.','bad');
+    var I=icc*1000;
+    var smin=(I*Math.sqrt(t))/k;
+    var ok=s>=smin;
+    var std=[1.5,2.5,4,6,10,16,25,35,50,70,95,120,150,185,240];
+    var sug=std.find(function(x){return x>=smin;});
+    out('e370CortoOut',
+      '<b>Sección mínima por cortocircuito: '+smin.toFixed(2)+' mm²</b><br>'+
+      'Sección instalada: <b>'+s+' mm²</b> '+
+      '<span class="eia370-chip '+(ok?'ok':'bad')+'">'+(ok?'CUMPLE':'NO CUMPLE')+'</span><br><br>'+
+      (ok ? 'La sección soporta la energía de la falla durante el tiempo de corte.'
+          : 'La sección es insuficiente: se necesitan al menos <b>'+(sug||'>240')+' mm²</b>, o una protección más rápida que reduzca el tiempo de corte.')+
+      '<span class="eia370-nota"><b>Fórmula:</b> S ≥ I·√t / k (IEC 60364-4-43), con I='+I.toFixed(0)+' A, t='+t+' s, k='+k+'.<br>'+
+      'La Icc presunta depende de la potencia del transformador y de la impedancia de la línea: usá el valor real de la instalación, no uno supuesto. Esta verificación no sustituye a la de ampacidad ni a la de caída de tensión.</span>',
+      ok?'ok':'bad');
+  };
+
+  /* ============================================================
+     PUESTA A TIERRA
+     ============================================================ */
+  W.eia370Tierra=function(){
+    var es=pais()==='es';
+    shell('<div class="eia370-hero"><h1>🌍 Puesta a tierra</h1>'+
+      '<p>Verifica que la resistencia medida limite la tensión de contacto por debajo del valor admisible y permita el corte del diferencial.</p></div>'+
+      '<div class="eia370-card">'+
+      '<div class="eia370-g2">'+
+        '<label class="eia370-f">Ra medida (Ω)<input id="e370Ra" type="number" step="0.1" value="10"></label>'+
+        '<label class="eia370-f">Sensibilidad IΔn (mA)<select id="e370Idn">'+
+          '<option value="10">10 mA</option><option value="30" selected>30 mA</option>'+
+          '<option value="100">100 mA</option><option value="300">300 mA</option><option value="500">500 mA</option>'+
+        '</select></label>'+
+        '<label class="eia370-f">Tensión de contacto límite (V)<select id="e370Ul">'+
+          '<option value="50" selected>50 V · locales secos</option>'+
+          '<option value="24">24 V · locales húmedos</option>'+
+          '<option value="12">12 V · sumergido / muy conductor</option>'+
+        '</select></label>'+
+      '</div>'+
+      '<button class="eia370-btn" type="button" onclick="eia370CalcTierra()">Verificar</button>'+
+      '<div id="e370TierraOut" class="eia370-out">Completá los datos y pulsá verificar.</div>'+
+      '</div>'+
+      '<div class="eia370-card"><h3>Resistividad orientativa del terreno</h3>'+
+      '<table class="eia370-tab"><tr><th>Terreno</th><th>ρ (Ω·m)</th></tr>'+
+      '<tr><td>Terreno pantanoso</td><td>2 – 30</td></tr>'+
+      '<tr><td>Limo / arcilla</td><td>20 – 100</td></tr>'+
+      '<tr><td>Arena arcillosa</td><td>50 – 500</td></tr>'+
+      '<tr><td>Arena silícea</td><td>200 – 3.000</td></tr>'+
+      '<tr><td>Roca / granito</td><td>1.500 – 10.000</td></tr></table>'+
+      '<span class="eia370-nota">Jabalina vertical: R ≈ ρ / L (L = longitud enterrada en metros). Es una aproximación de diseño: el valor real se obtiene midiendo con telurímetro.'+
+      (es?'':'<br>En Argentina la AEA exige medición con telurímetro y certificado profesional antes de energizar.')+'</span></div>'+
+      volver());
+  };
+  W.eia370CalcTierra=function(){
+    var ra=num('e370Ra'), idn=parseFloat(val('e370Idn'))/1000, ul=parseFloat(val('e370Ul'));
+    if(!(ra>0)) return out('e370TierraOut','La resistencia medida debe ser mayor que cero.','bad');
+    var raMax=ul/idn;
+    var uc=ra*idn;
+    var ok=ra<=raMax;
+    out('e370TierraOut',
+      '<b>Ra máxima admisible: '+raMax.toFixed(1)+' Ω</b><br>'+
+      'Ra medida: <b>'+ra+' Ω</b> <span class="eia370-chip '+(ok?'ok':'bad')+'">'+(ok?'CUMPLE':'NO CUMPLE')+'</span><br>'+
+      'Tensión de contacto previsible: <b>'+uc.toFixed(1)+' V</b> (límite '+ul+' V)<br><br>'+
+      (ok ? 'Con esta resistencia, una falla a masa genera una tensión de contacto por debajo del límite y el diferencial corta.'
+          : 'La resistencia es demasiado alta: ante una falla, la tensión de contacto superaría el límite admisible. Hay que mejorar la toma de tierra (más jabalinas, mayor profundidad, tratamiento del terreno) o usar un diferencial más sensible.')+
+      '<span class="eia370-nota"><b>Criterio:</b> Ra ≤ UL / IΔn (IEC 60364-4-41). Con IΔn='+(idn*1000)+' mA y UL='+ul+' V.<br>'+
+      'Aunque el cálculo cumpla, muchas reglamentaciones y buenas prácticas recomiendan valores bastante menores que el máximo teórico. Verificá la exigencia vigente y medí siempre con telurímetro.</span>',
+      ok?'ok':'bad');
+  };
+
+  /* ============================================================
+     REGISTRO DE MEDICIONES
+     ============================================================ */
+  var CLAVE='eia370-mediciones';
+  function leerM(){ try{ return JSON.parse(localStorage.getItem(CLAVE)||'[]')||[]; }catch(_){ return []; } }
+  function guardarM(a){
+    try{ localStorage.setItem(CLAVE,JSON.stringify(a)); return true; }
+    catch(e){ alert('No se pudo guardar: el almacenamiento del dispositivo está lleno.'); return false; }
+  }
+  var TIPOS={
+    aislamiento:{t:'Resistencia de aislamiento',u:'MΩ',min:1,cmp:'mayor',
+      nota:'Mínimo 1 MΩ para circuitos de hasta 500 V (ensayo a 500 V CC). Valores muy por encima del mínimo indican mejor estado.'},
+    tierra:{t:'Resistencia de puesta a tierra',u:'Ω',min:null,cmp:'menor',
+      nota:'El máximo depende de IΔn y de la tensión de contacto límite: Ra ≤ UL/IΔn.'},
+    continuidad:{t:'Continuidad de protección',u:'Ω',min:2,cmp:'menor',
+      nota:'Valores bajos indican buena continuidad del conductor de protección. Un valor alto sugiere empalme flojo o conductor interrumpido.'},
+    bucle:{t:'Impedancia de bucle de falla',u:'Ω',min:null,cmp:'menor',
+      nota:'Debe ser suficientemente baja para que la protección actúe en el tiempo exigido: Zs × Ia ≤ U0.'},
+    disparo:{t:'Tiempo de disparo del diferencial',u:'ms',min:300,cmp:'menor',
+      nota:'A IΔn debe cortar en menos de 300 ms (menos de 40 ms a 5·IΔn en diferenciales generales).'},
+    tension:{t:'Tensión de servicio',u:'V',min:null,cmp:'info',
+      nota:'Comparar con la nominal: desviaciones grandes sugieren caída excesiva o problema de suministro.'}
+  };
+
+  W.eia370Mediciones=function(){
+    var ms=leerM();
+    var lista = ms.length ? ms.map(function(m,i){
+      var T=TIPOS[m.tipo]||{t:m.tipo,u:''};
+      var f=''; try{ f=new Date(m.fecha).toLocaleDateString('es-AR',{day:'2-digit',month:'short',year:'numeric'}); }catch(_){ }
+      return '<div class="eia370-item"><b>'+esc(T.t)+': '+esc(m.valor)+' '+esc(T.u)+
+        (m.veredicto?' <span class="eia370-chip '+(m.veredicto==='ok'?'ok':'bad')+'">'+(m.veredicto==='ok'?'CUMPLE':'REVISAR')+'</span>':'')+'</b>'+
+        '<small>'+esc(m.punto||'Sin ubicación')+' · '+esc(f)+'</small>'+
+        '<button class="eia370-btn alt" style="margin-top:7px;padding:7px" type="button" onclick="eia370BorrarMedicion('+i+')">Borrar</button></div>';
+    }).join('') : '<p class="sub">Todavía no registraste mediciones. Quedan guardadas en este dispositivo y podés volcarlas a la memoria técnica.</p>';
+
+    shell('<div class="eia370-hero"><h1>📊 Registro de mediciones</h1>'+
+      '<p>Anotá lo medido en obra y contrastalo con el valor exigible. Cierra el ciclo: calcular, instalar, verificar.</p></div>'+
+      '<div class="eia370-card"><h3>Nueva medición</h3>'+
+      '<label class="eia370-f">Tipo<select id="e370MT" onchange="eia370NotaTipo()">'+
+        Object.keys(TIPOS).map(function(k){ return '<option value="'+k+'">'+esc(TIPOS[k].t)+'</option>'; }).join('')+
+      '</select></label>'+
+      '<div class="eia370-g2">'+
+        '<label class="eia370-f">Valor medido<input id="e370MV" type="number" step="0.01"></label>'+
+        '<label class="eia370-f">Punto / circuito<input id="e370MP" placeholder="Ej.: C2 cocina"></label>'+
+      '</div>'+
+      '<div id="e370MNota" class="eia370-nota"></div>'+
+      '<button class="eia370-btn" type="button" onclick="eia370GuardarMedicion()">Guardar medición</button>'+
+      '<div id="e370MOut" class="eia370-out" style="display:none"></div>'+
+      '</div>'+
+      '<div class="eia370-card"><h3>Mediciones registradas ('+ms.length+')</h3>'+lista+
+      (ms.length?'<button class="eia370-btn alt" type="button" onclick="eia370ExportarMediciones()">📄 Generar informe</button>':'')+
+      '</div>'+volver());
+    W.eia370NotaTipo();
+  };
+  W.eia370NotaTipo=function(){
+    var T=TIPOS[val('e370MT')]; var e=D.getElementById('e370MNota');
+    if(e&&T) e.innerHTML='<b>Unidad:</b> '+T.u+'. '+esc(T.nota);
+  };
+  W.eia370GuardarMedicion=function(){
+    var tipo=val('e370MT'), v=num('e370MV'), punto=val('e370MP');
+    if(!(v>=0)) return alert('Escribí el valor medido.');
+    var T=TIPOS[tipo], ver='';
+    if(T.min!==null && T.cmp==='mayor') ver = v>=T.min?'ok':'mal';
+    else if(T.min!==null && T.cmp==='menor') ver = v<=T.min?'ok':'mal';
+    var ms=leerM();
+    ms.unshift({tipo:tipo,valor:v,punto:punto,veredicto:ver,fecha:new Date().toISOString()});
+    if(ms.length>200) ms=ms.slice(0,200);
+    if(guardarM(ms)) W.eia370Mediciones();
+  };
+  W.eia370BorrarMedicion=function(i){
+    var ms=leerM(); if(!ms[i]) return;
+    if(!confirm('¿Borrar esta medición?')) return;
+    ms.splice(i,1); if(guardarM(ms)) W.eia370Mediciones();
+  };
+  W.eia370ExportarMediciones=function(){
+    var ms=leerM(); if(!ms.length) return;
+    var filas=ms.map(function(m){
+      var T=TIPOS[m.tipo]||{t:m.tipo,u:''};
+      var f=''; try{ f=new Date(m.fecha).toLocaleString('es-AR'); }catch(_){ }
+      return '<tr><td>'+esc(T.t)+'</td><td>'+esc(m.valor)+' '+esc(T.u)+'</td><td>'+esc(m.punto||'—')+'</td><td>'+
+        (m.veredicto==='ok'?'Cumple':m.veredicto==='mal'?'Revisar':'—')+'</td><td>'+esc(f)+'</td></tr>';
+    }).join('');
+    var v=W.open('','_blank');
+    if(!v) return alert('El navegador bloqueó la ventana. Permití las ventanas emergentes.');
+    v.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Informe de mediciones</title>'+
+      '<style>body{font-family:system-ui,Segoe UI,Arial,sans-serif;margin:32px;color:#16202e;line-height:1.5}'+
+      'h1{font-size:20px;margin:0 0 10px}table{width:100%;border-collapse:collapse;font-size:13px}'+
+      'th,td{border:1px solid #ccd6e2;padding:7px;text-align:left}th{background:#f1f5fa}'+
+      '.pie{margin-top:24px;font-size:11px;color:#5b6b80;border-top:1px solid #ccd6e2;padding-top:9px}</style></head><body>'+
+      '<h1>Informe de mediciones</h1>'+
+      '<table><tr><th>Ensayo</th><th>Valor</th><th>Punto</th><th>Resultado</th><th>Fecha</th></tr>'+filas+'</table>'+
+      '<div class="pie">Generado con ElectroIA el '+esc(new Date().toLocaleString('es-AR'))+'.<br>'+
+      'Los valores registrados son los declarados por el operador. La verificación reglamentaria y su certificación corresponden a un profesional matriculado con instrumental calibrado.</div>'+
+      '</body></html>');
+    v.document.close();
+    setTimeout(function(){ try{ v.focus(); v.print(); }catch(_){ } },420);
+  };
+
+  /* ============================================================
+     CONSULTA IA — con contexto, no en lugar del cálculo
+     ============================================================ */
+  W.eia370ConsultaIA=function(){
+    shell('<div class="eia370-hero"><h1>🤖 Consultar a ElectroIA</h1>'+
+      '<p>Para contrastar un criterio o entender un caso. Para calcular, usá las herramientas: dan trazabilidad normativa que la IA no garantiza.</p></div>'+
+      '<div class="eia370-card"><h3>¿Sobre qué querés consultar?</h3>'+
+      '<p class="sub">Elegí un tema y planteá tu caso con los datos que ya tengas.</p>'+
+      ['Revisión de un cuadro eléctrico',
+       'Organización de circuitos de iluminación y tomas',
+       'Interpretación de una exigencia normativa',
+       'Revisar un cálculo que ya hice',
+       'Documentación y memoria técnica',
+       'Un caso que no encaja en ninguna categoría'].map(function(x){
+        return '<button class="eia370-btn alt" type="button" onclick="eia370AbrirChat('+JSON.stringify(x).replace(/"/g,'&quot;')+')">'+esc(x)+'</button>';
+      }).join('')+
+      '</div>'+volver());
+  };
+  W.eia370AbrirChat=function(tema){
+    var p=pais()==='es'?'España (REBT)':'Argentina (AEA 90364)';
+    var msg='Tema: '+tema+'. País de referencia: '+p+'. '+
+      'Antes de concluir, pedime los datos que falten. Si una exigencia normativa no la tenés con certeza, decilo en vez de suponerla.';
+    if(typeof W.chat==='function') return W.chat('profesional',msg);
+    if(typeof W.eiaOpenChat==='function') return W.eiaOpenChat(msg);
+    alert('No se pudo abrir el chat.');
+  };
+
+  /* Dimensionado: reutiliza la herramienta ya existente */
+  W.eia370Dimensionar=function(){
+    if(typeof W.calcPro80==='function'){
+      W.calcPro80();
+      setTimeout(function(){
+        var c=D.getElementById('e330DimCard');
+        if(c && c.scrollIntoView) try{ c.scrollIntoView({behavior:'smooth',block:'start'}); }catch(_){ }
+      },700);
+      return;
+    }
+    alert('La herramienta de cálculo no está disponible.');
+  };
+
+  /* Reemplaza el menú profesional anterior. Setter vacío por si algún
+     renderizador previo intenta reasignarlo en cada pintado. */
+  function fijar(nombre,fn){
+    try{ Object.defineProperty(W,nombre,{configurable:true,get:function(){return fn;},set:function(){}}); }
+    catch(_){ W[nombre]=fn; }
+  }
+  fijar('prof', W.eia370Menu);
+  fijar('eiaOpenProSection', W.eia370Menu);
+})();
+</script>
+
 </body></html>
