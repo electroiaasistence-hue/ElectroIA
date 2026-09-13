@@ -6593,7 +6593,8 @@ ${W.sourcesBlock?W.sourcesBlock():''}
 .eia330-item .g{flex:1;min-width:0}
 .eia330-item b{display:block;font-size:14.5px}
 .eia330-item span{font-size:12.5px;color:#5b6b80}
-.eia330-call{background:#0f9d58;color:#fff;border:0;border-radius:10px;padding:10px 13px;font-weight:800;text-decoration:none;font-size:14px}
+/* 3,51 de ratio con blanco encima: se oscurece el verde hasta cumplir. */
+.eia330-call{background:#0c6b3d;color:#fff;border:0;border-radius:10px;padding:10px 13px;font-weight:800;text-decoration:none;font-size:14px}
 .eia330-x{background:#fdeceb;color:#b3182b;border:1px solid #f3c0bb;border-radius:9px;padding:8px 10px;font-weight:800;cursor:pointer}
 .eia330-chip{display:inline-block;padding:4px 9px;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.04em}
 .eia330-chip.ok{background:#d7f0de;color:#14602f}
@@ -8447,7 +8448,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
      más rápido, que es lo que importa en una urgencia. */
   var OPCIONES=[
     {e:'🚨',t:'Huele a quemado, humo o chispas',s:'También si algo está muy caliente, hay agua cerca de la electricidad o alguien recibió una descarga',p:'🚨 Hay humo, olor a quemado, chispas, algo muy caliente o agua',urg:true},
-    {e:'🏠',t:'No tengo luz en toda la casa',s:'Nada funciona en ninguna habitación',p:'🏠 No tengo luz en toda la vivienda'},
+    {e:'<svg style="width:1.05em;height:1.05em;vertical-align:-.14em" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 3.2 2.6 11.1a.8.8 0 0 0 .52 1.4H5v7.5c0 .5.4.9.9.9h4.2v-5.2h3.8V21h4.2c.5 0 .9-.4.9-.9v-7.5h1.88a.8.8 0 0 0 .52-1.4L12 3.2z" fill="currentColor"/></svg>',t:'No tengo luz en toda la casa',s:'Nada funciona en ninguna habitación',p:'No tengo luz en toda la vivienda'},
     {e:'💡',t:'Me quedé sin luz en una zona',s:'Una habitación, unos enchufes o unas luces concretas',p:'💡 No tengo luz en una zona de la casa'},
     {e:'❓',t:'Otra cosa o no sé qué pasa',s:'La luz parpadea, un aparato falla, algo raro… te hago preguntas',p:'❓ No sé qué pasa'}
   ];
@@ -11810,7 +11811,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
     eia380Electricistas:'Alta electricistas', eia470Comercios:'Alta comercios',
     eia410Aislar:'Aislar circuito', eia410Contador:'Contador',
     eia410Apanar:'Apañarse', eia410Diferencial:'Diferencial',
-    eia350Inicio:'Aprender'
+    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes'
   };
 
   var actual=null;
@@ -11904,6 +11905,191 @@ ${W.sourcesBlock?W.sourcesBlock():''}
     }
   }catch(_){ }
   function iniciar(){ arreglarVolver(); arreglarCasa(); actual=actual||'home'; }
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',iniciar); else iniciar();
+})();
+</script>
+
+<style id="eia500-css">
+/* ============================================================
+   1. CHIP DE CUENTA DUPLICADO
+   La cabecera pinta su propio botón "👤 Cuenta" y encima queda el
+   chip fijo con el nombre del usuario. Son lo mismo: se deja solo
+   el fijo, que es el que siempre está visible al hacer scroll.
+   ============================================================ */
+.top .btn.alt[onclick*="ccount"],
+.top .btn.alt[onclick*="cuenta"],
+.top .row .btn.alt{visibility:hidden}
+#eiaUserChip{z-index:40}
+
+/* ============================================================
+   2. COLORES DE PROCEDIMIENTOS RÁPIDOS
+   El ámbar sobre el rojo de urgencia cansaba la vista y competía
+   con la propia alerta. Se pasa a un panel claro, que además se
+   lee mejor a plena luz y separa "urgencia" de "cómo resolverlo".
+   ============================================================ */
+.eia410-titsec{margin:0 0 9px;font-size:12.5px;font-weight:900;letter-spacing:.05em;color:#fff}
+.eia410-titsec span{display:block;font-size:11.5px;font-weight:600;letter-spacing:0;color:#ffd9d4;margin-top:2px}
+.eia410-rapidos{display:grid;gap:8px}
+.eia410-rapidos button{display:block;width:100%;text-align:left;padding:12px 13px;border-radius:12px;
+  border:1px solid #cfdae8;background:#f7fafd;color:#16202e;cursor:pointer}
+.eia410-rapidos button b{display:block;font-size:14px;color:#0f1b2b;font-weight:800}
+.eia410-rapidos button small{display:block;font-size:12px;color:#4d5c6b;margin-top:2px;line-height:1.4}
+.eia410-rapidos button:hover{background:#eef4fb;border-color:#a9bfd8}
+
+/* ============================================================
+   3. MI HOGAR
+   ============================================================ */
+.eia500-hero{background:linear-gradient(140deg,#123c2a,#1a6a48 60%,#22855c);border-radius:18px;padding:17px;margin:10px 0 14px}
+.eia500-hero h1{margin:0 0 5px;font-size:21px;color:#fff}
+.eia500-hero p{margin:0;font-size:13.5px;line-height:1.5;color:#d3efe1}
+.eia500-card{background:#fff;border:1px solid #d9e2ee;border-radius:16px;padding:15px;margin:11px 0;color:#1b2736}
+.eia500-card,.eia500-card *{color:#1b2736}
+.eia500-card h3{margin:0 0 4px;font-size:16.5px;color:#0f1b2b}
+.eia500-card .sub{font-size:12.8px;color:#55687f;margin:0 0 12px;line-height:1.45}
+.eia500-btn{display:block;width:100%;margin-top:9px;padding:12px;border:0;border-radius:11px;background:#0b63c7;color:#fff;font-weight:800;font-size:14.5px;cursor:pointer}
+.eia500-card .eia500-btn{color:#fff}
+.eia500-btn.alt{background:#eef3fa;border:1px solid #ccd9ea;color:#1c3252}
+.eia500-card .eia500-btn.alt{color:#1c3252}
+.eia500-t{display:grid;grid-template-columns:42px 1fr 20px;gap:11px;align-items:center;width:100%;text-align:left;
+  background:#fff;border:1px solid #d9e2ee;border-radius:15px;padding:13px;margin-bottom:9px;cursor:pointer}
+.eia500-t .ic{width:42px;height:42px;border-radius:12px;background:#eaf4ee;display:flex;align-items:center;justify-content:center;font-size:21px}
+.eia500-t b{display:block;font-size:15px;color:#12203a}
+.eia500-t small{display:block;font-size:12.3px;color:#55687f;line-height:1.4;margin-top:1px}
+.eia500-t .fl{color:#546b88;font-size:18px}
+.eia500-t .badge{display:inline-block;margin-top:5px;font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;background:#e4ebf5;color:#3d5675}
+.eia500-t .badge.ok{background:#d5f2e0;color:#15683a}
+.eia500-nav{font-size:11px}
+</style>
+
+<script id="electroia-v500-mihogar">
+(function(){
+  'use strict';
+  var W=window,D=document;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function leer(){ try{ return JSON.parse(localStorage.getItem('eia330-datos')||'{}')||{}; }catch(_){ return {}; } }
+
+  /* ============================================================
+     MI HOGAR
+     ------------------------------------------------------------
+     Los datos personales de la vivienda estaban mezclados en
+     Ajustes, junto a la configuración de la app. No es lo mismo
+     "dónde está mi cuadro" que "qué país uso de referencia": lo
+     primero es información del usuario sobre su casa, y es lo que
+     necesita a mano en una urgencia.
+
+     Además, nada de esto requiere iniciar sesión: se guarda en el
+     dispositivo. Meterlo en Ajustes junto a las opciones de cuenta
+     hacía pensar que sí hacía falta registrarse.
+     ============================================================ */
+  W.eia500MiHogar=function(){
+    var app=D.getElementById('app'); if(!app) return;
+    if(typeof W.enterView==='function'){ try{ W.enterView('mihogar'); }catch(_){ } }
+    if(typeof W.nav==='function'){ try{ W.nav('nCasa'); }catch(_){ } }
+    var cab=(typeof W.head==='function')?W.head(false):'';
+    var d=leer();
+    var ins=d.instalacion||{}, cs=d.contactos||[], av=d.averias||[];
+    var tieneInst=!!(ins.tablero||ins.general||ins.diferencial||ins.circuitos);
+    var dias=null;
+    if(d.ultimoTest){ try{ dias=Math.floor((Date.now()-new Date(d.ultimoTest).getTime())/86400000); }catch(_){ } }
+
+    function t(fn,ic,tit,sub,badge,ok){
+      return '<button class="eia500-t" type="button" onclick="'+fn+'">'+
+        '<span class="ic">'+ic+'</span>'+
+        '<span><b>'+esc(tit)+'</b><small>'+esc(sub)+'</small>'+
+        (badge?'<span class="badge'+(ok?' ok':'')+'">'+esc(badge)+'</span>':'')+'</span>'+
+        '<span class="fl" aria-hidden="true">›</span></button>';
+    }
+
+    app.innerHTML=cab+'<main class="wrap page">'+
+      '<div class="eia500-hero"><h1>🏡 Mi hogar</h1>'+
+      '<p>Todo lo de tu vivienda que conviene tener anotado. Se guarda en este teléfono, '+
+      'no hace falta cuenta y aparece solo cuando lo necesitás.</p></div>'+
+
+      t('eia330Ajustes&&eia330Ajustes()','🏠','Mi instalación',
+        'Dónde está el cuadro, qué protege cada térmico, tu distribuidora',
+        tieneInst?'Completada':'Sin rellenar', tieneInst)+
+
+      t('eia330Ajustes&&eia330Ajustes()','📞','Contactos de emergencia',
+        'Tu electricista y la distribuidora, a un toque',
+        cs.length? (cs.length+' guardado'+(cs.length===1?'':'s')) : 'Ninguno', cs.length>0)+
+
+      t('eia410Diferencial&&eia410Diferencial()','🧪','Probar el diferencial',
+        'La comprobación de seguridad que podés hacer vos, una vez al mes',
+        dias===null?'Nunca probado':('Hace '+dias+' día'+(dias===1?'':'s')),
+        dias!==null && dias<30)+
+
+      t('eia330Ajustes&&eia330Ajustes()','📒','Historial de averías',
+        'Lo que ya pasó y cómo se resolvió',
+        av.length? (av.length+' registrada'+(av.length===1?'':'s')) : 'Vacío', av.length>0)+
+
+      t('eia450Consumo&&eia450Consumo()','📊','Mi consumo',
+        'Subí la curva de tu contador y mirá si pagás potencia de más','','')+
+
+      '<div class="eia500-card"><h3>💾 Copia de seguridad</h3>'+
+      '<p class="sub">Todo esto vive solo en este teléfono. Si borrás los datos del navegador o cambiás de móvil, se pierde.</p>'+
+      '<button class="eia500-btn alt" type="button" onclick="eia330Exportar&&eia330Exportar()">Descargar una copia</button>'+
+      '</div>'+
+
+      '<div class="eia500-card"><h3>ℹ️ ¿Por qué anotar todo esto?</h3>'+
+      '<p class="sub">Porque el día que se corte la luz vas a estar a oscuras, con prisa y probablemente nervioso. '+
+      'Saber de antemano dónde está el cuadro y a quién llamar convierte una urgencia en un trámite.</p></div>'+
+
+      '<button class="eia500-btn alt" type="button" onclick="eiaAtras&&eiaAtras()">← Volver</button>'+
+      '</main>';
+    try{ W.scrollTo(0,0); }catch(_){ }
+  };
+
+  /* ============================================================
+     BOTÓN EN LA BARRA INFERIOR
+     ------------------------------------------------------------
+     Sustituye a "Favoritos", que estaba vacío desde el principio y
+     no hacía nada útil. Cinco botones caben; seis ya no se leen.
+     ============================================================ */
+  function ponerNav(){
+    try{
+      var nav=D.querySelector('nav.bottom'); if(!nav) return;
+      if(D.getElementById('nCasa')) return;
+      var fav=D.getElementById('nFav');
+      var b=D.createElement('button');
+      b.id='nCasa'; b.type='button'; b.className='nav eia500-nav';
+      b.setAttribute('onclick','eia500MiHogar()');
+      b.innerHTML='🏡<span>Mi hogar</span>';
+      if(fav){ nav.replaceChild(b,fav); } else { nav.appendChild(b); }
+      nav.querySelectorAll('button').forEach(function(x){ x.classList.add('eia500-nav'); });
+    }catch(_){ }
+  }
+
+  /* ============================================================
+     LA CASITA DE LAS OPCIONES DE URGENCIA
+     El emoji 🏠 se dibuja con el tejado descuadrado en varios
+     Android. En la barra inferior ya se sustituyó por un SVG; acá
+     se cambia por un icono que ninguna fuente deforma.
+     ============================================================ */
+  // Mismo dibujo que en la barra inferior, para que sea coherente.
+  var CASA_SVG='<svg style="width:1.05em;height:1.05em;vertical-align:-.14em" viewBox="0 0 24 24" '+
+    'xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'+
+    '<path d="M12 3.2 2.6 11.1a.8.8 0 0 0 .52 1.4H5v7.5c0 .5.4.9.9.9h4.2v-5.2h3.8V21h4.2c.5 0 .9-.4.9-.9v-7.5h1.88a.8.8 0 0 0 .52-1.4L12 3.2z" fill="currentColor"/></svg>';
+
+  function arreglarEmojis(){
+    try{
+      // La casa ya se pinta como SVG desde el propio array de opciones.
+      // Parchear después del render provocaba una carrera con el
+      // renderizador, que reescribe innerHTML en cada mutación.
+    }catch(_){ }
+  }
+
+  try{
+    var app=D.getElementById('app');
+    if(app && W.MutationObserver){
+      var t2=null;
+      new MutationObserver(function(){
+        clearTimeout(t2);
+        t2=setTimeout(function(){ ponerNav(); arreglarEmojis(); },200);
+      }).observe(D.body,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+  function iniciar(){ ponerNav(); arreglarEmojis(); }
   if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',iniciar); else iniciar();
 })();
 </script>
