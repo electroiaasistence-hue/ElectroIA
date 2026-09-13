@@ -764,21 +764,21 @@ const diagTree={
  wholeHouse:{q:'¿Tus vecinos, el portal o la calle tienen electricidad?',a:[['No, también están sin luz','networkOutage'],['Sí, ellos tienen luz','wholeHouseLocal'],['No lo sé','tech']]},
  wholeHouseLocal:{q:'En tu cuadro eléctrico, ¿ves algún interruptor claramente bajado?',a:[['Sí','breakerWhole'],['No','meterPowerCheck'],['No puedo identificarlo','tech']]},
  meterPowerCheck:{q:'¿Justo antes del corte estaban funcionando varios aparatos potentes a la vez?',a:[['Sí','powerLimit'],['No','meterNoTrip']]},
- powerLimit:{q:'Vamos a intentar recuperar la luz de forma segura. Primero: ¿puedes apagar o desenchufar varios aparatos potentes sin tocar cables ni abrir equipos?',a:[['Sí','powerLimitStep1'],['No / no estoy seguro','tech']]},
- powerLimitStep1:{q:'Con los aparatos potentes apagados, ¿puedes bajar el interruptor general del cuadro, esperar unos segundos y volver a subirlo?',a:[['Sí','powerLimitReset'],['No / no sé cuál es','tech']]},
+ powerLimit:{q:'Vamos a intentar recuperar la luz de forma segura. Primero: ¿podés apagar o desenchufar varios aparatos potentes sin tocar cables ni abrir equipos?',a:[['Sí','powerLimitStep1'],['No / no estoy seguro','tech']]},
+ powerLimitStep1:{q:'Con los aparatos potentes apagados, ¿podés bajar el interruptor general del cuadro, esperar unos segundos y volver a subirlo?',a:[['Sí','powerLimitReset'],['No / no sé cuál es','tech']]},
  powerLimitReset:{q:'Después de volver a subir el cuadro, ¿volvió la luz y se mantiene encendida?',a:[['Sí','powerRestored'],['No','meterReconnect']]},
  meterReconnect:{q:'¿Tu contador es inteligente/telegestionado o dispone de una opción de reconexión? No hace falta abrirlo ni tocar conexiones.',a:[['Sí / puedo usar la reconexión indicada por mi distribuidora','meterRemoteReset'],['No sé qué contador tengo','distributorHelp'],['No / no puedo identificarlo','distributorHelp']]},
- meterRemoteReset:{result:['Probable actuación del control de potencia del contador','Había varios consumos altos y el cuadro no mostraba una llave bajada. En España, el contador inteligente puede incorporar el control de potencia (ICP).','Mantén apagados/desconectados los consumos altos. Usa únicamente el procedimiento de reconexión que indique tu distribuidora para tu contador (en algunos suministros puede hacerse desde el área online). No abras ni manipules el contador. Si no vuelve la luz, contacta con la distribuidora.','🟡 Recuperación guiada'],steps:['Apaga o desenchufa horno, vitro, termo, calefacción/estufas, aire acondicionado u otros equipos de alta potencia que estuvieran funcionando.','Rearma el cuadro solo desde sus interruptores accesibles: baja el general, espera unos segundos y vuelve a subirlo.','Si tu contador tiene un botón o procedimiento de reconexión indicado por el propio equipo o por tu distribuidora, sigue exactamente esa indicación; seguí únicamente el procedimiento indicado por tu distribuidora o por el propio contador. No improvises una secuencia de botones ni manipules conexiones.','Una vez recuperada la luz, vuelve a conectar los aparatos de uno en uno y evita encender varios consumos altos simultáneamente.','Si el corte por potencia se repite con frecuencia, conviene revisar la potencia contratada y la instalación con la comercializadora/distribuidora o un profesional.']},
- powerRestored:{result:['Suministro recuperado tras reducir la consumo','El corte coincidió con varios consumos importantes y la instalación volvió a funcionar después de reducir el consumo y volver a subir el cuadro.','Puedes seguir usando la vivienda, pero evita volver a conectar todos los equipos de alta potencia a la vez. Si sucede con frecuencia, revisa la potencia contratada.','🟢 Resuelto'],steps:['Mantén apagados unos minutos los aparatos de mayor potencia.','Vuelve a conectarlos de forma gradual, uno por uno.','Evita simultanear varios consumos altos si la potencia contratada es limitada.','Si vuelve a cortarse aun con pocos aparatos conectados, inicia un nuevo diagnóstico: puede no ser solo potencia.']},
- meterNoTrip:{result:['Posible problema en contador, suministro o instalación','Toda la vivienda está sin luz, los vecinos sí tienen suministro y no aparece una llave bajada.','No manipules el contador. Comprueba que la instalación no tenga una protección oculta/disparada y, si todo parece normal, contacta con la distribuidora para comprobar el estado del suministro.','🟠 Comprobar suministro'],steps:['No abras ni desmontes el contador.','Comprueba visualmente el cuadro sin tocar cables: general, diferencial y automáticos deben estar en posición normal.','Si todo está arriba y sigues sin luz, contacta con la distribuidora para que compruebe el contador/suministro.','Si la distribuidora confirma que la red y el contador están bien, será necesario un instalador autorizado para revisar la instalación interior.']},
- networkOutage:{result:['Probable incidencia de red','También hay viviendas o zonas cercanas sin electricidad, por lo que el problema puede estar fuera de tu instalación.','No manipules el cuadro ni el contador para intentar solucionar una avería de red. Consulta el aviso de averías de tu distribuidora o comunícala si no aparece registrada.','🟠 Distribuidora'],steps:['Comprueba si vecinos, portal o calle están también sin suministro.','No hagas pruebas eléctricas dentro de casa para intentar recuperar una avería externa.','Consulta el canal de averías de tu distribuidora y comprueba si existe una incidencia registrada.','Si solo tu vivienda continúa sin luz cuando la zona ya ha recuperado el servicio, vuelve a diagnosticar la instalación interior.']},
- breakerWhole:{q:'¿Puedes ver cuál es el interruptor bajado sin desmontar nada?',a:[['Sí, veo el general/diferencial/automático bajado','breakerIdentify'],['No estoy seguro','tech']]},
+ meterRemoteReset:{result:['Fue el contador: pediste más potencia de la contratada','Había varios consumos altos y el cuadro no mostraba una llave bajada. En España, el contador inteligente puede incorporar el control de potencia (ICP).','Mantené apagados/desconectados los consumos altos. Usa únicamente el procedimiento de reconexión que indique tu distribuidora para tu contador (en algunos suministros puede hacerse desde el área online). No abras ni manipules el contador. Si no vuelve la luz, contacta con la distribuidora.','🟡 Recuperación guiada'],steps:['Apaga o desenchufa horno, vitro, termo, calefacción/estufas, aire acondicionado u otros equipos de alta potencia que estuvieran funcionando.','Rearma el cuadro solo desde sus interruptores accesibles: baja el general, espera unos segundos y vuelve a subirlo.','Si tu contador tiene un botón o procedimiento de reconexión indicado por el propio equipo o por tu distribuidora, sigue exactamente esa indicación; seguí únicamente el procedimiento indicado por tu distribuidora o por el propio contador. No improvises una secuencia de botones ni manipules conexiones.','Una vez recuperada la luz, vuelve a conectar los aparatos de uno en uno y evitá encender varios consumos altos simultáneamente.','Si el corte por potencia se repite con frecuencia, conviene revisar la potencia contratada y la instalación con la comercializadora/distribuidora o un profesional.']},
+ powerRestored:{result:['Volvió la luz al bajar el consumo','El corte coincidió con varios consumos importantes y la instalación volvió a funcionar después de reducir el consumo y volver a subir el cuadro.','Podés seguir usando la vivienda, pero evitá volver a conectar todos los equipos de alta potencia a la vez. Si sucede con frecuencia, revisá la potencia contratada.','🟢 Resuelto'],steps:['Mantené apagados unos minutos los aparatos de mayor potencia.','Vuelve a conectarlos de forma gradual, uno por uno.','Evitá simultanear varios consumos altos si la potencia contratada es limitada.','Si vuelve a cortarse aun con pocos aparatos conectados, inicia un nuevo diagnóstico: puede no ser solo potencia.']},
+ meterNoTrip:{result:['El problema está en el contador o en la acometida','Toda la vivienda está sin luz, los vecinos sí tienen suministro y no aparece una llave bajada.','No manipules el contador. Comprobá que la instalación no tenga una protección oculta/disparada y, si todo parece normal, contacta con la distribuidora para comprobar el estado del suministro.','🟠 Comprobar suministro'],steps:['No abras ni desmontes el contador.','Comprobá visualmente el cuadro sin tocar cables: general, diferencial y automáticos deben estar en posición normal.','Si todo está arriba y sigues sin luz, contacta con la distribuidora para que compruebe el contador/suministro.','Si la distribuidora confirma que la red y el contador están bien, será necesario un instalador autorizado para revisar la instalación interior.']},
+ networkOutage:{result:['Es un corte de la compañía, no de tu casa','También hay viviendas o zonas cercanas sin electricidad, por lo que el problema puede estar fuera de tu instalación.','No manipules el cuadro ni el contador para intentar solucionar una avería de red. Consulta el aviso de averías de tu distribuidora o comunícala si no aparece registrada.','🟠 Distribuidora'],steps:['Comprobá si vecinos, portal o calle están también sin suministro.','No hagas pruebas eléctricas dentro de casa para intentar recuperar una avería externa.','Consulta el canal de averías de tu distribuidora y comprobá si existe una incidencia registrada.','Si solo tu vivienda continúa sin luz cuando la zona ya ha recuperado el servicio, vuelve a diagnosticar la instalación interior.']},
+ breakerWhole:{q:'¿Podés ver cuál es el interruptor bajado sin desmontar nada?',a:[['Sí, veo el general/diferencial/automático bajado','breakerIdentify'],['No estoy seguro','tech']]},
  breakerIdentify:{q:'¿Cuál parece estar bajado?',a:[['El general','generalReset'],['El diferencial (suele tener TEST)','differentialReset'],['Un automático de una zona','breakerZone']]},
  generalReset:{q:'Antes de volver a subirlo, ¿hay olor a quemado, humo, agua, chispas o algo caliente?',a:[['Sí','danger'],['No','generalResetSafe']]},
- generalResetSafe:{q:'Apaga o desenchufa los aparatos que estaban funcionando justo antes del corte. ¿Puedes hacerlo sin tocar cables ni abrir equipos?',a:[['Sí','generalResetDo'],['No / no sé','tech']]},
+ generalResetSafe:{q:'Apaga o desenchufa los aparatos que estaban funcionando justo antes del corte. ¿Podés hacerlo sin tocar cables ni abrir equipos?',a:[['Sí','generalResetDo'],['No / no sé','tech']]},
  generalResetDo:{q:'Ahora baja el general, espera unos segundos y vuelve a subirlo. ¿Se mantiene arriba y vuelve la luz?',a:[['Sí','recoveredZone'],['No, vuelve a bajar','circuitFault']]},
  differentialReset:{q:'Antes de volver a subir el diferencial, ¿hay agua/humedad, olor a quemado, chispas, descarga eléctrica o un aparato claramente sospechoso?',a:[['Sí','danger'],['No','differentialResetSafe']]},
- differentialResetSafe:{q:'Desenchufa los aparatos conectados recientemente o que estaban funcionando cuando ocurrió el corte. ¿Puedes hacerlo sin desmontar nada?',a:[['Sí','differentialResetDo'],['No / no sé','tech']]},
+ differentialResetSafe:{q:'Desenchufa los aparatos conectados recientemente o que estaban funcionando cuando ocurrió el corte. ¿Podés hacerlo sin desmontar nada?',a:[['Sí','differentialResetDo'],['No / no sé','tech']]},
  differentialResetDo:{q:'Rearma el diferencial una sola vez. ¿Se mantiene arriba?',a:[['Sí','recoveredZone'],['No, vuelve a bajar','leak']]},
  zone:{q:'En la zona afectada, ¿funciona alguna cosa o no funciona nada?',a:[['Funcionan algunas cosas','partialZone'],['No funciona nada','zoneAll'],['No estoy seguro','tech']]},
  partialZone:{q:'¿Qué falla exactamente?',a:[['Solo enchufes','outlet'],['Solo iluminación','light'],['Enchufes e iluminación','zoneFault']]},
@@ -789,24 +789,24 @@ const diagTree={
  light:{q:'¿La luz dejó de funcionar de golpe o venía parpadeando antes?',a:[['De golpe','lightSudden'],['Venía parpadeando','oneLightFlicker']]},
  other:{q:'Describime brevemente qué aparato o zona está afectada y qué sucede justo antes del fallo.',free:true},
  deviceDiff2:{q:'',a:[]},
- diffImmediate:{result:['Posible fuga de corriente asociada al aparato','El diferencial dispara inmediatamente al conectar ese equipo.','No uses ese aparato. Desenchúfalo solo si puedes hacerlo de forma normal y segura, sin tocar partes dañadas ni húmedas. No lo abras. Si al dejarlo desconectado el suministro se mantiene, el aparato queda identificado como sospechoso.','🔴 Técnico recomendado'],steps:['Deja el aparato sospechoso desconectado.','No lo abras, no cambies cables y no intentes puentear la protección.','Comprueba si la vivienda mantiene la luz con el aparato desconectado.','Si el diferencial sigue disparándose, no continúes rearmándolo: necesita revisión de la instalación.']},
- diffDelayed:{result:['Posible fuga o fallo que aparece durante el funcionamiento','El diferencial dispara después de un tiempo de uso.','Deja de utilizar el aparato cuando vuelva a ocurrir y no hagas pruebas internas. Si el resto de la vivienda funciona, el aparato queda como sospechoso.','🟠 Revisión recomendada'],steps:['Deja desconectado el aparato que coincide con el disparo.','Rearma la protección una sola vez si no existe ninguna señal de peligro.','Si la luz se mantiene, no vuelvas a usar ese aparato hasta revisarlo.','Si vuelve a disparar sin ese aparato conectado, pasa a revisión de la instalación.']},
- short:{result:['Posible cortocircuito o fallo interno del aparato','El automático dispara inmediatamente al encenderlo.','Deja el aparato desconectado. No sigas rearmando la protección con el equipo conectado. Si el circuito funciona sin él, el aparato es el principal sospechoso.','🔴 Técnico recomendado'],steps:['Desconecta el aparato de la toma si hacerlo es normal y seguro.','Rearma la protección una sola vez.','Si vuelve la luz y se mantiene, no conectes de nuevo el aparato.','Si el automático vuelve a bajar sin ese aparato, no sigas rearmándolo y solicita revisión.']},
- overloadDevice:{result:['Posible sobreconsumo o calentamiento del circuito','La protección dispara después de un periodo de funcionamiento.','Reduce la consumo y deja descansar el circuito. Si ocurre con un solo aparato o con un consumo normal, solicita revisión.','🟠 Revisión recomendada'],steps:['Apaga los aparatos de mayor potencia de esa zona.','Rearma la protección una sola vez cuando el circuito esté sin consumo elevado.','Vuelve a conectar los equipos de uno en uno.','Si vuelve a disparar con un consumo normal, deja de usar el circuito y pide revisión.']},
- overloadLikely:{result:['Probable exceso de potencia demandada','El corte coincide con varios consumidores de alta potencia funcionando simultáneamente. En España, el control de potencia del contador puede actuar cuando se supera la potencia contratada.','Primero reduce el consumo y recupera el suministro siguiendo el procedimiento seguro de volver a subir. Si ocurre con frecuencia, revisa la potencia contratada.','🟡 Recuperación guiada'],steps:['Apaga o desenchufa varios equipos de alta potencia.','Baja el interruptor general del cuadro, espera unos segundos y vuelve a subirlo.','Si vuelve la luz, conecta los aparatos de forma gradual y evita simultanear varios consumos altos.','Si vuelve a cortar con poca consumo, no asumas que es potencia: inicia un nuevo diagnóstico.','Si ocurre a menudo, consulta la potencia contratada y la potencia realmente utilizada antes de solicitar un aumento.']},
- leak:{result:['Posible fuga de corriente en la instalación o en algún equipo','El diferencial dispara sin un aparato concreto identificado.','No desmontes nada. Desconecta solo aparatos accesibles y sospechosos; si el diferencial continúa disparándose, deja de volver a subirlo y solicita un electricista cualificado.','🔴 Técnico recomendado'],steps:['Desconecta de forma normal los aparatos que puedas identificar como sospechosos.','Rearma el diferencial una sola vez si no hay ninguna señal de peligro.','Si se mantiene, no conectes de nuevo los aparatos sospechosos hasta revisarlos.','Si vuelve a disparar incluso con los aparatos desconectados, deja de hacer pruebas y solicita revisión profesional.']},
- suspectDevice:{result:['Posible problema relacionado con un aparato','El comportamiento comenzó después de conectar un equipo concreto.','Deja ese equipo desconectado y comprueba si la vivienda recupera estabilidad. No abras el aparato.','🟠 Revisión recomendada'],steps:['Desconecta el aparato sospechoso de la toma.','Rearma la protección una sola vez si no hay riesgo.','Si la instalación funciona, no vuelvas a conectar el aparato hasta revisarlo.','Si la protección vuelve a disparar sin él, revisa el circuito con un profesional.']},
- recoveredZone:{result:['La protección se había disparado y el suministro se recuperó','El interruptor vuelve a mantenerse arriba y la electricidad ha regresado.','Puedes continuar, pero observa si el fallo se repite. Si vuelve a ocurrir, no hagas hacerlo repetidamente: hay que encontrar la causa.','🟢 Suministro recuperado'],steps:['Mantén desconectados durante unos minutos los aparatos que estaban funcionando cuando ocurrió el corte.','Conecta los equipos uno por uno para identificar si alguno provoca el problema.','Si todo funciona, no hace falta desmontar nada.','Si el mismo interruptor vuelve a disparar, inicia otro diagnóstico y no lo fuerces.']},
- circuitFault:{result:['Fallo persistente en un circuito','La protección vuelve a dispararse inmediatamente o no se puede recuperar el servicio de forma estable.','No fuerces la protección. Deja desconectados los aparatos de la zona y solicita revisión por un electricista cualificado.','🔴 Técnico recomendado'],steps:['No sigas subiendo el mismo interruptor repetidamente.','Deja apagados/desconectados los equipos de la zona.','No desmontes enchufes, cajas ni cables.','Solicita revisión del circuito y de los aparatos conectados.']},
- zoneFault:{result:['Fallo localizado en una zona de la vivienda','Una zona ha perdido servicio sin una causa externa clara.','Revisa únicamente las protecciones accesibles del cuadro. Si están arriba y la zona sigue sin servicio, el circuito necesita revisión.','🟠 Revisión recomendada'],steps:['Comprueba visualmente si el automático de esa zona está bajado.','Si está bajado y no hay señales de peligro, puedes intentar volver a subirlo una vez.','Si vuelve a bajar, déjalo abajo y solicita revisión.','Si permanece arriba pero la zona sigue sin funcionar, no desmontes mecanismos: pide revisión del circuito.']},
- singleOutlet:{result:['Posible fallo localizado en un enchufe','Otros puntos funcionan y el problema parece concentrado en una sola toma.','No desmontes el enchufe. Comprueba solo si el aparato funciona en otra toma segura; si el problema sigue localizado, solicita revisión.','🟠 Revisión recomendada'],steps:['Desconecta el aparato de ese enchufe.','Si el aparato funciona en otra toma segura, el enchufe original queda como sospechoso.','No desmontes la toma ni toques conductores.','Si el enchufe está caliente, quemado, suelto o huele a quemado, no lo uses y pide asistencia.']},
- outletCircuit:{result:['Posible fallo del circuito de tomas','Varios enchufes de la misma zona están afectados.','Comprueba el automático correspondiente sin desmontar nada. Si está arriba y las tomas siguen sin funcionar, el circuito necesita revisión.','🔴 Técnico recomendado'],steps:['Desconecta los aparatos de las tomas afectadas.','Comprueba visualmente el cuadro.','Si el automático está bajado y no hay peligro, intenta volver a subirlo una sola vez.','Si vuelve a bajar o las tomas siguen sin corriente, deja de hacer pruebas y solicita revisión.']},
- oneLightFlicker:{result:['Posible fallo localizado en iluminación','El síntoma se limita a un punto de luz.','Si el parpadeo persiste, no desmontes la luminaria ni el interruptor. Puede ser una conexión, lámpara o equipo defectuoso.','🟠 Revisión recomendada'],steps:['Apaga la luz y deja que la luminaria se enfríe.','Si es una bombilla reemplazable y el cambio es una tarea que puedes realizar de forma segura, corta la alimentación antes de manipularla.','Si el parpadeo continúa con otra lámpara o no puedes identificar el problema, solicita revisión.']},
- manyFlicker:{result:['Posible problema de alimentación o conexión','Varias luces presentan el mismo comportamiento, lo que puede apuntar a una causa común.','No desmontes la instalación. Si el parpadeo es intenso, aparece en varias zonas o coincide con otros síntomas, solicita revisión profesional.','🔴 Técnico recomendado'],steps:['Observa si el parpadeo afecta a varias habitaciones.','No manipules el cuadro ni conexiones internas para intentar corregirlo.','Reduce aparatos de consumo alto si el problema aparece al conectar equipos potentes.','Si persiste, solicita revisión de la instalación o del suministro.']},
- lightSudden:{result:['Posible fallo localizado en iluminación','La iluminación dejó de funcionar de forma repentina mientras otros servicios pueden seguir funcionando.','Comprueba el cuadro sin desmontar nada. Si la protección está correcta y la luz sigue sin funcionar, solicita revisión del punto de luz.','🟠 Revisión recomendada'],steps:['Comprueba si otras luces de la vivienda funcionan.','Mira si el automático de iluminación está bajado.','Si está bajado y no hay señales de peligro, intenta volver a subirlo una sola vez.','Si vuelve a bajar o la luz no funciona, no desmontes la instalación.']},
- distributorHelp:{result:['Necesitas comprobar el contador o el suministro','El cuadro no muestra una protección clara y el suministro no se recupera con un procedimiento seguro.','No manipules el contador. Contacta con la distribuidora para que compruebe el estado del suministro y del control de potencia.','🟠 Distribuidora'],steps:['Mantén apagados los consumos altos.','No abras ni manipules el contador.','Contacta con la distribuidora por su canal oficial de averías o atención.','Si la distribuidora confirma que el suministro está correcto, solicita revisión de la instalación interior.']},
- tripUnclear:{result:['No se puede confirmar que sea solo un sobreconsumo','El corte no coincide claramente con varios consumos altos.','No sigas rearmando sin identificar qué protección actúa. Inicia el diagnóstico desde el cuadro o solicita revisión si se repite.','🟠 Revisión recomendada'],steps:['Desconecta aparatos de consumo alto.','Observa qué protección actúa si vuelve a ocurrir, sin tocar cables.','Si el mismo circuito vuelve a disparar, deja de volver a subirlo repetidamente.','Solicita revisión si no se identifica una causa sencilla y segura.']},
- tech:{result:['No hay información suficiente para una solución segura','Las respuestas no permiten diferenciar la causa sin inspección o mediciones.','No manipules cables, enchufes, el interior del cuadro ni el contador. Te conviene un electricista cualificado.','🔴 Técnico recomendado'],steps:['Deja la zona afectada sin manipular.','Desconecta aparatos sospechosos solo si puedes hacerlo normalmente y sin riesgo.','No puentes protecciones ni desmontes mecanismos.','Solicita revisión profesional y utiliza el informe de ElectroIA para explicar lo ocurrido.']}
+ diffImmediate:{result:['Ese aparato tiene una fuga','El diferencial dispara inmediatamente al conectar ese equipo.','No uses ese aparato. Desenchúfalo solo si podés hacerlo de forma normal y segura, sin tocar partes dañadas ni húmedas. No lo abras. Si al dejarlo desconectado el suministro se mantiene, el aparato queda identificado como sospechoso.','🔴 Técnico recomendado'],steps:['Dejá el aparato sospechoso desconectado.','No lo abras, no cambies cables y no intentes puentear la protección.','Comprobá si la vivienda mantiene la luz con el aparato desconectado.','Si el diferencial sigue disparándose, no continúes rearmándolo: necesita revisión de la instalación.']},
+ diffDelayed:{result:['La fuga aparece cuando el aparato lleva un rato en marcha','El diferencial dispara después de un tiempo de uso.','Dejá de utilizar el aparato cuando vuelva a ocurrir y no hagas pruebas internas. Si el resto de la vivienda funciona, el aparato queda como sospechoso.','🟠 Revisión recomendada'],steps:['Deja desconectado el aparato que coincide con el disparo.','Rearma la protección una sola vez si no existe ninguna señal de peligro.','Si la luz se mantiene, no vuelvas a usar ese aparato hasta revisarlo.','Si vuelve a disparar sin ese aparato conectado, pasa a revisión de la instalación.']},
+ short:{result:['Ese aparato tiene un cortocircuito','El automático dispara inmediatamente al encenderlo.','Dejá el aparato desconectado. No sigas rearmando la protección con el equipo conectado. Si el circuito funciona sin él, el aparato es el principal sospechoso.','🔴 Técnico recomendado'],steps:['Desconectá el aparato de la toma si hacerlo es normal y seguro.','Rearma la protección una sola vez.','Si vuelve la luz y se mantiene, no conectes de nuevo el aparato.','Si el automático vuelve a bajar sin ese aparato, no sigas rearmándolo y solicita revisión.']},
+ overloadDevice:{result:['Ese circuito lleva más carga de la que aguanta','La protección dispara después de un periodo de funcionamiento.','Reducí el consumo y deja descansar el circuito. Si ocurre con un solo aparato o con un consumo normal, solicita revisión.','🟠 Revisión recomendada'],steps:['Apaga los aparatos de mayor potencia de esa zona.','Rearma la protección una sola vez cuando el circuito esté sin consumo elevado.','Vuelve a conectar los equipos de uno en uno.','Si vuelve a disparar con un consumo normal, deja de usar el circuito y pide revisión.']},
+ overloadLikely:{result:['Había demasiadas cosas encendidas a la vez','El corte coincide con varios consumidores de alta potencia funcionando simultáneamente. En España, el control de potencia del contador puede actuar cuando se supera la potencia contratada.','Primero reduce el consumo y recupera el suministro siguiendo el procedimiento seguro de volver a subir. Si ocurre con frecuencia, revisá la potencia contratada.','🟡 Recuperación guiada'],steps:['Apaga o desenchufa varios equipos de alta potencia.','Baja el interruptor general del cuadro, espera unos segundos y vuelve a subirlo.','Si vuelve la luz, conecta los aparatos de forma gradual y evitá simultanear varios consumos altos.','Si vuelve a cortar con poca consumo, no asumas que es potencia: inicia un nuevo diagnóstico.','Si ocurre a menudo, consulta la potencia contratada y la potencia realmente utilizada antes de solicitar un aumento.']},
+ leak:{result:['Hay una fuga, pero todavía no sabemos de dónde','El diferencial dispara sin un aparato concreto identificado.','No desmontes nada. Desconectá solo aparatos accesibles y sospechosos; si el diferencial continúa disparándose, deja de volver a subirlo y solicita un electricista cualificado.','🔴 Técnico recomendado'],steps:['Desconectá de forma normal los aparatos que puedas identificar como sospechosos.','Rearma el diferencial una sola vez si no hay ninguna señal de peligro.','Si se mantiene, no conectes de nuevo los aparatos sospechosos hasta revisarlos.','Si vuelve a disparar incluso con los aparatos desconectados, deja de hacer pruebas y solicita revisión profesional.']},
+ suspectDevice:{result:['Todo apunta a un aparato concreto','El comportamiento comenzó después de conectar un equipo concreto.','Dejá ese equipo desconectado y comprobá si la vivienda recupera estabilidad. No abras el aparato.','🟠 Revisión recomendada'],steps:['Desconectá el aparato sospechoso de la toma.','Rearma la protección una sola vez si no hay riesgo.','Si la instalación funciona, no vuelvas a conectar el aparato hasta revisarlo.','Si la protección vuelve a disparar sin él, revisá el circuito con un profesional.']},
+ recoveredZone:{result:['Listo, volvió la luz','El interruptor vuelve a mantenerse arriba y la electricidad ha regresado.','Podés continuar, pero observa si el fallo se repite. Si vuelve a ocurrir, no hagas hacerlo repetidamente: hay que encontrar la causa.','🟢 Suministro recuperado'],steps:['Mantené desconectados durante unos minutos los aparatos que estaban funcionando cuando ocurrió el corte.','Conecta los equipos uno por uno para identificar si alguno provoca el problema.','Si todo funciona, no hace falta desmontar nada.','Si el mismo interruptor vuelve a disparar, inicia otro diagnóstico y no lo fuerces.']},
+ circuitFault:{result:['Ese circuito falla y no se puede dejar en uso','La protección vuelve a dispararse inmediatamente o no se puede recuperar el servicio de forma estable.','No fuerces la protección. Deja desconectados los aparatos de la zona y solicita revisión por un electricista cualificado.','🔴 Técnico recomendado'],steps:['No sigas subiendo el mismo interruptor repetidamente.','Deja apagados/desconectados los equipos de la zona.','No desmontes enchufes, cajas ni cables.','Solicita revisión del circuito y de los aparatos conectados.']},
+ zoneFault:{result:['El problema está en una zona de la casa','Una zona ha perdido servicio sin una causa externa clara.','Revisá únicamente las protecciones accesibles del cuadro. Si están arriba y la zona sigue sin servicio, el circuito necesita revisión.','🟠 Revisión recomendada'],steps:['Comprobá visualmente si el automático de esa zona está bajado.','Si está bajado y no hay señales de peligro, podés intentar volver a subirlo una vez.','Si vuelve a bajar, déjalo abajo y solicita revisión.','Si permanece arriba pero la zona sigue sin funcionar, no desmontes mecanismos: pide revisión del circuito.']},
+ singleOutlet:{result:['Parece ser solo ese enchufe','Otros puntos funcionan y el problema parece concentrado en una sola toma.','No desmontes el enchufe. Comprobá solo si el aparato funciona en otra toma segura; si el problema sigue localizado, solicita revisión.','🟠 Revisión recomendada'],steps:['Desconectá el aparato de ese enchufe.','Si el aparato funciona en otra toma segura, el enchufe original queda como sospechoso.','No desmontes la toma ni toques conductores.','Si el enchufe está caliente, quemado, suelto o huele a quemado, no lo uses y pide asistencia.']},
+ outletCircuit:{result:['Falla el circuito de enchufes de esa zona','Varios enchufes de la misma zona están afectados.','Comprobá el automático correspondiente sin desmontar nada. Si está arriba y las tomas siguen sin funcionar, el circuito necesita revisión.','🔴 Técnico recomendado'],steps:['Desconectá los aparatos de las tomas afectadas.','Comprobá visualmente el cuadro.','Si el automático está bajado y no hay peligro, intenta volver a subirlo una sola vez.','Si vuelve a bajar o las tomas siguen sin corriente, deja de hacer pruebas y solicita revisión.']},
+ oneLightFlicker:{result:['Es un problema de esa luz en concreto','El síntoma se limita a un punto de luz.','Si el parpadeo persiste, no desmontes la luminaria ni el interruptor. Puede ser una conexión, lámpara o equipo defectuoso.','🟠 Revisión recomendada'],steps:['Apaga la luz y deja que la luminaria se enfríe.','Si es una bombilla reemplazable y el cambio es una tarea que podés realizar de forma segura, corta la alimentación antes de manipularla.','Si el parpadeo continúa con otra lámpara o no podés identificar el problema, solicita revisión.']},
+ manyFlicker:{result:['Varias luces igual: puede ser una causa común','Varias luces presentan el mismo comportamiento, lo que puede apuntar a una causa común.','No desmontes la instalación. Si el parpadeo es intenso, aparece en varias zonas o coincide con otros síntomas, solicita revisión profesional.','🔴 Técnico recomendado'],steps:['Observa si el parpadeo afecta a varias habitaciones.','No manipules el cuadro ni conexiones internas para intentar corregirlo.','Reducí aparatos de consumo alto si el problema aparece al conectar equipos potentes.','Si persiste, solicita revisión de la instalación o del suministro.']},
+ lightSudden:{result:['Es un problema de esa luz en concreto','La iluminación dejó de funcionar de forma repentina mientras otros servicios pueden seguir funcionando.','Comprobá el cuadro sin desmontar nada. Si la protección está correcta y la luz sigue sin funcionar, solicita revisión del punto de luz.','🟠 Revisión recomendada'],steps:['Comprobá si otras luces de la vivienda funcionan.','Mira si el automático de iluminación está bajado.','Si está bajado y no hay señales de peligro, intenta volver a subirlo una sola vez.','Si vuelve a bajar o la luz no funciona, no desmontes la instalación.']},
+ distributorHelp:{result:['Hay que mirar el contador o el suministro','El cuadro no muestra una protección clara y el suministro no se recupera con un procedimiento seguro.','No manipules el contador. Contacta con la distribuidora para que compruebe el estado del suministro y del control de potencia.','🟠 Distribuidora'],steps:['Mantené apagados los consumos altos.','No abras ni manipules el contador.','Contacta con la distribuidora por su canal oficial de averías o atención.','Si la distribuidora confirma que el suministro está correcto, solicita revisión de la instalación interior.']},
+ tripUnclear:{result:['Todavía no está claro qué lo provoca','El corte no coincide claramente con varios consumos altos.','No sigas rearmando sin identificar qué protección actúa. Inicia el diagnóstico desde el cuadro o solicita revisión si se repite.','🟠 Revisión recomendada'],steps:['Desconectá aparatos de consumo alto.','Observa qué protección actúa si vuelve a ocurrir, sin tocar cables.','Si el mismo circuito vuelve a disparar, deja de volver a subirlo repetidamente.','Solicita revisión si no se identifica una causa sencilla y segura.']},
+ tech:{result:['Con lo que sabemos no se puede resolver a distancia','Las respuestas no permiten diferenciar la causa sin inspección o mediciones.','No manipules cables, enchufes, el interior del cuadro ni el contador. Te conviene un electricista cualificado.','🔴 Técnico recomendado'],steps:['Deja la zona afectada sin manipular.','Desconectá aparatos sospechosos solo si podés hacerlo normalmente y sin riesgo.','No puentes protecciones ni desmontes mecanismos.','Solicita revisión profesional y usá el informe de ElectroIA para explicar lo ocurrido.']}
 };
 Object.assign(diagTree,{
   dangerTriage:{q:'Gracias por decírmelo. No voy a hacerte tocar nada peligroso. Primero necesito saber qué está pasando para indicarte exactamente qué hacer. ¿Hay ahora mismo fuego, humo abundante o un peligro inmediato para una persona?',a:[['Sí, hay fuego o peligro inmediato','dangerEmergency'],['No, pero hay humo/olor/chispas/calor','dangerCutCheck'],['No sé / no puedo valorar el riesgo','dangerNoApproach']]},
@@ -1534,7 +1534,7 @@ Object.assign(diagTree,{
   },
   flickerSupply:{
     result:[
-      'Posible problema de alimentación o conexión',
+      'Varias luces igual: puede ser una causa común',
       'Varias luces cambian de intensidad sin una causa clara. Al afectar a más de un punto, conviene descartar un problema común.',
       'No desmontes nada. Si el síntoma es intenso, aparece en varias habitaciones o se acompaña de otros fallos, solicitá revisión.',
       '🔴 Técnico recomendado'
@@ -1556,7 +1556,7 @@ Object.assign(diagTree,{
   },
   singleOutlet:{
     result:[
-      'Posible fallo localizado en un enchufe',
+      'Parece ser solo ese enchufe',
       'El problema parece concentrado en una sola toma mientras otros puntos funcionan.',
       'No desmontes el enchufe. Si está caliente, quemado, suelto, hace ruido u huele a quemado, no lo uses.',
       '🟠 Revisión recomendada'
@@ -7237,6 +7237,14 @@ ${W.sourcesBlock?W.sourcesBlock():''}
   var PRESU={items:[],mano:0,horas:0};
 
   W.eia340AddItem=function(){ PRESU.items.push({d:'',c:1,p:0}); W.eia340Presupuesto(true); };
+  // Puente desde el catálogo de partidas: vuelca las seleccionadas al presupuesto.
+  W.eia340CargarPartidas=function(lista){
+    if(!Array.isArray(lista)||!lista.length) return;
+    // Se descarta la primera fila si está vacía, para no dejar un hueco arriba.
+    PRESU.items=PRESU.items.filter(function(x){ return x.d||x.p; });
+    lista.forEach(function(x){ PRESU.items.push({d:x.d||'',c:+x.c||1,p:+x.p||0}); });
+    W.eia340Presupuesto(true);
+  };
   W.eia340DelItem=function(i){ PRESU.items.splice(i,1); W.eia340Presupuesto(true); };
   W.eia340SyncItem=function(i,campo,v){
     if(!PRESU.items[i]) return;
@@ -8516,6 +8524,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
         t('eia370Tierra()','🌍','Puesta a tierra','Resistencia, tensión de contacto y corte.')+
         t('calcPro80&&calcPro80()','🧮','Calculadoras','Potencia, corriente, caída y sección.')+
         t('eia370Mediciones()','📊','Mediciones','Registrar y contrastar valores medidos.')+
+        t('eia400Catalogo&&eia400Catalogo()','📦','Catálogo de partidas','Presupuestá sin escribir cada línea.')+
       '</div>'+
 
       '<div class="eia370-sec">CONSULTA RÁPIDA</div>'+
@@ -9304,6 +9313,641 @@ ${W.sourcesBlock?W.sourcesBlock():''}
   }catch(_){ }
   function iniciar(){ ponerPie(); setTimeout(mostrarAviso,1400); }
   if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',iniciar); else iniciar();
+})();
+</script>
+
+
+<style id="eia390-contraste">
+/* ============================================================
+   CORRECCIÓN DE CONTRASTE
+   ------------------------------------------------------------
+   Auditoría con cálculo real de ratio WCAG (componiendo capas
+   translúcidas) sobre todas las pantallas. Dos causas de raíz:
+
+   A) Títulos de página con color oscuro (#162433) sobre el body
+      negro: fueron diseñados suponiendo página clara. Ratio 1,33.
+   B) Tarjetas con fondo blanco que fijan background pero no color:
+      el texto hereda el blanco del body. Ratio 1,00 (invisible).
+
+   Se corrige por causa, no elemento a elemento, para que aplique
+   también al contenido que se genere en el futuro.
+   ============================================================ */
+
+/* --- A) Texto a nivel de página: debe ser claro sobre fondo oscuro --- */
+.eia17-title{color:#eaf1fa}
+.eia17-subtitle{color:#a8bad0}
+.eia17-kicker{color:#b79bea}
+/* Dentro de una tarjeta clara vuelven a ser oscuros */
+.eia17-card .eia17-title,.card .eia17-title,.panel .eia17-title{color:#162433}
+.eia17-card .eia17-subtitle,.card .eia17-subtitle,.panel .eia17-subtitle{color:#667587}
+
+/* --- B) Tarjetas de fondo claro: fijar color de texto --- */
+.v80-calc-card,.v80-calc-card h2,.v80-calc-card h3,.v80-calc-card h4,
+.v80-calc-card p,.v80-calc-card li,.v80-calc-card span,.v80-calc-card div,
+.v80-calc-card td,.v80-calc-card th,.v80-calc-card strong,.v80-calc-card b{color:#1b2736}
+.v80-calc-card p{color:#43505d}
+.v80-calc-card small{color:#54626f}
+
+/* Mismo patrón en el resto de contenedores claros del proyecto */
+.tool-card,.tool-card h3,.tool-card h4,.tool-card p,.tool-card li,.tool-card span,
+.tool-card b,.tool-card strong,.tool-card td,.tool-card th{color:#1b2736}
+.tool-card p,.tool-card small{color:#43505d}
+
+/* --- C) Botón primario: 4,28 no alcanzaba el mínimo de 4,5 --- */
+.btn,button.btn,.eia-direct-ai-btn{background:#0b63c7}
+.btn:hover,button.btn:hover{background:#0a58b0}
+
+/* --- D) Texto secundario tenue sobre fondo oscuro --- */
+.subtitle{color:#a8bad0}
+
+/* --- E) Paneles claros definidos por clase ---
+   El CSS previo solo contemplaba paneles con estilo EN LÍNEA
+   (.panel[style*="background:#f"]). Los que reciben fondo claro
+   desde una clase, como .pro-workflow, quedaban con texto blanco
+   sobre fondo casi blanco: ratio 1,06, ilegible. */
+.panel.pro-workflow,.panel.pro-workflow *{color:#1b2736}
+.panel.pro-workflow p,.panel.pro-workflow li,.panel.pro-workflow small{color:#46515c}
+.panel.pro-workflow b,.panel.pro-workflow strong,
+.panel.pro-workflow h2,.panel.pro-workflow h3{color:#0f1b2b}
+
+/* --- F) Texto auxiliar de tarjetas: 4,3 no llegaba a 4,5 --- */
+.eia17-card small{color:#55636f}
+
+/* --- G) Fondos azules demasiado claros ---
+   Varios héroes y tarjetas usaban #0879e8 / #0b75df. Con texto blanco
+   dan 3,76-4,3, por debajo del mínimo. Encima llevan velos translúcidos
+   (rgba(255,255,255,.12)) que aclaran aún más el fondo y empeoran el
+   ratio. Se corrige el FONDO, no el texto: así el velo sigue funcionando
+   como recurso visual. #0a5ab4 mantiene 4,97 incluso con el velo. */
+.eia17-hero{background:linear-gradient(135deg,#0a5ab4 0%,#0e4a91 100%)}
+.eia-v22-section-card.eia-v22-home{background:linear-gradient(135deg,#0a5ab4,#1567c4)}
+.eia17-hero .eia17-kicker{color:#e4dcff}
+.eia17-hero p,.eia17-hero .eia17-subtitle{color:#fff}
+.eia-v22-section-card.eia-v22-home .eia-v22-kicker{color:#dbe9fb}
+.eia-v22-section-card.eia-v22-home p,
+.eia-v22-section-card.eia-v22-home span{color:#f2f7fd}
+/* Los velos se dejan tenues: con el azul oscurecido, .12 mantiene 5,18
+   de ratio. Subirlos aclara el fondo y vuelve a romper el contraste. */
+/* El hero de inicio usa un degradado que en su tramo medio llega a
+   #0879e8: con el velo encima, el texto blanco baja a 4,38. Se oscurece
+   el degradado manteniendo el mismo salto de color. */
+.eia-brand-hero{background:linear-gradient(135deg,#0a56b8 0%,#0a5ab4 52%,#0d7f9c 100%)}
+.eia-free{background:rgba(255,255,255,.12)}
+.eia17-quick{background:rgba(255,255,255,.12)}
+.eia17-photo-cta small{color:#4d5c6b}
+</style>
+<style id="eia400-css">
+.eia400-cap{margin:14px 0 7px;font-size:11.5px;font-weight:800;letter-spacing:.07em;color:#8fa8c4}
+.eia400-p{display:grid;grid-template-columns:1fr 82px 34px;gap:7px;align-items:center;background:#fff;border:1px solid #dde5ef;border-radius:11px;padding:9px 10px;margin-bottom:6px}
+.eia400-p .d{min-width:0}
+.eia400-p b{display:block;font-size:13.5px;color:#12203a;line-height:1.25}
+.eia400-p small{display:block;font-size:11.5px;color:#55687f}
+.eia400-p input{font:inherit;font-size:13px;padding:7px;border:1px solid #ccd6e2;border-radius:8px;width:100%;box-sizing:border-box;color:#16202e;text-align:right}
+.eia400-p button{background:#0b63c7;color:#fff;border:0;border-radius:8px;padding:8px 0;font-weight:800;cursor:pointer;font-size:15px}
+.eia400-p.sinprecio input{background:#fff8e8;border-color:#e8cd8a}
+.eia400-buscar{width:100%;padding:11px;border:1px solid #ccd6e2;border-radius:11px;font:inherit;color:#16202e;background:#fff;box-sizing:border-box;margin-bottom:4px}
+.eia400-tabs{display:flex;gap:6px;overflow-x:auto;margin:10px 0;padding-bottom:3px}
+.eia400-tabs button{flex:0 0 auto;padding:8px 12px;border-radius:99px;border:1px solid #ccd9ea;background:#fff;color:#22364f;font-weight:700;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.eia400-tabs button.on{background:#0b63c7;border-color:#0b63c7;color:#fff}
+.eia400-info{background:#fff8e8;border-left:4px solid #d9a200;border-radius:0 10px 10px 0;padding:11px 13px;margin:11px 0;font-size:12.8px;line-height:1.5;color:#5c4400}
+.eia400-info b{color:#7a5800}
+</style>
+
+<script id="electroia-v400-catalogo">
+(function(){
+  'use strict';
+  var W=window,D=document;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  /* ============================================================
+     CATÁLOGO DE PARTIDAS ELÉCTRICAS
+     ------------------------------------------------------------
+     Los competidores del sector (Motor de Presupuestos, AppSat,
+     InstalWin) traen catálogos precargados: es la diferencia entre
+     tardar una hora en un presupuesto o cinco minutos. El
+     presupuesto de ElectroIA arrancaba de una lista vacía.
+
+     DECISIÓN IMPORTANTE SOBRE LOS PRECIOS:
+     El catálogo trae las PARTIDAS y sus unidades, que son estables,
+     pero NO precios precargados. Los precios varían por país, zona,
+     proveedor, año e inflación —especialmente en Argentina—, y un
+     importe inventado dentro de un presupuesto que el técnico
+     entrega a un cliente le cuesta dinero real o le hace perder el
+     trabajo. En su lugar, cada profesional fija su precio una vez y
+     queda guardado para todos los presupuestos siguientes, que es
+     como funcionan las herramientas serias del sector.
+     ============================================================ */
+  var CATALOGO={
+    'Cuadro y protecciones':[
+      ['Cuadro general de mando y protección, empotrado','ud'],
+      ['Interruptor general automático (IGA)','ud'],
+      ['Interruptor diferencial 2P 25A 30mA','ud'],
+      ['Interruptor diferencial 4P 40A 30mA','ud'],
+      ['Interruptor magnetotérmico 1P+N 10A curva C','ud'],
+      ['Interruptor magnetotérmico 1P+N 16A curva C','ud'],
+      ['Interruptor magnetotérmico 1P+N 20A curva C','ud'],
+      ['Interruptor magnetotérmico 1P+N 25A curva C','ud'],
+      ['Protector contra sobretensiones transitorias','ud'],
+      ['Ampliación de cuadro existente','ud'],
+      ['Reetiquetado y ordenación de cuadro','ud']
+    ],
+    'Conductores y canalización':[
+      ['Cable H07V-K 1,5 mm² (por metro)','m'],
+      ['Cable H07V-K 2,5 mm² (por metro)','m'],
+      ['Cable H07V-K 4 mm² (por metro)','m'],
+      ['Cable H07V-K 6 mm² (por metro)','m'],
+      ['Cable H07V-K 10 mm² (por metro)','m'],
+      ['Tubo corrugado 16 mm (por metro)','m'],
+      ['Tubo corrugado 20 mm (por metro)','m'],
+      ['Tubo corrugado 25 mm (por metro)','m'],
+      ['Canaleta de superficie (por metro)','m'],
+      ['Caja de registro empotrada','ud'],
+      ['Caja de mecanismo empotrada','ud'],
+      ['Roza en pared de ladrillo (por metro)','m'],
+      ['Roza en hormigón (por metro)','m']
+    ],
+    'Mecanismos':[
+      ['Punto de luz sencillo, instalado','ud'],
+      ['Punto de luz conmutado, instalado','ud'],
+      ['Punto de luz con cruzamiento','ud'],
+      ['Toma de corriente 16A con TT','ud'],
+      ['Toma de corriente estanca IP44','ud'],
+      ['Base de 25A para cocina','ud'],
+      ['Toma de red RJ45','ud'],
+      ['Toma de TV','ud'],
+      ['Interruptor simple','ud'],
+      ['Conmutador','ud'],
+      ['Pulsador con timbre','ud'],
+      ['Regulador de intensidad','ud'],
+      ['Detector de presencia','ud']
+    ],
+    'Iluminación':[
+      ['Luminaria LED empotrable (downlight)','ud'],
+      ['Panel LED 60x60','ud'],
+      ['Regleta LED estanca','ud'],
+      ['Aplique de pared','ud'],
+      ['Foco proyector LED exterior','ud'],
+      ['Luz de emergencia','ud'],
+      ['Tira LED con fuente (por metro)','m']
+    ],
+    'Puesta a tierra':[
+      ['Jabalina / pica de tierra 2 m con conexión','ud'],
+      ['Conductor de tierra desnudo (por metro)','m'],
+      ['Arqueta de registro de tierra','ud'],
+      ['Medición de resistencia con telurímetro','ud'],
+      ['Mejora de toma de tierra existente','ud']
+    ],
+    'Mano de obra y servicios':[
+      ['Hora de oficial electricista','h'],
+      ['Hora de ayudante','h'],
+      ['Desplazamiento / visita','ud'],
+      ['Diagnóstico de avería','ud'],
+      ['Urgencia fuera de horario','ud'],
+      ['Certificado de instalación eléctrica (CIE)','ud'],
+      ['Memoria técnica de diseño','ud'],
+      ['Tramitación con la distribuidora','ud'],
+      ['Revisión y verificación de instalación','ud']
+    ],
+    'Climatización y grandes consumos':[
+      ['Línea exclusiva para aire acondicionado','ud'],
+      ['Línea exclusiva para cocina eléctrica','ud'],
+      ['Línea exclusiva para termo eléctrico','ud'],
+      ['Punto de recarga de vehículo eléctrico','ud'],
+      ['Instalación de placa de inducción','ud']
+    ],
+    'Fotovoltaica':[
+      ['Módulo fotovoltaico, montaje incluido','ud'],
+      ['Estructura de soporte (por módulo)','ud'],
+      ['Inversor string','ud'],
+      ['Microinversor','ud'],
+      ['Batería de litio (por kWh)','kWh'],
+      ['Cableado CC solar (por metro)','m'],
+      ['Protecciones CC (fusibles y seccionador)','ud'],
+      ['Legalización de autoconsumo','ud']
+    ]
+  };
+
+  var CLAVE='eia400-tarifa';
+  function tarifa(){ try{ return JSON.parse(localStorage.getItem(CLAVE)||'{}')||{}; }catch(_){ return {}; } }
+  function guardarTarifa(t){
+    try{ localStorage.setItem(CLAVE,JSON.stringify(t)); return true; }
+    catch(_){ alert('No se pudo guardar: almacenamiento lleno.'); return false; }
+  }
+  W.eia400Tarifa=tarifa;
+
+  var capActiva=Object.keys(CATALOGO)[0];
+  var filtro='';
+
+  W.eia400Cap=function(c){ capActiva=c; W.eia400Catalogo(); };
+  W.eia400Buscar=function(v){
+    filtro=String(v||'').toLowerCase();
+    pintarLista();
+  };
+  W.eia400Precio=function(clave,v){
+    var t=tarifa();
+    var n=parseFloat(String(v).replace(',','.'));
+    if(isNaN(n)||n<0){ delete t[clave]; } else { t[clave]=n; }
+    guardarTarifa(t);
+  };
+
+  function partidas(){
+    var t=tarifa(), out=[];
+    if(filtro){
+      Object.keys(CATALOGO).forEach(function(cap){
+        CATALOGO[cap].forEach(function(p){
+          if(p[0].toLowerCase().indexOf(filtro)>=0) out.push([cap,p[0],p[1]]);
+        });
+      });
+    } else {
+      (CATALOGO[capActiva]||[]).forEach(function(p){ out.push([capActiva,p[0],p[1]]); });
+    }
+    return out;
+  }
+
+  function pintarLista(){
+    var cont=D.getElementById('e400Lista'); if(!cont) return;
+    var t=tarifa(), ps=partidas();
+    if(!ps.length){ cont.innerHTML='<p style="color:#8fa8c4;font-size:13px">Sin resultados para esa búsqueda.</p>'; return; }
+    var capPrev=null, h='';
+    ps.forEach(function(p){
+      if(filtro && p[0]!==capPrev){ capPrev=p[0]; h+='<div class="eia400-cap">'+esc(p[0]).toUpperCase()+'</div>'; }
+      var clave=p[1];
+      var pr=t[clave];
+      var tiene=(typeof pr==='number');
+      h+='<div class="eia400-p'+(tiene?'':' sinprecio')+'">'+
+        '<div class="d"><b>'+esc(p[1])+'</b><small>Unidad: '+esc(p[2])+(tiene?'':' · sin precio')+'</small></div>'+
+        '<input type="number" step="0.01" inputmode="decimal" aria-label="Precio de '+esc(p[1])+'" '+
+          'value="'+(tiene?pr:'')+'" placeholder="0,00" '+
+          'oninput="eia400Precio('+JSON.stringify(clave).replace(/"/g,'&quot;')+',this.value)">'+
+        '<button type="button" aria-label="Añadir al presupuesto" '+
+          'onclick="eia400Anadir('+JSON.stringify(clave).replace(/"/g,'&quot;')+','+JSON.stringify(p[2]).replace(/"/g,'&quot;')+')">+</button>'+
+      '</div>';
+    });
+    cont.innerHTML=h;
+  }
+
+  W.eia400Catalogo=function(){
+    var app=D.getElementById('app'); if(!app) return;
+    var cab=(typeof W.head==='function')?W.head(true):'';
+    var t=tarifa(), conPrecio=Object.keys(t).length;
+    var total=0; Object.keys(CATALOGO).forEach(function(c){ total+=CATALOGO[c].length; });
+
+    app.innerHTML=cab+'<main class="wrap page">'+
+      '<div class="eia370-hero"><h1>📦 Catálogo de partidas</h1>'+
+      '<p>'+total+' partidas del oficio listas para presupuestar. Poné tu precio una vez y queda guardado para siempre.</p></div>'+
+
+      '<div class="eia400-info"><b>Sobre los precios.</b> El catálogo no trae importes precargados a propósito: '+
+      'los precios cambian por zona, proveedor y año, y un importe inventado en un presupuesto que entregás a un cliente '+
+      'te cuesta dinero o el trabajo. Poné tu tarifa real: se guarda en este dispositivo y se reutiliza en todos tus presupuestos.</div>'+
+
+      '<div class="eia370-card">'+
+      '<input class="eia400-buscar" id="e400Q" type="search" placeholder="Buscar partida…" aria-label="Buscar partida" oninput="eia400Buscar(this.value)">'+
+      '<div class="eia400-tabs">'+Object.keys(CATALOGO).map(function(c){
+        return '<button type="button" class="'+(c===capActiva?'on':'')+'" onclick="eia400Cap('+JSON.stringify(c).replace(/"/g,'&quot;')+')">'+esc(c)+'</button>';
+      }).join('')+'</div>'+
+      '<div id="e400Lista"></div>'+
+      '<p style="font-size:12px;color:#55687f;margin-top:11px">Tenés precio en <b>'+conPrecio+'</b> de '+total+' partidas. '+
+      'Las que están en amarillo todavía no tienen tarifa.</p>'+
+      '</div>'+
+
+      '<button class="eia370-btn" type="button" onclick="eia400IrPresupuesto()">🧾 Ir al presupuesto</button>'+
+      '<button class="eia370-btn alt" type="button" onclick="eia370Menu&&eia370Menu()">← Volver al Modo Profesional</button>'+
+    '</main>';
+    pintarLista();
+    if(W.eiaEtiquetarCampos) W.eiaEtiquetarCampos();
+  };
+
+  /* Añade la partida al presupuesto del bloque de monetización */
+  W.eia400Anadir=function(desc,unidad){
+    var t=tarifa();
+    var precio=(typeof t[desc]==='number')?t[desc]:0;
+    try{
+      W.eia400Pendientes=W.eia400Pendientes||[];
+      W.eia400Pendientes.push({d:desc,c:1,p:precio,u:unidad});
+      var e=D.getElementById('e400Aviso');
+      if(!e){
+        e=D.createElement('div'); e.id='e400Aviso';
+        e.style.cssText='position:fixed;left:12px;right:12px;bottom:86px;z-index:9996;background:#0f3d24;border:1px solid #2f7a51;color:#d6f5e3;padding:11px 13px;border-radius:12px;font-size:13.5px;box-shadow:0 8px 22px rgba(0,0,0,.4)';
+        D.body.appendChild(e);
+      }
+      e.innerHTML='✅ <b>'+esc(desc.slice(0,42))+'</b> añadida ('+W.eia400Pendientes.length+' en total)'+
+        (precio?'':' · <span style="color:#ffd88a">sin precio</span>');
+      e.style.display='block';
+      clearTimeout(W._e400t);
+      W._e400t=setTimeout(function(){ if(e) e.style.display='none'; },2600);
+    }catch(_){ }
+  };
+
+  W.eia400IrPresupuesto=function(){
+    var e=D.getElementById('e400Aviso'); if(e) e.style.display='none';
+    if(typeof W.eia340Presupuesto!=='function') return alert('El presupuesto no está disponible.');
+    W.eia340Presupuesto();
+    // volcar las partidas pendientes al presupuesto ya abierto
+    setTimeout(function(){
+      try{
+        var p=W.eia400Pendientes||[];
+        if(!p.length) return;
+        if(typeof W.eia340CargarPartidas==='function') W.eia340CargarPartidas(p);
+        W.eia400Pendientes=[];
+      }catch(_){ }
+    },400);
+  };
+})();
+</script>
+
+<style id="eia410-css">
+.eia410-ver{display:inline-flex;align-items:center;gap:6px;margin:8px 0;padding:8px 12px;border-radius:999px;border:1px solid #4a5f78;background:#16222f;color:#bcd4ee;font-size:13px;font-weight:700;cursor:pointer}
+.eia410-ver:hover{background:#1d2c3c}
+.eia410-ver .fl{transition:transform .2s;display:inline-block}
+.eia410-ver.on .fl{transform:rotate(180deg)}
+.eia410-fig{display:none;margin:8px 0 12px;background:#fff;border:1px solid #d9e2ee;border-radius:14px;padding:12px;color:#1b2736}
+.eia410-fig.on{display:block}
+.eia410-fig svg{width:100%;height:auto;display:block;border-radius:9px}
+.eia410-fig figcaption{font-size:12.5px;color:#43505d;line-height:1.5;margin-top:9px}
+.eia410-fig figcaption b{color:#0f1b2b}
+.eia410-paso{background:#fff;border:1px solid #d9e2ee;border-radius:14px;padding:14px;margin:11px 0;color:#1b2736}
+.eia410-paso,.eia410-paso *{color:#1b2736}
+.eia410-paso h3{margin:0 0 4px;font-size:16.5px;color:#0f1b2b}
+.eia410-paso .sub{font-size:13px;color:#55687f;margin:0 0 11px;line-height:1.45}
+.eia410-paso ol{margin:0 0 6px;padding-left:20px;font-size:14.5px;line-height:1.65}
+.eia410-paso ol li{margin-bottom:8px}
+.eia410-paso ol li b{color:#0f1b2b}
+.eia410-ok{background:#eafaf0;border:1px solid #b6e5c8;border-radius:11px;padding:11px;font-size:13.5px;color:#14602f;line-height:1.5;margin:10px 0}
+.eia410-warn{background:#fff6e2;border:1px solid #f0d79a;border-radius:11px;padding:11px;font-size:13.5px;color:#6b4a00;line-height:1.5;margin:10px 0}
+.eia410-btn{display:block;width:100%;margin-top:9px;padding:12px;border:0;border-radius:11px;background:#0b63c7;color:#fff;font-weight:800;font-size:14.5px;cursor:pointer}
+.eia410-btn.alt{background:#eef3fa;color:#1c3252;border:1px solid #ccd9ea}
+</style>
+
+<script id="electroia-v410-urgencia-mejorada">
+(function(){
+  'use strict';
+  var W=window,D=document;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function es(){ try{ return (typeof W.eia360Pais==='function' && W.eia360Pais()==='es'); }catch(_){ return false; } }
+
+  /* ============================================================
+     1. IDENTIFICADOR VISUAL DESPLEGABLE
+     ------------------------------------------------------------
+     Alguien que no sabe de electricidad no distingue una térmica
+     de un diferencial. Se ofrece un dibujo, pero SOLO cuando el
+     paso lo necesita o el usuario lo pide: si apareciera cada vez
+     que se nombra algo técnico, ocuparía toda la pantalla y
+     estorbaría justo cuando hay prisa.
+     Son ilustraciones esquemáticas propias (SVG), no fotos: pesan
+     nada, se ven nítidas en cualquier pantalla y no dependen de
+     imágenes de terceros con derechos.
+     ============================================================ */
+  var FIG={
+    diferencial:{
+      t:'¿Cuál es el diferencial?',
+      cap:'<b>Es el más ancho del cuadro y tiene un botón pequeño marcado con una T</b> (a veces "TEST"). Suele estar a la izquierda, después de la llave general. Es el que te protege de una descarga.',
+      svg:'<svg viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dibujo de un interruptor diferencial con su botón de prueba">'+
+        '<rect x="0" y="0" width="300" height="150" fill="#eef3f8"/>'+
+        '<rect x="60" y="20" width="180" height="110" rx="6" fill="#f7f9fb" stroke="#9fb0c2" stroke-width="2"/>'+
+        '<rect x="60" y="20" width="180" height="16" fill="#dde5ee"/>'+
+        '<rect x="88" y="52" width="30" height="52" rx="4" fill="#2b3a4b"/>'+
+        '<rect x="94" y="44" width="18" height="26" rx="3" fill="#f4f6f8" stroke="#7d8fa3"/>'+
+        '<circle cx="170" cy="66" r="13" fill="#1f7ad6" stroke="#0f4e91" stroke-width="2"/>'+
+        '<text x="170" y="72" font-size="15" font-weight="bold" fill="#fff" text-anchor="middle">T</text>'+
+        '<text x="170" y="98" font-size="10" fill="#3b4a5c" text-anchor="middle">botón de prueba</text>'+
+        '<text x="103" y="122" font-size="9" fill="#3b4a5c" text-anchor="middle">palanca</text>'+
+        '<text x="150" y="145" font-size="10" fill="#5b6b80" text-anchor="middle">Es más ancho que las demás llaves</text>'+
+        '</svg>'},
+    termica:{
+      t:'¿Cuál es la térmica?',
+      cap:'<b>Son las llaves más finas, en fila, cada una con un número</b> (10, 16, 20, 25). Ese número son los amperios. Cada una protege un circuito distinto de la casa.',
+      svg:'<svg viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dibujo de varios interruptores magnetotérmicos en fila">'+
+        '<rect x="0" y="0" width="300" height="150" fill="#eef3f8"/>'+
+        '<rect x="30" y="24" width="240" height="102" rx="6" fill="#f7f9fb" stroke="#9fb0c2" stroke-width="2"/>'+
+        '<rect x="30" y="24" width="240" height="14" fill="#dde5ee"/>'+
+        Array.from({length:5}).map(function(_,i){
+          var x=48+i*44, n=[10,16,16,20,25][i];
+          return '<rect x="'+x+'" y="48" width="30" height="56" rx="4" fill="#f4f6f8" stroke="#8fa2b6"/>'+
+                 '<rect x="'+(x+7)+'" y="'+(i===2?72:56)+'" width="16" height="26" rx="3" fill="'+(i===2?'#c0392b':'#2b3a4b')+'"/>'+
+                 '<text x="'+(x+15)+'" y="118" font-size="11" font-weight="bold" fill="#2b3a4b" text-anchor="middle">'+n+'</text>';
+        }).join('')+
+        '<text x="150" y="142" font-size="10" fill="#5b6b80" text-anchor="middle">La roja está BAJADA: ese circuito es el que falla</text>'+
+        '</svg>'},
+    cuadro:{
+      t:'¿Cómo es el cuadro por dentro?',
+      cap:'<b>De izquierda a derecha:</b> la llave general (corta todo), el diferencial (el del botón T) y las térmicas de cada circuito. No abras la tapa: mirá solo lo que se ve desde fuera.',
+      svg:'<svg viewBox="0 0 300 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dibujo de un cuadro eléctrico completo">'+
+        '<rect x="0" y="0" width="300" height="160" fill="#eef3f8"/>'+
+        '<rect x="16" y="20" width="268" height="118" rx="8" fill="#fdfefe" stroke="#8fa2b6" stroke-width="2"/>'+
+        '<rect x="24" y="30" width="252" height="14" fill="#e4ebf2"/>'+
+        '<rect x="30" y="54" width="34" height="56" rx="4" fill="#eef2f6" stroke="#7d8fa3" stroke-width="2"/>'+
+        '<rect x="39" y="62" width="16" height="26" rx="3" fill="#c0392b"/>'+
+        '<text x="47" y="126" font-size="8.5" fill="#2b3a4b" text-anchor="middle">GENERAL</text>'+
+        '<rect x="74" y="54" width="46" height="56" rx="4" fill="#eef2f6" stroke="#7d8fa3" stroke-width="2"/>'+
+        '<rect x="82" y="62" width="15" height="26" rx="3" fill="#2b3a4b"/>'+
+        '<circle cx="108" cy="70" r="8" fill="#1f7ad6"/>'+
+        '<text x="108" y="74" font-size="9" font-weight="bold" fill="#fff" text-anchor="middle">T</text>'+
+        '<text x="97" y="126" font-size="8.5" fill="#2b3a4b" text-anchor="middle">DIFERENCIAL</text>'+
+        Array.from({length:4}).map(function(_,i){
+          var x=132+i*36;
+          return '<rect x="'+x+'" y="54" width="28" height="56" rx="4" fill="#eef2f6" stroke="#7d8fa3"/>'+
+                 '<rect x="'+(x+6)+'" y="62" width="15" height="24" rx="3" fill="#2b3a4b"/>';
+        }).join('')+
+        '<text x="205" y="126" font-size="8.5" fill="#2b3a4b" text-anchor="middle">CIRCUITOS</text>'+
+        '<text x="150" y="152" font-size="10" fill="#5b6b80" text-anchor="middle">Mirá sin abrir la tapa</text>'+
+        '</svg>'},
+    contador:{
+      t:'¿Cómo es el contador digital?',
+      cap:'<b>Tiene una pantalla y un botón, casi siempre amarillo, al lado o arriba a la derecha.</b> Si la pantalla dice <b>ICP 00 PULSE</b>, es que cortó por exceso de potencia. Suele estar en el rellano, la entrada o un armario del portal.',
+      svg:'<svg viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dibujo de un contador digital con su botón amarillo">'+
+        '<rect x="0" y="0" width="300" height="150" fill="#eef3f8"/>'+
+        '<rect x="58" y="18" width="184" height="114" rx="8" fill="#f2f4f6" stroke="#8fa2b6" stroke-width="2"/>'+
+        '<rect x="76" y="38" width="118" height="40" rx="4" fill="#20303d"/>'+
+        '<text x="135" y="64" font-size="17" font-weight="bold" fill="#8ef0a8" text-anchor="middle" font-family="monospace">ICP 00 PULSE</text>'+
+        '<circle cx="215" cy="46" r="13" fill="#f2c200" stroke="#a98c00" stroke-width="2"/>'+
+        '<text x="215" y="72" font-size="9" fill="#3b4a5c" text-anchor="middle">botón</text>'+
+        '<rect x="76" y="90" width="118" height="8" rx="3" fill="#d8dee5"/>'+
+        '<rect x="76" y="104" width="80" height="8" rx="3" fill="#d8dee5"/>'+
+        '<text x="150" y="145" font-size="10" fill="#5b6b80" text-anchor="middle">Si dice PULSE: mantené el botón 3 segundos</text>'+
+        '</svg>'}
+  };
+
+  var contFig=0;
+  W.eia410Toggle=function(id){
+    var f=D.getElementById(id), b=D.getElementById(id+'-b');
+    if(!f) return;
+    var abierto=f.classList.toggle('on');
+    if(b){ b.classList.toggle('on',abierto); b.setAttribute('aria-expanded',abierto?'true':'false'); }
+  };
+  // Genera el par botón + figura plegada
+  function fig(clave){
+    var f=FIG[clave]; if(!f) return '';
+    var id='e410f'+(++contFig);
+    return '<button type="button" class="eia410-ver" id="'+id+'-b" aria-expanded="false" aria-controls="'+id+'" '+
+      'onclick="eia410Toggle(\''+id+'\')">🖼️ '+esc(f.t)+' <span class="fl">⌄</span></button>'+
+      '<figure class="eia410-fig" id="'+id+'">'+f.svg+'<figcaption>'+f.cap+'</figcaption></figure>';
+  }
+  W.eia410Fig=fig;
+
+  /* ============================================================
+     2. PROCEDIMIENTOS GUIADOS
+     ============================================================ */
+  function shell(html){
+    var app=D.getElementById('app'); if(!app) return;
+    var cab=(typeof W.head==='function')?W.head(false):'';
+    app.innerHTML=cab+'<main class="wrap page">'+html+'</main>';
+    try{ W.scrollTo(0,0); }catch(_){ }
+  }
+  function volver(){
+    return '<button class="eia410-btn alt" type="button" onclick="home&&home()">← Volver a Inicio</button>';
+  }
+
+  /* --- A. Aislar el circuito que falla, manteniendo luz en el resto ---
+     Es el procedimiento que más resuelve por sí solo y el que la app
+     no ofrecía de forma explícita. */
+  W.eia410Aislar=function(){
+    shell(
+      '<h1>🔍 Encontrar qué circuito falla</h1>'+
+      '<p class="subtitle">Con esto vas a saber qué parte de la casa da problema, y podés dejar el resto con luz mientras esperás al electricista.</p>'+
+      '<div class="eia410-warn"><b>Antes de empezar:</b> si hay humo, olor a quemado, chispas, algo caliente o agua cerca de la electricidad, no sigas. Cortá la llave general y llamá a un profesional.</div>'+
+      fig('cuadro')+
+      '<div class="eia410-paso"><h3>Paso a paso</h3>'+
+      '<p class="sub">Solo tocás las palancas del cuadro. No hay que abrir nada ni tocar cables.</p>'+
+      '<ol>'+
+      '<li><b>Bajá todas las llaves pequeñas</b> (las térmicas), una por una. Dejá arriba la general y el diferencial.</li>'+
+      '<li><b>Subí las térmicas de a una</b>, esperando unos segundos entre cada una.</li>'+
+      '<li><b>Cuando una haga saltar todo otra vez, esa es la del problema.</b> Bajala y dejala bajada.</li>'+
+      '<li><b>Subí el resto.</b> El resto de la casa vuelve a tener luz; solo queda sin servicio la zona afectada.</li>'+
+      '<li>Anotá qué dejó de funcionar: es lo primero que te va a preguntar el electricista.</li>'+
+      '</ol></div>'+
+      '<div class="eia410-ok"><b>Si funcionó:</b> ya aislaste el problema y tenés luz en el resto de la casa. No vuelvas a subir esa llave hasta que lo revisen: si salta, es por algo.</div>'+
+      '<div class="eia410-warn"><b>Si al subir la general vuelve a saltar con todas las térmicas bajadas,</b> el problema está antes del cuadro. Ahí sí hace falta un electricista o la distribuidora.</div>'+
+      '<button class="eia410-btn" type="button" onclick="eia410Apanar()">🩹 Cómo apañarme mientras tanto</button>'+
+      '<button class="eia410-btn alt" type="button" onclick="eia340PedirTecnico&&eia340PedirTecnico()">👷 Que me contacte un electricista</button>'+
+      volver());
+  };
+
+  /* --- B. Contador / ICP: exceso de potencia --- */
+  W.eia410Contador=function(){
+    var esp=es();
+    shell(
+      '<h1>⚡ Se fue la luz y no saltó nada en el cuadro</h1>'+
+      '<p class="subtitle">Si en el cuadro está todo arriba pero no hay luz, lo más probable es que hayas pasado la potencia contratada.</p>'+
+      '<div class="eia410-ok">Suele pasar al juntar varias cosas de mucho consumo a la vez: horno, termo, aire, secadora, vitrocerámica. <b>No es una avería: es un corte por consumo.</b></div>'+
+      '<div class="eia410-paso"><h3>1. Quitá consumo primero</h3>'+
+      '<p class="sub">Si no lo hacés, va a volver a cortar en cuanto lo rearmes.</p>'+
+      '<ol><li>Apagá o desenchufá lo que estaba funcionando cuando se fue la luz, sobre todo lo que más consume.</li></ol></div>'+
+      '<div class="eia410-paso"><h3>2. Probá desde el cuadro</h3>'+
+      '<p class="sub">Es lo más cómodo y la mayoría de las veces alcanza.</p>'+
+      '<ol>'+
+      '<li>Bajá la <b>llave general</b>.</li>'+
+      '<li>Esperá unos <b>10 segundos</b>.</li>'+
+      '<li>Volvé a subirla.</li>'+
+      '</ol></div>'+
+      (esp?
+      '<div class="eia410-paso"><h3>3. Si no vuelve, rearmá desde el contador</h3>'+
+      '<p class="sub">Los contadores digitales llevan el limitador de potencia (ICP) dentro.</p>'+
+      '<ol>'+
+      '<li>Buscá el contador: suele estar en el rellano, la entrada o un armario del portal.</li>'+
+      '<li>Mirá la pantalla. Si dice <b>ICP 00 PULSE</b>, confirmado: cortó por exceso de potencia.</li>'+
+      '<li>Pulsá el <b>botón amarillo</b> (al lado de la pantalla o arriba a la derecha) y <b>mantenelo unos 3 segundos</b>.</li>'+
+      '<li>Vas a oír un chasquido dentro del contador: la luz vuelve.</li>'+
+      '</ol></div>'+
+      fig('contador')+
+      '<div class="eia410-warn"><b>Si el contador está precintado o dentro de un armario cerrado de la comunidad,</b> no fuerces nada: llamá a tu distribuidora. El teléfono está en la factura.</div>'
+      :
+      '<div class="eia410-paso"><h3>3. Si no vuelve</h3>'+
+      '<p class="sub">En Argentina el corte por exceso de consumo se comporta distinto según la distribuidora y el tipo de medidor.</p>'+
+      '<ol>'+
+      '<li>Revisá si el medidor tiene alguna llave o interruptor visible y accesible.</li>'+
+      '<li>Si no lo tiene o está precintado, <b>no lo toques</b>: llamá a tu distribuidora (Edenor, Edesur, EPE, EPEC, según tu zona). El número está en la factura.</li>'+
+      '</ol></div>'+
+      '<div class="eia410-warn"><b>Nunca manipules el medidor ni rompas un precinto.</b> Además de ser peligroso, es una infracción que puede acarrear multa.</div>')+
+      '<div class="eia410-ok"><b>Si te pasa a menudo:</b> no es un fallo de la instalación, es que necesitás más potencia contratada. Se pide a la comercializadora. Mientras tanto, evitá juntar varios aparatos de alto consumo a la vez.</div>'+
+      '<button class="eia410-btn alt" type="button" onclick="eia410Aislar()">🔍 No era esto: buscar qué circuito falla</button>'+
+      volver());
+  };
+
+  /* --- C. Apañarse hasta que llegue el electricista --- */
+  W.eia410Apanar=function(){
+    shell(
+      '<h1>🩹 Apañarte hasta que venga el electricista</h1>'+
+      '<p class="subtitle">Cómo pasar los próximos días con la mayor normalidad posible, sin forzar nada.</p>'+
+      '<div class="eia410-warn"><b>La regla que no se rompe:</b> nunca vuelvas a subir una protección que salta sola, ni la sustituyas por una más grande, ni puentees nada. Salta porque hay un problema; anularla no lo quita, lo esconde.</div>'+
+      '<div class="eia410-paso"><h3>Si aislaste el circuito que falla</h3>'+
+      '<ol>'+
+      '<li>Dejá esa térmica <b>bajada</b> y el resto arriba: tenés luz en el resto de la casa.</li>'+
+      '<li>Si la zona sin luz tiene la nevera, <b>enchufala con un alargador a otra habitación</b> que funcione. Es la prioridad.</li>'+
+      '<li>Poné un cartel o avisá en casa de qué enchufes no hay que usar.</li>'+
+      '</ol></div>'+
+      '<div class="eia410-paso"><h3>Si el problema es un aparato concreto</h3>'+
+      '<ol>'+
+      '<li>Dejalo desenchufado. El resto de la casa puede funcionar con normalidad.</li>'+
+      '<li>No lo uses "solo un rato": si provoca una fuga, el riesgo está cada vez que se enchufa.</li>'+
+      '</ol></div>'+
+      '<div class="eia410-paso"><h3>Si te falta luz en una zona</h3>'+
+      '<ol>'+
+      '<li>Usá lámparas de pie o de mesa enchufadas a un circuito que sí funcione.</li>'+
+      '<li>Alargadores: uno solo por enchufe, sin encadenar uno detrás de otro, y sin enchufar aparatos de mucho consumo (estufa, secador, microondas).</li>'+
+      '</ol></div>'+
+      '<div class="eia410-paso"><h3>Lo que conviene evitar estos días</h3>'+
+      '<ol>'+
+      '<li>Juntar varios aparatos de alto consumo a la vez.</li>'+
+      '<li>Usar enchufes de la zona afectada, aunque parezcan funcionar.</li>'+
+      '<li>Mojar o limpiar con agua cerca de la zona con problema.</li>'+
+      '</ol></div>'+
+      '<div class="eia410-ok"><b>Cuando venga el electricista</b> vas a poder decirle: qué circuito es, cuándo empezó, qué lo dispara y qué ya probaste. Eso le ahorra media visita.</div>'+
+      '<button class="eia410-btn" type="button" onclick="eia340PedirTecnico&&eia340PedirTecnico()">👷 Que me contacte un electricista</button>'+
+      volver());
+  };
+
+  /* --- D. Probar el diferencial (con ilustración) --- */
+  W.eia410Diferencial=function(){
+    shell(
+      '<h1>🧪 Probar el diferencial</h1>'+
+      '<p class="subtitle">Es la única comprobación de seguridad que podés hacer vos, y toma cinco segundos.</p>'+
+      fig('diferencial')+
+      '<div class="eia410-paso"><h3>Cómo se hace</h3>'+
+      '<ol>'+
+      '<li>Avisá en casa: se va a cortar la luz un momento.</li>'+
+      '<li>Apretá el botón <b>T</b> (o TEST) del diferencial.</li>'+
+      '<li>Debe cortar <b>al instante</b>. Si corta, está bien.</li>'+
+      '<li>Volvé a subir la palanca.</li>'+
+      '</ol></div>'+
+      '<div class="eia410-warn"><b>Si no corta al apretar el botón,</b> el diferencial está fallado y no te está protegiendo de una descarga. Llamá a un electricista: esto no admite espera.</div>'+
+      '<div class="eia410-ok">Conviene repetirlo <b>una vez al mes</b>.</div>'+
+      volver());
+  };
+
+  /* ============================================================
+     3. ENGANCHES
+     ------------------------------------------------------------
+     Se añaden accesos a estos procedimientos dentro de la tarjeta
+     de urgencia, sin sustituir el diagnóstico guiado que ya existe.
+     ============================================================ */
+  function inyectar(){
+    try{
+      var cont=D.querySelector('.eia-emergency-options-inner');
+      if(!cont || cont.querySelector('#e410Extra')) return;
+      var caja=D.createElement('div');
+      caja.id='e410Extra';
+      caja.style.cssText='margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.18)';
+      caja.innerHTML='<p style="margin:0 0 8px;font-size:12.5px;opacity:.9"><b>Procedimientos rápidos</b></p>'+
+        '<div class="eia-emergency-secondary">'+
+        '<button class="btn alt" type="button" onclick="eia410Aislar()">🔍 Ver qué circuito falla</button>'+
+        '<button class="btn alt" type="button" onclick="eia410Contador()">⚡ Todo arriba pero sin luz</button>'+
+        '<button class="btn alt" type="button" onclick="eia410Apanar()">🩹 Apañarme hasta que venga</button>'+
+        '<button class="btn alt" type="button" onclick="eia410Diferencial()">🧪 Probar el diferencial</button>'+
+        '</div>';
+      cont.appendChild(caja);
+    }catch(_){ }
+  }
+  try{
+    var app=D.getElementById('app');
+    if(app && W.MutationObserver){
+      var t=null;
+      new MutationObserver(function(){ clearTimeout(t); t=setTimeout(inyectar,170); })
+        .observe(app,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',inyectar); else inyectar();
 })();
 </script>
 
