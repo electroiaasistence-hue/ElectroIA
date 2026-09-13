@@ -731,6 +731,72 @@ app.get('/api/electricistas', async (req, res) => {
 });
 
 /* ============================================================
+   ALTA DE COMERCIOS ANUNCIANTES
+   ------------------------------------------------------------
+   Tiendas de material eléctrico que quieren aparecer ante los
+   usuarios de su zona mediante una suscripción.
+   IMPORTANTE: la publicidad NUNCA debe entrar en el diagnóstico
+   ni en los cálculos. Si el dimensionado empezara a recomendar
+   la marca que paga, se pierde la credibilidad técnica, que es
+   el único activo real del producto. Los anunciantes van en
+   espacios claramente identificados como tales.
+   ============================================================ */
+app.post('/api/comercios', rateLimit(5, 60 * 60 * 1000, 'comercios'), authOpcional, async (req, res) => {
+  if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
+  const { nombre, contacto, email, telefono, web, zona, pais, tipo, notas } = req.body || {};
+  if (!String(nombre || '').trim() || !String(telefono || '').trim()) {
+    return res.status(400).json({ error: 'DATOS_REQUERIDOS' });
+  }
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS comercios (
+        id UUID PRIMARY KEY,
+        user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+        nombre TEXT NOT NULL DEFAULT '',
+        contacto TEXT NOT NULL DEFAULT '',
+        email TEXT NOT NULL DEFAULT '',
+        telefono TEXT NOT NULL DEFAULT '',
+        web TEXT NOT NULL DEFAULT '',
+        zona TEXT NOT NULL DEFAULT '',
+        pais TEXT NOT NULL DEFAULT '',
+        tipo TEXT NOT NULL DEFAULT '',
+        notas TEXT NOT NULL DEFAULT '',
+        estado TEXT NOT NULL DEFAULT 'nuevo',
+        activo BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS comercios_created_idx ON comercios(created_at DESC);
+    `);
+    const id = crypto.randomUUID();
+    await pool.query(
+      'INSERT INTO comercios(id,user_id,nombre,contacto,email,telefono,web,zona,pais,tipo,notas) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)',
+      [id, req.user?.sub || null,
+       String(nombre).slice(0, 160), String(contacto || '').slice(0, 120),
+       String(email || '').slice(0, 160), String(telefono).slice(0, 60),
+       String(web || '').slice(0, 200), String(zona || '').slice(0, 200),
+       pais === 'es' ? 'es' : 'ar', String(tipo || '').slice(0, 80),
+       String(notas || '').slice(0, 1000)]
+    );
+    res.json({ ok: true, id });
+  } catch (e) {
+    console.error('comercios', e.message);
+    res.status(500).json({ error: 'FALLO' });
+  }
+});
+
+app.get('/api/comercios', async (req, res) => {
+  const token = req.get('x-admin-token') || '';
+  if (!process.env.ADMIN_TOKEN || token !== process.env.ADMIN_TOKEN) {
+    return res.status(404).json({ error: 'NOT_FOUND' });
+  }
+  if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
+  try {
+    const r = await pool.query('SELECT * FROM comercios ORDER BY created_at DESC LIMIT 300');
+    res.json(r.rows);
+  } catch (_) { res.status(500).json({ error: 'FALLO' }); }
+});
+
+/* ============================================================
    PLANES Y FACTURACIÓN
    ============================================================ */
 

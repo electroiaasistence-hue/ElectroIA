@@ -11435,4 +11435,250 @@ ${W.sourcesBlock?W.sourcesBlock():''}
 })();
 </script>
 
+<style id="eia470-css">
+.eia470-foot{margin:26px 0 10px;border-top:1px solid #26303e;padding-top:18px}
+.eia470-marca{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+.eia470-marca b{font-size:15.5px;color:#eaf1fa}
+.eia470-lema{font-size:12.8px;color:#93a6bd;line-height:1.5;margin:0 0 14px}
+.eia470-sec{border-top:1px solid #1f2a37}
+.eia470-sec:first-of-type{border-top:0}
+.eia470-h{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;background:none;border:0;padding:13px 2px;cursor:pointer;text-align:left}
+.eia470-h span.t{font-size:13.5px;font-weight:800;color:#cfdcea;letter-spacing:.02em}
+.eia470-h span.fl{font-size:15px;color:#7f94ad;transition:transform .2s}
+.eia470-h.on span.fl{transform:rotate(180deg)}
+.eia470-body{display:none;padding:0 2px 14px}
+.eia470-body.on{display:block}
+.eia470-link{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;margin-bottom:7px;border-radius:11px;border:1px solid #2b3748;background:#141c27;color:#dbe6f3;font:inherit;font-size:13.5px;text-align:left;text-decoration:none;cursor:pointer}
+.eia470-link:hover{background:#1b2836}
+.eia470-link .ic{font-size:18px;flex:0 0 auto}
+.eia470-link .tx{flex:1;min-width:0}
+.eia470-link .tx b{display:block;font-size:13.8px;color:#eaf1fa;font-weight:700}
+.eia470-link .tx small{display:block;font-size:11.8px;color:#8ea4bd;line-height:1.4;margin-top:1px}
+.eia470-link .ex{font-size:12px;color:#7f94ad}
+.eia470-redes{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.eia470-red{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 6px;border-radius:11px;border:1px solid #2b3748;background:#141c27;color:#dbe6f3;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer}
+.eia470-red.ig{background:linear-gradient(135deg,#3b1d4e,#7b2b5e);border-color:#8d3b6d;color:#fbe7f4}
+.eia470-red.wa{background:#0e3d2a;border-color:#1c6f4a;color:#d6f5e3}
+.eia470-red.fb{background:#122a4d;border-color:#24508c;color:#dbe9fb}
+.eia470-red.yt{background:#3d1416;border-color:#7a2429;color:#fadedf}
+.eia470-red.tt{background:#1a1a1e;border-color:#3a3a44;color:#e8e8ee}
+.eia470-red.li{background:#0d2b3f;border-color:#1c5a8c;color:#d7ebf8}
+.eia470-disc{margin-top:14px;padding:11px;border-radius:10px;background:#2a1d10;border:1px solid #5c4014;color:#f0d9a8;font-size:12px;line-height:1.5}
+.eia470-cop{margin-top:11px;font-size:11.5px;color:#7f94ad}
+.eia470-vacio{font-size:12.5px;color:#8ea4bd;line-height:1.5;padding:4px 2px 8px}
+/* El pie anterior (v380) tiene su propio observador que lo vuelve a insertar
+   tras cada render. En vez de pelear con él en cada mutación, se oculta:
+   sus enlaces siguen existiendo en el DOM y nada que dependiera de ellos
+   se rompe, pero el usuario solo ve el pie organizado por secciones. */
+.eia380-foot{display:none!important}
+</style>
+
+<script id="electroia-v470-pie">
+(function(){
+  'use strict';
+  var W=window,D=document;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  /* ============================================================
+     DATOS DE CONTACTO Y REDES
+     ------------------------------------------------------------
+     Se centralizan aquí para poder cambiarlos en un solo sitio.
+     Las entradas vacías NO se pintan: un enlace a una red que no
+     existe da peor impresión que no tener la red.
+     Para activarlas, rellená los valores.
+     ============================================================ */
+  var CONTACTO={
+    email:'',                       // ej. 'hola@electro-ia.com'
+    whatsapp:'',                    // solo dígitos con prefijo, ej. '5491155555555'
+    telefono:''                     // ej. '+34600000000'
+  };
+  var REDES={
+    instagram:'',                   // ej. 'https://instagram.com/electroia'
+    facebook:'',
+    youtube:'',
+    tiktok:'',
+    linkedin:''
+  };
+  W.ELECTROIA_CONTACTO=CONTACTO;
+  W.ELECTROIA_REDES=REDES;
+
+  var META={
+    instagram:{ic:'📷',n:'Instagram',cls:'ig'},
+    facebook:{ic:'👥',n:'Facebook',cls:'fb'},
+    youtube:{ic:'▶️',n:'YouTube',cls:'yt'},
+    tiktok:{ic:'🎵',n:'TikTok',cls:'tt'},
+    linkedin:{ic:'💼',n:'LinkedIn',cls:'li'}
+  };
+
+  W.eia470Toggle=function(id){
+    var b=D.getElementById(id+'-h'), c=D.getElementById(id);
+    if(!b||!c) return;
+    var abierto=c.classList.toggle('on');
+    b.classList.toggle('on',abierto);
+    b.setAttribute('aria-expanded',abierto?'true':'false');
+  };
+
+  function seccion(id,titulo,contenido){
+    return '<div class="eia470-sec">'+
+      '<button class="eia470-h" id="'+id+'-h" type="button" aria-expanded="false" aria-controls="'+id+'" '+
+      'onclick="eia470Toggle(\''+id+'\')"><span class="t">'+esc(titulo)+'</span><span class="fl" aria-hidden="true">⌄</span></button>'+
+      '<div class="eia470-body" id="'+id+'">'+contenido+'</div></div>';
+  }
+  function link(ic,tit,sub,accion,externo){
+    var extra = externo ? ' target="_blank" rel="noopener noreferrer"' : '';
+    var tag = externo ? 'a href="'+accion+'"'+extra : 'button type="button" onclick="'+accion+'"';
+    return '<'+tag+' class="eia470-link">'+
+      '<span class="ic" aria-hidden="true">'+ic+'</span>'+
+      '<span class="tx"><b>'+esc(tit)+'</b><small>'+esc(sub)+'</small></span>'+
+      (externo?'<span class="ex" aria-hidden="true">↗</span>':'<span class="ex" aria-hidden="true">›</span>')+
+      '</'+(externo?'a':'button')+'>';
+  }
+
+  function pie(){
+    // --- Contacto ---
+    var c='';
+    if(CONTACTO.email) c+=link('✉️','Escribinos',CONTACTO.email,'mailto:'+CONTACTO.email,true);
+    if(CONTACTO.whatsapp) c+=link('💬','WhatsApp','Escribinos por WhatsApp','https://wa.me/'+CONTACTO.whatsapp,true);
+    if(CONTACTO.telefono) c+=link('📞','Teléfono',CONTACTO.telefono,'tel:'+CONTACTO.telefono,true);
+    if(!c) c='<p class="eia470-vacio">Todavía no hay un canal de contacto publicado.</p>';
+
+    // --- Redes ---
+    var r=Object.keys(REDES).filter(function(k){ return REDES[k]; });
+    var redes = r.length
+      ? '<div class="eia470-redes">'+r.map(function(k){
+          var m=META[k];
+          return '<a class="eia470-red '+m.cls+'" href="'+esc(REDES[k])+'" target="_blank" rel="noopener noreferrer">'+
+            '<span aria-hidden="true">'+m.ic+'</span> '+esc(m.n)+'</a>';
+        }).join('')+'</div>'
+      : '<p class="eia470-vacio">Todavía no hay redes sociales publicadas.</p>';
+
+    // --- Trabajá con nosotros ---
+    var t=link('👷','¿Sos electricista?','Recibí avisos de gente de tu zona','eia380Electricistas()')+
+          link('🏪','¿Tenés una tienda de material?','Llegá a los profesionales de tu zona','eia470Comercios()');
+
+    // --- Ayuda ---
+    var a=link('📚','Aprender electricidad','8 niveles con ejercicios y examen','aprender&&aprender()')+
+          link('🚨','Urgencia eléctrica','Diagnóstico guiado paso a paso','home&&home()')+
+          link('🔐','Mis datos','Descargar o eliminar tu información','eia380MisDatos()');
+
+    // --- Legal ---
+    var l=link('⚖️','Aviso legal','Titular y condiciones de uso','eia380Ver(\'aviso\')')+
+          link('🔒','Privacidad','Qué datos tratamos y para qué','eia380Ver(\'privacidad\')')+
+          link('📄','Términos y condiciones','Qué es y qué no es este servicio','eia380Ver(\'terminos\')')+
+          link('🍪','Cookies y almacenamiento','Qué se guarda en tu dispositivo','eia380Ver(\'cookies\')');
+
+    return '<footer class="eia470-foot">'+
+      '<div class="eia470-marca"><span aria-hidden="true">⚡</span><b>ElectroIA</b></div>'+
+      '<p class="eia470-lema">Herramienta de orientación eléctrica para el hogar y para profesionales. '+
+      'España y Argentina.</p>'+
+      seccion('e470Ayuda','QUÉ PODÉS HACER',a)+
+      seccion('e470Trab','TRABAJÁ CON NOSOTROS',t)+
+      seccion('e470Cont','CONTACTO',c)+
+      seccion('e470Red','REDES SOCIALES',redes)+
+      seccion('e470Leg','LEGAL',l)+
+      '<div class="eia470-disc"><b>⚠️ ElectroIA no sustituye a un electricista habilitado.</b> '+
+      'Los contenidos son orientativos. Ante humo, olor a quemado, chispas o una descarga: '+
+      'cortá la corriente y llamá a un profesional o a emergencias.</div>'+
+      '<div class="eia470-cop">© '+new Date().getFullYear()+' ElectroIA</div>'+
+    '</footer>';
+  }
+
+  /* ============================================================
+     ALTA DE COMERCIOS ANUNCIANTES
+     ============================================================ */
+  W.eia470Comercios=function(){
+    var p='ar'; try{ if(typeof W.eia360Pais==='function') p=W.eia360Pais(); }catch(_){ }
+    var zonas=[]; try{ if(typeof W.eia430Zonas==='function') zonas=W.eia430Zonas(p)||[]; }catch(_){ }
+    var app=D.getElementById('app'); if(!app) return;
+    var cab=(typeof W.head==='function')?W.head(true):'';
+    app.innerHTML=cab+'<main class="wrap page">'+
+      '<div class="eia380-doc"><h2>🏪 Anunciá tu tienda en ElectroIA</h2>'+
+      '<p class="act">Para tiendas de material eléctrico, distribuidores y mayoristas.</p>'+
+      '<p>Los electricistas usan ElectroIA para calcular, presupuestar y documentar su trabajo. '+
+      'Cuando terminan un presupuesto, saben exactamente qué material necesitan. Ese es el momento '+
+      'en el que tu tienda puede aparecer.</p>'+
+      '<h3>Cómo funciona</h3>'+
+      '<ul><li>Aparecés ante los profesionales y usuarios de <b>tu zona</b>, no en todo el país.</li>'+
+      '<li>Espacios identificados claramente como publicidad.</li>'+
+      '<li>Suscripción mensual, sin permanencia.</li></ul>'+
+      '<div class="ojo"><b>Lo que no hacemos</b><p>La publicidad nunca entra en el diagnóstico ni en los cálculos. '+
+      'Un dimensionado que recomendara la marca que paga dejaría de ser fiable, y la credibilidad técnica es lo único '+
+      'que hace que un electricista use esta herramienta. Por eso los anunciantes van en espacios propios y señalados.</p></div>'+
+      '<h3>Dejanos tus datos</h3>'+
+      '<label class="eia380-f">Nombre del comercio *<input id="e470N" placeholder="Ej.: Materiales El Rayo"></label>'+
+      '<label class="eia380-f">Persona de contacto<input id="e470C" placeholder="Nombre y apellido"></label>'+
+      '<label class="eia380-f">Teléfono *<input id="e470T" type="tel" placeholder="Con prefijo"></label>'+
+      '<label class="eia380-f">Email<input id="e470E" type="email"></label>'+
+      '<label class="eia380-f">Web o redes<input id="e470W" placeholder="https://"></label>'+
+      '<label class="eia380-f">País<select id="e470P" onchange="eia470Zonas()">'+
+        '<option value="ar"'+(p==='ar'?' selected':'')+'>Argentina</option>'+
+        '<option value="es"'+(p==='es'?' selected':'')+'>España</option></select></label>'+
+      '<label class="eia380-f">Zona<select id="e470Z"><option value="">Elegí tu zona…</option>'+
+        zonas.map(function(z){ return '<option>'+esc(z)+'</option>'; }).join('')+'</select></label>'+
+      '<label class="eia380-f">Tipo de negocio<select id="e470Ti">'+
+        '<option>Tienda de material eléctrico</option>'+
+        '<option>Distribuidor o mayorista</option>'+
+        '<option>Fabricante</option>'+
+        '<option>Alquiler de herramienta</option>'+
+        '<option>Formación técnica</option>'+
+        '<option>Otro</option></select></label>'+
+      '<label class="eia380-f">Contanos brevemente<textarea id="e470No" rows="3" placeholder="Qué vendés y a qué zona llegás"></textarea></label>'+
+      '<button class="eia380-btn" type="button" onclick="eia470Enviar()">Enviar mis datos</button>'+
+      '<div id="e470Out" class="eia380-out" style="display:none"></div>'+
+      '<p style="font-size:12px;color:#55687f;margin-top:11px">Al enviar aceptás que tratemos estos datos para contactarte, '+
+      'conforme a la <button type="button" style="background:none;border:0;color:#1663c7;text-decoration:underline;padding:0;font:inherit;cursor:pointer" '+
+      'onclick="eia380Ver(\'privacidad\')">política de privacidad</button>.</p>'+
+      '</div>'+
+      '<button class="eia380-btn alt" type="button" onclick="home&&home()">← Volver a Inicio</button>'+
+      '</main>';
+    if(W.eiaEtiquetarCampos) W.eiaEtiquetarCampos();
+  };
+  W.eia470Zonas=function(){
+    var s=D.getElementById('e470Z'), p=D.getElementById('e470P');
+    if(!s||!p) return;
+    var z=[]; try{ if(typeof W.eia430Zonas==='function') z=W.eia430Zonas(p.value)||[]; }catch(_){ }
+    s.innerHTML='<option value="">Elegí tu zona…</option>'+z.map(function(x){ return '<option>'+esc(x)+'</option>'; }).join('');
+  };
+  W.eia470Enviar=function(){
+    var v=function(id){ var e=D.getElementById(id); return e?e.value.trim():''; };
+    var out=D.getElementById('e470Out');
+    function msg(t,c){ if(out){ out.style.display='block'; out.className='eia380-out '+(c||''); out.textContent=t; } }
+    if(!v('e470N')||!v('e470T')) return msg('Necesitamos al menos el nombre del comercio y un teléfono.','bad');
+    msg('Enviando…');
+    fetch('/api/comercios',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({nombre:v('e470N'),contacto:v('e470C'),telefono:v('e470T'),
+        email:v('e470E'),web:v('e470W'),pais:v('e470P'),zona:v('e470Z'),
+        tipo:v('e470Ti'),notas:v('e470No')})})
+      .then(function(r){ return {ok:r.ok}; })
+      .then(function(x){
+        msg(x.ok? '✅ Recibido. Te contactamos para contarte las opciones y precios.'
+                : 'No se pudo enviar ahora. Probá de nuevo en un rato.', x.ok?'ok':'bad');
+      })
+      .catch(function(){ msg('Sin conexión. Probá más tarde.','bad'); });
+  };
+
+  /* Sustituye el pie anterior por el nuevo, organizado por secciones. */
+  function ponerPie(){
+    try{
+      var main=D.querySelector('#app main'); if(!main) return;
+      var viejo=main.querySelector('.eia380-foot');
+      if(viejo) viejo.remove();
+      if(main.querySelector('.eia470-foot')) return;
+      var f=D.createElement('div'); f.innerHTML=pie();
+      main.appendChild(f.firstChild);
+    }catch(_){ }
+  }
+  try{
+    var app=D.getElementById('app');
+    if(app && W.MutationObserver){
+      var t=null;
+      new MutationObserver(function(){ clearTimeout(t); t=setTimeout(ponerPie,240); })
+        .observe(app,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',ponerPie); else ponerPie();
+})();
+</script>
+
 </body></html>
