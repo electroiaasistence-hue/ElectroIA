@@ -7493,6 +7493,10 @@ ${W.sourcesBlock?W.sourcesBlock():''}
 .eia350-lv small{display:block;font-size:12.5px;color:#55687f;line-height:1.4}
 .eia350-lv .fl{font-size:19px;color:#546b88}
 .eia350-lv.done{border-color:#9ed9b4;background:#f4fdf7}
+.eia350-lv.bloq{background:#f1f4f8;border-color:#d3dbe6;opacity:.78;cursor:pointer}
+.eia350-lv.bloq b{color:#4a5b70}
+.eia350-lv.bloq .ic{background:#e2e8f0}
+.eia350-lv.bloq .badge{background:#dbe2ec;color:#54637a}
 .eia350-lv .badge{display:inline-block;margin-top:5px;font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;background:#e4ebf5;color:#3d5675}
 .eia350-lv.done .badge{background:#d5f2e0;color:#15683a}
 .eia350-ls{width:100%;text-align:left;display:grid;grid-template-columns:34px 1fr 22px;gap:10px;align-items:center;background:#fff;border:1px solid #dde5ef;border-radius:12px;padding:11px;margin-bottom:7px;cursor:pointer}
@@ -7558,6 +7562,30 @@ ${W.sourcesBlock?W.sourcesBlock():''}
     var d=leer(); d.lecciones=d.lecciones||{}; d.lecciones[lid]={pct:pct,fecha:new Date().toISOString()}; guardar(d);
   }
   function notaNivel(nid){ var d=leer(); return (d.examenes&&d.examenes[nid])||null; }
+
+  /* ---------------------------------------------------------
+     PROGRESIÓN POR NIVELES
+     ---------------------------------------------------------
+     Un nivel se abre cuando el anterior está APROBADO: su examen
+     con 70% o más. El nivel 1 está siempre abierto.
+     El motivo no es gamificar: los niveles se apoyan unos en
+     otros. Alguien que no distingue fase de neutro no puede
+     interpretar una coordinación Ib ≤ In ≤ Iz, y dejarle saltar
+     hasta ahí solo produce frustración y confianza mal puesta.
+     --------------------------------------------------------- */
+  var APROBADO=70;
+  function aprobado(nid){ var n=notaNivel(nid); return !!(n && n.pct>=APROBADO); }
+  function indiceNivel(nid){
+    for(var i=0;i<NIVELES.length;i++){ if(NIVELES[i].id===nid) return i; }
+    return -1;
+  }
+  function abierto(nid){
+    var i=indiceNivel(nid);
+    if(i<=0) return true;                 // el primero siempre
+    return aprobado(NIVELES[i-1].id);     // el anterior aprobado
+  }
+  W.eia350Abierto=abierto;
+  W.eia350Aprobado=aprobado;
 
   /* =========================================================
      CONTENIDO
@@ -8048,20 +8076,53 @@ ${W.sourcesBlock?W.sourcesBlock():''}
       '<div class="eia350-prog"><b>Tu progreso</b><div class="eia350-bar"><i style="width:'+pct+'%"></i></div>'+
       '<span>'+hec+' de '+tot+' lecciones · '+pct+'%</span></div>';
 
-    h+=NIVELES.map(function(nv){
+    h+=NIVELES.map(function(nv,idx){
       var d=nv.ls.filter(function(l){ return hecho(l.id); }).length;
       var comp=d===nv.ls.length;
       var nota=notaNivel(nv.id);
-      return '<button type="button" class="eia350-lv'+(comp?' done':'')+'" onclick="eia350Nivel(\''+nv.id+'\')">'+
-        '<span class="ic">'+nv.ic+'</span><span><b>'+esc(nv.t)+'</b><small>'+esc(nv.d)+'</small>'+
-        '<span class="badge">'+d+'/'+nv.ls.length+' lecciones'+(nota?' · examen '+nota.pct+'%':'')+'</span></span>'+
+      var libre=abierto(nv.id);
+      var apr=aprobado(nv.id);
+      if(!libre){
+        var previo=NIVELES[idx-1];
+        // No se marca aria-disabled: el botón SÍ hace algo útil (explica qué
+        // falta para abrirlo). Marcarlo como deshabilitado lo escondería de
+        // los lectores de pantalla y dejaría al usuario sin esa explicación.
+        return '<button type="button" class="eia350-lv bloq" '+
+          'aria-label="'+esc(nv.t)+' · bloqueado. Ver qué falta para abrirlo." '+
+          'onclick="eia350Bloqueado(\''+nv.id+'\')">'+
+          '<span class="ic">🔒</span><span><b>'+esc(nv.t)+'</b>'+
+          '<small>Se abre al aprobar el examen de: '+esc(previo.t)+'</small>'+
+          '<span class="badge">Bloqueado</span></span>'+
+          '<span class="fl" aria-hidden="true">›</span></button>';
+      }
+      return '<button type="button" class="eia350-lv'+(apr?' done':'')+'" onclick="eia350Nivel(\''+nv.id+'\')">'+
+        '<span class="ic">'+(apr?'✅':nv.ic)+'</span><span><b>'+esc(nv.t)+'</b><small>'+esc(nv.d)+'</small>'+
+        '<span class="badge">'+d+'/'+nv.ls.length+' lecciones'+
+        (nota?' · examen '+nota.pct+'%'+(apr?'':' (hace falta '+APROBADO+'%)'):'')+'</span></span>'+
         '<span class="fl" aria-hidden="true">›</span></button>';
     }).join('');
     shell(h);
   };
 
+  W.eia350Bloqueado=function(nid){
+    var i=indiceNivel(nid); if(i<1) return;
+    var previo=NIVELES[i-1], n=notaNivel(previo.id);
+    shell('<div class="eia350-hero"><h1>🔒 Todavía no</h1>'+
+      '<p>Este nivel se apoya en lo anterior. Aprobá primero el examen del nivel previo.</p></div>'+
+      '<div class="eia350-doc"><h2>Te falta aprobar: '+esc(previo.t)+'</h2>'+
+      '<p>'+(n
+        ? 'Tu mejor nota en ese examen es <b>'+n.pct+'%</b>. Hace falta <b>'+APROBADO+'%</b> para seguir.'
+        : 'Todavía no rendiste ese examen.')+'</p>'+
+      '<p>No es un capricho: cada nivel usa lo del anterior. Saltearlo hace que lo que viene no se entienda '+
+      'y, en electricidad, entender a medias es peor que no saber.</p></div>'+
+      '<button class="eia350-btn" type="button" onclick="eia350Nivel(\''+previo.id+'\')">Ir a '+esc(previo.t)+'</button>'+
+      '<button class="eia350-btn alt" type="button" onclick="eia350Inicio()">← Volver a niveles</button>');
+  };
+
   W.eia350Nivel=function(nid){
     var nv=NIVELES.find(function(x){ return x.id===nid; }); if(!nv) return W.eia350Inicio();
+    // Guardia real: ocultar el botón no basta, esta función es global.
+    if(!abierto(nid)) return W.eia350Bloqueado(nid);
     var todas=nv.ls.every(function(l){ return hecho(l.id); });
     var nota=notaNivel(nid);
     var h='<div class="eia350-hero"><h1>'+nv.ic+' '+esc(nv.t)+'</h1><p>'+esc(nv.d)+'</p></div>';
@@ -8079,6 +8140,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
 
   W.eia350Leccion=function(nid,i){
     var nv=NIVELES.find(function(x){ return x.id===nid; }); if(!nv) return W.eia350Inicio();
+    if(!abierto(nid)) return W.eia350Bloqueado(nid);
     var l=nv.ls[i]; if(!l) return W.eia350Nivel(nid);
     var h='<div class="eia350-doc"><div class="kick">'+esc(nv.t)+'</div><h2>'+l.ic+' '+esc(l.t)+'</h2>'+l.html+'</div>';
     h+='<button class="eia350-btn" type="button" onclick="eia350Ejercicios(\''+nid+'\','+i+')">✏️ Hacer los ejercicios ('+l.q.length+')</button>';
@@ -8096,6 +8158,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
   };
   W.eia350Examen=function(nid){
     var nv=NIVELES.find(function(x){ return x.id===nid; }); if(!nv) return W.eia350Inicio();
+    if(!abierto(nid)) return W.eia350Bloqueado(nid);
     var banco=[];
     nv.ls.forEach(function(l){ l.q.forEach(function(q){ banco.push(q); }); });
     /* mezcla y toma hasta 8 */
@@ -8169,7 +8232,17 @@ ${W.sourcesBlock?W.sourcesBlock():''}
       if(nv&&nv.ls[sig]) h+='<button class="eia350-btn" type="button" onclick="eia350Leccion(\''+TEST.nid+'\','+sig+')">Siguiente lección →</button>';
       h+='<button class="eia350-btn alt" type="button" onclick="eia350Leccion(\''+TEST.nid+'\','+TEST.i+')">Releer la lección</button>';
     } else {
-      h+='<button class="eia350-btn" type="button" onclick="eia350Examen(\''+TEST.nid+'\')">Repetir el examen</button>';
+      // Si el examen se aprobó, avisar del nivel que se acaba de abrir.
+      var i=indiceNivel(TEST.nid), sig=(i>=0)?NIVELES[i+1]:null;
+      if(aprobado(TEST.nid) && sig){
+        h+='<div class="eia350-key" style="margin-top:12px"><b>🔓 NIVEL DESBLOQUEADO</b>'+
+           '<p>Ya podés entrar a <b>'+esc(sig.t)+'</b>.</p></div>'+
+           '<button class="eia350-btn" type="button" onclick="eia350Nivel(\''+sig.id+'\')">Ir a '+esc(sig.t)+' →</button>';
+      } else if(!aprobado(TEST.nid)){
+        h+='<div class="eia350-key" style="margin-top:12px"><b>ℹ️ PARA SEGUIR</b>'+
+           '<p>Hace falta un <b>'+APROBADO+'%</b> para abrir el próximo nivel. Repasá lo que fallaste y volvé a intentarlo: podés repetirlo las veces que quieras.</p></div>';
+      }
+      h+='<button class="eia350-btn alt" type="button" onclick="eia350Examen(\''+TEST.nid+'\')">Repetir el examen</button>';
     }
     h+='<button class="eia350-btn alt" type="button" onclick="eia350Nivel(\''+TEST.nid+'\')">← Volver al nivel</button>';
     shell(h);
@@ -9945,6 +10018,829 @@ ${W.sourcesBlock?W.sourcesBlock():''}
       var t=null;
       new MutationObserver(function(){ clearTimeout(t); t=setTimeout(inyectar,170); })
         .observe(app,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',inyectar); else inyectar();
+})();
+</script>
+
+<style id="eia430-css">
+.eia430-card{background:#fff;border:1px solid #d9e2ee;border-radius:16px;padding:15px;margin:11px 0;color:#1b2736}
+.eia430-card,.eia430-card *{color:#1b2736}
+.eia430-card h3{margin:0 0 4px;font-size:16.5px;color:#0f1b2b}
+.eia430-card .sub{font-size:12.8px;color:#55687f;margin:0 0 12px;line-height:1.45}
+.eia430-f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:700;color:#41506a;margin-bottom:9px}
+.eia430-f input,.eia430-f select,.eia430-f textarea{font:inherit;font-weight:500;padding:10px;border:1px solid #ccd6e2;border-radius:9px;background:#fff;color:#16202e;width:100%;box-sizing:border-box}
+.eia430-g2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.eia430-btn{display:block;width:100%;margin-top:9px;padding:12px;border:0;border-radius:11px;background:#0b63c7;color:#fff;font-weight:800;font-size:14.5px;cursor:pointer}
+.eia430-btn.alt{background:#eef3fa;color:#1c3252;border:1px solid #ccd9ea}
+.eia430-btn.ok{background:#0f7a44}
+.eia430-firma{border:2px dashed #b9c7da;border-radius:12px;background:#fcfdff;touch-action:none;width:100%;height:170px;display:block}
+.eia430-firma.hecha{border-style:solid;border-color:#0f7a44;background:#fff}
+.eia430-out{margin-top:11px;padding:12px;border-radius:11px;background:#f3f7fc;border:1px solid #d8e4f2;font-size:13.5px;line-height:1.5}
+.eia430-out.ok{background:#eafaf0;border-color:#b6e5c8;color:#14602f}
+.eia430-out.bad{background:#fdeeec;border-color:#f0c2bc;color:#8c1a12}
+.eia430-item{border:1px solid #e0e7f1;border-radius:11px;padding:10px;margin-bottom:7px;background:#fff}
+.eia430-item b{display:block;font-size:14px;color:#12203a}
+.eia430-item small{font-size:12px;color:#55687f}
+.eia430-cert{background:linear-gradient(150deg,#12325c,#1d5a9e);border-radius:18px;padding:22px;text-align:center;color:#fff;margin:12px 0}
+.eia430-cert h2{margin:0 0 6px;font-size:21px;color:#fff}
+.eia430-cert .pct{font-size:40px;font-weight:900;margin:8px 0;color:#ffe08a}
+.eia430-cert p{margin:5px 0;font-size:13.5px;color:#d7e6f8;line-height:1.5}
+.eia430-lock{border:1px dashed #b9c7da;border-radius:13px;padding:15px;text-align:center;background:#f7fafd;color:#1b2736}
+.eia430-lock b{display:block;font-size:15px;margin-bottom:5px;color:#0f1b2b}
+.eia430-lock p{font-size:13px;color:#55687f;margin:0 0 10px;line-height:1.5}
+</style>
+
+<script id="electroia-v430-tecnicos">
+(function(){
+  'use strict';
+  var W=window,D=document;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function val(id){var e=D.getElementById(id);return e?e.value.trim():'';}
+  function esPro(){ try{ return typeof W.eia340EsPro==='function' && W.eia340EsPro(); }catch(_){ return false; } }
+  function pais(){ try{ return (typeof W.eia360Pais==='function' && W.eia360Pais()==='es')?'es':'ar'; }catch(_){ return 'ar'; } }
+  function shell(html){
+    var app=D.getElementById('app'); if(!app) return;
+    var cab=(typeof W.head==='function')?W.head(true):'';
+    app.innerHTML=cab+'<main class="wrap page">'+html+'</main>';
+    try{ W.scrollTo(0,0); }catch(_){ }
+    if(W.eiaEtiquetarCampos) W.eiaEtiquetarCampos();
+  }
+  function volver(){ return '<button class="eia430-btn alt" type="button" onclick="eia370Menu&&eia370Menu()">← Volver al Modo Profesional</button>'; }
+
+  /* ============================================================
+     ZONAS DE ESPAÑA Y ARGENTINA
+     ------------------------------------------------------------
+     El alta de electricistas pedía la zona como texto libre, lo que
+     impide después repartir un aviso por proximidad. Con listas
+     cerradas de las 17 comunidades y las 24 jurisdicciones se puede
+     enrutar cada lead a los profesionales de esa zona.
+     ============================================================ */
+  var ZONAS={
+    es:['Andalucía','Aragón','Asturias','Illes Balears','Canarias','Cantabria','Castilla-La Mancha',
+        'Castilla y León','Cataluña','Comunitat Valenciana','Extremadura','Galicia','La Rioja',
+        'Comunidad de Madrid','Región de Murcia','Comunidad Foral de Navarra','País Vasco',
+        'Ceuta','Melilla'],
+    ar:['Ciudad Autónoma de Buenos Aires','Buenos Aires (GBA)','Buenos Aires (interior)','Catamarca',
+        'Chaco','Chubut','Córdoba','Corrientes','Entre Ríos','Formosa','Jujuy','La Pampa','La Rioja',
+        'Mendoza','Misiones','Neuquén','Río Negro','Salta','San Juan','San Luis','Santa Cruz',
+        'Santa Fe','Santiago del Estero','Tierra del Fuego','Tucumán']
+  };
+  W.eia430Zonas=function(p){ return ZONAS[p==='es'?'es':'ar']; };
+
+  /* ============================================================
+     PARTES DE TRABAJO CON FIRMA DEL CLIENTE
+     ------------------------------------------------------------
+     Es la pieza que todos los competidores tienen y ElectroIA no.
+     Cierra el ciclo: presupuesto → trabajo → conformidad firmada.
+     Contenido según lo que exige un parte de servicio: datos de
+     ambas partes, descripción, materiales, tiempo, observaciones
+     y firma de conformidad.
+
+     ALCANCE HONESTO: esto captura una firma manuscrita en pantalla
+     y la imprime en el documento, que sirve como conformidad del
+     cliente y justificante del trabajo. NO es una firma electrónica
+     cualificada eIDAS: para eso hace falta un certificado digital y
+     un sello de tiempo de un prestador acreditado. Se advierte en el
+     propio documento para no inducir a error.
+     ============================================================ */
+  var CLAVE='eia430-partes';
+  function leer(){ try{ return JSON.parse(localStorage.getItem(CLAVE)||'[]')||[]; }catch(_){ return []; } }
+  function guardar(a){
+    try{ localStorage.setItem(CLAVE,JSON.stringify(a)); return true; }
+    catch(_){ alert('No se pudo guardar: el almacenamiento del dispositivo está lleno. Borrá algún parte antiguo.'); return false; }
+  }
+
+  var firmaCtx=null, firmando=false, hayFirma=false;
+  function initFirma(){
+    var c=D.getElementById('e430Firma'); if(!c) return;
+    var r=c.getBoundingClientRect();
+    c.width=Math.round(r.width*2); c.height=Math.round(r.height*2);
+    firmaCtx=c.getContext('2d');
+    firmaCtx.scale(2,2);
+    firmaCtx.lineWidth=2.2; firmaCtx.lineCap='round'; firmaCtx.lineJoin='round';
+    firmaCtx.strokeStyle='#10233b';
+    hayFirma=false;
+    function pos(ev){
+      var b=c.getBoundingClientRect();
+      var t=(ev.touches&&ev.touches[0])||ev;
+      return {x:t.clientX-b.left, y:t.clientY-b.top};
+    }
+    function ini(ev){ ev.preventDefault(); firmando=true; var p=pos(ev);
+      firmaCtx.beginPath(); firmaCtx.moveTo(p.x,p.y); }
+    function mov(ev){ if(!firmando) return; ev.preventDefault(); var p=pos(ev);
+      firmaCtx.lineTo(p.x,p.y); firmaCtx.stroke(); hayFirma=true;
+      c.classList.add('hecha'); }
+    function fin(){ firmando=false; }
+    c.addEventListener('mousedown',ini); c.addEventListener('mousemove',mov);
+    W.addEventListener('mouseup',fin);
+    c.addEventListener('touchstart',ini,{passive:false});
+    c.addEventListener('touchmove',mov,{passive:false});
+    c.addEventListener('touchend',fin);
+  }
+  W.eia430LimpiarFirma=function(){
+    var c=D.getElementById('e430Firma'); if(!c||!firmaCtx) return;
+    firmaCtx.clearRect(0,0,c.width,c.height);
+    hayFirma=false; c.classList.remove('hecha');
+  };
+
+  W.eia430Partes=function(){
+    if(!esPro()){
+      return shell('<h1>📋 Partes de trabajo</h1>'+
+        '<div class="eia430-lock"><b>🔒 Parte del plan PRO</b>'+
+        '<p>Documentá cada intervención y hacé que el cliente firme en tu móvil. El parte queda guardado y listo para entregar en PDF.</p>'+
+        '<button class="eia430-btn" type="button" onclick="eia340VerPlanes&&eia340VerPlanes()">Ver el plan PRO</button></div>'+
+        volver());
+    }
+    var ps=leer();
+    var lista = ps.length ? ps.slice(0,20).map(function(x,i){
+      var f=''; try{ f=new Date(x.fecha).toLocaleDateString('es-AR',{day:'2-digit',month:'short',year:'numeric'}); }catch(_){ }
+      return '<div class="eia430-item"><b>'+esc(x.cliente||'Sin cliente')+(x.firmado?' ✍️':'')+'</b>'+
+        '<small>'+esc(x.trabajo||'')+' · '+esc(f)+(x.horas?' · '+x.horas+' h':'')+'</small>'+
+        '<button class="eia430-btn alt" style="margin-top:7px;padding:7px" type="button" onclick="eia430VerParte('+i+')">Ver e imprimir</button>'+
+        '</div>';
+    }).join('') : '<p class="sub">Todavía no registraste partes.</p>';
+
+    shell('<h1>📋 Parte de trabajo</h1>'+
+      '<p class="subtitle">Registrá la intervención y que el cliente firme en el momento.</p>'+
+      '<div class="eia430-card"><h3>Datos de la intervención</h3>'+
+      '<div class="eia430-g2">'+
+        '<label class="eia430-f">Cliente<input id="e430Cli" placeholder="Nombre o razón social"></label>'+
+        '<label class="eia430-f">Identificación fiscal<input id="e430Nif" placeholder="NIF / CUIT"></label>'+
+      '</div>'+
+      '<label class="eia430-f">Dirección de la intervención<input id="e430Dir" placeholder="Calle, número, población"></label>'+
+      '<label class="eia430-f">Trabajo realizado<textarea id="e430Trab" rows="3" placeholder="Ej.: sustitución de diferencial y revisión del cuadro"></textarea></label>'+
+      '<label class="eia430-f">Materiales empleados<textarea id="e430Mat" rows="3" placeholder="Una línea por material y cantidad"></textarea></label>'+
+      '<div class="eia430-g2">'+
+        '<label class="eia430-f">Horas<input id="e430Hor" type="number" step="0.5" value="1"></label>'+
+        '<label class="eia430-f">Desplazamiento (km)<input id="e430Km" type="number" step="1" value="0"></label>'+
+      '</div>'+
+      '<label class="eia430-f">Observaciones e incidencias<textarea id="e430Obs" rows="2" placeholder="Lo que el cliente debe saber: pendientes, riesgos detectados, recomendaciones"></textarea></label>'+
+      '</div>'+
+
+      '<div class="eia430-card"><h3>Conformidad del cliente</h3>'+
+      '<p class="sub">Que firme con el dedo en la pantalla. Podés borrar y repetir.</p>'+
+      '<canvas id="e430Firma" class="eia430-firma" aria-label="Zona de firma del cliente"></canvas>'+
+      '<button class="eia430-btn alt" type="button" onclick="eia430LimpiarFirma()">Borrar firma</button>'+
+      '<label class="eia430-f" style="margin-top:9px">Nombre de quien firma<input id="e430Firmante" placeholder="Nombre y apellido"></label>'+
+      '<button class="eia430-btn ok" type="button" onclick="eia430GuardarParte()">Guardar y generar parte</button>'+
+      '<div id="e430Out" class="eia430-out" style="display:none"></div>'+
+      '</div>'+
+
+      '<div class="eia430-card"><h3>Partes guardados ('+ps.length+')</h3>'+lista+'</div>'+
+      volver());
+    setTimeout(initFirma,180);
+  };
+
+  W.eia430GuardarParte=function(){
+    var out=D.getElementById('e430Out');
+    function msg(t,c){ if(out){ out.style.display='block'; out.className='eia430-out '+(c||''); out.textContent=t; } }
+    if(!val('e430Cli')) return msg('Falta el nombre del cliente.','bad');
+    if(!val('e430Trab')) return msg('Describí el trabajo realizado.','bad');
+    var firma='';
+    try{ if(hayFirma){ firma=D.getElementById('e430Firma').toDataURL('image/png'); } }catch(_){ }
+    var parte={
+      cliente:val('e430Cli'), nif:val('e430Nif'), dir:val('e430Dir'),
+      trabajo:val('e430Trab'), materiales:val('e430Mat'),
+      horas:parseFloat(val('e430Hor'))||0, km:parseFloat(val('e430Km'))||0,
+      obs:val('e430Obs'), firmante:val('e430Firmante'),
+      firma:firma, firmado:!!firma, fecha:new Date().toISOString()
+    };
+    var ps=leer(); ps.unshift(parte);
+    if(ps.length>60) ps=ps.slice(0,60);
+    if(guardar(ps)){
+      msg(firma?'✅ Parte guardado y firmado.':'✅ Parte guardado (sin firma del cliente).','ok');
+      setTimeout(function(){ W.eia430VerParte(0); },700);
+    }
+  };
+
+  W.eia430VerParte=function(i){
+    var p=leer()[i]; if(!p) return;
+    var f=''; try{ f=new Date(p.fecha).toLocaleString('es-AR'); }catch(_){ }
+    var v=W.open('','_blank');
+    if(!v) return alert('El navegador bloqueó la ventana. Permití las ventanas emergentes.');
+    function lineas(t){ return esc(t||'—').replace(/\n/g,'<br>'); }
+    v.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Parte de trabajo</title>'+
+      '<style>body{font-family:system-ui,Segoe UI,Arial,sans-serif;margin:30px;color:#16202e;line-height:1.55}'+
+      'h1{font-size:21px;margin:0 0 4px}.meta{font-size:12px;color:#5b6b80;margin-bottom:16px}'+
+      'h2{font-size:14px;margin:18px 0 5px;border-bottom:1px solid #ccd6e2;padding-bottom:3px}'+
+      'table{width:100%;border-collapse:collapse;font-size:13px}'+
+      'th,td{border:1px solid #ccd6e2;padding:7px;text-align:left;vertical-align:top}th{background:#f1f5fa;width:34%}'+
+      '.firma{margin-top:18px;border:1px solid #ccd6e2;border-radius:8px;padding:12px;text-align:center}'+
+      '.firma img{max-width:260px;max-height:110px}'+
+      '.pie{margin-top:24px;font-size:10.5px;color:#5b6b80;border-top:1px solid #ccd6e2;padding-top:9px;line-height:1.5}'+
+      '@media print{body{margin:14px}}</style></head><body>'+
+      '<h1>Parte de trabajo</h1><div class="meta">Fecha: '+esc(f)+'</div>'+
+      '<h2>Cliente</h2><table>'+
+      '<tr><th>Nombre</th><td>'+esc(p.cliente)+'</td></tr>'+
+      '<tr><th>Identificación fiscal</th><td>'+esc(p.nif||'—')+'</td></tr>'+
+      '<tr><th>Dirección</th><td>'+esc(p.dir||'—')+'</td></tr></table>'+
+      '<h2>Trabajo realizado</h2><table><tr><td>'+lineas(p.trabajo)+'</td></tr></table>'+
+      '<h2>Materiales empleados</h2><table><tr><td>'+lineas(p.materiales)+'</td></tr></table>'+
+      '<h2>Tiempo y desplazamiento</h2><table>'+
+      '<tr><th>Horas</th><td>'+p.horas+'</td></tr>'+
+      '<tr><th>Desplazamiento</th><td>'+p.km+' km</td></tr></table>'+
+      (p.obs?'<h2>Observaciones</h2><table><tr><td>'+lineas(p.obs)+'</td></tr></table>':'')+
+      '<div class="firma"><b>Conformidad del cliente</b><br>'+
+      (p.firma?'<img src="'+p.firma+'" alt="Firma del cliente">':'<br><br>_______________________<br>')+
+      '<div style="font-size:12px;margin-top:6px">'+esc(p.firmante||'')+'</div></div>'+
+      '<div class="pie">Documento generado con ElectroIA el '+esc(new Date().toLocaleString('es-AR'))+'.<br>'+
+      'La firma recogida es una firma manuscrita capturada en pantalla, con valor de conformidad del cliente sobre el trabajo descrito. '+
+      'No constituye una firma electrónica cualificada conforme al Reglamento (UE) 910/2014 (eIDAS), que requiere certificado digital y sello de tiempo de un prestador acreditado.<br>'+
+      'Este parte documenta la intervención; no sustituye al certificado de instalación eléctrica ni a la factura.</div>'+
+      '</body></html>');
+    v.document.close();
+    setTimeout(function(){ try{ v.focus(); v.print(); }catch(_){ } },450);
+  };
+
+  /* ============================================================
+     CERTIFICADO DE FORMACIÓN
+     ------------------------------------------------------------
+     Aprovecha el sistema de exámenes que ya existe. Se emite solo
+     si TODOS los niveles están aprobados: un certificado que se
+     regala no vale nada, ni para quien lo recibe ni para la marca.
+     ============================================================ */
+  W.eia430Certificado=function(){
+    var d={}; try{ d=JSON.parse(localStorage.getItem('eia350-progreso')||'{}')||{}; }catch(_){ }
+    var ex=d.examenes||{};
+    var ids=['n1','n2','n3','n4','n5','n6','n7','n8'];
+    var nombres={n1:'Fundamentos',n2:'Seguridad',n3:'El tablero',n4:'Circuitos de la vivienda',
+      n5:'Diagnóstico de averías',n6:'Consumo y factura',n7:'Dimensionado',n8:'Normativa y verificación'};
+    var aprob=ids.filter(function(i){ return ex[i] && ex[i].pct>=70; });
+    var media=aprob.length? Math.round(aprob.reduce(function(a,i){ return a+ex[i].pct; },0)/aprob.length):0;
+    var completo=aprob.length===ids.length;
+
+    var filas=ids.map(function(i){
+      var n=ex[i];
+      var est=n? (n.pct>=70?'<span style="color:#14602f;font-weight:800">'+n.pct+'% · aprobado</span>'
+                          :'<span style="color:#8c1a12">'+n.pct+'% · no alcanza</span>')
+               : '<span style="color:#55687f">sin rendir</span>';
+      return '<tr><td>'+esc(nombres[i])+'</td><td style="text-align:right">'+est+'</td></tr>';
+    }).join('');
+
+    shell('<h1>🎓 Certificado de formación</h1>'+
+      '<p class="subtitle">Acredita que completaste los ocho niveles del módulo de aprendizaje.</p>'+
+      (completo
+        ? '<div class="eia430-cert"><h2>✅ Formación completada</h2>'+
+          '<div class="pct">'+media+'%</div>'+
+          '<p>Aprobaste los 8 niveles del programa.</p>'+
+          '<p style="font-size:12px;opacity:.85">Ponés tu nombre y lo descargás.</p></div>'+
+          '<div class="eia430-card">'+
+          '<label class="eia430-f">Nombre completo para el certificado<input id="e430CertN" placeholder="Como querés que figure"></label>'+
+          '<button class="eia430-btn ok" type="button" onclick="eia430EmitirCert('+media+')">Generar mi certificado</button></div>'
+        : '<div class="eia430-lock"><b>Te faltan '+(ids.length-aprob.length)+' niveles</b>'+
+          '<p>El certificado se emite al aprobar los ocho, con un 70% o más en cada examen. Un certificado que se regala no acredita nada.</p>'+
+          '<button class="eia430-btn" type="button" onclick="aprender&&aprender()">Ir a Aprender</button></div>')+
+      '<div class="eia430-card"><h3>Tu progreso</h3>'+
+      '<table style="width:100%;border-collapse:collapse;font-size:13.5px">'+filas+'</table></div>'+
+      '<button class="eia430-btn alt" type="button" onclick="aprender&&aprender()">← Volver a Aprender</button>');
+  };
+
+  W.eia430EmitirCert=function(media){
+    var n=val('e430CertN');
+    if(!n) return alert('Escribí tu nombre para el certificado.');
+    var v=W.open('','_blank');
+    if(!v) return alert('El navegador bloqueó la ventana. Permití las ventanas emergentes.');
+    var hoy=new Date().toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'});
+    v.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Certificado ElectroIA</title>'+
+      '<style>@page{size:A4 landscape;margin:0}'+
+      'body{font-family:Georgia,serif;margin:0;padding:42px;color:#12233b;text-align:center}'+
+      '.marco{border:3px solid #1d5a9e;border-radius:10px;padding:38px 34px;height:calc(100% - 96px)}'+
+      '.kick{letter-spacing:.26em;font-size:12px;color:#5b7fa8;text-transform:uppercase}'+
+      'h1{font-size:34px;margin:14px 0 6px;color:#12325c}'+
+      '.nom{font-size:30px;margin:22px 0 6px;border-bottom:2px solid #c9d8e8;display:inline-block;padding:0 26px 8px}'+
+      'p{font-size:14px;line-height:1.7;margin:8px 0;color:#33455e}'+
+      '.pct{font-size:17px;font-weight:bold;color:#0f7a44;margin-top:14px}'+
+      '.pie{margin-top:26px;font-size:10px;color:#6b7d93;line-height:1.5}'+
+      '</style></head><body><div class="marco">'+
+      '<div class="kick">ElectroIA · Formación en electricidad</div>'+
+      '<h1>Certificado de aprovechamiento</h1>'+
+      '<p>Se deja constancia de que</p>'+
+      '<div class="nom">'+esc(n)+'</div>'+
+      '<p>ha completado los ocho niveles del programa formativo de ElectroIA,<br>'+
+      'que abarca fundamentos, seguridad, protecciones, circuitos de vivienda,<br>'+
+      'diagnóstico de averías, consumo, dimensionado y normativa.</p>'+
+      '<div class="pct">Calificación media: '+media+'%</div>'+
+      '<p style="margin-top:20px">'+esc(hoy)+'</p>'+
+      '<div class="pie">Este certificado acredita la realización de un programa formativo de carácter divulgativo dentro de la aplicación ElectroIA.<br>'+
+      '<b>No constituye una titulación oficial, ni una habilitación o matrícula profesional, ni faculta para ejecutar o certificar instalaciones eléctricas.</b><br>'+
+      'La ejecución de instalaciones requiere la habilitación que exija la normativa de cada jurisdicción.</div>'+
+      '</div></body></html>');
+    v.document.close();
+    setTimeout(function(){ try{ v.focus(); v.print(); }catch(_){ } },450);
+  };
+
+  /* ============================================================
+     ENGANCHES
+     ============================================================ */
+  function inyectar(){
+    try{
+      // Partes de trabajo en el menú profesional
+      var menu=D.querySelector('.eia370-grid');
+      if(menu && !D.getElementById('e430Tile')){
+        var cont=D.querySelectorAll('.eia370-grid');
+        var trabajo=cont[cont.length-2]||cont[cont.length-1];
+        if(trabajo && trabajo.querySelector('button')){
+          var b=D.createElement('button');
+          b.id='e430Tile'; b.type='button'; b.className='eia370-t';
+          b.setAttribute('onclick','eia430Partes()');
+          b.innerHTML='<span class="ic">📋</span><b>Partes de trabajo</b><span>Con firma del cliente en el móvil.</span>';
+          trabajo.appendChild(b);
+        }
+      }
+      // Certificado en el índice de Aprender
+      var prog=D.querySelector('.eia350-prog');
+      if(prog && !D.getElementById('e430Cert')){
+        var c=D.createElement('button');
+        c.id='e430Cert'; c.type='button'; c.className='eia350-btn alt';
+        c.style.cssText='margin:0 0 12px';
+        c.setAttribute('onclick','eia430Certificado()');
+        c.textContent='🎓 Mi certificado de formación';
+        prog.parentNode.insertBefore(c,prog.nextSibling);
+      }
+      // Zonas cerradas en el alta de electricistas
+      var z=D.getElementById('e380EZ');
+      if(z && z.tagName==='INPUT'){
+        var p=(D.getElementById('e380EP')||{}).value||pais();
+        var sel=D.createElement('select');
+        sel.id='e380EZ'; sel.setAttribute('aria-label','Zona donde trabajás');
+        sel.innerHTML='<option value="">Elegí tu zona…</option>'+
+          ZONAS[p==='es'?'es':'ar'].map(function(x){ return '<option>'+esc(x)+'</option>'; }).join('');
+        z.parentNode.replaceChild(sel,z);
+        var selP=D.getElementById('e380EP');
+        if(selP && !selP.dataset.eia430){
+          selP.dataset.eia430='1';
+          selP.addEventListener('change',function(){
+            var s=D.getElementById('e380EZ'); if(!s) return;
+            s.innerHTML='<option value="">Elegí tu zona…</option>'+
+              ZONAS[selP.value==='es'?'es':'ar'].map(function(x){ return '<option>'+esc(x)+'</option>'; }).join('');
+          });
+        }
+      }
+    }catch(_){ }
+  }
+  try{
+    var app=D.getElementById('app');
+    if(app && W.MutationObserver){
+      var t=null;
+      new MutationObserver(function(){ clearTimeout(t); t=setTimeout(inyectar,200); })
+        .observe(app,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',inyectar); else inyectar();
+})();
+</script>
+
+<style id="eia440-css">
+.eia440-card{background:#fff;border:1px solid #d9e2ee;border-radius:16px;padding:15px;margin:11px 0;color:#1b2736}
+.eia440-card,.eia440-card *{color:#1b2736}
+.eia440-card h3{margin:0 0 4px;font-size:16.5px;color:#0f1b2b}
+.eia440-card .sub{font-size:12.8px;color:#55687f;margin:0 0 12px;line-height:1.45}
+.eia440-f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:700;color:#41506a;margin-bottom:9px}
+.eia440-f input,.eia440-f select,.eia440-f textarea{font:inherit;font-weight:500;padding:10px;border:1px solid #ccd6e2;border-radius:9px;background:#fff;color:#16202e;width:100%;box-sizing:border-box}
+.eia440-g2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.eia440-btn{display:block;width:100%;margin-top:9px;padding:12px;border:0;border-radius:11px;background:#0b63c7;color:#fff;font-weight:800;font-size:14.5px;cursor:pointer}
+.eia440-btn.alt{background:#eef3fa;color:#1c3252;border:1px solid #ccd9ea}
+.eia440-btn.rec{background:#b3182b}
+.eia440-btn.stop{background:#0f7a44}
+/* La regla .eia440-card * fija texto oscuro; los botones de color
+   necesitan más especificidad o quedan ilegibles (2,22 de ratio). */
+.eia440-card .eia440-btn,.eia440-btn,.eia440-card .eia440-btn *{color:#fff}
+.eia440-card .eia440-btn.alt,.eia440-btn.alt{color:#1c3252}
+.eia440-card .eia440-btn .eia440-mic,.eia440-btn .eia440-mic{color:#fff}
+.eia440-mic{display:flex;align-items:center;justify-content:center;gap:10px;font-size:16px}
+.eia440-pulse{width:12px;height:12px;border-radius:50%;background:#fff;animation:eia440p 1s infinite}
+@keyframes eia440p{0%,100%{opacity:1}50%{opacity:.25}}
+.eia440-out{margin-top:11px;padding:12px;border-radius:11px;background:#f3f7fc;border:1px solid #d8e4f2;font-size:13.5px;line-height:1.5;color:#1b2736}
+.eia440-out.ok{background:#eafaf0;border-color:#b6e5c8;color:#14602f}
+.eia440-out.bad{background:#fdeeec;border-color:#f0c2bc;color:#8c1a12}
+.eia440-item{border:1px solid #e0e7f1;border-radius:11px;padding:10px;margin-bottom:7px;background:#fff}
+.eia440-item b{display:block;font-size:14px;color:#12203a}
+.eia440-item small{font-size:12px;color:#55687f}
+.eia440-tel{background:linear-gradient(140deg,#0d3b2a,#12784e);border-radius:16px;padding:17px;color:#fff;margin:12px 0}
+.eia440-tel h3{margin:0 0 5px;font-size:17px;color:#fff}
+.eia440-tel p{margin:0 0 11px;font-size:13.5px;line-height:1.5;color:#d9f2e5}
+.eia440-tel a,.eia440-tel button{display:block;width:100%;padding:13px;border:0;border-radius:11px;background:#fff;color:#0d3b2a;font-weight:900;font-size:15px;text-align:center;text-decoration:none;cursor:pointer}
+.eia440-reanudar{background:#1b2a3d;border:1px solid #35506f;border-radius:14px;padding:13px;margin:10px 0;color:#dce8f6}
+.eia440-reanudar b{display:block;font-size:14.5px;color:#fff;margin-bottom:3px}
+.eia440-reanudar small{display:block;font-size:12.5px;color:#a9c0da;margin-bottom:9px}
+.eia440-reanudar .row{display:flex;gap:7px}
+.eia440-reanudar button{flex:1;padding:10px;border-radius:9px;border:0;font-weight:800;font-size:13px;cursor:pointer}
+.eia440-reanudar .si{background:#0b63c7;color:#fff}
+.eia440-reanudar .no{background:#2b3d52;color:#c5d6e8}
+</style>
+
+<script id="electroia-v440-productividad">
+(function(){
+  'use strict';
+  var W=window,D=document;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function val(id){var e=D.getElementById(id);return e?e.value.trim():'';}
+  function esPro(){ try{ return typeof W.eia340EsPro==='function' && W.eia340EsPro(); }catch(_){ return false; } }
+  function token(){
+    var ks=['electroia_session_v1','electroia_user','eia_user','currentUser','electroia_session','eia_session'];
+    for(var i=0;i<ks.length;i++){
+      try{ var r=localStorage.getItem(ks[i]); if(r){ var v=JSON.parse(r); if(v&&v.token) return v.token; } }catch(_){ }
+    }
+    return '';
+  }
+  function shell(html){
+    var app=D.getElementById('app'); if(!app) return;
+    var cab=(typeof W.head==='function')?W.head(true):'';
+    app.innerHTML=cab+'<main class="wrap page">'+html+'</main>';
+    try{ W.scrollTo(0,0); }catch(_){ }
+    if(W.eiaEtiquetarCampos) W.eiaEtiquetarCampos();
+  }
+  function guardarJSON(k,v){
+    try{ localStorage.setItem(k,JSON.stringify(v)); return true; }
+    catch(_){ alert('No se pudo guardar: almacenamiento lleno.'); return false; }
+  }
+  function leerJSON(k,def){ try{ return JSON.parse(localStorage.getItem(k)||'null')||def; }catch(_){ return def; } }
+
+  /* ============================================================
+     1. DICTADO POR VOZ PARA PRESUPUESTAR EN OBRA
+     ------------------------------------------------------------
+     El backend ya tenía /api/transcribe desde el principio y el
+     frontend nunca lo usaba: no existía ni MediaRecorder ni
+     getUserMedia en toda la app. Es la función que más tiempo
+     ahorra a un técnico: dictar las partidas delante del cliente
+     en vez de anotarlas y pasarlas a limpio por la noche.
+     ============================================================ */
+  var grabador=null, trozos=[], grabando=false;
+
+  W.eia440Dictar=function(){
+    if(!esPro()){
+      return shell('<h1>🎤 Dictar presupuesto</h1>'+
+        '<div class="eia440-card"><h3>🔒 Parte del plan PRO</h3>'+
+        '<p class="sub">Dictá las partidas delante del cliente y salen escritas. Sin anotar en papel ni pasarlo a limpio después.</p>'+
+        '<button class="eia440-btn" type="button" onclick="eia340VerPlanes&&eia340VerPlanes()">Ver el plan PRO</button></div>'+
+        '<button class="eia440-btn alt" type="button" onclick="eia370Menu&&eia370Menu()">← Volver</button>');
+    }
+    shell('<h1>🎤 Dictar presupuesto</h1>'+
+      '<p class="subtitle">Decí las partidas en voz alta y se escriben solas. Después las revisás y las pasás al presupuesto.</p>'+
+      '<div class="eia440-card"><h3>Cómo dictar</h3>'+
+      '<p class="sub">Hablá normal, di la cantidad y después el concepto. Hacé una pausa entre partidas.</p>'+
+      '<p style="font-size:13.5px;background:#f1f5fc;padding:10px;border-radius:9px;margin:0 0 10px">'+
+      '<i>«Tres puntos de luz. Seis tomas de corriente. Un diferencial de cuarenta amperios. Cuatro horas de mano de obra.»</i></p>'+
+      '<button class="eia440-btn rec" id="e440Rec" type="button" onclick="eia440Grabar()">'+
+      '<span class="eia440-mic">🎤 Empezar a dictar</span></button>'+
+      '<div id="e440Out" class="eia440-out" style="display:none"></div>'+
+      '</div>'+
+      '<div class="eia440-card" id="e440Res" style="display:none"><h3>Lo que entendí</h3>'+
+      '<p class="sub">Revisá y corregí antes de pasarlo. La transcripción puede equivocarse con los números.</p>'+
+      '<textarea id="e440Texto" rows="7" aria-label="Partidas dictadas" style="width:100%;font:inherit;padding:10px;border:1px solid #ccd6e2;border-radius:9px;color:#16202e;box-sizing:border-box"></textarea>'+
+      '<button class="eia440-btn" type="button" onclick="eia440AlPresupuesto()">Pasar al presupuesto</button>'+
+      '<button class="eia440-btn alt" type="button" onclick="eia440Grabar()">🎤 Dictar más</button>'+
+      '</div>'+
+      '<button class="eia440-btn alt" type="button" onclick="eia370Menu&&eia370Menu()">← Volver al Modo Profesional</button>');
+  };
+
+  function msg(t,c){
+    var e=D.getElementById('e440Out'); if(!e) return;
+    e.style.display='block'; e.className='eia440-out '+(c||''); e.innerHTML=t;
+  }
+
+  W.eia440Grabar=function(){
+    var btn=D.getElementById('e440Rec');
+    if(grabando){ // parar
+      try{ grabador.stop(); }catch(_){ }
+      return;
+    }
+    if(!navigator.mediaDevices || !W.MediaRecorder){
+      return msg('Tu navegador no permite grabar audio. Podés escribir las partidas a mano en el presupuesto.','bad');
+    }
+    msg('Pidiendo permiso para usar el micrófono…');
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+      trozos=[];
+      try{ grabador=new MediaRecorder(stream); }
+      catch(_){ return msg('No se pudo iniciar la grabación en este dispositivo.','bad'); }
+      grabador.ondataavailable=function(ev){ if(ev.data && ev.data.size) trozos.push(ev.data); };
+      grabador.onstop=function(){
+        grabando=false;
+        try{ stream.getTracks().forEach(function(t){ t.stop(); }); }catch(_){ }
+        if(btn) btn.innerHTML='<span class="eia440-mic">🎤 Empezar a dictar</span>', btn.className='eia440-btn rec';
+        enviar(new Blob(trozos,{type:grabador.mimeType||'audio/webm'}));
+      };
+      grabador.start();
+      grabando=true;
+      if(btn){ btn.innerHTML='<span class="eia440-mic"><span class="eia440-pulse"></span> Grabando · tocá para parar</span>'; btn.className='eia440-btn stop'; }
+      msg('Grabando. Dictá las partidas y tocá el botón cuando termines.');
+    }).catch(function(){
+      msg('No diste permiso para el micrófono. Podés activarlo en los ajustes del navegador, o escribir las partidas a mano.','bad');
+    });
+  };
+
+  function enviar(blob){
+    if(!blob || !blob.size) return msg('No se grabó audio. Probá de nuevo.','bad');
+    msg('Transcribiendo… puede tardar unos segundos.');
+    var fd=new FormData();
+    fd.append('audio', blob, 'dictado.webm');
+    var h={}; var t=token(); if(t) h['Authorization']='Bearer '+t;
+    fetch('/api/transcribe',{method:'POST',headers:h,body:fd})
+      .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
+      .then(function(x){
+        if(!x.ok || !x.j || !(x.j.text||x.j.transcript)){
+          var e=(x.j&&x.j.error)||'';
+          if(e==='LIMITE_IA_ALCANZADO') return msg('Alcanzaste el límite de consultas de IA de este mes.','bad');
+          return msg('No se pudo transcribir. Probá de nuevo o escribí las partidas a mano.','bad');
+        }
+        var texto=x.j.text||x.j.transcript;
+        var ta=D.getElementById('e440Texto');
+        if(ta){ ta.value=(ta.value?ta.value+'\n':'')+interpretar(texto); }
+        var res=D.getElementById('e440Res'); if(res) res.style.display='block';
+        msg('✅ Listo. Revisá el texto abajo antes de pasarlo.','ok');
+      })
+      .catch(function(){ msg('Sin conexión. El dictado necesita internet; podés escribir a mano mientras tanto.','bad'); });
+  }
+
+  /* Convierte el dictado en líneas "cantidad | concepto".
+     Se hace en el cliente y de forma conservadora: si no se reconoce
+     una cantidad, se deja 1 y el técnico corrige. Nunca se inventa
+     un precio: eso lo pone la tarifa del catálogo o el usuario. */
+  var NUMS={'un':1,'una':1,'uno':1,'dos':2,'tres':3,'cuatro':4,'cinco':5,'seis':6,'siete':7,
+    'ocho':8,'nueve':9,'diez':10,'once':11,'doce':12,'quince':15,'veinte':20,'veinticinco':25,
+    'treinta':30,'cuarenta':40,'cincuenta':50,'sesenta':60,'cien':100};
+  function interpretar(texto){
+    return String(texto||'')
+      .replace(/\s+/g,' ')
+      .split(/(?:[.;\n]|,\s*(?=\w+\s))/)
+      .map(function(f){ return f.trim(); })
+      .filter(function(f){ return f.length>2; })
+      .map(function(f){
+        var cant=1, resto=f;
+        var mNum=f.match(/^(\d+(?:[.,]\d+)?)\s+(.*)$/);
+        if(mNum){ cant=parseFloat(mNum[1].replace(',','.')); resto=mNum[2]; }
+        else{
+          var mPal=f.match(/^(\w+)\s+(.*)$/);
+          if(mPal && NUMS[mPal[1].toLowerCase()]!==undefined){ cant=NUMS[mPal[1].toLowerCase()]; resto=mPal[2]; }
+        }
+        resto=resto.charAt(0).toUpperCase()+resto.slice(1);
+        return cant+' | '+resto;
+      }).join('\n');
+  }
+
+  W.eia440AlPresupuesto=function(){
+    var ta=D.getElementById('e440Texto'); if(!ta||!ta.value.trim()) return;
+    var tarifa={}; try{ if(typeof W.eia400Tarifa==='function') tarifa=W.eia400Tarifa()||{}; }catch(_){ }
+    var items=ta.value.split('\n').map(function(l){
+      var p=l.split('|');
+      var c=parseFloat((p[0]||'1').trim())||1;
+      var d=(p[1]||p[0]||'').trim();
+      // Si la partida coincide con una del catálogo, se toma su precio guardado.
+      var precio=0;
+      Object.keys(tarifa).forEach(function(k){
+        if(!precio && d && k.toLowerCase().indexOf(d.toLowerCase().slice(0,14))>=0) precio=tarifa[k];
+      });
+      return {d:d,c:c,p:precio};
+    }).filter(function(x){ return x.d; });
+    if(!items.length) return;
+    if(typeof W.eia340Presupuesto!=='function') return alert('El presupuesto no está disponible.');
+    W.eia340Presupuesto();
+    setTimeout(function(){
+      try{ if(typeof W.eia340CargarPartidas==='function') W.eia340CargarPartidas(items); }catch(_){ }
+    },420);
+  };
+
+  /* ============================================================
+     2. FICHA DE CLIENTES
+     ------------------------------------------------------------
+     Hoy cada parte y cada proyecto es una isla. Un electricista
+     vuelve a la misma comunidad diez veces al año y tiene que
+     reescribir los datos cada vez.
+     ============================================================ */
+  var KC='eia440-clientes';
+  W.eia440Clientes=function(){
+    if(!esPro()){
+      return shell('<h1>👥 Clientes</h1>'+
+        '<div class="eia440-card"><h3>🔒 Parte del plan PRO</h3>'+
+        '<p class="sub">Guardá los datos de cada cliente y su historial de intervenciones. No vuelvas a escribir lo mismo.</p>'+
+        '<button class="eia440-btn" type="button" onclick="eia340VerPlanes&&eia340VerPlanes()">Ver el plan PRO</button></div>'+
+        '<button class="eia440-btn alt" type="button" onclick="eia370Menu&&eia370Menu()">← Volver</button>');
+    }
+    var cs=leerJSON(KC,[]);
+    var partes=leerJSON('eia430-partes',[]);
+    var lista = cs.length ? cs.map(function(c,i){
+      var n=partes.filter(function(p){ return (p.cliente||'').toLowerCase()===(c.nombre||'').toLowerCase(); }).length;
+      return '<div class="eia440-item"><b>'+esc(c.nombre)+'</b>'+
+        '<small>'+esc(c.dir||'Sin dirección')+(c.tel?' · '+esc(c.tel):'')+'</small>'+
+        '<small style="color:#0b63c7;font-weight:700">'+n+' intervención'+(n===1?'':'es')+' registrada'+(n===1?'':'s')+'</small>'+
+        (c.notas?'<small style="margin-top:4px">'+esc(c.notas)+'</small>':'')+
+        '<div style="display:flex;gap:6px;margin-top:7px">'+
+        '<button class="eia440-btn alt" style="margin:0;padding:8px" type="button" onclick="eia440UsarCliente('+i+')">Usar en parte</button>'+
+        '<button class="eia440-btn alt" style="margin:0;padding:8px" type="button" onclick="eia440BorrarCliente('+i+')">Borrar</button>'+
+        '</div></div>';
+    }).join('') : '<p class="sub">Todavía no guardaste clientes.</p>';
+
+    shell('<h1>👥 Clientes</h1>'+
+      '<p class="subtitle">Los datos de siempre, listos para reutilizar en partes y presupuestos.</p>'+
+      '<div class="eia440-card"><h3>Nuevo cliente</h3>'+
+      '<div class="eia440-g2">'+
+        '<label class="eia440-f">Nombre o razón social<input id="e440CN" placeholder="Ej.: Comunidad Los Olivos"></label>'+
+        '<label class="eia440-f">Identificación fiscal<input id="e440CF" placeholder="NIF / CUIT"></label>'+
+      '</div>'+
+      '<label class="eia440-f">Dirección<input id="e440CD" placeholder="Calle, número, población"></label>'+
+      '<div class="eia440-g2">'+
+        '<label class="eia440-f">Teléfono<input id="e440CT" type="tel"></label>'+
+        '<label class="eia440-f">Email<input id="e440CE" type="email"></label>'+
+      '</div>'+
+      '<label class="eia440-f">Notas de la instalación<textarea id="e440CNo" rows="2" placeholder="Ej.: cuadro en el rellano, instalación de 1985, llave general a la izquierda"></textarea></label>'+
+      '<button class="eia440-btn" type="button" onclick="eia440GuardarCliente()">Guardar cliente</button>'+
+      '</div>'+
+      '<div class="eia440-card"><h3>Guardados ('+cs.length+')</h3>'+lista+'</div>'+
+      '<button class="eia440-btn alt" type="button" onclick="eia370Menu&&eia370Menu()">← Volver al Modo Profesional</button>');
+  };
+  W.eia440GuardarCliente=function(){
+    if(!val('e440CN')) return alert('Poné al menos el nombre.');
+    var cs=leerJSON(KC,[]);
+    cs.unshift({nombre:val('e440CN'),fiscal:val('e440CF'),dir:val('e440CD'),
+      tel:val('e440CT'),email:val('e440CE'),notas:val('e440CNo'),fecha:new Date().toISOString()});
+    if(cs.length>200) cs=cs.slice(0,200);
+    if(guardarJSON(KC,cs)) W.eia440Clientes();
+  };
+  W.eia440BorrarCliente=function(i){
+    var cs=leerJSON(KC,[]); if(!cs[i]) return;
+    if(!confirm('¿Borrar a '+cs[i].nombre+'? Los partes ya guardados no se borran.')) return;
+    cs.splice(i,1); if(guardarJSON(KC,cs)) W.eia440Clientes();
+  };
+  W.eia440UsarCliente=function(i){
+    var c=leerJSON(KC,[])[i]; if(!c) return;
+    if(typeof W.eia430Partes!=='function') return;
+    W.eia430Partes();
+    setTimeout(function(){
+      try{
+        var s=function(id,v){ var e=D.getElementById(id); if(e&&v) e.value=v; };
+        s('e430Cli',c.nombre); s('e430Nif',c.fiscal); s('e430Dir',c.dir);
+        if(c.notas){ var o=D.getElementById('e430Obs'); if(o&&!o.value) o.value=''; }
+      }catch(_){ }
+    },450);
+  };
+
+  /* ============================================================
+     3. RETOMAR UN DIAGNÓSTICO A MEDIAS
+     ------------------------------------------------------------
+     Si alguien cierra el navegador durante una urgencia, empezaba
+     de cero. Con el móvil al 5% de batería y a oscuras, eso es
+     exactamente lo que no debe pasar.
+     ============================================================ */
+  var KD='eia440-diag';
+  function guardarEstado(){
+    try{
+      var d=W.diag;
+      if(!d || !d.node || d.node==='start') return;
+      guardarJSON(KD,{node:d.node,problem:d.problem||'',entry:d.entryKind||'',
+        answers:d.answers||d.history||null, fecha:Date.now()});
+    }catch(_){ }
+  }
+  W.eia440Descartar=function(){
+    try{ localStorage.removeItem(KD); }catch(_){ }
+    var e=D.getElementById('e440Reanudar'); if(e) e.remove();
+  };
+  W.eia440Reanudar=function(){
+    var s=leerJSON(KD,null); if(!s) return;
+    try{
+      // Se vuelve a pasar por el filtro de seguridad a propósito: pueden haber
+      // pasado horas y la situación puede haber empeorado. Pero se conserva el
+      // nodo objetivo para no repetir todo el cuestionario.
+      if(typeof W.start==='function') W.start(s.node,s.problem,s.entry||'emergency');
+      else if(typeof W.diagnostico==='function') W.diagnostico(s.node,s.problem);
+      try{ if(W.diag){ W.diag.targetNode=s.node; W.diag.entryKind=s.entry||'emergency'; } }catch(_){ }
+    }catch(_){ }
+    var e=D.getElementById('e440Reanudar'); if(e) e.remove();
+  };
+  function ofrecerReanudar(){
+    try{
+      var s=leerJSON(KD,null);
+      if(!s) return;
+      // Solo se ofrece durante 24 h: pasado ese tiempo el problema
+      // ya se resolvió o cambió, y reanudarlo confundiría.
+      if(Date.now()-s.fecha > 24*3600*1000){ localStorage.removeItem(KD); return; }
+      if(D.getElementById('e440Reanudar')) return;
+      var main=D.querySelector('#app main'); if(!main) return;
+      if(!D.querySelector('.eia-emergency-card')) return; // solo en inicio/hogar
+      var cuando='';
+      var min=Math.round((Date.now()-s.fecha)/60000);
+      cuando = min<60 ? ('hace '+min+' min') : ('hace '+Math.round(min/60)+' h');
+      var box=D.createElement('div');
+      box.id='e440Reanudar'; box.className='eia440-reanudar';
+      box.innerHTML='<b>⏸️ Tenías un diagnóstico a medias</b>'+
+        '<small>'+esc(s.problem||'Diagnóstico guiado')+' · '+cuando+'</small>'+
+        '<div class="row"><button class="si" type="button" onclick="eia440Reanudar()">Seguir donde iba</button>'+
+        '<button class="no" type="button" onclick="eia440Descartar()">Empezar de nuevo</button></div>';
+      var card=D.querySelector('.eia-emergency-card');
+      card.parentNode.insertBefore(box,card.nextSibling);
+    }catch(_){ }
+  }
+
+  /* ============================================================
+     4. ASISTENCIA TELEFÓNICA (con límites)
+     ------------------------------------------------------------
+     No puede estar siempre a la vista: si aparece en cada pantalla,
+     se usa ante cualquier duda y el coste se dispara. Se ofrece solo
+     cuando se cumplen las dos condiciones:
+       a) el diagnóstico guiado ya se recorrió y no resolvió, o hay
+          una situación que lo justifica, y
+       b) queda cupo del período.
+     El cupo es la pieza clave: convierte un canal caro en un
+     recurso acotado y valorado.
+     ============================================================ */
+  var KT='eia440-tel';
+  var CUPO={free:0, pro:2};   // llamadas incluidas por mes
+  function periodo(){ var d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1); }
+  function usadas(){
+    var r=leerJSON(KT,null);
+    return (r && r.periodo===periodo()) ? (r.usadas||0) : 0;
+  }
+  function cupo(){ return esPro()?CUPO.pro:CUPO.free; }
+  W.eia440CupoTel=function(){ return {usadas:usadas(), total:cupo()}; };
+  W.eia440RegistrarLlamada=function(){
+    guardarJSON(KT,{periodo:periodo(),usadas:usadas()+1});
+  };
+
+  W.eia440Telefonica=function(){
+    var u=usadas(), c=cupo(), quedan=Math.max(0,c-u);
+    var tel=(W.ELECTROIA_TEL||'').trim();
+    shell('<h1>📞 Asistencia telefónica</h1>'+
+      '<p class="subtitle">Para cuando el diagnóstico guiado no alcanza y necesitás hablar con alguien.</p>'+
+      (c===0
+        ? '<div class="eia440-card"><h3>Incluida en el plan PRO</h3>'+
+          '<p class="sub">La asistencia telefónica está incluida en el plan PRO, con '+CUPO.pro+' llamadas al mes. '+
+          'No es un canal ilimitado a propósito: así quien la necesita de verdad encuentra la línea libre.</p>'+
+          '<button class="eia440-btn" type="button" onclick="eia340VerPlanes&&eia340VerPlanes()">Ver el plan PRO</button></div>'
+        : quedan>0
+          ? '<div class="eia440-tel"><h3>Te quedan '+quedan+' de '+c+' llamadas este mes</h3>'+
+            '<p>Antes de llamar, tené a mano: qué pasó, qué protección saltó y qué probaste. Con eso se resuelve en la mitad de tiempo.</p>'+
+            (tel? '<a href="tel:'+esc(tel)+'" onclick="eia440RegistrarLlamada()">📞 Llamar ahora</a>'
+                : '<button type="button" onclick="alert(\'El número de asistencia todavía no está configurado.\')">📞 Llamar ahora</button>')+
+            '</div>'
+          : '<div class="eia440-card"><h3>Agotaste las llamadas de este mes</h3>'+
+            '<p class="sub">Se renuevan el mes que viene. Mientras tanto, el chat con IA y el diagnóstico guiado siguen disponibles sin límite.</p></div>')+
+      '<div class="eia440-card"><h3>Antes de llamar, probá esto</h3>'+
+      '<p class="sub">La mayoría de los casos se resuelven sin llamada.</p>'+
+      '<button class="eia440-btn alt" type="button" onclick="eia410Aislar&&eia410Aislar()">🔍 Ver qué circuito falla</button>'+
+      '<button class="eia440-btn alt" type="button" onclick="eia410Contador&&eia410Contador()">⚡ Todo arriba pero sin luz</button>'+
+      '<button class="eia440-btn alt" type="button" onclick="eia340PedirTecnico&&eia340PedirTecnico()">👷 Que venga un electricista</button>'+
+      '</div>'+
+      '<div class="eia440-out"><b>La asistencia telefónica orienta, no repara.</b> No sustituye la visita de un profesional '+
+      'ni autoriza a hacer trabajos para los que no estés habilitado.</div>'+
+      '<button class="eia440-btn alt" type="button" onclick="home&&home()">← Volver a Inicio</button>');
+  };
+
+  /* Se ofrece el acceso telefónico SOLO al final de un diagnóstico
+     que no resolvió, nunca en la pantalla de inicio. */
+  function ofrecerTelefono(){
+    try{
+      if(D.getElementById('e440TelCta')) return;
+      var fin=D.querySelector('.diag-output, .eia-final-options');
+      if(!fin) return;
+      var txt=(fin.textContent||'').toLowerCase();
+      var noResuelto=/electricista|profesional|no se puede|no hay informaci|distribuidora/.test(txt);
+      if(!noResuelto) return;
+      var b=D.createElement('button');
+      b.id='e440TelCta'; b.type='button'; b.className='eia440-btn alt';
+      b.textContent='📞 Hablar con asistencia telefónica';
+      b.setAttribute('onclick','eia440Telefonica()');
+      fin.parentNode.insertBefore(b,fin.nextSibling);
+    }catch(_){ }
+  }
+
+  /* ============================================================
+     ENGANCHES
+     ============================================================ */
+  function inyectar(){
+    try{
+      // Tarjetas nuevas en el menú profesional
+      var grids=D.querySelectorAll('.eia370-grid');
+      if(grids.length && !D.getElementById('e440Tiles')){
+        var g=grids[grids.length-2]||grids[grids.length-1];
+        if(g && g.querySelector('button')){
+          var wrap=D.createDocumentFragment();
+          [['eia440Dictar()','🎤','Dictar presupuesto','Decilo en voz alta y se escribe solo.'],
+           ['eia440Clientes()','👥','Clientes','Datos e historial, listos para reutilizar.']
+          ].forEach(function(t){
+            var b=D.createElement('button');
+            b.type='button'; b.className='eia370-t'; b.setAttribute('onclick',t[0]);
+            b.innerHTML='<span class="ic">'+t[1]+'</span><b>'+t[2]+'</b><span>'+t[3]+'</span>';
+            wrap.appendChild(b);
+          });
+          var marca=D.createElement('span'); marca.id='e440Tiles'; marca.style.display='none';
+          g.appendChild(wrap); g.appendChild(marca);
+        }
+      }
+      ofrecerReanudar();
+      ofrecerTelefono();
+    }catch(_){ }
+  }
+  try{
+    var app=D.getElementById('app');
+    if(app && W.MutationObserver){
+      var t=null;
+      new MutationObserver(function(){
+        clearTimeout(t);
+        t=setTimeout(function(){ inyectar(); guardarEstado(); },220);
+      }).observe(app,{childList:true,subtree:true});
     }
   }catch(_){ }
   if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',inyectar); else inyectar();
