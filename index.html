@@ -11129,4 +11129,310 @@ ${W.sourcesBlock?W.sourcesBlock():''}
 })();
 </script>
 
+<script id="electroia-v460-arbol">
+(function(){
+  'use strict';
+  var W=window;
+
+  function aplicar(){
+    var T=W.diagTree;
+    if(!T || !T.safetyGate) return false;
+
+    /* ========================================================
+       1. BUG REAL: el nodo 'danger' no existe
+       --------------------------------------------------------
+       Cinco respuestas apuntaban a 'danger', que no está en el
+       árbol. Son las respuestas de PELIGRO ("olor a quemado",
+       "agua o humedad", "sí, hay algo de eso"): justo las que
+       nunca deben fallar. El nodo correcto es 'dangerTriage'.
+       ======================================================== */
+    var reparados=0;
+    Object.keys(T).forEach(function(n){
+      (T[n].a||[]).forEach(function(op){
+        if(op[1]==='danger' && T.dangerTriage){ op[1]='dangerTriage'; reparados++; }
+      });
+    });
+
+    /* ========================================================
+       2. LOS "NO LO SÉ" DEJAN DE SER UN CALLEJÓN
+       --------------------------------------------------------
+       26 respuestas del tipo "No lo sé" / "No estoy seguro"
+       llevaban todas al mismo final: "no se puede resolver a
+       distancia, llamá a un electricista".
+
+       Para quien no sabe de electricidad —el público principal
+       de este modo— "no lo sé" es la respuesta más honesta y la
+       más frecuente. Derivarlo ahí significa cobrarle una visita
+       de urgencia por algo que podría resolver solo.
+
+       La solución no es adivinar por él: es ENSEÑARLE a mirar y
+       volver a preguntar. Y cuando ni eso alcanza, ofrecerle el
+       procedimiento de aislar circuitos, que no exige saber
+       nada: solo bajar y subir palancas.
+       ======================================================== */
+
+    var GUIAS={
+      // Cómo distinguir el diferencial de una térmica
+      ayudaQueSalto:{
+        q:'Vamos a averiguarlo juntos. Mirá el cuadro de llaves sin abrir la tapa. Buscá una llave que sea MÁS ANCHA que las demás y que tenga un botón pequeño con una letra T (a veces dice TEST). ¿La encontrás?',
+        a:[
+          ['Sí, la encontré y está BAJADA','deviceDiff'],
+          ['Sí, la encontré pero está ARRIBA','deviceMag'],
+          ['No hay ninguna llave con botón T','deviceMag'],
+          ['No encuentro el cuadro de llaves','ayudaCuadro'],
+          ['Prefiero probar sin identificar nada','ayudaAislar']
+        ]
+      },
+      // Dónde está el cuadro
+      ayudaCuadro:{
+        q:'El cuadro de llaves suele estar en la entrada, el pasillo, dentro de un armario o detrás de la puerta. Es una caja de plástico con una tapa y varias palancas pequeñas dentro. ¿Lo encontrás?',
+        a:[
+          ['Sí, ya lo veo','ayudaQueSalto'],
+          ['Lo veo pero no me animo a tocarlo','noTocarGuia'],
+          ['No hay cuadro a la vista','sinCuadro']
+        ]
+      },
+      // No encuentra cuadro
+      sinCuadro:{
+        result:[
+          'No encontramos el cuadro de llaves',
+          'Sin acceder al cuadro no se puede hacer casi nada por tu cuenta, pero todavía hay cosas que podés comprobar.',
+          'Preguntá a quien viva con vos o al portero dónde está: en pisos antiguos a veces está fuera de la vivienda, en el rellano.',
+          'Comprobá si los vecinos tienen luz: si tampoco la tienen, es un corte de la compañía y no hay nada que tocar.',
+          'Si el cuadro está en una zona común cerrada, avisá a la administración o a la comunidad.'
+        ],
+        steps:[
+          'Preguntá dónde está el cuadro a alguien que conozca la vivienda.',
+          'Mirá si los vecinos tienen luz.',
+          'Si es una zona común cerrada, contactá con la administración.'
+        ]
+      },
+      // No quiere tocar
+      noTocarGuia:{
+        q:'Es una decisión razonable. Bajar y subir las palancas del cuadro es seguro si no abrís la tapa, pero si preferís no hacerlo, podemos ir por otro lado. ¿Qué preferís?',
+        a:[
+          ['Probemos: solo palancas, sin abrir nada','ayudaAislar'],
+          ['Prefiero comprobar otras cosas antes','comprobarSinCuadro'],
+          ['Prefiero llamar a un electricista','tech']
+        ]
+      },
+      // Cosas que se pueden comprobar sin tocar el cuadro
+      comprobarSinCuadro:{
+        q:'Sin tocar el cuadro, todavía hay cosas útiles que mirar. ¿Los vecinos o el resto del edificio tienen luz?',
+        a:[
+          ['Ellos tampoco tienen luz','networkOutage'],
+          ['Ellos sí tienen luz','soloMiCasa'],
+          ['Vivo en casa aislada, no puedo comparar','meterPowerCheck']
+        ]
+      },
+      soloMiCasa:{
+        result:[
+          'El problema está dentro de tu vivienda',
+          'Si los vecinos tienen luz y vos no, el corte no viene de la calle: está en tu instalación o en tu contador.',
+          'Lo más probable es que se haya bajado alguna llave del cuadro, o que el contador haya cortado por exceso de consumo.',
+          'Ambas cosas se comprueban desde fuera del cuadro, sin abrir nada y sin tocar cables.'
+        ],
+        steps:[
+          'Mirá el cuadro: si alguna palanca está hacia abajo y el resto hacia arriba, esa es la que saltó.',
+          'Si están todas arriba y aun así no hay luz, mirá el contador: puede haber cortado por potencia.',
+          'Antes de rearmar nada, apagá los aparatos de mucho consumo que estuvieran encendidos.'
+        ]
+      },
+      // El procedimiento universal: no hace falta saber nada
+      ayudaAislar:{
+        q:'Hay una prueba que funciona sin saber nada de electricidad: se trata solo de bajar y subir palancas, sin abrir la tapa ni tocar cables. Sirve para descubrir qué parte de la casa da el problema y dejar el resto con luz. ¿Querés hacerla?',
+        a:[
+          ['Sí, explicame paso a paso','aislarPasos'],
+          ['Antes quiero ver cómo es un cuadro','ayudaCuadro'],
+          ['No, prefiero otra cosa','comprobarSinCuadro']
+        ]
+      },
+      aislarPasos:{
+        result:[
+          'Probá a aislar el circuito que falla',
+          'Es la prueba que más problemas resuelve sin electricista, y solo consiste en mover palancas.',
+          'Si al terminar la casa vuelve a tener luz menos en una zona, ya localizaste el problema y podés vivir con normalidad hasta que lo revisen.',
+          'Si al subir la llave general vuelve a saltar con TODAS las pequeñas bajadas, entonces sí hace falta un profesional: el problema está antes del cuadro.'
+        ],
+        steps:[
+          'Bajá todas las llaves pequeñas del cuadro, una por una.',
+          'Dejá arriba la llave general y la del botón T.',
+          'Subí las pequeñas de a una, esperando unos segundos entre cada una.',
+          'La que haga saltar todo otra vez es la del problema: bajala y dejala bajada.',
+          'Subí el resto: recuperás luz en toda la casa menos en esa zona.',
+          'Anotá qué dejó de funcionar, es lo primero que te preguntará el electricista.'
+        ]
+      },
+      // No sabe si el contador cortó
+      ayudaContador:{
+        q:'El contador suele estar en la entrada, el rellano o un armario del portal. Tiene una pantalla pequeña. ¿Podés verla?',
+        a:[
+          ['Sí, y pone algo como "ICP" o "PULSE"','powerLimitReset'],
+          ['Sí, pero no pone nada raro','meterNoTrip'],
+          ['No lo encuentro o está cerrado','contadorInaccesible'],
+          ['No sé cuál es el contador','contadorInaccesible']
+        ]
+      },
+      contadorInaccesible:{
+        result:[
+          'No podés llegar al contador',
+          'En muchos edificios el contador está en un armario cerrado de la comunidad. No fuerces nada ni rompas un precinto: además de peligroso, es una infracción.',
+          'Todavía podés probar desde tu cuadro, que suele bastar.'
+        ],
+        steps:[
+          'Apagá o desenchufá los aparatos de mucho consumo que estuvieran funcionando.',
+          'Bajá la llave general de tu cuadro y esperá unos 10 segundos.',
+          'Volvé a subirla: en muchos casos el suministro se recupera.',
+          'Si no vuelve, llamá a tu distribuidora; el teléfono está en la factura.'
+        ]
+      },
+      // No sabe qué aparato fue
+      ayudaAparato:{
+        q:'Podemos descubrir qué aparato lo provoca sin saber nada de electricidad, probando de a uno. ¿Podés desenchufar aparatos con seguridad (enchufes accesibles, manos secas)?',
+        a:[
+          ['Sí, puedo','aparatoPasos'],
+          ['No puedo llegar a los enchufes','ayudaAislar'],
+          ['Están mojados o en mal estado','dangerTriage']
+        ]
+      },
+      aparatoPasos:{
+        result:[
+          'Probá los aparatos de a uno',
+          'Es la forma de encontrar el aparato culpable sin instrumentos y sin riesgo.',
+          'Cuando lo encuentres, dejalo desenchufado: el resto de la casa puede seguir funcionando con normalidad.',
+          'Un aparato que hace saltar la protección no debe volver a usarse hasta que lo revisen, aunque parezca funcionar bien.'
+        ],
+        steps:[
+          'Desenchufá TODO lo de la zona afectada.',
+          'Volvé a subir la llave que había saltado.',
+          'Si se mantiene arriba, el problema es un aparato, no la instalación.',
+          'Enchufá de a uno, esperando unos segundos entre cada uno.',
+          'El que la haga saltar es el culpable: dejalo desenchufado.',
+          'Si salta con todo desenchufado, el problema está en la instalación y ahí sí hace falta un electricista.'
+        ]
+      }
+    };
+
+    // Insertar las guías sin pisar nada existente
+    var nuevos=0;
+    Object.keys(GUIAS).forEach(function(k){
+      if(!T[k]){ T[k]=GUIAS[k]; nuevos++; }
+    });
+
+    /* Redirigir cada "no lo sé" al destino que mejor enseña,
+       según de qué nodo venga. Solo se tocan los que llevaban
+       al callejón 'tech'. */
+    var REDIR={
+      deviceTrip:'ayudaQueSalto', deviceDiff:'ayudaQueSalto', deviceMag:'ayudaQueSalto',
+      wholeHouse:'comprobarSinCuadro', wholeHouseLocal:'ayudaQueSalto',
+      powerLimit:'ayudaContador', powerLimitStep1:'ayudaContador', powerLimitReset:'ayudaContador',
+      breakerWhole:'ayudaQueSalto', breakerIdentify:'ayudaQueSalto',
+      generalReset:'ayudaAislar', generalResetSafe:'ayudaAislar', generalResetDo:'ayudaAislar',
+      differentialReset:'ayudaAislar', differentialResetSafe:'ayudaAislar', differentialResetDo:'ayudaAislar',
+      breakerZone:'ayudaAislar', zoneDetail:'ayudaAislar',
+      flicker:'ayudaAislar', light:'ayudaAislar',
+      suspectDevice:'ayudaAparato', deviceTimingUnknown:'ayudaAparato',
+      highPowerImmediate:'ayudaAparato', deviceIdentifyPhoto:'ayudaQueSalto',
+      protectionExplain:'ayudaQueSalto', recentWork:'ayudaAislar'
+    };
+    var redirigidos=0;
+    Object.keys(REDIR).forEach(function(n){
+      if(!T[n] || !T[n].a) return;
+      T[n].a.forEach(function(op){
+        if(op[1]==='tech' && T[REDIR[n]]){ op[1]=REDIR[n]; redirigidos++; }
+      });
+    });
+
+    /* El callejón 'tech' sigue existiendo (hay caminos donde
+       derivar SÍ es lo correcto), pero se le añaden salidas útiles
+       para que nunca sea un punto muerto absoluto. */
+    if(T.tech && T.tech.result){
+      T.tech.steps=T.tech.steps||[];
+      var extra=[
+        'Antes de llamar, probá la prueba de las palancas: bajá todas las llaves pequeñas y subilas de a una para ver cuál falla.',
+        'Si localizás la zona, dejá esa llave bajada y el resto arriba: recuperás luz en el resto de la casa.',
+        'Anotá qué probaste y qué pasó: le ahorra media visita al electricista y a vos parte de la factura.'
+      ];
+      extra.forEach(function(s){ if(T.tech.steps.indexOf(s)<0) T.tech.steps.push(s); });
+    }
+
+    /* ========================================================
+       3. FINALES SIN PASOS CONCRETOS
+       --------------------------------------------------------
+       Dos finales que pasan el diagnóstico a la IA no daban
+       ningún paso mientras tanto. Si el usuario no tiene datos,
+       o la IA falla, se queda sin nada que hacer. Se les añaden
+       los pasos que sí puede dar por su cuenta.
+       ======================================================== */
+    if(T.aiIdentificationPanelStart && !T.aiIdentificationPanelStart.steps){
+      T.aiIdentificationPanelStart.steps=[
+        'Mientras tanto podés probar sin identificar nada: bajá todas las llaves pequeñas del cuadro.',
+        'Subilas de a una, esperando unos segundos entre cada una.',
+        'La que haga saltar todo es la del problema: dejala bajada y subí el resto.',
+        'Con eso recuperás luz en el resto de la casa aunque no sepas cómo se llama cada llave.'
+      ];
+    }
+    if(T.aiIdentificationMeterStart && !T.aiIdentificationMeterStart.steps){
+      T.aiIdentificationMeterStart.steps=[
+        'Mientras tanto, apagá los aparatos de mucho consumo que estuvieran funcionando.',
+        'Bajá la llave general de tu cuadro y esperá unos 10 segundos.',
+        'Volvé a subirla: muchas veces el suministro se recupera sin tocar el contador.',
+        'Si no vuelve, llamá a tu distribuidora; el teléfono está en la factura.'
+      ];
+    }
+
+    /* ========================================================
+       4. NODOS SIN NINGUNA SALIDA
+       --------------------------------------------------------
+       'other' y 'deviceDiff2' no tenían ni pregunta ni resultado:
+       quien caía ahí se quedaba con la pantalla muerta.
+       ======================================================== */
+    if(T.other && !T.other.result && !(T.other.a||[]).length){
+      T.other={
+        q:'No encaja en las opciones anteriores. Para orientarnos, ¿qué describe mejor lo que pasa?',
+        a:[
+          ['Se corta la luz en algún momento','ayudaAislar'],
+          ['Un aparato o enchufe concreto falla','ayudaAparato'],
+          ['Algo se calienta, huele o hace ruido','dangerTriage'],
+          ['No sabría decirlo','ayudaAislar']
+        ]
+      };
+    }
+    if(T.deviceDiff2 && !T.deviceDiff2.result && !(T.deviceDiff2.a||[]).length){
+      T.deviceDiff2={
+        q:'¿Conseguiste volver a subir la llave del botón T?',
+        a:[
+          ['Sí, subió y se mantiene','differentialResetDo'],
+          ['Sube pero vuelve a saltar','ayudaAparato'],
+          ['No sube de ninguna manera','tech'],
+          ['No estoy seguro','ayudaAislar']
+        ]
+      };
+    }
+
+    /* ========================================================
+       5. ÚLTIMAS DERIVACIONES PREMATURAS
+       ======================================================== */
+    [['soundAppliance','ayudaAparato'],['thermosymptom','ayudaAparato']].forEach(function(par){
+      var nd=T[par[0]];
+      if(nd && nd.a && T[par[1]]){
+        nd.a.forEach(function(op){ if(op[1]==='tech'){ op[1]=par[1]; redirigidos++; } });
+      }
+    });
+
+    W.EIA460={reparados:reparados,nuevos:nuevos,redirigidos:redirigidos};
+    try{ console.info('EIA460 árbol:',W.EIA460); }catch(_){ }
+    return true;
+  }
+
+  // El árbol se define en un bloque anterior; se espera a que exista.
+  if(!aplicar()){
+    var intentos=0;
+    var t=setInterval(function(){
+      if(aplicar() || ++intentos>40) clearInterval(t);
+    },120);
+  }
+})();
+</script>
+
 </body></html>
