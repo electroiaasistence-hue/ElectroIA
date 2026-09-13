@@ -603,6 +603,134 @@ app.get('/api/auth/me', authRequired, async (req, res) => {
 });
 
 /* ============================================================
+   DERECHOS DEL INTERESADO (RGPD arts. 15, 17 y 20)
+   ------------------------------------------------------------
+   La app opera en España y Argentina. El RGPD exige poder ejercer
+   el acceso, la portabilidad y la supresión sin fricción indebida.
+   No basta con explicarlo en la política: tiene que poder hacerse.
+   ============================================================ */
+
+// Derecho de acceso y portabilidad: descarga de todos los datos del usuario.
+app.get('/api/account/export', authRequired, async (req, res) => {
+  if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
+  try {
+    const u = await pool.query(
+      'SELECT id,email,name,created_at,updated_at,plan,plan_until FROM users WHERE id=$1',
+      [req.user.sub]
+    );
+    if (!u.rows.length) return res.status(404).json({ error: 'NOT_FOUND' });
+    const pr = await pool.query(
+      'SELECT id,data,created_at,updated_at FROM projects WHERE user_id=$1',
+      [req.user.sub]
+    );
+    const us = await pool.query('SELECT period,used FROM ai_usage WHERE user_id=$1', [req.user.sub]);
+    const ld = await pool.query(
+      'SELECT id,nombre,contacto,zona,resumen,urgencia,estado,created_at FROM leads WHERE user_id=$1',
+      [req.user.sub]
+    );
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="electroia-mis-datos.json"');
+    res.setHeader('Cache-Control', 'no-store');
+    res.send(JSON.stringify({
+      generado: new Date().toISOString(),
+      aviso: 'Copia de todos los datos personales asociados a esta cuenta en ElectroIA.',
+      cuenta: u.rows[0],
+      proyectos: pr.rows,
+      consumo_ia: us.rows,
+      solicitudes_de_contacto: ld.rows
+    }, null, 2));
+  } catch (e) {
+    console.error('account/export', e.message);
+    res.status(500).json({ error: 'EXPORT_FAILED' });
+  }
+});
+
+// Derecho de supresión. Borrado real e irreversible, no marca de baja.
+// Exige la contraseña: sin ella, un token robado bastaría para destruir la cuenta.
+app.post('/api/account/delete', authRequired, authRateLimit, async (req, res) => {
+  if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
+  const { password } = req.body || {};
+  if (!password) return res.status(400).json({ error: 'PASSWORD_REQUIRED' });
+  try {
+    const u = await pool.query('SELECT id,password_hash FROM users WHERE id=$1', [req.user.sub]);
+    if (!u.rows.length) return res.status(404).json({ error: 'NOT_FOUND' });
+    const okPass = await bcrypt.compare(String(password), u.rows[0].password_hash);
+    if (!okPass) return res.status(401).json({ error: 'PASSWORD_INVALID' });
+
+    // Los leads se anonimizan en vez de borrarse: pueden estar ya derivados a un
+    // electricista y el histórico de la derivación tiene interés legítimo, pero
+    // sin datos identificativos del usuario.
+    await pool.query(
+      "UPDATE leads SET user_id=NULL, nombre='', contacto='[eliminado]' WHERE user_id=$1",
+      [req.user.sub]
+    );
+    // projects y ai_usage caen por ON DELETE CASCADE.
+    await pool.query('DELETE FROM users WHERE id=$1', [req.user.sub]);
+    res.json({ ok: true, mensaje: 'Cuenta y datos asociados eliminados de forma permanente.' });
+  } catch (e) {
+    console.error('account/delete', e.message);
+    res.status(500).json({ error: 'DELETE_FAILED' });
+  }
+});
+
+/* ============================================================
+   ALTA DE ELECTRICISTAS (lado oferta de la derivación)
+   ------------------------------------------------------------
+   Los leads no valen nada sin profesionales a quien enviarlos.
+   Este endpoint capta el otro lado del mercado.
+   ============================================================ */
+app.post('/api/electricistas', rateLimit(5, 60 * 60 * 1000, 'electricistas'), authOpcional, async (req, res) => {
+  if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
+  const { nombre, email, telefono, matricula, zona, pais, notas } = req.body || {};
+  if (!String(nombre || '').trim() || !String(telefono || '').trim()) {
+    return res.status(400).json({ error: 'DATOS_REQUERIDOS' });
+  }
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS electricians (
+        id UUID PRIMARY KEY,
+        user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+        nombre TEXT NOT NULL DEFAULT '',
+        email TEXT NOT NULL DEFAULT '',
+        telefono TEXT NOT NULL DEFAULT '',
+        matricula TEXT NOT NULL DEFAULT '',
+        zona TEXT NOT NULL DEFAULT '',
+        pais TEXT NOT NULL DEFAULT '',
+        notas TEXT NOT NULL DEFAULT '',
+        verificado BOOLEAN NOT NULL DEFAULT FALSE,
+        activo BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `);
+    const id = crypto.randomUUID();
+    await pool.query(
+      'INSERT INTO electricians(id,user_id,nombre,email,telefono,matricula,zona,pais,notas) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+      [id, req.user?.sub || null,
+       String(nombre).slice(0, 120), String(email || '').slice(0, 160),
+       String(telefono).slice(0, 60), String(matricula || '').slice(0, 80),
+       String(zona || '').slice(0, 200), pais === 'es' ? 'es' : 'ar',
+       String(notas || '').slice(0, 1000)]
+    );
+    res.json({ ok: true, id });
+  } catch (e) {
+    console.error('electricistas', e.message);
+    res.status(500).json({ error: 'FALLO' });
+  }
+});
+
+app.get('/api/electricistas', async (req, res) => {
+  const token = req.get('x-admin-token') || '';
+  if (!process.env.ADMIN_TOKEN || token !== process.env.ADMIN_TOKEN) {
+    return res.status(404).json({ error: 'NOT_FOUND' });
+  }
+  if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
+  try {
+    const r = await pool.query('SELECT * FROM electricians ORDER BY created_at DESC LIMIT 300');
+    res.json(r.rows);
+  } catch (_) { res.status(500).json({ error: 'FALLO' }); }
+});
+
+/* ============================================================
    PLANES Y FACTURACIÓN
    ============================================================ */
 

@@ -7006,6 +7006,11 @@ ${W.sourcesBlock?W.sourcesBlock():''}
       '<input id="e330File" type="file" accept="application/json,.json" style="display:none" onchange="eia330Importar(event)" aria-label="Elegir archivo de copia">'+
       '<span class="eia330-note">'+esc(e.texto)+'</span></div>'+
 
+      '<div class="eia330-card"><h3>🔐 Mis datos y privacidad</h3>'+
+      '<p class="eia330-sub">Descargá una copia de tus datos o eliminá tu cuenta. También podés consultar cómo tratamos la información.</p>'+
+      '<button class="eia330-btn alt" type="button" onclick="eia380MisDatos&&eia380MisDatos()">Mis datos (descargar o eliminar)</button>'+
+      '<button class="eia330-btn alt" type="button" onclick="eia380Ver&&eia380Ver(\'privacidad\')">Política de privacidad</button></div>'+
+
       '<div class="eia330-card"><h3>👤 Cuenta</h3>'+
       '<p class="eia330-sub">Iniciá sesión para guardar proyectos, o seguí sin cuenta.</p>'+
       '<button class="eia330-btn alt" type="button" onclick="window.eiaToggleMenu?eiaToggleMenu():document.getElementById(\'eiaAccountOverlay\')?.classList.add(\'show\')">Abrir cuenta</button></div>'+
@@ -8916,6 +8921,389 @@ ${W.sourcesBlock?W.sourcesBlock():''}
   }
   fijar('prof', W.eia370Menu);
   fijar('eiaOpenProSection', W.eia370Menu);
+})();
+</script>
+
+<style id="eia380-css">
+.eia380-foot{margin:26px 0 8px;padding:16px 14px 20px;border-top:1px solid #26303e;color:#93a6bd;font-size:12.5px;line-height:1.6}
+.eia380-foot .marca{font-weight:800;color:#dbe6f3;font-size:13.5px;margin-bottom:6px}
+.eia380-foot .links{display:flex;flex-wrap:wrap;gap:9px;margin:10px 0}
+.eia380-foot .links button{background:none;border:0;color:#7cc4ff;font:inherit;text-decoration:underline;cursor:pointer;padding:0}
+.eia380-foot .disc{margin-top:11px;padding:10px;border-radius:9px;background:#2a1d10;border:1px solid #5c4014;color:#f0d9a8;font-size:12px}
+.eia380-doc{background:#fff;border:1px solid #d9e2ee;border-radius:16px;padding:17px;color:#1b2736}
+.eia380-doc,.eia380-doc *{color:#1b2736}
+.eia380-doc h2{margin:0 0 3px;font-size:19px;color:#0f1b2b}
+.eia380-doc .act{font-size:12px;color:#55687f;margin:0 0 14px}
+.eia380-doc h3{font-size:15.5px;margin:18px 0 6px;color:#0f1b2b}
+.eia380-doc p,.eia380-doc li{font-size:14px;line-height:1.6;color:#243449}
+.eia380-doc p{margin:0 0 10px}
+.eia380-doc ul{margin:0 0 10px;padding-left:19px}
+.eia380-doc table{width:100%;border-collapse:collapse;font-size:12.8px;margin:9px 0}
+.eia380-doc th,.eia380-doc td{border:1px solid #d9e2ee;padding:7px;text-align:left;color:#243449}
+.eia380-doc th{background:#eef3fb;font-weight:800;color:#12203a}
+.eia380-doc .ojo{background:#fff6e2;border-left:4px solid #d9a200;border-radius:0 9px 9px 0;padding:11px 13px;margin:13px 0}
+.eia380-doc .ojo b{color:#7a5800}
+.eia380-doc .ojo p{color:#5c4400;margin:0}
+.eia380-btn{display:block;width:100%;margin-top:10px;padding:12px;border:0;border-radius:11px;background:#1663c7;color:#fff;font-weight:800;font-size:14.5px;cursor:pointer}
+.eia380-btn.alt{background:#eef3fa;color:#1c3252;border:1px solid #ccd9ea}
+.eia380-btn.danger{background:#b3182b;color:#fff}
+#eia380Aviso{position:fixed;left:10px;right:10px;bottom:78px;z-index:9997;background:#101a26;border:1px solid #2f3f52;border-radius:14px;padding:13px;box-shadow:0 10px 30px rgba(0,0,0,.5);display:none}
+#eia380Aviso.on{display:block}
+#eia380Aviso p{margin:0 0 10px;font-size:13px;line-height:1.5;color:#d7e3f1}
+#eia380Aviso .row{display:flex;gap:8px}
+#eia380Aviso button{flex:1;padding:10px;border-radius:10px;border:0;font-weight:800;font-size:13.5px;cursor:pointer}
+#eia380Aviso .ok{background:#1663c7;color:#fff}
+#eia380Aviso .mas{background:#22303f;color:#cfe0f5;border:1px solid #3a4c61}
+.eia380-f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:700;color:#41506a;margin-bottom:9px}
+.eia380-f input,.eia380-f select,.eia380-f textarea{font:inherit;font-weight:500;padding:10px;border:1px solid #ccd6e2;border-radius:9px;background:#fff;color:#16202e;width:100%;box-sizing:border-box}
+.eia380-out{margin-top:11px;padding:12px;border-radius:11px;background:#f3f7fc;border:1px solid #d8e4f2;font-size:13.5px;line-height:1.5;color:#1b2736}
+.eia380-out.ok{background:#eafaf0;border-color:#b6e5c8;color:#14602f}
+.eia380-out.bad{background:#fdeeec;border-color:#f0c2bc;color:#8c1a12}
+</style>
+
+<div id="eia380Aviso" role="region" aria-label="Aviso de privacidad">
+  <p><b>Cómo usamos tus datos.</b> ElectroIA guarda información en tu dispositivo para que la app funcione (tu progreso, contactos y proyectos). No usamos cookies de publicidad ni de seguimiento. Las consultas a la IA se procesan en servidores de OpenAI.</p>
+  <div class="row">
+    <button type="button" class="mas" onclick="eia380Ver('privacidad')">Leer más</button>
+    <button type="button" class="ok" onclick="eia380Aceptar()">Entendido</button>
+  </div>
+</div>
+
+<script id="electroia-v380-legal">
+(function(){
+  'use strict';
+  var W=window,D=document;
+  var EMPRESA={
+    nombre:'ElectroIA',
+    titular:'[COMPLETAR: nombre o razón social del titular]',
+    id:'[COMPLETAR: NIF / CUIT]',
+    domicilio:'[COMPLETAR: domicilio fiscal]',
+    email:'[COMPLETAR: correo de contacto]',
+    web:'https://electro-ia.com'
+  };
+  var ACT='13 de septiembre de 2026';
+
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function token(){
+    var ks=['electroia_session_v1','electroia_user','eia_user','currentUser','electroia_session','eia_session'];
+    for(var i=0;i<ks.length;i++){
+      try{ var r=localStorage.getItem(ks[i]); if(r){ var v=JSON.parse(r); if(v&&v.token) return v.token; } }catch(_){ }
+    }
+    return '';
+  }
+  function shell(html){
+    var app=D.getElementById('app'); if(!app) return;
+    var cab=(typeof W.head==='function')?W.head(true):'';
+    app.innerHTML=cab+'<main class="wrap page">'+html+'</main>';
+    try{ W.scrollTo(0,0); }catch(_){ }
+    if(W.eiaEtiquetarCampos) W.eiaEtiquetarCampos();
+  }
+  function volver(){ return '<button class="eia380-btn alt" type="button" onclick="home&&home()">← Volver a Inicio</button>'; }
+
+  /* ============================================================
+     AVISO DE PRIVACIDAD (informativo, no bloqueante)
+     ------------------------------------------------------------
+     ElectroIA no usa cookies de publicidad ni analítica: solo
+     almacenamiento local funcional. Bajo el artículo 5.3 de la
+     Directiva ePrivacy, el almacenamiento estrictamente necesario
+     para prestar el servicio que el usuario pide está exento de
+     consentimiento previo, pero la obligación de informar se
+     mantiene. Por eso este aviso informa y no bloquea el acceso:
+     un muro de consentimiento aquí sería incorrecto y, en una app
+     de urgencias, además peligroso.
+     SI EN EL FUTURO SE AÑADE ANALÍTICA O PUBLICIDAD, hará falta
+     consentimiento previo real, con opción de rechazar igual de
+     accesible que la de aceptar.
+     ============================================================ */
+  var CLAVE='eia380-aviso';
+  W.eia380Aceptar=function(){
+    try{ localStorage.setItem(CLAVE,JSON.stringify({visto:true,fecha:new Date().toISOString()})); }catch(_){ }
+    var e=D.getElementById('eia380Aviso'); if(e) e.classList.remove('on');
+  };
+  function mostrarAviso(){
+    try{ if(localStorage.getItem(CLAVE)) return; }catch(_){ }
+    var e=D.getElementById('eia380Aviso'); if(e) e.classList.add('on');
+  }
+
+  /* ============================================================
+     DOCUMENTOS LEGALES
+     ============================================================ */
+  var DOCS={
+    aviso:{t:'Aviso legal',html:function(){ return ''+
+      '<h3>1. Titular del sitio</h3>'+
+      '<p>En cumplimiento de la Ley 34/2002 de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI-CE), se informa:</p>'+
+      '<table><tr><th>Denominación</th><td>'+esc(EMPRESA.titular)+'</td></tr>'+
+      '<tr><th>Identificación fiscal</th><td>'+esc(EMPRESA.id)+'</td></tr>'+
+      '<tr><th>Domicilio</th><td>'+esc(EMPRESA.domicilio)+'</td></tr>'+
+      '<tr><th>Correo electrónico</th><td>'+esc(EMPRESA.email)+'</td></tr>'+
+      '<tr><th>Sitio web</th><td>'+esc(EMPRESA.web)+'</td></tr></table>'+
+      '<div class="ojo"><b>⚠️ Pendiente de completar</b><p>Los datos identificativos deben rellenarse con la información real del titular antes de operar comercialmente. Su ausencia es una infracción de la LSSI-CE.</p></div>'+
+      '<h3>2. Objeto</h3>'+
+      '<p>ElectroIA es una herramienta informativa de orientación en materia eléctrica, dirigida tanto a usuarios domésticos como a profesionales del sector. El acceso al sitio atribuye la condición de usuario e implica la aceptación de las presentes condiciones.</p>'+
+      '<h3>3. Naturaleza del servicio y limitación de responsabilidad</h3>'+
+      '<p>ElectroIA <b>no es un servicio de instalación, reparación, certificación ni peritaje eléctrico</b>, y no sustituye la intervención de un profesional habilitado o matriculado.</p>'+
+      '<p>Los diagnósticos, cálculos, tablas y contenidos formativos tienen carácter <b>orientativo</b>. Se elaboran a partir de normativa técnica de referencia (IEC 60364 y sus adaptaciones nacionales: REBT en España, AEA 90364 en Argentina), pero pueden contener errores, quedar desactualizados o no aplicar a un caso concreto.</p>'+
+      '<p>El titular no se responsabiliza de los daños derivados de intervenciones realizadas por el usuario sobre instalaciones eléctricas. Cualquier trabajo sobre una instalación debe ser ejecutado y certificado por un profesional habilitado conforme a la normativa vigente en su jurisdicción.</p>'+
+      '<div class="ojo"><b>Seguridad ante todo</b><p>Ante humo, olor a quemado, chispas, un conductor caliente o una persona que ha recibido una descarga: corte la corriente si puede hacerlo con seguridad y contacte con los servicios de emergencia y con un profesional. No utilice esta aplicación como sustituto de esa actuación.</p></div>'+
+      '<h3>4. Propiedad intelectual</h3>'+
+      '<p>Los contenidos originales del sitio pertenecen a su titular. Las referencias a normas técnicas se realizan a título informativo; los textos normativos son propiedad de sus respectivos organismos (IEC, AENOR, AEA) y deben consultarse en sus fuentes oficiales.</p>'+
+      '<h3>5. Legislación aplicable</h3>'+
+      '<p>Las presentes condiciones se rigen por la legislación española para usuarios en España y por la legislación argentina para usuarios en Argentina.</p>';
+    }},
+
+    privacidad:{t:'Política de privacidad',html:function(){ return ''+
+      '<h3>1. Responsable del tratamiento</h3>'+
+      '<p>'+esc(EMPRESA.titular)+' · '+esc(EMPRESA.id)+' · '+esc(EMPRESA.domicilio)+' · '+esc(EMPRESA.email)+'</p>'+
+      '<h3>2. Qué datos tratamos y para qué</h3>'+
+      '<table><tr><th>Datos</th><th>Finalidad</th><th>Base jurídica</th></tr>'+
+      '<tr><td>Correo, nombre y contraseña (cifrada)</td><td>Crear y gestionar tu cuenta</td><td>Ejecución del contrato</td></tr>'+
+      '<tr><td>Proyectos, cálculos y fotos que subas</td><td>Guardar tu trabajo</td><td>Ejecución del contrato</td></tr>'+
+      '<tr><td>Consultas a la IA, incluidas fotos</td><td>Generar la respuesta</td><td>Ejecución del contrato</td></tr>'+
+      '<tr><td>Nombre, teléfono y zona en solicitudes de contacto</td><td>Ponerte en contacto con un electricista</td><td>Consentimiento</td></tr>'+
+      '<tr><td>Número de consultas de IA por mes</td><td>Aplicar los límites del plan</td><td>Ejecución del contrato</td></tr>'+
+      '<tr><td>Dirección IP (temporal)</td><td>Limitar el abuso del servicio</td><td>Interés legítimo</td></tr></table>'+
+      '<h3>3. Datos que NO salen de tu dispositivo</h3>'+
+      '<p>Los contactos de emergencia, la ficha de tu instalación, el historial de averías, el progreso del módulo de aprendizaje y las mediciones registradas se guardan <b>únicamente en el almacenamiento local de tu navegador</b>. No se envían a ningún servidor. Si borras los datos del navegador, se pierden.</p>'+
+      '<h3>4. Destinatarios y transferencias internacionales</h3>'+
+      '<p>Para prestar el servicio recurrimos a:</p>'+
+      '<ul>'+
+      '<li><b>OpenAI</b> (Estados Unidos): procesa el texto, las fotos y el audio que envías a la IA. Implica una transferencia internacional de datos.</li>'+
+      '<li><b>Render</b>: alojamiento de la aplicación y de la base de datos.</li>'+
+      '</ul>'+
+      '<div class="ojo"><b>Importante sobre la IA</b><p>No incluyas datos personales de terceros, documentación sensible ni información confidencial en las consultas a la IA ni en las fotos que subas.</p></div>'+
+      '<h3>5. Conservación</h3>'+
+      '<p>Los datos de la cuenta se conservan mientras la cuenta esté activa. Si la eliminas, se borran de forma permanente, salvo lo que debamos conservar por obligación legal. Las solicitudes de contacto se conservan durante el tiempo necesario para gestionarlas y después se anonimizan.</p>'+
+      '<h3>6. Tus derechos</h3>'+
+      '<p>Puedes ejercer los derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad. Dos de ellos están disponibles directamente en la app, sin trámite:</p>'+
+      '<ul><li><b>Acceso y portabilidad:</b> Ajustes → Mis datos → Descargar todos mis datos.</li>'+
+      '<li><b>Supresión:</b> Ajustes → Mis datos → Eliminar mi cuenta.</li></ul>'+
+      '<p>Para el resto, escribe a '+esc(EMPRESA.email)+'. Si consideras que no hemos atendido correctamente tu solicitud, puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es) o, en Argentina, ante la Agencia de Acceso a la Información Pública (argentina.gob.ar/aaip).</p>'+
+      '<h3>7. Menores</h3>'+
+      '<p>El servicio no está dirigido a menores de 14 años. No se solicitan ni tratan conscientemente datos de menores de esa edad.</p>'+
+      '<h3>8. Seguridad</h3>'+
+      '<p>Las contraseñas se almacenan cifradas mediante bcrypt. La comunicación con el servidor se realiza sobre HTTPS. Ningún sistema es infalible: te recomendamos usar una contraseña única para este servicio.</p>';
+    }},
+
+    terminos:{t:'Términos y condiciones',html:function(){ return ''+
+      '<h3>1. Aceptación</h3>'+
+      '<p>El uso de ElectroIA implica la aceptación de estos términos. Si no estás de acuerdo, no utilices el servicio.</p>'+
+      '<h3>2. Qué es y qué no es este servicio</h3>'+
+      '<p>ElectroIA es una <b>herramienta de orientación e información</b>. No presta servicios de ingeniería, instalación, reparación ni certificación eléctrica, y no emite documentos con validez reglamentaria.</p>'+
+      '<p>Los cálculos generados son orientativos y no están firmados por un técnico competente. Para que un cálculo tenga validez debe ser verificado y firmado por un profesional habilitado.</p>'+
+      '<h3>3. Uso responsable</h3>'+
+      '<p>Te comprometes a:</p>'+
+      '<ul><li>No realizar intervenciones para las que no estés capacitado o habilitado.</li>'+
+      '<li>Detener cualquier actuación y contactar con un profesional ante señales de peligro.</li>'+
+      '<li>No utilizar el servicio para fines ilícitos, ni intentar manipular el comportamiento de la IA.</li>'+
+      '<li>No sobrecargar el servicio de forma automatizada.</li></ul>'+
+      '<h3>4. Planes y pagos</h3>'+
+      '<p>El diagnóstico de urgencia, las advertencias de seguridad, el módulo de aprendizaje y las calculadoras son <b>gratuitos y no requieren cuenta</b>.</p>'+
+      '<p>El plan PRO añade herramientas de productividad profesional (documentos entregables, proyectos ilimitados y mayor cuota de IA). Se contrata por periodos mensuales renovables y puede cancelarse en cualquier momento, manteniéndose activo hasta el final del periodo pagado.</p>'+
+      '<div class="ojo"><b>Nunca de pago</b><p>Ninguna función relacionada con la seguridad de las personas se sitúa detrás de un pago, ni lo estará. Esto no es una promesa comercial: es una decisión de diseño del producto.</p></div>'+
+      '<h3>5. Derecho de desistimiento</h3>'+
+      '<p>Los consumidores en la Unión Europea disponen de 14 días naturales para desistir de la contratación de un servicio digital, salvo que hayan solicitado expresamente su ejecución inmediata y renunciado a este derecho.</p>'+
+      '<h3>6. Limitación de responsabilidad</h3>'+
+      '<p>En la máxima medida permitida por la ley, el titular no responde de los daños derivados del uso o de la imposibilidad de uso del servicio, incluidos los causados por decisiones tomadas a partir de la información proporcionada. El usuario asume la responsabilidad de verificar la información antes de actuar sobre una instalación eléctrica.</p>'+
+      '<p>Nada de lo anterior excluye la responsabilidad que legalmente no pueda excluirse.</p>'+
+      '<h3>7. Disponibilidad y cambios</h3>'+
+      '<p>El servicio se presta sin garantía de disponibilidad ininterrumpida. Estos términos pueden modificarse; los cambios sustanciales se comunicarán a los usuarios registrados.</p>';
+    }},
+
+    cookies:{t:'Cookies y almacenamiento',html:function(){ return ''+
+      '<h3>1. Situación actual</h3>'+
+      '<p><b>ElectroIA no utiliza cookies de publicidad, de analítica ni de seguimiento.</b> No hay perfilado, no se comparten datos con anunciantes y no se rastrea la navegación entre sitios.</p>'+
+      '<p>Lo que sí se emplea es <b>almacenamiento local</b> (localStorage) del navegador, necesario para que la aplicación funcione.</p>'+
+      '<h3>2. Qué se guarda en tu dispositivo</h3>'+
+      '<table><tr><th>Dato</th><th>Para qué</th></tr>'+
+      '<tr><td>Sesión de usuario</td><td>Mantenerte identificado sin volver a escribir la contraseña</td></tr>'+
+      '<tr><td>Contactos de emergencia</td><td>Tenerlos a mano en una urgencia</td></tr>'+
+      '<tr><td>Ficha de tu instalación</td><td>Mostrarla durante un diagnóstico</td></tr>'+
+      '<tr><td>Historial de averías</td><td>Consultar problemas anteriores</td></tr>'+
+      '<tr><td>Progreso de aprendizaje</td><td>Recordar lecciones y notas</td></tr>'+
+      '<tr><td>Mediciones registradas</td><td>Consultarlas y exportarlas</td></tr>'+
+      '<tr><td>País de referencia</td><td>Aplicar la normativa y el número de emergencias correctos</td></tr>'+
+      '<tr><td>Aviso de privacidad visto</td><td>No mostrarlo en cada visita</td></tr></table>'+
+      '<h3>3. Por qué no aparece un banner de aceptar o rechazar</h3>'+
+      '<p>La normativa europea (artículo 5.3 de la Directiva ePrivacy y su transposición en el artículo 22.2 de la LSSI-CE) exige consentimiento previo para el almacenamiento en el dispositivo, <b>salvo cuando es estrictamente necesario para prestar el servicio que el usuario ha solicitado</b>.</p>'+
+      '<p>Todo lo que ElectroIA guarda entra en esa excepción: sin ello la aplicación no puede funcionar. Por eso se informa, que es obligatorio, pero no se bloquea el acceso pidiendo un consentimiento que la ley no requiere en este caso. En una aplicación de urgencias, además, interponer un muro antes de poder pedir ayuda sería contraproducente.</p>'+
+      '<div class="ojo"><b>Si esto cambia</b><p>Si en el futuro se incorpora analítica, publicidad o cualquier seguimiento, será obligatorio pedir consentimiento previo, con la opción de rechazar tan accesible como la de aceptar, y esta política se actualizará antes de activarlo.</p></div>'+
+      '<h3>4. Cómo borrar estos datos</h3>'+
+      '<p>Puedes eliminarlos desde los ajustes de tu navegador (borrar datos del sitio) o, para los datos de tu cuenta, desde Ajustes → Mis datos → Eliminar mi cuenta.</p>';
+    }}
+  };
+
+  W.eia380Ver=function(k){
+    var d=DOCS[k]||DOCS.aviso;
+    if(typeof W.enterView==='function'){ try{ W.enterView('legal'); }catch(_){ } }
+    shell('<div class="eia380-doc"><h2>'+esc(d.t)+'</h2>'+
+      '<p class="act">Última actualización: '+ACT+'</p>'+d.html()+'</div>'+
+      '<div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:11px">'+
+      Object.keys(DOCS).filter(function(x){return x!==k;}).map(function(x){
+        return '<button class="eia380-btn alt" style="flex:1;min-width:44%" type="button" onclick="eia380Ver(\''+x+'\')">'+esc(DOCS[x].t)+'</button>';
+      }).join('')+'</div>'+volver());
+    var e=D.getElementById('eia380Aviso'); if(e) e.classList.remove('on');
+  };
+
+  /* ============================================================
+     PIE DE PÁGINA
+     ============================================================ */
+  function pie(){
+    return '<footer class="eia380-foot">'+
+      '<div class="marca">⚡ ElectroIA</div>'+
+      '<div>Herramienta de orientación eléctrica para el hogar y para profesionales.</div>'+
+      '<div class="links">'+
+        '<button type="button" onclick="eia380Ver(\'aviso\')">Aviso legal</button>'+
+        '<button type="button" onclick="eia380Ver(\'privacidad\')">Privacidad</button>'+
+        '<button type="button" onclick="eia380Ver(\'terminos\')">Términos</button>'+
+        '<button type="button" onclick="eia380Ver(\'cookies\')">Cookies</button>'+
+        '<button type="button" onclick="eia380Electricistas()">¿Sos electricista?</button>'+
+      '</div>'+
+      '<div class="disc"><b>⚠️ ElectroIA no sustituye a un electricista habilitado.</b> Los contenidos son orientativos. '+
+      'Ante humo, olor a quemado, chispas o una descarga: cortá la corriente y llamá a un profesional o a emergencias.</div>'+
+      '<div style="margin-top:9px;opacity:.75">© '+new Date().getFullYear()+' ElectroIA</div>'+
+    '</footer>';
+  }
+  function ponerPie(){
+    try{
+      var main=D.querySelector('#app main');
+      if(!main || main.querySelector('.eia380-foot')) return;
+      var f=D.createElement('div'); f.innerHTML=pie();
+      main.appendChild(f.firstChild);
+    }catch(_){ }
+  }
+
+  /* ============================================================
+     MIS DATOS (derechos RGPD, operativos)
+     ============================================================ */
+  W.eia380MisDatos=function(){
+    var hay=!!token();
+    shell('<div class="eia380-doc"><h2>🔐 Mis datos</h2>'+
+      '<p class="act">Ejercé tus derechos sobre los datos que tenemos de vos.</p>'+
+      (hay ? ''+
+        '<h3>Descargar todos mis datos</h3>'+
+        '<p>Obtené una copia completa en formato JSON: cuenta, proyectos, consumo y solicitudes de contacto.</p>'+
+        '<button class="eia380-btn alt" type="button" onclick="eia380Exportar()">Descargar mis datos</button>'+
+        '<h3>Eliminar mi cuenta</h3>'+
+        '<p>Borra de forma <b>permanente</b> tu cuenta y todos tus proyectos del servidor. No se puede deshacer. Los datos guardados solo en este dispositivo se borran aparte, desde los ajustes del navegador.</p>'+
+        '<label class="eia380-f">Confirmá con tu contraseña<input id="e380Pass" type="password" autocomplete="current-password" placeholder="Tu contraseña"></label>'+
+        '<button class="eia380-btn danger" type="button" onclick="eia380Borrar()">Eliminar mi cuenta permanentemente</button>'
+        : '<p>Iniciá sesión para descargar o eliminar los datos de tu cuenta.</p>'+
+          '<p>Los datos guardados solo en este dispositivo (contactos, ficha de instalación, historial, progreso y mediciones) podés borrarlos desde los ajustes de tu navegador.</p>')+
+      '<div id="e380Out" class="eia380-out" style="display:none"></div>'+
+      '</div>'+
+      '<button class="eia380-btn alt" type="button" onclick="eia380Ver(\'privacidad\')">Ver política de privacidad</button>'+
+      volver());
+  };
+  function pintar(msg,cls){
+    var e=D.getElementById('e380Out'); if(!e) return;
+    e.style.display='block'; e.className='eia380-out'+(cls?' '+cls:''); e.textContent=msg;
+  }
+  W.eia380Exportar=function(){
+    pintar('Preparando la descarga…');
+    fetch('/api/account/export',{headers:{'Authorization':'Bearer '+token()}})
+      .then(function(r){ if(!r.ok) throw new Error('fallo'); return r.blob(); })
+      .then(function(b){
+        var u=URL.createObjectURL(b), a=D.createElement('a');
+        a.href=u; a.download='electroia-mis-datos.json';
+        D.body.appendChild(a); a.click(); D.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(u); },1500);
+        pintar('✅ Descarga generada.','ok');
+      })
+      .catch(function(){ pintar('No se pudo generar la descarga. Probá de nuevo o escribinos.','bad'); });
+  };
+  W.eia380Borrar=function(){
+    var pass=(D.getElementById('e380Pass')||{}).value||'';
+    if(!pass) return pintar('Escribí tu contraseña para confirmar.','bad');
+    if(!confirm('Esto elimina tu cuenta y todos tus proyectos de forma permanente. No se puede deshacer.\n\n¿Continuar?')) return;
+    pintar('Eliminando…');
+    fetch('/api/account/delete',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+token(),'Content-Type':'application/json'},
+      body:JSON.stringify({password:pass})
+    }).then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
+      .then(function(x){
+        if(x.ok){
+          try{ ['electroia_session_v1','electroia_user','eia_user','currentUser','electroia_session','eia_session'].forEach(function(k){ localStorage.removeItem(k); }); }catch(_){ }
+          alert('Tu cuenta ha sido eliminada.');
+          if(typeof W.home==='function') W.home();
+        } else {
+          pintar(x.j && x.j.error==='PASSWORD_INVALID' ? 'La contraseña no es correcta.' : 'No se pudo eliminar la cuenta.','bad');
+        }
+      })
+      .catch(function(){ pintar('No se pudo conectar. Probá de nuevo.','bad'); });
+  };
+
+  /* ============================================================
+     ALTA DE ELECTRICISTAS — el otro lado del mercado
+     ------------------------------------------------------------
+     Los leads que capta el modo Hogar no valen nada sin
+     profesionales a quien derivarlos.
+     ============================================================ */
+  W.eia380Electricistas=function(){
+    var p='ar'; try{ if(typeof W.eia360Pais==='function') p=W.eia360Pais(); }catch(_){ }
+    shell('<div class="eia380-doc"><h2>👷 Recibí trabajos de ElectroIA</h2>'+
+      '<p class="act">Para electricistas habilitados o matriculados.</p>'+
+      '<p>Cuando alguien usa ElectroIA y el diagnóstico concluye que necesita un profesional, le ofrecemos ponerlo en contacto con un electricista de su zona. Dejá tus datos para entrar en esa red.</p>'+
+      '<h3>Cómo funciona</h3>'+
+      '<ul><li>Recibís avisos de personas de tu zona que ya tienen el problema descrito.</li>'+
+      '<li>Llegan con un diagnóstico previo hecho: sabés a qué vas antes de salir.</li>'+
+      '<li>Alta sin coste durante la fase inicial.</li></ul>'+
+      '<div class="ojo"><b>Verificación</b><p>Pedimos matrícula o número de habilitación porque solo derivamos a profesionales acreditados. Los datos se comprueban antes del alta.</p></div>'+
+      '<label class="eia380-f">Nombre y apellido *<input id="e380EN" placeholder="Tu nombre"></label>'+
+      '<label class="eia380-f">Teléfono *<input id="e380ET" type="tel" placeholder="Con prefijo"></label>'+
+      '<label class="eia380-f">Email<input id="e380EE" type="email" placeholder="Para avisos"></label>'+
+      '<label class="eia380-f">Matrícula o nº de habilitación<input id="e380EM" placeholder="Como figure en tu credencial"></label>'+
+      '<label class="eia380-f">Zona donde trabajás<input id="e380EZ" placeholder="Barrios, localidades o provincia"></label>'+
+      '<label class="eia380-f">País<select id="e380EP">'+
+        '<option value="ar"'+(p==='ar'?' selected':'')+'>Argentina</option>'+
+        '<option value="es"'+(p==='es'?' selected':'')+'>España</option></select></label>'+
+      '<label class="eia380-f">Especialidad o comentarios<textarea id="e380ENo" rows="3" placeholder="Ej.: instalaciones domiciliarias, tableros, fotovoltaica"></textarea></label>'+
+      '<button class="eia380-btn" type="button" onclick="eia380EnviarElectricista()">Enviar mis datos</button>'+
+      '<div id="e380EOut" class="eia380-out" style="display:none"></div>'+
+      '<p style="font-size:12px;color:#55687f;margin-top:11px">Al enviar aceptás que tratemos estos datos para contactarte y gestionar tu alta, conforme a la '+
+      '<button type="button" style="background:none;border:0;color:#1663c7;text-decoration:underline;padding:0;font:inherit;cursor:pointer" onclick="eia380Ver(\'privacidad\')">política de privacidad</button>.</p>'+
+      '</div>'+volver());
+  };
+  W.eia380EnviarElectricista=function(){
+    var v=function(id){ var e=D.getElementById(id); return e?e.value.trim():''; };
+    if(!v('e380EN')||!v('e380ET')){
+      var e0=D.getElementById('e380EOut');
+      if(e0){ e0.style.display='block'; e0.className='eia380-out bad'; e0.textContent='Necesitamos al menos nombre y teléfono.'; }
+      return;
+    }
+    var e=D.getElementById('e380EOut');
+    if(e){ e.style.display='block'; e.className='eia380-out'; e.textContent='Enviando…'; }
+    fetch('/api/electricistas',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({nombre:v('e380EN'),telefono:v('e380ET'),email:v('e380EE'),
+        matricula:v('e380EM'),zona:v('e380EZ'),pais:v('e380EP'),notas:v('e380ENo')})
+    }).then(function(r){ return {ok:r.ok}; })
+      .then(function(x){
+        if(!e) return;
+        e.className='eia380-out '+(x.ok?'ok':'bad');
+        e.textContent = x.ok
+          ? '✅ Recibido. Nos ponemos en contacto para verificar tus datos y darte de alta.'
+          : 'No se pudo enviar ahora. Probá de nuevo en un rato.';
+      })
+      .catch(function(){ if(e){ e.className='eia380-out bad'; e.textContent='Sin conexión. Probá más tarde.'; } });
+  };
+
+  /* ============================================================
+     ARRANQUE
+     ============================================================ */
+  try{
+    var app=D.getElementById('app');
+    if(app && W.MutationObserver){
+      var pend=null;
+      new MutationObserver(function(){
+        clearTimeout(pend);
+        pend=setTimeout(ponerPie,220);
+      }).observe(app,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+  function iniciar(){ ponerPie(); setTimeout(mostrarAviso,1400); }
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',iniciar); else iniciar();
 })();
 </script>
 
