@@ -731,6 +731,130 @@ app.get('/api/electricistas', async (req, res) => {
 });
 
 /* ============================================================
+   PORTAL DE COMUNIDAD (administradores de fincas)
+   ------------------------------------------------------------
+   El 80 % de la población española vive en propiedad horizontal.
+   El administrador recibe los avisos "por demasiadas puertas"
+   (llamada, WhatsApp, correo, el cuaderno del conserje) y el
+   desperdicio clásico es enviar un gremio —y pagar su
+   desplazamiento— a una avería que no lo necesitaba: una bombilla
+   fundida, un térmico bajado o un corte de la distribuidora.
+
+   Ya existen plataformas de gestión de incidencias. Ninguna
+   TRIA antes de despachar. Ese es el hueco: el vecino describe la
+   avería, ElectroIA la diagnostica, y solo llega al administrador
+   lo que de verdad necesita un profesional, ya clasificado.
+   ============================================================ */
+app.post('/api/comunidades', rateLimit(10, 60 * 60 * 1000, 'comunidades'), authOpcional, async (req, res) => {
+  if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
+  const { nombre, direccion, administrador, email, telefono, viviendas } = req.body || {};
+  if (!String(nombre || '').trim() || !String(email || '').trim()) {
+    return res.status(400).json({ error: 'DATOS_REQUERIDOS' });
+  }
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS comunidades (
+        id UUID PRIMARY KEY,
+        codigo TEXT UNIQUE NOT NULL,
+        nombre TEXT NOT NULL DEFAULT '',
+        direccion TEXT NOT NULL DEFAULT '',
+        administrador TEXT NOT NULL DEFAULT '',
+        email TEXT NOT NULL DEFAULT '',
+        telefono TEXT NOT NULL DEFAULT '',
+        viviendas INTEGER NOT NULL DEFAULT 0,
+        activa BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE TABLE IF NOT EXISTS incidencias (
+        id UUID PRIMARY KEY,
+        comunidad_id UUID REFERENCES comunidades(id) ON DELETE CASCADE,
+        vecino TEXT NOT NULL DEFAULT '',
+        contacto TEXT NOT NULL DEFAULT '',
+        ubicacion TEXT NOT NULL DEFAULT '',
+        descripcion TEXT NOT NULL DEFAULT '',
+        diagnostico TEXT NOT NULL DEFAULT '',
+        resuelta_sola BOOLEAN NOT NULL DEFAULT FALSE,
+        gremio TEXT NOT NULL DEFAULT '',
+        estado TEXT NOT NULL DEFAULT 'nueva',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS incidencias_com_idx ON incidencias(comunidad_id, created_at DESC);
+    `);
+    // Código corto y legible para imprimir en el cartel del portal.
+    const codigo = crypto.randomBytes(3).toString('hex').toUpperCase();
+    const id = crypto.randomUUID();
+    await pool.query(
+      'INSERT INTO comunidades(id,codigo,nombre,direccion,administrador,email,telefono,viviendas) VALUES($1,$2,$3,$4,$5,$6,$7,$8)',
+      [id, codigo, String(nombre).slice(0, 160), String(direccion || '').slice(0, 200),
+       String(administrador || '').slice(0, 160), String(email).slice(0, 160),
+       String(telefono || '').slice(0, 60), Number(viviendas) > 0 ? Number(viviendas) : 0]
+    );
+    res.json({ ok: true, id, codigo });
+  } catch (e) {
+    console.error('comunidades', e.message);
+    res.status(500).json({ error: 'FALLO' });
+  }
+});
+
+// Un vecino consulta su comunidad por el código del cartel.
+app.get('/api/comunidades/:codigo', async (req, res) => {
+  if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
+  try {
+    const r = await pool.query(
+      'SELECT nombre,direccion,administrador,telefono FROM comunidades WHERE codigo=$1 AND activa=TRUE',
+      [String(req.params.codigo || '').toUpperCase().slice(0, 12)]
+    );
+    if (!r.rows.length) return res.status(404).json({ error: 'NO_ENCONTRADA' });
+    res.json(r.rows[0]);
+  } catch (_) { res.status(500).json({ error: 'FALLO' }); }
+});
+
+// El vecino registra la incidencia SOLO si el diagnóstico no la resolvió.
+app.post('/api/incidencias', rateLimit(10, 60 * 60 * 1000, 'incidencias'), async (req, res) => {
+  if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
+  const { codigo, vecino, contacto, ubicacion, descripcion, diagnostico, resuelta_sola } = req.body || {};
+  if (!String(codigo || '').trim()) return res.status(400).json({ error: 'CODIGO_REQUERIDO' });
+  try {
+    const c = await pool.query('SELECT id FROM comunidades WHERE codigo=$1 AND activa=TRUE',
+      [String(codigo).toUpperCase().slice(0, 12)]);
+    if (!c.rows.length) return res.status(404).json({ error: 'NO_ENCONTRADA' });
+    const id = crypto.randomUUID();
+    await pool.query(
+      'INSERT INTO incidencias(id,comunidad_id,vecino,contacto,ubicacion,descripcion,diagnostico,resuelta_sola) VALUES($1,$2,$3,$4,$5,$6,$7,$8)',
+      [id, c.rows[0].id, String(vecino || '').slice(0, 120), String(contacto || '').slice(0, 120),
+       String(ubicacion || '').slice(0, 160), String(descripcion || '').slice(0, 2000),
+       String(diagnostico || '').slice(0, 2000), resuelta_sola === true]
+    );
+    res.json({ ok: true, id });
+  } catch (e) {
+    console.error('incidencias', e.message);
+    res.status(500).json({ error: 'FALLO' });
+  }
+});
+
+// Panel del administrador. Incluye la métrica que justifica el servicio:
+// cuántos avisos se resolvieron sin enviar a nadie.
+app.get('/api/incidencias', async (req, res) => {
+  const token = req.get('x-admin-token') || '';
+  if (!process.env.ADMIN_TOKEN || token !== process.env.ADMIN_TOKEN) {
+    return res.status(404).json({ error: 'NOT_FOUND' });
+  }
+  if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
+  try {
+    const r = await pool.query(`
+      SELECT i.*, c.nombre AS comunidad, c.codigo
+      FROM incidencias i LEFT JOIN comunidades c ON c.id=i.comunidad_id
+      ORDER BY i.created_at DESC LIMIT 300`);
+    const tot = r.rows.length;
+    const solas = r.rows.filter(x => x.resuelta_sola).length;
+    res.json({
+      incidencias: r.rows,
+      resumen: { total: tot, resueltas_sin_gremio: solas, porcentaje: tot ? Math.round(solas / tot * 100) : 0 }
+    });
+  } catch (_) { res.status(500).json({ error: 'FALLO' }); }
+});
+
+/* ============================================================
    ALTA DE COMERCIOS ANUNCIANTES
    ------------------------------------------------------------
    Tiendas de material eléctrico que quieren aparecer ante los

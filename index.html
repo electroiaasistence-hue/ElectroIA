@@ -11637,7 +11637,9 @@ ${W.sourcesBlock?W.sourcesBlock():''}
 
     // --- Trabajá con nosotros ---
     var t=link('👷','¿Sos electricista?','Recibí avisos de gente de tu zona','eia380Electricistas()')+
-          link('🏪','¿Tenés una tienda de material?','Llegá a los profesionales de tu zona','eia470Comercios()');
+          link('🏪','¿Tenés una tienda de material?','Llegá a los profesionales de tu zona','eia470Comercios()')+
+          link('🏢','¿Administrás fincas?','Filtrá los avisos antes de mandar un gremio','eia530Administradores&&eia530Administradores()')+
+          link('🔑','Soy vecino, tengo un código','Avisar de una avería de mi comunidad','eia530Vecino&&eia530Vecino()');
 
     // --- Ayuda ---
     var a=link('📚','Aprender electricidad','8 niveles con ejercicios y examen','aprender&&aprender()')+
@@ -11814,7 +11816,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
     eia380Electricistas:'Alta electricistas', eia470Comercios:'Alta comercios',
     eia410Aislar:'Aislar circuito', eia410Contador:'Contador',
     eia410Apanar:'Apañarse', eia410Diferencial:'Diferencial',
-    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes', eia520Inicio:'Reclamar daños'
+    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes', eia520Inicio:'Reclamar daños', eia530Administradores:'Administradores', eia530Vecino:'Avisar avería', eia530Triaje:'Comunidad'
   };
 
   var actual=null;
@@ -12419,6 +12421,271 @@ ${W.sourcesBlock?W.sourcesBlock():''}
       var t2=null;
       new MutationObserver(function(){ clearTimeout(t2); t2=setTimeout(inyectar,220); })
         .observe(app,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',inyectar); else inyectar();
+})();
+</script>
+
+<style id="eia530-css">
+.eia530-hero{background:linear-gradient(140deg,#2a1a4d,#4a2d87 60%,#6b3fb5);border-radius:18px;padding:17px;margin:10px 0 14px}
+.eia530-hero h1{margin:0 0 5px;font-size:21px;color:#fff}
+.eia530-hero p{margin:0;font-size:13.5px;line-height:1.5;color:#e0d8f7}
+.eia530-card{background:#fff;border:1px solid #d9e2ee;border-radius:16px;padding:15px;margin:11px 0;color:#1b2736}
+.eia530-card,.eia530-card *{color:#1b2736}
+.eia530-card h3{margin:0 0 4px;font-size:16.5px;color:#0f1b2b}
+.eia530-card .sub{font-size:12.8px;color:#55687f;margin:0 0 12px;line-height:1.45}
+.eia530-f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:700;color:#41506a;margin-bottom:9px}
+.eia530-f input,.eia530-f select,.eia530-f textarea{font:inherit;font-weight:500;padding:10px;border:1px solid #ccd6e2;border-radius:9px;background:#fff;color:#16202e;width:100%;box-sizing:border-box}
+.eia530-g2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.eia530-btn{display:block;width:100%;margin-top:9px;padding:12px;border:0;border-radius:11px;background:#0b63c7;color:#fff;font-weight:800;font-size:14.5px;cursor:pointer}
+.eia530-card .eia530-btn{color:#fff}
+.eia530-btn.alt,.eia530-card .eia530-btn.alt{background:#eef3fa;border:1px solid #ccd9ea;color:#1c3252}
+.eia530-btn.pro{background:#5a35a8}
+.eia530-out{margin-top:11px;padding:12px;border-radius:11px;background:#f3f7fc;border:1px solid #d8e4f2;font-size:13.5px;line-height:1.5;color:#1b2736}
+.eia530-out.ok{background:#eafaf0;border-color:#b6e5c8;color:#14602f}
+.eia530-out.bad{background:#fdeeec;border-color:#f0c2bc;color:#8c1a12}
+.eia530-cod{font-family:ui-monospace,Menlo,monospace;font-size:30px;font-weight:900;letter-spacing:.14em;color:#0f1b2b;text-align:center;padding:14px;background:#f1f5fc;border:2px dashed #b9c7da;border-radius:13px;margin:10px 0}
+.eia530-kpi{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:11px 0}
+.eia530-k{background:#f2f7fd;border:1px solid #d8e4f2;border-radius:12px;padding:12px;text-align:center}
+.eia530-k .v{font-size:24px;font-weight:900;color:#0f1b2b;line-height:1.1}
+.eia530-k .l{font-size:11.5px;color:#55687f;margin-top:3px;line-height:1.35}
+.eia530-paso{display:flex;gap:11px;margin-bottom:11px;font-size:13.8px;line-height:1.5;color:#243449}
+.eia530-paso .n{flex:0 0 24px;height:24px;border-radius:50%;background:#5a35a8;color:#fff;font-weight:800;font-size:12.5px;display:flex;align-items:center;justify-content:center}
+</style>
+
+<script id="electroia-v530-comunidad">
+(function(){
+  'use strict';
+  var W=window,D=document;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function val(id){var e=D.getElementById(id);return e?e.value.trim():'';}
+  function shell(html){
+    var app=D.getElementById('app'); if(!app) return;
+    var cab=(typeof W.head==='function')?W.head(false):'';
+    app.innerHTML=cab+'<main class="wrap page">'+html+'</main>';
+    try{ W.scrollTo(0,0); }catch(_){ }
+    if(W.eiaEtiquetarCampos) W.eiaEtiquetarCampos();
+  }
+  function volver(){ return '<button class="eia530-btn alt" type="button" onclick="eiaAtras&&eiaAtras()">← Volver</button>'; }
+
+  /* ============================================================
+     ALTA DE COMUNIDAD (para administradores de fincas)
+     ------------------------------------------------------------
+     La propuesta no es competir con las plataformas de gestión de
+     incidencias que ya existen: es el paso ANTERIOR. Filtrar los
+     avisos eléctricos antes de que se conviertan en el
+     desplazamiento de un gremio que no hacía falta.
+     ============================================================ */
+  W.eia530Administradores=function(){
+    shell('<div class="eia530-hero"><h1>🏢 Para administradores de fincas</h1>'+
+      '<p>Dejá de pagar desplazamientos por averías que no los necesitaban.</p></div>'+
+
+      '<div class="eia530-card"><h3>El problema</h3>'+
+      '<p class="sub">Los avisos entran por todas partes: llamada al móvil, WhatsApp del grupo, correo del presidente, '+
+      'el cuaderno del conserje. Y muchos avisos eléctricos no necesitaban un electricista.</p>'+
+      '<p style="font-size:14px;line-height:1.6;margin:0">Una bombilla fundida en el portal. Un térmico bajado en el cuarto '+
+      'de contadores. Un corte de la distribuidora que afectaba a toda la calle. '+
+      '<b>En los tres casos el gremio viene, mira, y cobra el desplazamiento igual.</b></p></div>'+
+
+      '<div class="eia530-card"><h3>Cómo funciona</h3>'+
+      '<div class="eia530-paso"><span class="n">1</span><span>Damos de alta tu comunidad y te entregamos un '+
+      '<b>código</b> para el cartel del portal.</span></div>'+
+      '<div class="eia530-paso"><span class="n">2</span><span>El vecino entra, pone el código y describe la avería. '+
+      'ElectroIA le hace las preguntas.</span></div>'+
+      '<div class="eia530-paso"><span class="n">3</span><span>Si se resuelve solo, se acabó: ni aviso ni gremio ni desplazamiento.</span></div>'+
+      '<div class="eia530-paso"><span class="n">4</span><span>Si hace falta un profesional, te llega el aviso '+
+      '<b>ya diagnosticado</b>: qué falla, dónde y qué se probó.</span></div>'+
+      '<div class="eia530-out"><b>Lo que ganás:</b> menos desplazamientos pagados, menos avisos duplicados '+
+      '(dos vecinos, la misma avería) y un historial por comunidad que podés enseñar en la junta.</div>'+
+      '</div>'+
+
+      '<div class="eia530-card"><h3>Dar de alta una comunidad</h3>'+
+      '<p class="sub">Sin coste durante la fase inicial. Te contactamos para ponerla en marcha.</p>'+
+      '<label class="eia530-f">Nombre de la comunidad *<input id="e530N" placeholder="Ej.: C/ Mayor 12"></label>'+
+      '<label class="eia530-f">Dirección<input id="e530D" placeholder="Calle, número, población"></label>'+
+      '<div class="eia530-g2">'+
+        '<label class="eia530-f">Administrador<input id="e530A" placeholder="Despacho o persona"></label>'+
+        '<label class="eia530-f">N.º de viviendas<input id="e530V" type="number" min="1"></label>'+
+      '</div>'+
+      '<div class="eia530-g2">'+
+        '<label class="eia530-f">Email *<input id="e530E" type="email"></label>'+
+        '<label class="eia530-f">Teléfono<input id="e530T" type="tel"></label>'+
+      '</div>'+
+      '<button class="eia530-btn pro" type="button" onclick="eia530Alta()">Dar de alta la comunidad</button>'+
+      '<div id="e530Out" class="eia530-out" style="display:none"></div>'+
+      '<p style="font-size:12px;color:#55687f;margin-top:11px">Al enviar aceptás que tratemos estos datos para '+
+      'gestionar el alta, conforme a la <button type="button" style="background:none;border:0;color:#1663c7;'+
+      'text-decoration:underline;padding:0;font:inherit;cursor:pointer" onclick="eia380Ver(\'privacidad\')">política de privacidad</button>.</p>'+
+      '</div>'+
+
+      '<div class="eia530-card"><h3>¿Ya tenés código?</h3>'+
+      '<p class="sub">Si sos vecino y viste el cartel del portal, entrá por acá.</p>'+
+      '<button class="eia530-btn alt" type="button" onclick="eia530Vecino()">Soy vecino · tengo un código</button></div>'+
+      volver());
+  };
+
+  W.eia530Alta=function(){
+    var out=D.getElementById('e530Out');
+    function msg(t,c){ if(out){ out.style.display='block'; out.className='eia530-out '+(c||''); out.innerHTML=t; } }
+    if(!val('e530N')||!val('e530E')) return msg('Necesitamos al menos el nombre de la comunidad y un email.','bad');
+    msg('Enviando…');
+    fetch('/api/comunidades',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({nombre:val('e530N'),direccion:val('e530D'),administrador:val('e530A'),
+        email:val('e530E'),telefono:val('e530T'),viviendas:val('e530V')})})
+      .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
+      .then(function(x){
+        if(x.ok && x.j && x.j.codigo){
+          msg('✅ Comunidad dada de alta.<br>El código para el cartel del portal es:'+
+            '<div class="eia530-cod">'+esc(x.j.codigo)+'</div>'+
+            'Anotalo. Te escribimos al email para poner el cartel en marcha.','ok');
+        } else {
+          msg('No se pudo dar de alta ahora. Probá de nuevo en un rato.','bad');
+        }
+      })
+      .catch(function(){ msg('Sin conexión. Probá más tarde.','bad'); });
+  };
+
+  /* ============================================================
+     FLUJO DEL VECINO
+     ------------------------------------------------------------
+     Lo importante: el diagnóstico va PRIMERO. El aviso al
+     administrador solo se crea si el problema no se resolvió.
+     Es lo que convierte esto en un ahorro y no en otro buzón.
+     ============================================================ */
+  var COM=null;
+  W.eia530Vecino=function(){
+    shell('<div class="eia530-hero"><h1>🏢 Avisar de una avería</h1>'+
+      '<p>Antes de dar el aviso, vamos a ver si se puede resolver ahora mismo.</p></div>'+
+      '<div class="eia530-card"><h3>Código de tu comunidad</h3>'+
+      '<p class="sub">Está en el cartel del portal.</p>'+
+      '<label class="eia530-f">Código<input id="e530C" placeholder="Ej.: A3F9C1" '+
+      'style="text-transform:uppercase;font-family:ui-monospace,monospace;font-size:19px;letter-spacing:.1em;text-align:center"></label>'+
+      '<button class="eia530-btn" type="button" onclick="eia530Buscar()">Continuar</button>'+
+      '<div id="e530VOut" class="eia530-out" style="display:none"></div></div>'+
+      volver());
+  };
+
+  W.eia530Buscar=function(){
+    var c=val('e530C').toUpperCase();
+    var out=D.getElementById('e530VOut');
+    function msg(t,cl){ if(out){ out.style.display='block'; out.className='eia530-out '+(cl||''); out.textContent=t; } }
+    if(!c) return msg('Escribí el código del cartel.','bad');
+    msg('Buscando…');
+    fetch('/api/comunidades/'+encodeURIComponent(c))
+      .then(function(r){ return r.ok? r.json() : null; })
+      .then(function(j){
+        if(!j) return msg('No encontramos ese código. Comprobá el cartel del portal.','bad');
+        COM={codigo:c, nombre:j.nombre, admin:j.administrador, tel:j.telefono};
+        W.eia530Triaje();
+      })
+      .catch(function(){ msg('Sin conexión. Probá más tarde.','bad'); });
+  };
+
+  W.eia530Triaje=function(){
+    if(!COM) return W.eia530Vecino();
+    shell('<div class="eia530-hero"><h1>'+esc(COM.nombre)+'</h1>'+
+      '<p>Antes de molestar al administrador, probemos si se arregla solo. Suele pasar.</p></div>'+
+      '<div class="eia530-card"><h3>¿Qué está pasando?</h3>'+
+      '<p class="sub">Elegí lo que más se parezca.</p>'+
+      '<button class="eia530-btn alt" type="button" onclick="eia410Aislar&&eia410Aislar()">'+
+      '🔍 Se fue la luz en mi casa</button>'+
+      '<button class="eia530-btn alt" type="button" onclick="eia410Contador&&eia410Contador()">'+
+      '⚡ Todo arriba en el cuadro pero sin luz</button>'+
+      '<button class="eia530-btn alt" type="button" onclick="home&&home()">'+
+      '🚨 Es una urgencia · diagnóstico completo</button>'+
+      '<button class="eia530-btn alt" type="button" onclick="eia530Zonas()">'+
+      '🏢 Es en zonas comunes (portal, garaje, escalera)</button>'+
+      '</div>'+
+      '<div class="eia530-card"><h3>¿Ya lo probaste y sigue igual?</h3>'+
+      '<p class="sub">Entonces sí hace falta avisar. Le llegará ya diagnosticado.</p>'+
+      '<button class="eia530-btn pro" type="button" onclick="eia530Aviso(false)">Dar el aviso al administrador</button></div>'+
+      '<button class="eia530-btn alt" type="button" onclick="eia530Aviso(true)">✅ Se resolvió, no hace falta aviso</button>'+
+      volver());
+  };
+
+  W.eia530Zonas=function(){
+    shell('<div class="eia530-hero"><h1>🏢 Avería en zonas comunes</h1>'+
+      '<p>Algunas cosas las puede mirar cualquiera antes de llamar a un gremio.</p></div>'+
+      '<div class="eia530-card"><h3>Comprobaciones rápidas</h3>'+
+      '<p class="sub">Ninguna exige abrir nada ni tocar cables.</p>'+
+      '<div class="eia530-paso"><span class="n">1</span><span><b>¿Es solo una luz?</b> Si el resto del portal funciona, '+
+      'lo más probable es una bombilla fundida: no hace falta electricista, lo cambia el conserje o el propio gremio de limpieza.</span></div>'+
+      '<div class="eia530-paso"><span class="n">2</span><span><b>¿Está todo el portal a oscuras?</b> Mirá si el cuarto de '+
+      'contadores tiene algún térmico bajado. Si lo hay y podés acceder, subirlo suele bastar.</span></div>'+
+      '<div class="eia530-paso"><span class="n">3</span><span><b>¿También están sin luz las casas?</b> Entonces es un corte '+
+      'de la distribuidora y no hay nada que reparar en el edificio: hay que esperar o llamarles.</span></div>'+
+      '<div class="eia530-paso"><span class="n">4</span><span><b>¿Se apaga sola a los pocos minutos?</b> Es el temporizador '+
+      'de la escalera haciendo su trabajo, no una avería. Se puede regular.</span></div>'+
+      '<div class="eia530-out"><b>Si nada de esto encaja</b>, ya sabés bastante para dar un aviso útil: '+
+      'contá qué comprobaste y qué pasó.</div></div>'+
+      '<button class="eia530-btn pro" type="button" onclick="eia530Aviso(false)">Dar el aviso al administrador</button>'+
+      '<button class="eia530-btn alt" type="button" onclick="eia530Aviso(true)">✅ Se resolvió solo</button>'+
+      volver());
+  };
+
+  W.eia530Aviso=function(resuelta){
+    if(!COM) return W.eia530Vecino();
+    if(resuelta){
+      // Se registra igual: es la métrica que demuestra el ahorro al administrador.
+      fetch('/api/incidencias',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({codigo:COM.codigo,descripcion:'Resuelto por el vecino con el diagnóstico guiado',
+          resuelta_sola:true})}).catch(function(){});
+      return shell('<div class="eia530-card" style="text-align:center">'+
+        '<div style="font-size:44px">✅</div><h3>Resuelto sin aviso</h3>'+
+        '<p class="sub">Perfecto. No hace falta molestar a nadie ni pagar un desplazamiento.</p>'+
+        '<button class="eia530-btn alt" type="button" onclick="home&&home()">Volver a Inicio</button></div>');
+    }
+    shell('<div class="eia530-hero"><h1>📨 Dar el aviso</h1>'+
+      '<p>'+esc(COM.nombre)+'</p></div>'+
+      '<div class="eia530-card"><h3>Tus datos</h3>'+
+      '<div class="eia530-g2">'+
+        '<label class="eia530-f">Nombre<input id="e530VN" placeholder="Tu nombre"></label>'+
+        '<label class="eia530-f">Teléfono<input id="e530VT" type="tel"></label>'+
+      '</div>'+
+      '<label class="eia530-f">¿Dónde es?<input id="e530VU" placeholder="Ej.: 3.º B, portal, garaje"></label>'+
+      '<label class="eia530-f">¿Qué pasa?<textarea id="e530VD" rows="3" placeholder="Contá qué ocurre"></textarea></label>'+
+      '<label class="eia530-f">¿Qué probaste ya?<textarea id="e530VP" rows="2" placeholder="Ej.: subí el térmico y volvió a saltar"></textarea></label>'+
+      '<button class="eia530-btn pro" type="button" onclick="eia530Enviar()">Enviar el aviso</button>'+
+      '<div id="e530AOut" class="eia530-out" style="display:none"></div></div>'+
+      (COM.tel? '<div class="eia530-card"><h3>¿Es urgente?</h3>'+
+        '<p class="sub">Si hay peligro o riesgo, no esperes al aviso: llamá.</p>'+
+        '<a class="eia530-btn" style="text-align:center;text-decoration:none" href="tel:'+esc(COM.tel)+'">📞 Llamar al administrador</a></div>':'')+
+      volver());
+  };
+
+  W.eia530Enviar=function(){
+    var out=D.getElementById('e530AOut');
+    function msg(t,c){ if(out){ out.style.display='block'; out.className='eia530-out '+(c||''); out.textContent=t; } }
+    if(!val('e530VD')) return msg('Contá qué está pasando.','bad');
+    msg('Enviando…');
+    fetch('/api/incidencias',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({codigo:COM.codigo, vecino:val('e530VN'), contacto:val('e530VT'),
+        ubicacion:val('e530VU'), descripcion:val('e530VD'),
+        diagnostico:val('e530VP'), resuelta_sola:false})})
+      .then(function(r){ return {ok:r.ok}; })
+      .then(function(x){
+        msg(x.ok? '✅ Aviso enviado. El administrador lo recibe con lo que ya comprobaste, así que no va a tener que preguntártelo.'
+                : 'No se pudo enviar. Probá de nuevo o llamá directamente.', x.ok?'ok':'bad');
+      })
+      .catch(function(){ msg('Sin conexión. Probá más tarde o llamá directamente.','bad'); });
+  };
+
+  /* Acceso desde el pie, junto a electricistas y comercios */
+  function inyectar(){
+    try{
+      /* El enlace se genera dentro del propio pie (bloque v470).
+         Añadirlo después competía con el render, que reconstruye
+         la sección en cada mutación. */
+    }catch(_){ }
+  }
+  try{
+    var app=D.getElementById('app');
+    if(app && W.MutationObserver){
+      var t=null;
+      new MutationObserver(function(){ clearTimeout(t); t=setTimeout(inyectar,240); })
+        .observe(D.body,{childList:true,subtree:true});
     }
   }catch(_){ }
   if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',inyectar); else inyectar();
