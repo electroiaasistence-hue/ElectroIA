@@ -59,6 +59,45 @@ app.use((req, res, next) => {
   next();
 });
 
+/* ============================================================
+   PÁGINAS DE ATERRIZAJE POR SÍNTOMA
+   ------------------------------------------------------------
+   La app entera vive en index.html, así que para Google es UNA
+   sola página y no puede posicionarla para búsquedas distintas.
+   Nadie busca "asistente eléctrico": buscan "salta el diferencial"
+   o "no tengo luz en toda la casa", a oscuras y con el móvil.
+
+   Estas páginas son HTML estático real: se indexan sin ejecutar
+   JavaScript y pesan unos 10 KB, lo que importa cuando alguien las
+   abre con mala cobertura durante un apagón.
+
+   Se sirven con URL limpia (sin .html) porque es lo que se enlaza
+   en el canonical y en el sitemap.
+   ============================================================ */
+const PAGINAS_URGENCIA = new Set([
+  'salta-el-diferencial',
+  'salta-el-automatico',
+  'no-tengo-luz-en-toda-la-casa',
+  'contador-dice-icp-pulse',
+  'huele-a-quemado-enchufe',
+  'como-probar-el-diferencial'
+]);
+
+app.get('/urgencias/:slug', (req, res, next) => {
+  const slug = String(req.params.slug || '').replace(/\.html$/, '');
+  // Lista blanca: evita que el parámetro se use para leer otros ficheros.
+  if (!PAGINAS_URGENCIA.has(slug)) return next();
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.sendFile(path.join(__dirname, 'urgencias', slug + '.html'));
+});
+
+// Índice de la sección, para que las páginas no queden huérfanas.
+app.get('/urgencias', (req, res) => res.redirect(301, '/urgencias/'));
+app.get('/urgencias/', (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.sendFile(path.join(__dirname, 'urgencias', 'index.html'));
+});
+
 app.use(express.static(__dirname, {
   // Los estáticos (imágenes, manifest, favicon) se cachean; el HTML se revalida
   // siempre para que un despliegue nuevo llegue al usuario sin caché vieja.

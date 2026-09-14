@@ -445,6 +445,15 @@
 <p>Una vez al mes, con el botón T o TEST. Debe cortar al instante. Si no corta, llamá a un electricista.</p>
 <h3>¿Qué sección de cable corresponde a los tomacorrientes?</h3>
 <p>Habitualmente 2,5 mm² para tomas de uso general y 1,5 mm² para iluminación. La sección definitiva debe verificarse por ampacidad, caída de tensión y coordinación con la protección, según AEA 90364 en Argentina o el REBT en España.</p>
+<h2>Guías por avería</h2>
+<ul>
+<li><a href="/urgencias/salta-el-diferencial">Se me salta el diferencial</a></li>
+<li><a href="/urgencias/salta-el-automatico">Se me salta el automático (la térmica)</a></li>
+<li><a href="/urgencias/no-tengo-luz-en-toda-la-casa">No tengo luz en toda la casa</a></li>
+<li><a href="/urgencias/contador-dice-icp-pulse">El contador dice ICP 00 PULSE</a></li>
+<li><a href="/urgencias/huele-a-quemado-enchufe">Huele a quemado en un enchufe</a></li>
+<li><a href="/urgencias/como-probar-el-diferencial">Cómo probar el diferencial</a></li>
+</ul>
 <p>ElectroIA es una herramienta de orientación y no reemplaza a un electricista matriculado.</p>
 </div>
 </noscript>
@@ -11642,7 +11651,8 @@ ${W.sourcesBlock?W.sourcesBlock():''}
           link('🔑','Soy vecino, tengo un código','Avisar de una avería de mi comunidad','eia530Vecino&&eia530Vecino()');
 
     // --- Ayuda ---
-    var a=link('📚','Aprender electricidad','8 niveles con ejercicios y examen','aprender&&aprender()')+
+    var a=link('📖','Guías por avería','Las averías más frecuentes, explicadas','/urgencias/',true)+
+          link('📚','Aprender electricidad','8 niveles con ejercicios y examen','aprender&&aprender()')+
           link('🚨','Urgencia eléctrica','Diagnóstico guiado paso a paso','home&&home()')+
           link('🔐','Mis datos','Descargar o eliminar tu información','eia380MisDatos()');
 
