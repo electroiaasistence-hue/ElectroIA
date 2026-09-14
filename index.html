@@ -93,7 +93,10 @@
 .eia-hero-actions .btn.alt{background:rgba(0,0,0,.16)!important;color:#fff!important;border:1px solid rgba(255,255,255,.25)}
 .eia-visual{position:absolute;right:25px;bottom:17px;width:150px;height:150px;z-index:1;opacity:.95}
 .eia-house{position:absolute;left:27px;bottom:12px;width:95px;height:76px;background:rgba(255,255,255,.95);border-radius:10px;box-shadow:0 10px 20px rgba(0,0,0,.12)}
-.eia-roof{position:absolute;left:13px;top:-42px;width:0;height:0;border-left:61px solid transparent;border-right:61px solid transparent;border-bottom:52px solid rgba(255,255,255,.95)}
+/* El tejado mide 122px (61+61) sobre una casa de 95px. Estaba en left:13px,
+   así que sobresalía 40px por la derecha y quedaba visiblemente descuadrado.
+   Para centrar: (95-122)/2 = -13.5px. */
+.eia-roof{position:absolute;left:-13.5px;top:-42px;width:0;height:0;border-left:61px solid transparent;border-right:61px solid transparent;border-bottom:52px solid rgba(255,255,255,.95)}
 .eia-window{position:absolute;width:21px;height:21px;border-radius:4px;background:#0879e8;top:20px;left:15px;box-shadow:45px 0 0 #0879e8}
 .eia-door{position:absolute;width:20px;height:34px;border-radius:5px 5px 0 0;background:#0b65d8;bottom:0;left:38px}
 .eia-bolt{position:absolute;right:7px;top:2px;font-size:48px;filter:drop-shadow(0 6px 5px rgba(0,0,0,.16));transform:rotate(7deg)}
@@ -11811,7 +11814,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
     eia380Electricistas:'Alta electricistas', eia470Comercios:'Alta comercios',
     eia410Aislar:'Aislar circuito', eia410Contador:'Contador',
     eia410Apanar:'Apañarse', eia410Diferencial:'Diferencial',
-    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes'
+    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes', eia520Inicio:'Reclamar daños'
   };
 
   var actual=null;
@@ -11861,7 +11864,10 @@ ${W.sourcesBlock?W.sourcesBlock():''}
       D.querySelectorAll('#app button').forEach(function(b){
         if(b.dataset.eia490) return;
         var t=(b.textContent||'').trim();
-        if(!/^←|Volver/.test(t)) return;
+        // Solo los botones que realmente dicen "Volver". Antes bastaba con
+        // empezar por "←", y eso reescribía botones como "← Cambiar de vía",
+        // que no son de navegación hacia atrás.
+        if(!/volver/i.test(t)) return;
         b.dataset.eia490='1';
         var previo=PILA.length? PANTALLAS[PILA[PILA.length-1]] : null;
         b.textContent = previo ? ('← Volver a '+previo) : (/Inicio/.test(t)?'← Volver a Inicio':'← Volver');
@@ -12148,4 +12154,275 @@ ${W.sourcesBlock?W.sourcesBlock():''}
   if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',pasar); else pasar();
 })();
 </script>
+<style id="eia520-css">
+.eia520-card{background:#fff;border:1px solid #d9e2ee;border-radius:16px;padding:15px;margin:11px 0;color:#1b2736}
+.eia520-card,.eia520-card *{color:#1b2736}
+.eia520-card h3{margin:0 0 4px;font-size:16.5px;color:#0f1b2b}
+.eia520-card .sub{font-size:12.8px;color:#55687f;margin:0 0 12px;line-height:1.45}
+.eia520-btn{display:block;width:100%;margin-top:9px;padding:12px;border:0;border-radius:11px;background:#0b63c7;color:#fff;font-weight:800;font-size:14.5px;cursor:pointer}
+.eia520-card .eia520-btn{color:#fff}
+.eia520-btn.alt,.eia520-card .eia520-btn.alt{background:#eef3fa;border:1px solid #ccd9ea;color:#1c3252}
+.eia520-op{display:block;width:100%;text-align:left;padding:13px;border:1.5px solid #d9e2ee;border-radius:12px;background:#fff;margin-bottom:8px;cursor:pointer}
+.eia520-op b{display:block;font-size:14.5px;color:#0f1b2b}
+.eia520-op small{display:block;font-size:12.3px;color:#55687f;margin-top:2px;line-height:1.4}
+.eia520-plazo{background:#fdeceb;border:1px solid #f0c2bc;border-radius:12px;padding:13px;margin:11px 0}
+.eia520-plazo b{display:block;font-size:15px;color:#8c1a12;margin-bottom:4px}
+.eia520-plazo p{margin:0;font-size:13.5px;color:#6b1a14;line-height:1.55}
+.eia520-via{border-radius:14px;padding:15px;margin:11px 0;color:#fff}
+.eia520-via.seguro{background:linear-gradient(140deg,#123c5e,#1a6aa8)}
+.eia520-via.red{background:linear-gradient(140deg,#0d3b2a,#12784e)}
+.eia520-via h3,.eia520-via p{color:#fff}
+.eia520-via h3{margin:0 0 5px;font-size:17px}
+.eia520-via p{margin:0;font-size:13.5px;line-height:1.5;opacity:.95}
+.eia520-chk{display:flex;gap:10px;align-items:flex-start;padding:11px;border:1px solid #e0e7f1;border-radius:11px;margin-bottom:7px;background:#fff;cursor:pointer}
+.eia520-chk input{margin-top:2px;width:19px;height:19px;flex:0 0 auto}
+.eia520-chk span{flex:1;font-size:13.8px;line-height:1.5;color:#243449}
+.eia520-chk span b{color:#0f1b2b}
+.eia520-chk.ok{background:#f4fdf7;border-color:#9ed9b4}
+</style>
+
+<script id="electroia-v520-reclamacion">
+(function(){
+  'use strict';
+  var W=window,D=document;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function shell(html){
+    var app=D.getElementById('app'); if(!app) return;
+    var cab=(typeof W.head==='function')?W.head(false):'';
+    app.innerHTML=cab+'<main class="wrap page">'+html+'</main>';
+    try{ W.scrollTo(0,0); }catch(_){ }
+  }
+  function volver(){ return '<button class="eia520-btn alt" type="button" onclick="eiaAtras&&eiaAtras()">← Volver</button>'; }
+
+  /* ============================================================
+     RECLAMAR LOS DAÑOS
+     ------------------------------------------------------------
+     Una avería eléctrica no termina cuando vuelve la luz: si se
+     quemaron aparatos, hay dinero en juego y un plazo corto.
+
+     Lo que la gente no sabe, y le cuesta caro:
+     · Si el origen está en la RED, se reclama a la DISTRIBUIDORA,
+       no al seguro de hogar. Son dos vías distintas.
+     · Hay 7 días para notificar a la aseguradora.
+     · No hay que tirar los aparatos dañados: el perito los evalúa.
+     · Si la instalación falló por falta de mantenimiento, la
+       aseguradora puede no cubrir. Por eso el registro de las
+       pruebas del diferencial tiene valor probatorio.
+
+     ElectroIA ya sabe determinar la vía: es la misma pregunta que
+     hace el diagnóstico ("¿los vecinos también se quedaron sin
+     luz?"). Aprovecharlo aquí es gratis y evita que alguien
+     reclame durante semanas a quien no corresponde.
+     ============================================================ */
+  var CLAVE='eia520-reclamacion';
+  function leer(){ try{ return JSON.parse(localStorage.getItem(CLAVE)||'{}')||{}; }catch(_){ return {}; } }
+  function guardar(d){ try{ localStorage.setItem(CLAVE,JSON.stringify(d)); return true; }catch(_){ return false; } }
+
+  W.eia520Inicio=function(){
+    shell('<h1>📋 Reclamar los daños</h1>'+
+      '<p class="subtitle">Si se te quemaron aparatos o tuviste daños, hay dinero en juego y un plazo corto. '+
+      'Te decimos a quién reclamar y qué necesitás.</p>'+
+
+      '<div class="eia520-plazo"><b>⏳ Tenés 7 días</b>'+
+      '<p>Ese es el plazo para notificar el siniestro a tu aseguradora. Pasado ese plazo pueden rechazarte la reclamación, '+
+      'aunque tengas razón. Si ya pasó, notificá igual: la negativa no es automática.</p></div>'+
+
+      '<div class="eia520-card"><h3>¿Qué pasó exactamente?</h3>'+
+      '<p class="sub">Con esto sabemos a quién le corresponde pagar.</p>'+
+      '<button class="eia520-op" type="button" onclick="eia520Via(\'red\')">'+
+      '<b>Se fue la luz en todo el barrio o el edificio</b>'+
+      '<small>Los vecinos también se quedaron sin luz, o hubo un apagón general</small></button>'+
+      '<button class="eia520-op" type="button" onclick="eia520Via(\'seguro\')">'+
+      '<b>Solo pasó en mi casa</b>'+
+      '<small>Los vecinos estaban bien. Saltó algo en mi cuadro o falló mi instalación</small></button>'+
+      '<button class="eia520-op" type="button" onclick="eia520Via(\'ambas\')">'+
+      '<b>No lo sé / hubo una subida de tensión</b>'+
+      '<small>Se quemaron varios aparatos a la vez sin motivo aparente</small></button>'+
+      '</div>'+
+      volver());
+  };
+
+  var VIAS={
+    red:{
+      t:'Reclamá a la DISTRIBUIDORA',
+      d:'Si el origen está en la red, el responsable es la empresa que gestiona los cables y transformadores de tu zona, '+
+        'no tu seguro de hogar y tampoco la comercializadora que te factura la luz.',
+      cls:'red',
+      pasos:[
+        ['Registrá la incidencia con la distribuidora <b>cuanto antes</b> y anotá el número que te den.','Ese número es la prueba de que el corte existió, y sirve también si después reclamás al seguro.'],
+        ['Pedí un <b>justificante del corte</b>: fecha, hora y duración.',''],
+        ['<b>No tires los aparatos dañados.</b>','Sin ellos no se puede peritar y pierde la reclamación.'],
+        ['Hacé fotos de los aparatos y del contenido del congelador si se echó a perder.',''],
+        ['Reuní las <b>facturas de compra</b> de lo que se estropeó.',''],
+        ['Pedí un <b>informe técnico</b> a un electricista que confirme el origen eléctrico de la avería.','Es el documento que más peso tiene.'],
+        ['Presentá la reclamación por escrito y guardá copia.','']
+      ]
+    },
+    seguro:{
+      t:'Reclamá a tu SEGURO DE HOGAR',
+      d:'Si el fallo fue de tu instalación, la vía es tu póliza, siempre que incluya cobertura de daños eléctricos.',
+      cls:'seguro',
+      pasos:[
+        ['Notificá a tu aseguradora <b>dentro de los 7 días</b> y abrí parte de daños.','Es el paso que más se olvida y el que más reclamaciones tumba.'],
+        ['<b>No manipules ni tires nada</b> hasta que pase el perito.',''],
+        ['Listá los aparatos afectados: marca, modelo, antigüedad y valor.',''],
+        ['Reuní las facturas de compra.',''],
+        ['Pedí un <b>informe técnico</b> que acredite el origen eléctrico.',''],
+        ['Reuní pruebas de que la instalación estaba mantenida.','Si la aseguradora considera que falló por falta de mantenimiento, puede no cubrirlo. El registro de tus pruebas del diferencial ayuda.'],
+        ['Comprobá si tu póliza cubre daños eléctricos y subidas de tensión.','No todas lo incluyen: mirá las condiciones antes de discutir.']
+      ]
+    },
+    ambas:{
+      t:'Podrían ser las dos vías',
+      d:'Una subida de tensión suele venir de la red, pero los daños los cubre el seguro si tu póliza lo incluye. '+
+        'Lo habitual es abrir las dos y ver cuál responde.',
+      cls:'seguro',
+      pasos:[
+        ['Preguntá a los vecinos si a ellos también se les quemó algo.','Si varios tuvieron daños a la vez, apunta claramente a la red.'],
+        ['Registrá la incidencia con la <b>distribuidora</b> y pedí el número.',''],
+        ['Notificá también a tu <b>aseguradora dentro de los 7 días</b>.',''],
+        ['<b>No tires nada</b> y hacé fotos de todo.',''],
+        ['Reuní facturas de compra de los aparatos afectados.',''],
+        ['Pedí un <b>informe técnico</b> a un electricista.','Este documento sirve para las dos reclamaciones.'],
+        ['Llevá un registro de fechas y de con quién hablaste.','']
+      ]
+    }
+  };
+
+  W.eia520Via=function(k){
+    var v=VIAS[k]||VIAS.seguro;
+    var d=leer(); var hechos=(d[k]||{}).hechos||{};
+    var lista=v.pasos.map(function(p,i){
+      var ok=!!hechos[i];
+      return '<label class="eia520-chk'+(ok?' ok':'')+'">'+
+        '<input type="checkbox" '+(ok?'checked':'')+' onchange="eia520Marcar(\''+k+'\','+i+',this.checked)" '+
+        'aria-label="Paso '+(i+1)+'">'+
+        '<span>'+p[0]+(p[1]?'<br><small style="color:#55687f">'+p[1]+'</small>':'')+'</span></label>';
+    }).join('');
+    var n=Object.keys(hechos).filter(function(x){return hechos[x];}).length;
+
+    shell('<h1>📋 Reclamar los daños</h1>'+
+      '<div class="eia520-via '+v.cls+'"><h3>'+esc(v.t)+'</h3><p>'+v.d+'</p></div>'+
+      '<div class="eia520-card"><h3>Lo que tenés que hacer ('+n+'/'+v.pasos.length+')</h3>'+
+      '<p class="sub">Marcá lo que vayas completando. Se guarda en este teléfono.</p>'+
+      lista+
+      '<button class="eia520-btn" type="button" onclick="eia520Informe(\''+k+'\')">📄 Generar informe para la reclamación</button>'+
+      '</div>'+
+      '<div class="eia520-card"><h3>⚠️ Lo que NO hay que hacer</h3>'+
+      '<p class="sub">Son los errores que más reclamaciones tumban.</p>'+
+      '<ul style="font-size:14px;line-height:1.65;margin:0;padding-left:19px">'+
+      '<li>Tirar los aparatos dañados antes de que pase el perito.</li>'+
+      '<li>Dejar pasar los 7 días de plazo.</li>'+
+      '<li>Repararlo todo sin documentar antes el estado.</li>'+
+      '<li>Reclamar a la comercializadora que te factura: no es la responsable de la red.</li>'+
+      '</ul></div>'+
+      '<button class="eia520-btn alt" type="button" onclick="eia520Inicio()">← Cambiar de vía</button>'+
+      volver());
+  };
+
+  W.eia520Marcar=function(k,i,ok){
+    var d=leer(); d[k]=d[k]||{hechos:{}};
+    d[k].hechos=d[k].hechos||{}; d[k].hechos[i]=!!ok;
+    guardar(d);
+    var lbl=D.querySelectorAll('.eia520-chk')[i];
+    if(lbl) lbl.classList.toggle('ok',!!ok);
+  };
+
+  W.eia520Informe=function(k){
+    var v=VIAS[k]||VIAS.seguro;
+    var datos={}; try{ datos=JSON.parse(localStorage.getItem('eia330-datos')||'{}')||{}; }catch(_){ }
+    var ins=datos.instalacion||{};
+    var test=datos.ultimoTest? new Date(datos.ultimoTest).toLocaleDateString('es-ES') : null;
+    var av=(datos.averias||[]).slice(0,5);
+
+    var vt=W.open('','_blank');
+    if(!vt) return alert('El navegador bloqueó la ventana. Permití las ventanas emergentes.');
+    vt.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Informe de incidencia eléctrica</title>'+
+      '<style>body{font-family:system-ui,Segoe UI,Arial,sans-serif;margin:30px;color:#16202e;line-height:1.55}'+
+      'h1{font-size:20px;margin:0 0 4px}.meta{font-size:12px;color:#5b6b80;margin-bottom:16px}'+
+      'h2{font-size:14px;margin:18px 0 5px;border-bottom:1px solid #ccd6e2;padding-bottom:3px}'+
+      'table{width:100%;border-collapse:collapse;font-size:13px}'+
+      'th,td{border:1px solid #ccd6e2;padding:7px;text-align:left;vertical-align:top}th{background:#f1f5fa;width:36%}'+
+      'ol{font-size:13px;padding-left:20px}li{margin-bottom:5px}'+
+      '.campo{border:1px solid #ccd6e2;border-radius:4px;padding:14px 8px;margin:5px 0;font-size:12px;color:#8a97a6}'+
+      '.pie{margin-top:24px;font-size:10.5px;color:#5b6b80;border-top:1px solid #ccd6e2;padding-top:9px;line-height:1.5}'+
+      '@media print{body{margin:14px}}</style></head><body>'+
+      '<h1>Informe de incidencia eléctrica</h1>'+
+      '<div class="meta">Generado el '+esc(new Date().toLocaleString('es-ES'))+' · Destinatario: '+esc(v.t.replace('Reclamá a la ','').replace('Reclamá a tu ',''))+'</div>'+
+      '<h2>Datos del suministro</h2><table>'+
+      '<tr><th>Titular</th><td class="campo">a rellenar</td></tr>'+
+      '<tr><th>Dirección del suministro</th><td class="campo">a rellenar</td></tr>'+
+      '<tr><th>Distribuidora</th><td>'+esc(ins.distribuidora||'—')+'</td></tr>'+
+      '<tr><th>N.º de suministro / CUPS</th><td>'+esc(ins.suministro||'—')+'</td></tr>'+
+      '<tr><th>Fecha y hora del incidente</th><td class="campo">a rellenar</td></tr>'+
+      '</table>'+
+      '<h2>Descripción del incidente</h2>'+
+      '<div class="campo" style="padding:36px 8px">a rellenar: qué ocurrió, qué se oyó o se vio, qué aparatos estaban funcionando</div>'+
+      '<h2>Aparatos afectados</h2>'+
+      '<table><tr><th style="width:34%">Aparato</th><th style="width:22%">Marca y modelo</th><th style="width:22%">Antigüedad</th><th>Valor</th></tr>'+
+      '<tr><td class="campo"></td><td class="campo"></td><td class="campo"></td><td class="campo"></td></tr>'+
+      '<tr><td class="campo"></td><td class="campo"></td><td class="campo"></td><td class="campo"></td></tr>'+
+      '<tr><td class="campo"></td><td class="campo"></td><td class="campo"></td><td class="campo"></td></tr></table>'+
+      '<h2>Estado de la instalación</h2><table>'+
+      '<tr><th>Última prueba del diferencial</th><td>'+(test? esc(test)+' (registrada por el usuario)' : 'Sin registro')+'</td></tr>'+
+      '<tr><th>Ubicación del cuadro</th><td>'+esc(ins.tablero||'—')+'</td></tr>'+
+      '<tr><th>Circuitos</th><td>'+esc(ins.circuitos||'—')+'</td></tr>'+
+      '</table>'+
+      (av.length? '<h2>Incidencias anteriores registradas</h2><ol>'+av.map(function(a){
+        var f=''; try{ f=new Date(a.fecha).toLocaleDateString('es-ES'); }catch(_){ }
+        return '<li>'+esc(f)+' — '+esc(a.que)+(a.solucion?' ('+esc(a.solucion)+')':'')+'</li>';
+      }).join('')+'</ol>':'')+
+      '<h2>Documentación que se adjunta</h2><ol>'+
+      v.pasos.map(function(p){ return '<li>'+p[0].replace(/<[^>]+>/g,'')+'</li>'; }).join('')+
+      '</ol>'+
+      '<div class="pie">Documento generado con ElectroIA como apoyo para tramitar una reclamación. '+
+      '<b>No es un informe pericial ni un certificado técnico.</b> Las compañías suelen exigir un informe firmado por un '+
+      'profesional habilitado que acredite el origen eléctrico de la avería; este documento sirve para ordenar la información '+
+      'y no lo sustituye.<br>Los datos de la instalación son los que el propio usuario registró en la aplicación.</div>'+
+      '</body></html>');
+    vt.document.close();
+    setTimeout(function(){ try{ vt.focus(); vt.print(); }catch(_){ } },450);
+  };
+
+  /* Acceso: al cerrar una avería y desde Mi hogar */
+  function inyectar(){
+    try{
+      // Al finalizar una avería
+      var fin=D.querySelector('.eia440-card h3');
+      if(fin && /Avería cerrada/.test(fin.textContent||'') && !D.getElementById('e520Cta')){
+        var b=D.createElement('button');
+        b.id='e520Cta'; b.type='button'; b.className='eia520-btn';
+        b.textContent='📋 ¿Se te quemó algún aparato? Reclamalo';
+        b.setAttribute('onclick','eia520Inicio()');
+        fin.parentNode.appendChild(b);
+      }
+      // En Mi hogar
+      var h1=D.querySelector('#app main h1');
+      if(h1 && /Mi hogar/.test(h1.textContent||'') && !D.getElementById('e520Tile')){
+        var t=D.querySelector('.eia500-t');
+        if(t){
+          var n=D.createElement('button');
+          n.id='e520Tile'; n.type='button'; n.className='eia500-t';
+          n.setAttribute('onclick','eia520Inicio()');
+          n.innerHTML='<span class="ic">📋</span><span><b>Reclamar daños</b>'+
+            '<small>Si se te quemó algo: a quién reclamar y qué necesitás</small></span>'+
+            '<span class="fl" aria-hidden="true">›</span>';
+          t.parentNode.insertBefore(n, t.nextSibling);
+        }
+      }
+    }catch(_){ }
+  }
+  try{
+    var app=D.getElementById('app');
+    if(app && W.MutationObserver){
+      var t2=null;
+      new MutationObserver(function(){ clearTimeout(t2); t2=setTimeout(inyectar,220); })
+        .observe(app,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',inyectar); else inyectar();
+})();
+</script>
+
 </body></html>
