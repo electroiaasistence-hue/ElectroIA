@@ -11826,7 +11826,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
     eia380Electricistas:'Alta electricistas', eia470Comercios:'Alta comercios',
     eia410Aislar:'Aislar circuito', eia410Contador:'Contador',
     eia410Apanar:'Apañarse', eia410Diferencial:'Diferencial',
-    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes', eia520Inicio:'Reclamar daños', eia530Administradores:'Administradores', eia530Vecino:'Avisar avería', eia530Triaje:'Comunidad'
+    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes', eia520Inicio:'Reclamar daños', eia550Iniciar:'Asistente paso a paso', eia530Administradores:'Administradores', eia530Vecino:'Avisar avería', eia530Triaje:'Comunidad'
   };
 
   var actual=null;
@@ -12696,6 +12696,374 @@ ${W.sourcesBlock?W.sourcesBlock():''}
       var t=null;
       new MutationObserver(function(){ clearTimeout(t); t=setTimeout(inyectar,240); })
         .observe(D.body,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',inyectar); else inyectar();
+})();
+</script>
+
+<style id="eia550-css">
+.eia550-barra{display:flex;gap:5px;margin:14px 0 4px}
+.eia550-barra i{flex:1;height:6px;border-radius:99px;background:#26303e;transition:background .25s}
+.eia550-barra i.hecho{background:#2f9e5c}
+.eia550-barra i.activo{background:#4f9be8}
+.eia550-cuenta{font-size:12.5px;color:#93a6bd;margin:0 0 14px}
+.eia550-card{background:#fff;border:1px solid #d9e2ee;border-radius:18px;padding:20px 17px;margin:11px 0;color:#1b2736}
+.eia550-card,.eia550-card *{color:#1b2736}
+.eia550-num{display:inline-block;font-size:11.5px;font-weight:900;letter-spacing:.09em;color:#0b63c7;margin-bottom:8px}
+.eia550-card h2{margin:0 0 10px;font-size:22px;line-height:1.28;color:#0f1b2b}
+.eia550-card p{font-size:16px;line-height:1.62;color:#243449;margin:0 0 12px}
+.eia550-card p:last-of-type{margin-bottom:0}
+.eia550-card b{color:#0f1b2b}
+.eia550-tip{background:#f1f5fc;border-left:4px solid #1663c7;border-radius:0 11px 11px 0;padding:12px 14px;margin:14px 0}
+.eia550-tip b{display:block;font-size:12px;letter-spacing:.06em;color:#134a94;margin-bottom:4px}
+.eia550-tip p{margin:0;font-size:14px;color:#22364f;line-height:1.55}
+.eia550-ojo{background:#fff6e2;border-left:4px solid #d9a200;border-radius:0 11px 11px 0;padding:12px 14px;margin:14px 0}
+.eia550-ojo b{display:block;font-size:12px;letter-spacing:.06em;color:#7a5800;margin-bottom:4px}
+.eia550-ojo p{margin:0;font-size:14px;color:#5c4400;line-height:1.55}
+.eia550-btn{display:block;width:100%;margin-top:10px;padding:16px;border:0;border-radius:13px;font-weight:800;font-size:16px;cursor:pointer;line-height:1.35}
+.eia550-btn.si{background:#0f7a44;color:#fff}
+.eia550-btn.si small{display:block;font-size:12.5px;font-weight:600;opacity:.9;margin-top:2px;color:#fff}
+.eia550-btn.no{background:#fff;color:#8c1a12;border:1.5px solid #e8b6b0}
+.eia550-btn.no small{display:block;font-size:12.5px;font-weight:600;color:#a45248;margin-top:2px}
+.eia550-btn.alt{background:#eef3fa;color:#1c3252;border:1px solid #ccd9ea;font-size:14px;padding:12px}
+.eia550-fin{background:linear-gradient(140deg,#0d3b2a,#12784e);border-radius:18px;padding:22px;color:#fff;text-align:center;margin:11px 0}
+.eia550-fin.no{background:linear-gradient(140deg,#3d2412,#8a4a1a)}
+.eia550-fin h2{margin:8px 0 6px;font-size:22px;color:#fff}
+.eia550-fin p{margin:0;font-size:14.5px;line-height:1.55;color:#dff0e6}
+.eia550-fin.no p{color:#f3ddc4}
+.eia550-salir{display:block;width:100%;margin-top:16px;padding:11px;background:none;border:0;color:#93a6bd;font-size:13.5px;cursor:pointer;text-decoration:underline}
+</style>
+
+<script id="electroia-v550-asistente">
+(function(){
+  'use strict';
+  var W=window,D=document;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function shell(html){
+    var app=D.getElementById('app'); if(!app) return;
+    var cab=(typeof W.head==='function')?W.head(false):'';
+    app.innerHTML=cab+'<main class="wrap page">'+html+'</main>';
+    try{ W.scrollTo(0,0); }catch(_){ }
+  }
+
+  /* ============================================================
+     ASISTENTE PASO A PASO
+     ------------------------------------------------------------
+     Los procedimientos se mostraban como una lista de seis puntos
+     de golpe. Eso funciona leyendo sentado; no funciona a oscuras,
+     de pie frente al cuadro, con el móvil en una mano.
+
+     Acá se muestra UN paso por pantalla, con letra grande, y no se
+     avanza hasta que la persona confirma. Lo importante es el
+     segundo botón: "no pude". Un asistente que solo admite éxito
+     obliga a mentir o a abandonar, y justo ahí es donde alguien
+     acaba llamando a un electricista de urgencia.
+
+     Cada "no pude" lleva a una explicación concreta de por qué
+     puede estar pasando y qué hacer, sin IA: son respuestas
+     previstas, porque las razones de no poder son pocas y
+     conocidas.
+
+     NO se usa en todas partes: solo en los procedimientos donde
+     hay riesgo real de perderse a mitad. Para explicaciones, el
+     texto seguido se lee mejor.
+     ============================================================ */
+
+  var FLUJOS = {
+    aislar: {
+      titulo: 'Encontrar qué circuito falla',
+      intro: 'Vas a bajar y subir los térmicos del cuadro. No hay que abrir ninguna tapa ni tocar cables.',
+      pasos: [
+        {
+          t:'Mirá el cuadro sin tocarlo',
+          c:'<p>Abrí la puerta del cuadro (la tapa exterior, la que se abre con la mano) y mirá lo que hay dentro.</p>'+
+            '<p>Vas a ver una fila de <b>interruptores pequeños</b>: esos son los térmicos. A un lado suele haber uno <b>más ancho con un botón pequeño marcado con una T</b>: ese es el diferencial. Y normalmente hay uno algo mayor que los demás: el interruptor general.</p>',
+          tip:'No hace falta que sepas cuál es cuál con exactitud. Con distinguir los pequeños en fila del resto, alcanza.',
+          si:'Ya lo veo',
+          no:'No encuentro el cuadro',
+          noR:{
+            t:'Dónde suele estar el cuadro',
+            c:'<p>Mirá en la entrada, el pasillo, dentro de un armario o detrás de una puerta. Es una caja de plástico con tapa.</p>'+
+              '<p>En pisos antiguos a veces está <b>fuera de la vivienda</b>, en el rellano. Si vivís de alquiler, preguntá al propietario; si es un edificio, al portero o a algún vecino.</p>',
+            salida:'Sin acceso al cuadro no podemos seguir con esta prueba, pero todavía hay cosas que comprobar.',
+            accion:['Ver otras comprobaciones','eia410Contador&&eia410Contador()']
+          }
+        },
+        {
+          t:'Bajá todos los térmicos',
+          c:'<p>Bajá <b>uno por uno</b> todos los interruptores pequeños de la fila. Todos hacia abajo.</p>'+
+            '<p><b>Dejá arriba</b> el interruptor general y el del botón T.</p>',
+          ojo:'Se va a ir la luz de toda la casa. Es lo esperado y dura un momento.',
+          si:'Listo, ya los bajé',
+          no:'Alguno no baja',
+          noR:{
+            t:'Si un térmico no baja',
+            c:'<p>A veces cuesta porque están duros, sobre todo si llevan años sin tocarse. Probá con firmeza pero sin forzar.</p>'+
+              '<p>Si uno está <b>realmente atascado</b> o la palanca se queda a medio camino y no responde, ese interruptor puede estar averiado.</p>',
+            salida:'Un térmico que no responde es una avería del propio interruptor y necesita cambio.',
+            accion:['Que me contacte un electricista','eia340PedirTecnico&&eia340PedirTecnico()']
+          }
+        },
+        {
+          t:'Subí el general y el diferencial',
+          c:'<p>Si el interruptor general o el del botón T habían saltado, subilos ahora.</p>'+
+            '<p>Con todos los térmicos abajo, deberían quedarse arriba sin problema.</p>',
+          si:'Se quedaron arriba',
+          no:'Vuelven a saltar',
+          noR:{
+            t:'Esto cambia el diagnóstico',
+            c:'<p>Si salta con <b>todos los térmicos bajados</b>, el problema no está en ningún circuito de la casa: está antes del cuadro, en la acometida o en el propio interruptor.</p>'+
+              '<p>Eso no se puede resolver desde dentro de la vivienda.</p>',
+            salida:'Encontraste algo importante: el problema está antes del cuadro. Contáselo al electricista, le ahorra la mitad del trabajo.',
+            accion:['Que me contacte un electricista','eia340PedirTecnico&&eia340PedirTecnico()']
+          }
+        },
+        {
+          t:'Subí los térmicos de a uno',
+          c:'<p>Ahora subí el primer térmico. Esperá unos segundos.</p>'+
+            '<p>Si se queda arriba, subí el siguiente. Y así uno por uno, <b>esperando entre cada uno</b>.</p>',
+          tip:'La espera importa: algunas averías tardan unos segundos en manifestarse. Si vas rápido, podés pasar de largo el circuito culpable.',
+          si:'Los subí todos y ninguno saltó',
+          no:'Uno hizo saltar todo',
+          noR:{
+            t:'Ese es el circuito del problema',
+            c:'<p>Justo lo que buscábamos. Ese térmico alimenta la zona donde está la avería.</p>'+
+              '<p><b>Bajalo y dejalo bajado.</b> Después subí los demás: el resto de la casa vuelve a tener luz.</p>'+
+              '<p>Anotá qué dejó de funcionar (qué habitación, qué enchufes, qué luces). Es lo primero que te va a preguntar el electricista.</p>',
+            salida:'Aislaste el problema y recuperaste luz en el resto de la casa. Ya podés esperar al electricista con normalidad.',
+            accion:['Cómo apañarme mientras tanto','eia410Apanar&&eia410Apanar()'],
+            ok:true
+          }
+        }
+      ],
+      finOk:{
+        t:'Todo volvió a la normalidad',
+        c:'Subiste todos los térmicos y ninguno saltó. Puede que fuera algo puntual: una subida de tensión, un aparato que ya desenchufaste, o una sobrecarga momentánea.',
+        nota:'Si vuelve a pasar, anotá qué estabas usando en ese momento. Ese dato vale más que cualquier otra cosa para encontrar la causa.'
+      }
+    },
+
+    contador: {
+      titulo: 'Rearmar el contador',
+      intro: 'Si en el cuadro está todo arriba pero no hay luz, probablemente cortó el contador por superar la potencia contratada. Se rearma sin electricista.',
+      pasos: [
+        {
+          t:'Quitá consumo primero',
+          c:'<p>Apagá o desenchufá lo que estaba funcionando cuando se fue la luz, sobre todo lo que más consume: horno, vitrocerámica, termo, secadora, aire acondicionado, calefactores.</p>',
+          ojo:'Si no lo hacés, va a volver a cortar en cuanto lo rearmes. Este paso no es opcional.',
+          si:'Listo, ya lo apagué',
+          no:'No sé qué estaba encendido',
+          noR:{
+            t:'Apagá lo más probable',
+            c:'<p>No hace falta que lo sepas con certeza. Apagá o desenchufá directamente los grandes consumidores que tengas: horno, termo, aire, secadora, vitrocerámica.</p>'+
+              '<p>Con eso basta para el intento.</p>',
+            salida:'',
+            continuar:true
+          }
+        },
+        {
+          t:'Probá desde tu cuadro',
+          c:'<p>Antes de bajar al contador, probá esto. Muchas veces alcanza.</p>'+
+            '<p><b>1.</b> Bajá el interruptor general.<br><b>2.</b> Esperá unos <b>10 segundos</b>.<br><b>3.</b> Volvé a subirlo.</p>',
+          si:'Volvió la luz',
+          no:'Sigue sin luz',
+          noR:{
+            t:'Hay que ir al contador',
+            c:'<p>Entonces el corte está en el limitador de potencia, que va dentro del contador.</p>'+
+              '<p>Buscalo: suele estar en el rellano, la entrada o un armario del portal.</p>',
+            salida:'',
+            continuar:true
+          },
+          finSi:{
+            t:'Resuelto',
+            c:'Era el corte por potencia. Volvió la luz sin que tuvieras que llamar a nadie.',
+            nota:'Si te pasa a menudo, no es una avería: es que tu potencia contratada se queda corta para cómo usás la casa. Se amplía con tu comercializadora.'
+          }
+        },
+        {
+          t:'Mirá la pantalla del contador',
+          c:'<p>El contador tiene una pantalla pequeña. Mirá qué muestra.</p>'+
+            '<p>Si dice <b>ICP 00 PULSE</b> (o algo parecido con la palabra PULSE), está confirmado: cortó por exceso de potencia.</p>',
+          si:'Sí, dice PULSE',
+          no:'No llego al contador',
+          noR:{
+            t:'La sala de contadores está cerrada',
+            c:'<p>Es lo normal en edificios. Quién tiene la llave, por orden de facilidad:</p>'+
+              '<p><b>1.</b> El presidente de la comunidad o el administrador de fincas. Muchas comunidades cambian la cerradura y guardan copia.<br>'+
+              '<b>2.</b> El conserje o portero, si lo hay.<br>'+
+              '<b>3.</b> La distribuidora, que tiene llave normalizada.<br>'+
+              '<b>4.</b> Los electricistas matriculados, que también suelen llevarla.</p>',
+            salida:'Nunca fuerces la puerta ni rompas un precinto: además de peligroso, es una infracción que puede acarrear multa.',
+            accion:['Que me contacte un electricista','eia340PedirTecnico&&eia340PedirTecnico()']
+          }
+        },
+        {
+          t:'Pulsá el botón unos segundos',
+          c:'<p>Buscá un <b>botón, normalmente amarillo</b>, al lado de la pantalla o arriba a la derecha.</p>'+
+            '<p>Pulsalo y <b>mantenelo unos 3 segundos</b>. Vas a oír un chasquido dentro del contador.</p>',
+          tip:'Un toque rápido no sirve: hay que mantenerlo pulsado.',
+          si:'Volvió la luz',
+          no:'No pasa nada',
+          noR:{
+            t:'Si el contador no responde',
+            c:'<p>Puede que el corte no sea por potencia, sino otra cosa: una avería en la acometida, un problema del propio contador o un corte de la distribuidora.</p>'+
+              '<p>Comprobá si los vecinos tienen luz. Si ellos tampoco, es de la compañía y no hay nada que rearmar.</p>',
+            salida:'Llamá a tu distribuidora; el teléfono está en la factura. Contales que ya probaste rearmar y que no responde.',
+            accion:['Que me contacte un electricista','eia340PedirTecnico&&eia340PedirTecnico()']
+          }
+        }
+      ],
+      finOk:{
+        t:'Resuelto',
+        c:'Rearmaste el contador vos mismo. Eso es una visita de urgencia que no hizo falta pagar.',
+        nota:'Si te pasa a menudo, tu potencia contratada se queda corta. Podés comprobarlo con datos reales analizando tu consumo, o pedir una ampliación a tu comercializadora.'
+      }
+    }
+  };
+
+  var EST=null;
+
+  W.eia550Iniciar=function(clave){
+    var f=FLUJOS[clave]; if(!f) return;
+    EST={clave:clave, i:0};
+    pintar();
+  };
+
+  function barra(){
+    var f=FLUJOS[EST.clave];
+    var h='<div class="eia550-barra">';
+    for(var k=0;k<f.pasos.length;k++){
+      h+='<i class="'+(k<EST.i?'hecho':(k===EST.i?'activo':''))+'"></i>';
+    }
+    return h+'</div><p class="eia550-cuenta">Paso '+(EST.i+1)+' de '+f.pasos.length+'</p>';
+  }
+
+  function pintar(){
+    var f=FLUJOS[EST.clave], p=f.pasos[EST.i];
+    if(!p) return finalizar(true);
+    shell(
+      '<h1 style="font-size:19px;margin:6px 0 0">'+esc(f.titulo)+'</h1>'+
+      barra()+
+      '<div class="eia550-card">'+
+      '<span class="eia550-num">PASO '+(EST.i+1)+'</span>'+
+      '<h2>'+esc(p.t)+'</h2>'+
+      p.c+
+      (p.tip?'<div class="eia550-tip"><b>💡 AYUDA</b><p>'+esc(p.tip)+'</p></div>':'')+
+      (p.ojo?'<div class="eia550-ojo"><b>⚠️ OJO</b><p>'+esc(p.ojo)+'</p></div>':'')+
+      '</div>'+
+      '<button class="eia550-btn si" type="button" onclick="eia550Si()">✅ '+esc(p.si)+
+      '<small>Continuar con el siguiente paso</small></button>'+
+      '<button class="eia550-btn no" type="button" onclick="eia550No()">✋ '+esc(p.no)+
+      '<small>Te explico qué hacer</small></button>'+
+      (EST.i>0?'<button class="eia550-btn alt" type="button" data-eia490="1" onclick="eia550Atras()">← Volver al paso anterior</button>':'')+
+      '<button class="eia550-salir" type="button" onclick="eia550Salir()">Salir del asistente</button>'
+    );
+  }
+
+  W.eia550Si=function(){
+    var f=FLUJOS[EST.clave], p=f.pasos[EST.i];
+    // Algunos pasos terminan bien aquí mismo, sin recorrer el resto.
+    if(p.finSi) return finalizar(true, p.finSi);
+    EST.i++;
+    if(EST.i>=f.pasos.length) return finalizar(true);
+    pintar();
+  };
+
+  W.eia550Atras=function(){ if(EST.i>0){ EST.i--; pintar(); } };
+
+  W.eia550No=function(){
+    var f=FLUJOS[EST.clave], p=f.pasos[EST.i], r=p.noR;
+    if(!r) return;
+    var acciones='';
+    if(r.continuar){
+      acciones='<button class="eia550-btn si" type="button" onclick="eia550Seguir()">Entendido, seguimos'+
+        '<small>Continuar con el siguiente paso</small></button>';
+    }
+    if(r.accion){
+      acciones+='<button class="eia550-btn '+(r.continuar?'alt':'si')+'" type="button" onclick="'+r.accion[1]+'">'+esc(r.accion[0])+'</button>';
+    }
+    shell(
+      '<h1 style="font-size:19px;margin:6px 0 0">'+esc(f.titulo)+'</h1>'+
+      barra()+
+      (r.ok
+        ? '<div class="eia550-fin"><div style="font-size:40px">🎯</div><h2>'+esc(r.t)+'</h2></div>'
+        : '')+
+      '<div class="eia550-card">'+
+      (r.ok?'':'<span class="eia550-num">SI NO PUDISTE</span><h2>'+esc(r.t)+'</h2>')+
+      r.c+
+      (r.salida?'<div class="eia550-tip"><b>QUÉ SIGNIFICA</b><p>'+esc(r.salida)+'</p></div>':'')+
+      '</div>'+
+      acciones+
+      '<button class="eia550-btn alt" type="button" data-eia490="1" onclick="eia550Atras2()">← Volver a intentar el paso</button>'+
+      '<button class="eia550-salir" type="button" onclick="eia550Salir()">Salir del asistente</button>'
+    );
+  };
+
+  W.eia550Seguir=function(){
+    var f=FLUJOS[EST.clave];
+    EST.i++;
+    if(EST.i>=f.pasos.length) return finalizar(true);
+    pintar();
+  };
+  W.eia550Atras2=function(){ pintar(); };
+
+  function finalizar(ok, propio){
+    var f=FLUJOS[EST.clave];
+    var d=propio||f.finOk;
+    shell(
+      '<div class="eia550-fin"><div style="font-size:46px">✅</div>'+
+      '<h2>'+esc(d.t)+'</h2><p>'+esc(d.c)+'</p></div>'+
+      (d.nota?'<div class="eia550-card"><div class="eia550-tip" style="margin:0"><b>PARA LA PRÓXIMA</b><p>'+esc(d.nota)+'</p></div></div>':'')+
+      '<button class="eia550-btn si" type="button" onclick="eia440Finalizar&&eia440Finalizar()">Cerrar la avería</button>'+
+      '<button class="eia550-btn alt" type="button" onclick="eia410Apanar&&eia410Apanar()">🩹 Apañarme hasta que venga alguien</button>'+
+      '<button class="eia550-btn alt" type="button" onclick="home&&home()">Volver a Inicio</button>'
+    );
+  }
+
+  W.eia550Salir=function(){
+    EST=null;
+    if(typeof W.home==='function') W.home();
+  };
+
+  /* ============================================================
+     ENGANCHE
+     ------------------------------------------------------------
+     Se ofrece el modo guiado en los dos procedimientos donde hay
+     riesgo de perderse. El texto seguido se mantiene: hay gente
+     que prefiere leerlo todo de una vez, y en una urgencia no es
+     momento de imponer una forma de hacer las cosas.
+     ============================================================ */
+  function inyectar(){
+    try{
+      // No ofrecer el modo guiado DENTRO del propio asistente: los títulos
+      // coinciden, y el botón inyectado quedaba antes que los de avanzar,
+      // reiniciando el flujo al pulsarlo.
+      if(EST || D.querySelector('.eia550-barra')) return;
+      var h1=D.querySelector('#app main h1');
+      if(!h1) return;
+      var t=h1.textContent||'';
+      var clave=null;
+      if(/circuito falla/i.test(t)) clave='aislar';
+      else if(/arriba.*sin luz|se fue la luz y no salt/i.test(t)) clave='contador';
+      if(!clave || D.getElementById('e550Cta')) return;
+      var b=D.createElement('button');
+      b.id='e550Cta'; b.type='button'; b.className='eia550-btn si';
+      b.style.marginTop='14px';
+      b.innerHTML='👉 Guiame paso a paso<small>Un paso por pantalla, sin perderte</small>';
+      b.setAttribute('onclick','eia550Iniciar(\''+clave+'\')');
+      var sub=D.querySelector('#app main .subtitle');
+      if(sub) sub.parentNode.insertBefore(b, sub.nextSibling);
+      else h1.parentNode.insertBefore(b, h1.nextSibling);
+    }catch(_){ }
+  }
+  try{
+    var app=D.getElementById('app');
+    if(app && W.MutationObserver){
+      var tt=null;
+      new MutationObserver(function(){ clearTimeout(tt); tt=setTimeout(inyectar,220); })
+        .observe(app,{childList:true,subtree:true});
     }
   }catch(_){ }
   if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',inyectar); else inyectar();
