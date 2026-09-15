@@ -13188,16 +13188,36 @@ body.eia570-consent-on #app main{padding-bottom:200px}
   }
   W.eia570Estado=leer;
 
+  /* ------------------------------------------------------------
+     CONSENT MODE v2
+     ------------------------------------------------------------
+     La etiqueta se carga SIEMPRE, pero con el almacenamiento
+     DENEGADO por defecto. Mientras esté denegado, Google no
+     escribe cookies ni identificadores en el dispositivo: envía
+     señales anónimas sin almacenamiento. Al aceptar, se actualiza
+     el consentimiento y la medición pasa a ser completa.
+
+     Es el método que Google documenta para el Espacio Económico
+     Europeo y tiene dos ventajas sobre no cargar nada:
+     · el verificador de instalación de Google encuentra la etiqueta;
+     · si la persona acepta, la medición empieza en ese instante,
+       sin tener que recargar.
+
+     Aviso honesto: algunas autoridades de protección de datos han
+     cuestionado incluso las señales sin almacenamiento. Si querés
+     el criterio más estricto, se puede volver a no cargar nada
+     hasta el consentimiento; es una línea de código.
+     ------------------------------------------------------------ */
   var cargado=false;
   function cargarAnalytics(){
     if(cargado) return; cargado=true;
     W.dataLayer = W.dataLayer || [];
     function gtag(){ W.dataLayer.push(arguments); }
     W.gtag=gtag;
-    // Consent Mode: se declara el consentimiento concedido antes de configurar.
+    // TODO denegado antes de cargar el script: el orden importa.
     gtag('consent','default',{
       ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied',
-      analytics_storage:'granted'
+      analytics_storage:'denied', wait_for_update:500
     });
     var s=D.createElement('script');
     s.async=true;
@@ -13205,13 +13225,24 @@ body.eia570-consent-on #app main{padding-bottom:200px}
     D.head.appendChild(s);
     gtag('js', new Date());
     gtag('config', MEDICION, { anonymize_ip:true });
+    if(leer()===true) conceder();
+  }
+
+  function conceder(){
+    if(typeof W.gtag!=='function') return;
+    // La publicidad sigue denegada: ElectroIA no hace publicidad.
+    W.gtag('consent','update',{ analytics_storage:'granted' });
+  }
+  function denegar(){
+    if(typeof W.gtag!=='function') return;
+    W.gtag('consent','update',{ analytics_storage:'denied' });
   }
 
   W.eia570Decidir=function(ok){
     guardar(ok);
     var c=D.getElementById('eia570Consent'); if(c) c.classList.remove('on');
     D.body.classList.remove('eia570-consent-on');
-    if(ok) cargarAnalytics();
+    if(ok) conceder(); else denegar();
   };
 
   // Permite cambiar de opinión desde la política de cookies.
@@ -13232,7 +13263,7 @@ body.eia570-consent-on #app main{padding-bottom:200px}
   }
 
   function iniciar(){
-    if(leer()===true) cargarAnalytics();
+    cargarAnalytics();   // siempre, con almacenamiento denegado por defecto
     // Se espera a que el aviso de privacidad se haya cerrado, para no
     // apilar dos tarjetas encima del botón de urgencia.
     setTimeout(function(){
