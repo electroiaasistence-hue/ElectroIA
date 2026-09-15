@@ -9076,7 +9076,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
 </style>
 
 <div id="eia380Aviso" role="region" aria-label="Aviso de privacidad">
-  <p><b>Cómo usamos tus datos.</b> ElectroIA guarda información en tu dispositivo para que la app funcione (tu progreso, contactos y proyectos). No usamos cookies de publicidad ni de seguimiento. Las consultas a la IA se procesan en servidores de OpenAI.</p>
+  <p><b>Cómo usamos tus datos.</b> ElectroIA guarda información en tu dispositivo para que la app funcione (tu progreso, contactos y proyectos). No usamos cookies de publicidad. Las consultas a la IA se procesan en servidores de OpenAI. Después te preguntaremos si nos dejás medir el uso: podés decir que no.</p>
   <div class="row">
     <button type="button" class="mas" onclick="eia380Ver('privacidad')">Leer más</button>
     <button type="button" class="ok" onclick="eia380Aceptar()">Entendido</button>
@@ -9226,8 +9226,11 @@ ${W.sourcesBlock?W.sourcesBlock():''}
 
     cookies:{t:'Cookies y almacenamiento',html:function(){ return ''+
       '<h3>1. Situación actual</h3>'+
-      '<p><b>ElectroIA no utiliza cookies de publicidad, de analítica ni de seguimiento.</b> No hay perfilado, no se comparten datos con anunciantes y no se rastrea la navegación entre sitios.</p>'+
-      '<p>Lo que sí se emplea es <b>almacenamiento local</b> (localStorage) del navegador, necesario para que la aplicación funcione.</p>'+
+      '<p><b>ElectroIA no utiliza cookies de publicidad ni comparte datos con anunciantes.</b> No hay perfilado publicitario ni seguimiento entre sitios.</p>'+
+      '<p>Se emplean dos cosas distintas:</p>'+
+      '<ul><li><b>Almacenamiento local</b> (localStorage) del navegador, necesario para que la aplicación funcione. No requiere consentimiento porque sin él no hay servicio.</li>'+
+      '<li><b>Google Analytics</b>, para saber qué averías consulta la gente y mejorar las guías. <b>Solo se carga si lo aceptás</b>, y podés rechazarlo sin perder ninguna función.</li></ul>'+
+      '<p style="margin-top:12px"><button type="button" onclick="eia570Revisar&&eia570Revisar()" style="background:#1663c7;color:#fff;border:0;border-radius:9px;padding:11px 15px;font:inherit;font-weight:800;cursor:pointer">Cambiar mi decisión sobre la medición</button></p>'+
       '<h3>2. Qué se guarda en tu dispositivo</h3>'+
       '<table><tr><th>Dato</th><th>Para qué</th></tr>'+
       '<tr><td>Sesión de usuario</td><td>Mantenerte identificado sin volver a escribir la contraseña</td></tr>'+
@@ -9238,10 +9241,11 @@ ${W.sourcesBlock?W.sourcesBlock():''}
       '<tr><td>Mediciones registradas</td><td>Consultarlas y exportarlas</td></tr>'+
       '<tr><td>País de referencia</td><td>Aplicar la normativa y el número de emergencias correctos</td></tr>'+
       '<tr><td>Aviso de privacidad visto</td><td>No mostrarlo en cada visita</td></tr></table>'+
-      '<h3>3. Por qué no aparece un banner de aceptar o rechazar</h3>'+
-      '<p>La normativa europea (artículo 5.3 de la Directiva ePrivacy y su transposición en el artículo 22.2 de la LSSI-CE) exige consentimiento previo para el almacenamiento en el dispositivo, <b>salvo cuando es estrictamente necesario para prestar el servicio que el usuario ha solicitado</b>.</p>'+
-      '<p>Todo lo que ElectroIA guarda entra en esa excepción: sin ello la aplicación no puede funcionar. Por eso se informa, que es obligatorio, pero no se bloquea el acceso pidiendo un consentimiento que la ley no requiere en este caso. En una aplicación de urgencias, además, interponer un muro antes de poder pedir ayuda sería contraproducente.</p>'+
-      '<div class="ojo"><b>Si esto cambia</b><p>Si en el futuro se incorpora analítica, publicidad o cualquier seguimiento, será obligatorio pedir consentimiento previo, con la opción de rechazar tan accesible como la de aceptar, y esta política se actualizará antes de activarlo.</p></div>'+
+      '<h3>3. Cómo se pide el consentimiento</h3>'+
+      '<p>El almacenamiento <b>necesario</b> (tu sesión, tus contactos, tu progreso) está exento de consentimiento previo por el artículo 5.3 de la Directiva ePrivacy: sin él la aplicación no funciona. Se informa, que es obligatorio, pero no se bloquea el acceso.</p>'+
+      '<p>La <b>analítica</b> es distinta y sí requiere consentimiento previo. Por eso el script de Google Analytics no se carga hasta que lo aceptás: rechazarlo significa que no se carga nada, no solo que no se envían datos.</p>'+
+      '<p>El botón de rechazar tiene el mismo tamaño y visibilidad que el de aceptar, y rechazar no degrada ninguna función de la aplicación.</p>'+
+      '<div class="ojo"><b>Durante una urgencia</b><p>El aviso de medición no aparece si estás en mitad de un diagnóstico. Interponer una petición de permisos entre una persona y la ayuda que está buscando sería indefendible.</p></div>'+
       '<h3>4. Cómo borrar estos datos</h3>'+
       '<p>Puedes eliminarlos desde los ajustes de tu navegador (borrar datos del sitio) o, para los datos de tu cuenta, desde Ajustes → Mis datos → Eliminar mi cuenta.</p>';
     }}
@@ -13116,4 +13120,135 @@ ${W.sourcesBlock?W.sourcesBlock():''}
   }
 })();
 </script>
+<style id="eia570-css">
+#eia570Consent{position:fixed;left:10px;right:10px;bottom:78px;z-index:9998;background:#101a26;
+  border:1px solid #2f3f52;border-radius:15px;padding:15px;box-shadow:0 12px 34px rgba(0,0,0,.55);display:none}
+#eia570Consent.on{display:block}
+/* Mientras el aviso está visible se añade espacio al final del contenido.
+   Sin esto el banner queda montado sobre lo último de la página, y en una
+   app de urgencias eso puede ser justo el botón de pedir ayuda. */
+body.eia570-consent-on #app main{padding-bottom:200px}
+#eia570Consent h3{margin:0 0 7px;font-size:15.5px;color:#fff}
+#eia570Consent p{margin:0 0 12px;font-size:13.2px;line-height:1.55;color:#cfdcea}
+#eia570Consent .fila{display:flex;gap:8px}
+#eia570Consent button{flex:1;padding:12px 8px;border-radius:11px;border:0;font-weight:800;font-size:13.8px;cursor:pointer}
+#eia570Consent .acepto{background:#1663c7;color:#fff}
+#eia570Consent .rechazo{background:#22303f;color:#dbe6f3;border:1px solid #3a4c61}
+#eia570Consent .mas{display:block;width:100%;margin-top:9px;background:none;border:0;color:#7cc4ff;
+  font-size:12.5px;text-decoration:underline;cursor:pointer;padding:4px}
+</style>
+
+<div id="eia570Consent" role="dialog" aria-live="polite" aria-label="Consentimiento de medición">
+  <h3>¿Nos dejás medir el uso?</h3>
+  <p>Usaríamos Google Analytics para saber qué averías consulta la gente y mejorar las guías.
+  <b>No sirve para publicidad</b> y podés decir que no sin perder ninguna función.</p>
+  <div class="fila">
+    <button type="button" class="rechazo" onclick="eia570Decidir(false)">No, gracias</button>
+    <button type="button" class="acepto" onclick="eia570Decidir(true)">Aceptar</button>
+  </div>
+  <button type="button" class="mas" onclick="eia380Ver&&eia380Ver('cookies')">Ver qué se guarda exactamente</button>
+</div>
+
+<script id="electroia-v570-analytics">
+(function(){
+  'use strict';
+  var W=window, D=document;
+  var MEDICION='G-EQZP4MSEMT';
+  var CLAVE='eia570-consent';
+
+  /* ============================================================
+     MEDICIÓN CON CONSENTIMIENTO PREVIO
+     ------------------------------------------------------------
+     Google Analytics NO es almacenamiento necesario: es analítica.
+     El artículo 22.2 de la LSSI-CE y el RGPD exigen consentimiento
+     PREVIO, informado y con la opción de rechazar tan accesible
+     como la de aceptar. Por eso:
+
+     · El script de Google no se carga hasta que la persona acepta.
+       No basta con "no enviar datos": el propio script ya deja
+       identificadores en el dispositivo.
+     · "No, gracias" está a la izquierda y con el mismo tamaño que
+       "Aceptar". Los banners que esconden el rechazo son
+       precisamente los que sanciona la AEPD.
+     · Rechazar no degrada nada de la app.
+     · La decisión se puede cambiar después desde la política de
+       cookies.
+
+     El aviso aparece DESPUÉS del de privacidad y nunca tapa el
+     botón de urgencia: en una emergencia, pedir permisos antes de
+     dejar pedir ayuda sería indefendible.
+     ============================================================ */
+
+  function leer(){
+    try{ var v=localStorage.getItem(CLAVE); return v==='si'?true:(v==='no'?false:null); }
+    catch(_){ return null; }
+  }
+  function guardar(ok){
+    try{ localStorage.setItem(CLAVE, ok?'si':'no'); }catch(_){ }
+  }
+  W.eia570Estado=leer;
+
+  var cargado=false;
+  function cargarAnalytics(){
+    if(cargado) return; cargado=true;
+    W.dataLayer = W.dataLayer || [];
+    function gtag(){ W.dataLayer.push(arguments); }
+    W.gtag=gtag;
+    // Consent Mode: se declara el consentimiento concedido antes de configurar.
+    gtag('consent','default',{
+      ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied',
+      analytics_storage:'granted'
+    });
+    var s=D.createElement('script');
+    s.async=true;
+    s.src='https://www.googletagmanager.com/gtag/js?id='+MEDICION;
+    D.head.appendChild(s);
+    gtag('js', new Date());
+    gtag('config', MEDICION, { anonymize_ip:true });
+  }
+
+  W.eia570Decidir=function(ok){
+    guardar(ok);
+    var c=D.getElementById('eia570Consent'); if(c) c.classList.remove('on');
+    D.body.classList.remove('eia570-consent-on');
+    if(ok) cargarAnalytics();
+  };
+
+  // Permite cambiar de opinión desde la política de cookies.
+  W.eia570Revisar=function(){
+    try{ localStorage.removeItem(CLAVE); }catch(_){ }
+    var c=D.getElementById('eia570Consent'); if(c) c.classList.add('on');
+    D.body.classList.add('eia570-consent-on');
+  };
+
+  function mostrar(){
+    if(leer()!==null) return;                 // ya decidió
+    // No interrumpir una urgencia en marcha.
+    try{
+      if(D.querySelector('.diag-q,.diag-options,.eia550-barra')) return;
+    }catch(_){ }
+    var c=D.getElementById('eia570Consent'); if(c) c.classList.add('on');
+    D.body.classList.add('eia570-consent-on');
+  }
+
+  function iniciar(){
+    if(leer()===true) cargarAnalytics();
+    // Se espera a que el aviso de privacidad se haya cerrado, para no
+    // apilar dos tarjetas encima del botón de urgencia.
+    setTimeout(function(){
+      var priv=D.getElementById('eia380Aviso');
+      if(priv && priv.classList.contains('on')){
+        var t=setInterval(function(){
+          if(!priv.classList.contains('on')){ clearInterval(t); setTimeout(mostrar,900); }
+        },700);
+        setTimeout(function(){ clearInterval(t); },40000);
+      } else {
+        mostrar();
+      }
+    },2600);
+  }
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',iniciar); else iniciar();
+})();
+</script>
+
 </body></html>
