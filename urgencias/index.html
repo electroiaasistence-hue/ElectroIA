@@ -33,24 +33,25 @@ text-decoration:none;background:#101d2e}
 footer{margin-top:32px;border-top:1px solid #24344a;padding-top:16px;font-size:13px;color:#93a6bd}
 footer a{color:#8fc3ff}
 </style>
+<!-- Google tag (gtag.js) con Consent Mode v2 -->
 <script>
-/* Medición con consentimiento previo. El script de Google no se carga
-   hasta que la persona acepta en la app: aquí solo se comprueba la
-   decisión ya tomada. Rechazar no degrada nada de esta página. */
+/* La etiqueta se carga siempre, con el almacenamiento DENEGADO hasta que
+   la persona acepta en la app. Así Google detecta la instalación y no se
+   escribe ninguna cookie ni identificador sin consentimiento. */
 (function(){
-  try{
-    if(localStorage.getItem('eia570-consent')!=='si') return;
-  }catch(_){ return; }
   window.dataLayer=window.dataLayer||[];
   function gtag(){dataLayer.push(arguments);}
   window.gtag=gtag;
   gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',
-    ad_personalization:'denied',analytics_storage:'granted'});
+    ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});
+  var ok=false;
+  try{ ok = localStorage.getItem('eia570-consent')==='si'; }catch(_){}
   var s=document.createElement('script');
   s.async=true; s.src='https://www.googletagmanager.com/gtag/js?id=G-EQZP4MSEMT';
   document.head.appendChild(s);
   gtag('js',new Date());
   gtag('config','G-EQZP4MSEMT',{anonymize_ip:true});
+  if(ok) gtag('consent','update',{analytics_storage:'granted'});
 })();
 </script>
 </head>
