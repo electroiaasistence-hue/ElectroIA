@@ -56,6 +56,26 @@ footer a{color:#8fc3ff}
 .otras a:hover{background:#16243a}
 .aviso{margin-top:22px;background:#2a1d10;border:1px solid #5c4014;border-radius:11px;padding:12px;font-size:13px;color:#f0d9a8;line-height:1.55}
 </style>
+<script>
+/* Medición con consentimiento previo. El script de Google no se carga
+   hasta que la persona acepta en la app: aquí solo se comprueba la
+   decisión ya tomada. Rechazar no degrada nada de esta página. */
+(function(){
+  try{
+    if(localStorage.getItem('eia570-consent')!=='si') return;
+  }catch(_){ return; }
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  window.gtag=gtag;
+  gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',
+    ad_personalization:'denied',analytics_storage:'granted'});
+  var s=document.createElement('script');
+  s.async=true; s.src='https://www.googletagmanager.com/gtag/js?id=G-EQZP4MSEMT';
+  document.head.appendChild(s);
+  gtag('js',new Date());
+  gtag('config','G-EQZP4MSEMT',{anonymize_ip:true});
+})();
+</script>
 </head>
 <body>
 <div class="wrap">
