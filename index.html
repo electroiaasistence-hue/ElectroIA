@@ -11830,7 +11830,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
     eia380Electricistas:'Alta electricistas', eia470Comercios:'Alta comercios',
     eia410Aislar:'Aislar circuito', eia410Contador:'Contador',
     eia410Apanar:'Apañarse', eia410Diferencial:'Diferencial',
-    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes', eia520Inicio:'Reclamar daños', eia550Iniciar:'Asistente paso a paso', eia530Administradores:'Administradores', eia530Vecino:'Avisar avería', eia530Triaje:'Comunidad'
+    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes', eia520Inicio:'Reclamar daños', eia580MenuPro:'Modo Profesional', eia550Iniciar:'Asistente paso a paso', eia530Administradores:'Administradores', eia530Vecino:'Avisar avería', eia530Triaje:'Comunidad'
   };
 
   var actual=null;
@@ -13279,6 +13279,309 @@ body.eia570-consent-on #app main{padding-bottom:200px}
     },2600);
   }
   if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',iniciar); else iniciar();
+})();
+</script>
+
+<style id="eia580-css">
+.eia580-buscar{position:relative;margin:10px 0 4px}
+.eia580-buscar input{width:100%;box-sizing:border-box;padding:14px 14px 14px 42px;border-radius:13px;
+  border:1px solid #2b3748;background:#111923;color:#eaf1fa;font:inherit;font-size:15.5px}
+.eia580-buscar input::placeholder{color:#8296ae}
+.eia580-buscar .lupa{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;opacity:.75}
+.eia580-res{margin-top:8px}
+.eia580-r{display:grid;grid-template-columns:38px 1fr 20px;gap:10px;align-items:center;width:100%;text-align:left;
+  background:#fff;border:1px solid #d9e2ee;border-radius:13px;padding:11px;margin-bottom:7px;cursor:pointer}
+.eia580-r .ic{width:38px;height:38px;border-radius:11px;background:#eef3fb;display:flex;align-items:center;justify-content:center;font-size:19px}
+.eia580-r b{display:block;font-size:14.5px;color:#12203a}
+.eia580-r small{display:block;font-size:12.2px;color:#55687f;line-height:1.4}
+.eia580-r .fl{color:#546b88;font-size:17px}
+.eia580-r .cat{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.05em;
+  padding:2px 7px;border-radius:99px;background:#e4ebf5;color:#3d5675;margin-top:4px}
+.eia580-vacio{padding:16px;text-align:center;color:#93a6bd;font-size:13.5px;line-height:1.55}
+.eia580-sec{font-size:11.5px;font-weight:800;letter-spacing:.08em;color:#8fa8c4;margin:18px 0 8px}
+.eia580-rec{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:4px}
+.eia580-rec button{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:10px 14px;border-radius:99px;
+  border:1px solid #2b3748;background:#141c27;color:#dbe6f3;font-size:13.2px;font-weight:700;cursor:pointer;white-space:nowrap}
+.eia580-rec button:hover{background:#1b2836}
+.eia580-grupo{border:1px solid #d9e2ee;border-radius:15px;background:#fff;margin-bottom:9px;overflow:hidden}
+.eia580-gh{width:100%;display:grid;grid-template-columns:40px 1fr 22px;gap:11px;align-items:center;
+  padding:14px 13px;background:#fff;border:0;cursor:pointer;text-align:left}
+.eia580-gh .ic{width:40px;height:40px;border-radius:12px;background:#eef3fb;display:flex;align-items:center;justify-content:center;font-size:20px}
+.eia580-gh b{display:block;font-size:15.5px;color:#12203a}
+.eia580-gh small{display:block;font-size:12.2px;color:#55687f;line-height:1.4}
+.eia580-gh .fl{color:#546b88;font-size:17px;transition:transform .2s}
+.eia580-gh.on .fl{transform:rotate(90deg)}
+.eia580-gb{display:none;padding:0 11px 11px}
+.eia580-gb.on{display:block}
+.eia580-gb button{display:block;width:100%;text-align:left;padding:11px 12px;margin-bottom:6px;border-radius:11px;
+  border:1px solid #e2e9f2;background:#f8fafd;cursor:pointer}
+.eia580-gb button b{display:block;font-size:14px;color:#12203a}
+.eia580-gb button small{display:block;font-size:12px;color:#55687f;margin-top:1px;line-height:1.4}
+.eia580-gb button:hover{background:#eef4fb;border-color:#c2d3e7}
+</style>
+
+<script id="electroia-v580-buscador">
+(function(){
+  'use strict';
+  var W=window, D=document;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  /* ============================================================
+     BUSCADOR, RECIENTES Y AGRUPACIÓN
+     ------------------------------------------------------------
+     La app llegó a 50 módulos y 139 funciones. El Modo Profesional
+     mostraba 16 tarjetas sueltas y ocupaba dos pantallas y media de
+     scroll. Nadie procesa 16 opciones, y un técnico en obra no hace
+     scroll dos veces para abrir una tabla.
+
+     Tres cambios, por orden de impacto:
+     1. Buscar por lo que la persona QUIERE, no por cómo se llama la
+        herramienta: "diferencial" encuentra la tabla, la guía y el
+        procedimiento.
+     2. Recientes: quien usa la app usa tres cosas el 90 % del
+        tiempo. Que estén arriba.
+     3. Agrupar en 5 bloques plegables en vez de 16 tarjetas.
+     ============================================================ */
+
+  // Índice: cada entrada tiene sinónimos porque la gente busca por
+  // síntoma o por nombre coloquial, no por el término técnico.
+  var INDICE=[
+    // --- Urgencia / hogar ---
+    {ic:'🚨',t:'Diagnóstico de urgencia',s:'Te guía paso a paso con preguntas simples',
+     cat:'Urgencia',fn:'home()',k:'urgencia emergencia averia problema ayuda diagnostico se fue la luz apagon'},
+    {ic:'🔍',t:'Encontrar qué circuito falla',s:'Bajar y subir térmicos para aislar la avería',
+     cat:'Urgencia',fn:'eia410Aislar()',k:'circuito termico termica aislar salta cuadro magnetotermico automatico'},
+    {ic:'⚡',t:'Todo arriba pero sin luz',s:'Rearmar el contador por exceso de potencia',
+     cat:'Urgencia',fn:'eia410Contador()',k:'contador icp pulse potencia contratada boton amarillo rearmar limitador'},
+    {ic:'🧪',t:'Probar el diferencial',s:'La comprobación de seguridad que podés hacer vos',
+     cat:'Urgencia',fn:'eia410Diferencial()',k:'diferencial disyuntor boton test t prueba seguridad mensual fuga'},
+    {ic:'🩹',t:'Apañarme hasta que venga',s:'Recuperar la mayor normalidad posible',
+     cat:'Urgencia',fn:'eia410Apanar()',k:'apañar provisional mientras tanto esperar electricista nevera alargador'},
+    {ic:'📋',t:'Reclamar daños',s:'A quién reclamar y qué necesitás',
+     cat:'Urgencia',fn:'eia520Inicio()',k:'reclamar seguro distribuidora daños quemado aparatos perito indemnizacion'},
+    // --- Mi hogar ---
+    {ic:'🏡',t:'Mi hogar',s:'Instalación, contactos, historial',
+     cat:'Mi hogar',fn:'eia500MiHogar()',k:'mi hogar casa instalacion contactos historial cuadro donde esta'},
+    {ic:'📊',t:'Analizar mi consumo',s:'¿Pagás más potencia de la que usás?',
+     cat:'Mi hogar',fn:'eia450Consumo()',k:'consumo factura luz potencia contratada datadis kwh ahorro gasto curva'},
+    {ic:'📚',t:'Aprender electricidad',s:'8 niveles con ejercicios y examen',
+     cat:'Aprender',fn:'aprender()',k:'aprender curso niveles examen certificado formacion estudiar leccion'},
+    // --- Cálculo ---
+    {ic:'📐',t:'Dimensionar conductor',s:'Ampacidad, caída y coordinación en un paso',
+     cat:'Cálculo',fn:'eia370Dimensionar()',k:'seccion cable conductor mm2 dimensionar ampacidad caida tension coordinacion calcular'},
+    {ic:'⚡',t:'Cortocircuito',s:'Verificación adiabática de la sección',
+     cat:'Cálculo',fn:'eia370Corto()',k:'cortocircuito icc adiabatica kA falla corriente'},
+    {ic:'🌍',t:'Puesta a tierra',s:'Resistencia y tensión de contacto',
+     cat:'Cálculo',fn:'eia370Tierra()',k:'tierra puesta a tierra jabalina pica telurimetro resistencia ra ohmios electrodo'},
+    {ic:'🧮',t:'Calculadoras',s:'Potencia, corriente, caída y sección',
+     cat:'Cálculo',fn:'calcPro80()',k:'calculadora calcular potencia corriente amperios watts caida tension ley de ohm'},
+    {ic:'📖',t:'Tablas de referencia',s:'Ampacidad, curvas, IP, colores, circuitos',
+     cat:'Cálculo',fn:'eia370Tablas()',k:'tabla tablas ampacidad iz curvas b c d grados ip colores cables circuitos vivienda referencia'},
+    // --- Trabajo ---
+    {ic:'📊',t:'Mediciones',s:'Registrar y contrastar valores medidos',
+     cat:'Trabajo',fn:'eia370Mediciones()',k:'medicion medir aislamiento continuidad bucle megger ensayo verificacion'},
+    {ic:'📦',t:'Catálogo de partidas',s:'Presupuestá sin escribir cada línea',
+     cat:'Trabajo',fn:'eia400Catalogo()',k:'catalogo partidas materiales precios tarifa presupuestar'},
+    {ic:'🧾',t:'Presupuesto',s:'Materiales y mano de obra, con PDF',
+     cat:'Trabajo',fn:'eia340Presupuesto()',k:'presupuesto pdf cliente precio importe cotizar oferta'},
+    {ic:'🎤',t:'Dictar presupuesto',s:'Decilo en voz alta y se escribe solo',
+     cat:'Trabajo',fn:'eia440Dictar()',k:'dictar voz microfono hablar transcribir obra rapido'},
+    {ic:'📋',t:'Partes de trabajo',s:'Con firma del cliente en el móvil',
+     cat:'Trabajo',fn:'eia430Partes()',k:'parte trabajo albaran firma cliente conformidad intervencion'},
+    {ic:'👥',t:'Clientes',s:'Datos e historial, listos para reutilizar',
+     cat:'Trabajo',fn:'eia440Clientes()',k:'cliente clientes ficha datos contacto historial'},
+    {ic:'📁',t:'Proyectos',s:'Datos, fotos, cálculos y notas',
+     cat:'Trabajo',fn:'projects()',k:'proyecto proyectos obra guardar trabajo'},
+    {ic:'🔎',t:'Diagnóstico PRO',s:'Síntoma, hipótesis y comprobación',
+     cat:'Trabajo',fn:'diagPro()',k:'diagnostico profesional tecnico averia hipotesis sintoma'},
+    {ic:'☀️',t:'Fotovoltaica',s:'Strings, MPPT, baterías y producción',
+     cat:'Cálculo',fn:'pv()',k:'fotovoltaica solar placas paneles mppt bateria autoconsumo inversor string'},
+    {ic:'🏠',t:'Ficha de vivienda',s:'Circuitos, datos y checklist',
+     cat:'Trabajo',fn:'monoDom()',k:'vivienda ficha monofasica domiciliaria circuitos checklist'},
+    {ic:'🎓',t:'Certificado de formación',s:'Al aprobar los 8 niveles',
+     cat:'Aprender',fn:'eia430Certificado()',k:'certificado diploma formacion acreditacion titulo'},
+    // --- Cuenta / otros ---
+    {ic:'⚙️',t:'Ajustes',s:'Cuenta, datos y privacidad',
+     cat:'Otros',fn:'settings()',k:'ajustes configuracion cuenta sesion privacidad datos'},
+    {ic:'🔐',t:'Mis datos',s:'Descargar o eliminar tu información',
+     cat:'Otros',fn:'eia380MisDatos()',k:'mis datos rgpd descargar eliminar cuenta borrar privacidad exportar'},
+    {ic:'👷',t:'Que me contacte un electricista',s:'Te ponemos en contacto con uno de tu zona',
+     cat:'Otros',fn:'eia340PedirTecnico()',k:'electricista profesional contactar llamar presupuesto visita'},
+  ];
+
+  function normal(s){
+    return String(s||'').toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'');   // quita tildes
+  }
+
+  function buscar(q){
+    q=normal(q).trim();
+    if(q.length<2) return [];
+    var palabras=q.split(/\s+/);
+    return INDICE.map(function(e){
+      var texto=normal(e.t+' '+e.s+' '+e.k+' '+e.cat);
+      var punt=0;
+      palabras.forEach(function(p){
+        if(normal(e.t).indexOf(p)===0) punt+=10;        // empieza por el título
+        else if(normal(e.t).indexOf(p)>=0) punt+=6;     // aparece en el título
+        else if(texto.indexOf(p)>=0) punt+=3;           // aparece en sinónimos
+      });
+      return {e:e, punt:punt};
+    }).filter(function(x){ return x.punt>0; })
+      .sort(function(a,b){ return b.punt-a.punt; })
+      .slice(0,8).map(function(x){ return x.e; });
+  }
+
+  /* ---------------- recientes ---------------- */
+  var KR='eia580-recientes';
+  function recientes(){
+    try{ return JSON.parse(localStorage.getItem(KR)||'[]')||[]; }catch(_){ return []; }
+  }
+  function registrar(fn){
+    try{
+      var r=recientes().filter(function(x){ return x!==fn; });
+      r.unshift(fn);
+      localStorage.setItem(KR, JSON.stringify(r.slice(0,5)));
+    }catch(_){ }
+  }
+  function porFn(fn){
+    for(var i=0;i<INDICE.length;i++){ if(INDICE[i].fn===fn) return INDICE[i]; }
+    return null;
+  }
+
+  W.eia580Ir=function(fn){
+    registrar(fn);
+    try{ (new Function(fn))(); }
+    catch(e){ console.warn('no se pudo abrir',fn,e); }
+  };
+
+  /* ---------------- pintar ---------------- */
+  W.eia580Buscar=function(v){
+    var cont=D.getElementById('e580Res'); if(!cont) return;
+    var r=buscar(v);
+    if(!String(v||'').trim()){ cont.innerHTML=''; pintarRecientes(); return; }
+    var rec=D.getElementById('e580Rec'); if(rec) rec.style.display='none';
+    if(!r.length){
+      cont.innerHTML='<div class="eia580-vacio">No encontramos nada con eso.<br>'+
+        'Probá con lo que te pasa: <b>«salta»</b>, <b>«sin luz»</b>, <b>«cable»</b>, <b>«consumo»</b>.</div>';
+      return;
+    }
+    cont.innerHTML=r.map(function(e){
+      return '<button class="eia580-r" type="button" onclick="eia580Ir('+JSON.stringify(e.fn).replace(/"/g,'&quot;')+')">'+
+        '<span class="ic">'+e.ic+'</span>'+
+        '<span><b>'+esc(e.t)+'</b><small>'+esc(e.s)+'</small>'+
+        '<span class="cat">'+esc(e.cat.toUpperCase())+'</span></span>'+
+        '<span class="fl" aria-hidden="true">›</span></button>';
+    }).join('');
+  };
+
+  function pintarRecientes(){
+    var rec=D.getElementById('e580Rec'); if(!rec) return;
+    var r=recientes().map(porFn).filter(Boolean);
+    if(!r.length){ rec.style.display='none'; return; }
+    rec.style.display='block';
+    rec.innerHTML='<div class="eia580-sec">LO QUE MÁS USÁS</div>'+
+      '<div class="eia580-rec">'+r.map(function(e){
+        return '<button type="button" onclick="eia580Ir('+JSON.stringify(e.fn).replace(/"/g,'&quot;')+')">'+
+          e.ic+' '+esc(e.t)+'</button>';
+      }).join('')+'</div>';
+  }
+
+  function bloqueBuscador(){
+    return '<div class="eia580-buscar">'+
+      '<span class="lupa" aria-hidden="true">🔍</span>'+
+      '<input id="e580Q" type="search" inputmode="search" autocomplete="off" '+
+      'placeholder="¿Qué necesitás? Ej.: salta el diferencial" '+
+      'aria-label="Buscar en ElectroIA" oninput="eia580Buscar(this.value)">'+
+      '</div><div id="e580Rec"></div><div id="e580Res" class="eia580-res"></div>';
+  }
+  W.eia580Bloque=bloqueBuscador;
+
+  /* ============================================================
+     MODO PROFESIONAL AGRUPADO
+     ============================================================ */
+  var GRUPOS=[
+    {ic:'📐',t:'Calcular',s:'Secciones, cortocircuito, tierra y fotovoltaica',
+     items:['eia370Dimensionar()','eia370Corto()','eia370Tierra()','calcPro80()','pv()']},
+    {ic:'📖',t:'Consultar',s:'Tablas de referencia, sin conexión',
+     items:['eia370Tablas()']},
+    {ic:'🧾',t:'Presupuestar',s:'Catálogo, presupuesto y dictado por voz',
+     items:['eia400Catalogo()','eia340Presupuesto()','eia440Dictar()']},
+    {ic:'📋',t:'Documentar',s:'Partes con firma, mediciones y proyectos',
+     items:['eia430Partes()','eia370Mediciones()','projects()','monoDom()']},
+    {ic:'🔎',t:'Diagnosticar y clientes',s:'Diagnóstico PRO, clientes y consulta a la IA',
+     items:['diagPro()','eia440Clientes()','eia370ConsultaIA()']}
+  ];
+  var abierto=null;
+  W.eia580Grupo=function(i){
+    abierto = (abierto===i)? null : i;
+    W.eia580MenuPro();
+  };
+
+  W.eia580MenuPro=function(){
+    var app=D.getElementById('app'); if(!app) return;
+    if(typeof W.enterView==='function'){ try{ W.enterView('prof'); }catch(_){ } }
+    var cab=(typeof W.head==='function')?W.head(true):'';
+    var h=cab+'<main class="wrap page">'+
+      '<div class="eia370-hero"><h1>🧰 Modo Profesional</h1>'+
+      '<p>Herramientas de cálculo y documentación. Los resultados son orientativos: la validación final es tuya.</p></div>'+
+      bloqueBuscador()+
+      '<div class="eia580-sec">HERRAMIENTAS</div>';
+
+    h+=GRUPOS.map(function(g,i){
+      var items=g.items.map(porFn).filter(Boolean);
+      return '<div class="eia580-grupo">'+
+        '<button class="eia580-gh'+(abierto===i?' on':'')+'" type="button" '+
+        'aria-expanded="'+(abierto===i?'true':'false')+'" onclick="eia580Grupo('+i+')">'+
+        '<span class="ic">'+g.ic+'</span>'+
+        '<span><b>'+esc(g.t)+'</b><small>'+esc(g.s)+'</small></span>'+
+        '<span class="fl" aria-hidden="true">›</span></button>'+
+        '<div class="eia580-gb'+(abierto===i?' on':'')+'">'+
+        items.map(function(e){
+          return '<button type="button" onclick="eia580Ir('+JSON.stringify(e.fn).replace(/"/g,'&quot;')+')">'+
+            '<b>'+e.ic+' '+esc(e.t)+'</b><small>'+esc(e.s)+'</small></button>';
+        }).join('')+'</div></div>';
+    }).join('');
+
+    h+='<button class="eia370-btn alt" type="button" onclick="home&&home()">← Volver a Inicio</button></main>';
+    app.innerHTML=h;
+    try{ W.scrollTo(0,0); }catch(_){ }
+    pintarRecientes();
+    if(W.eiaEtiquetarCampos) W.eiaEtiquetarCampos();
+  };
+
+  // Sustituye el menú profesional anterior (16 tarjetas sueltas).
+  function fijar(nombre,fn){
+    try{ Object.defineProperty(W,nombre,{configurable:true,get:function(){return fn;},set:function(){}}); }
+    catch(_){ W[nombre]=fn; }
+  }
+  fijar('prof', W.eia580MenuPro);
+  fijar('eia370Menu', W.eia580MenuPro);
+
+  /* Buscador también en Mi hogar, que es la puerta del usuario doméstico */
+  function inyectar(){
+    try{
+      var h1=D.querySelector('#app main h1');
+      if(!h1) return;
+      if(!/Mi hogar/.test(h1.textContent||'')) return;
+      if(D.getElementById('e580Q')) return;
+      var d=D.createElement('div');
+      d.innerHTML=bloqueBuscador();
+      var hero=D.querySelector('.eia500-hero');
+      if(hero) hero.parentNode.insertBefore(d, hero.nextSibling);
+      pintarRecientes();
+    }catch(_){ }
+  }
+  try{
+    var app=D.getElementById('app');
+    if(app && W.MutationObserver){
+      var t=null;
+      new MutationObserver(function(){ clearTimeout(t); t=setTimeout(inyectar,230); })
+        .observe(app,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',inyectar); else inyectar();
 })();
 </script>
 
