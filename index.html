@@ -11655,6 +11655,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
 
     // --- Ayuda ---
     var a=link('📖','Guías por avería','Las averías más frecuentes, explicadas','/urgencias/index.html',true)+
+          link('💬','Opiniones y sugerencias','Lo que dice quien la usa · deja la tuya','eia620Opiniones&&eia620Opiniones()')+
           link('📚','Aprender electricidad','8 niveles con ejercicios y examen','aprender&&aprender()')+
           link('🚨','Urgencia eléctrica','Diagnóstico guiado paso a paso','home&&home()')+
           link('🔐','Mis datos','Descargar o eliminar tu información','eia380MisDatos()');
@@ -11828,7 +11829,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
     eia380Electricistas:'Alta electricistas', eia470Comercios:'Alta comercios',
     eia410Aislar:'Aislar circuito', eia410Contador:'Contador',
     eia410Apanar:'Apañarse', eia410Diferencial:'Diferencial',
-    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes', eia520Inicio:'Reclamar daños', eia600MiCuenta:'Mi cuenta', eia610Red:'PRO RED', eia610Info:'PRO RED', eia580MenuPro:'Modo Profesional', eia550Iniciar:'Asistente paso a paso', eia530Administradores:'Administradores', eia530Vecino:'Avisar avería', eia530Triaje:'Comunidad'
+    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes', eia520Inicio:'Reclamar daños', eia600MiCuenta:'Mi cuenta', eia610Red:'PRO RED', eia610Info:'PRO RED', eia620Historial:'Mi actividad', eia620Opiniones:'Opiniones', eia580MenuPro:'Modo Profesional', eia550Iniciar:'Asistente paso a paso', eia530Administradores:'Administradores', eia530Vecino:'Avisar avería', eia530Triaje:'Comunidad'
   };
 
   var actual=null;
@@ -14246,6 +14247,397 @@ body.eia570-consent-on #app main{padding-bottom:200px}
         b.innerHTML='<span class="ic" aria-hidden="true">🔌</span>'+
           '<span class="tx"><b>PRO RED · recibir avisos</b>'+
           '<small>Avisos de tu zona, ya diagnosticados</small></span>'+
+          '<span class="ex" aria-hidden="true">›</span>';
+        cont.appendChild(b);
+      }
+    }catch(_){ }
+  }
+  try{
+    if(W.MutationObserver){
+      var t=null;
+      new MutationObserver(function(){ clearTimeout(t); t=setTimeout(inyectar,240); })
+        .observe(D.documentElement,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',inyectar); else inyectar();
+})();
+</script>
+
+<style id="eia620-css">
+.eia620-tabs{display:flex;gap:6px;margin:12px 0}
+.eia620-tabs button{flex:1;padding:11px 6px;border-radius:11px;border:1px solid #2b3748;background:#141c27;
+  color:#a9bed6;font-weight:800;font-size:13px;cursor:pointer}
+.eia620-tabs button.on{background:#1663c7;border-color:#1663c7;color:#fff}
+.eia620-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.eia620-k{background:#fff;border:1px solid #d9e2ee;border-radius:13px;padding:12px 8px;text-align:center}
+.eia620-k .v{font-size:21px;font-weight:900;color:#0f1b2b;line-height:1.15}
+.eia620-k .l{font-size:11px;color:#55687f;margin-top:3px;line-height:1.3}
+.eia620-est{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.04em;padding:3px 9px;border-radius:99px}
+.eia620-est.enviado{background:#e4ebf5;color:#3d5675}
+.eia620-est.contactado{background:#e0eefc;color:#12527f}
+.eia620-est.agendado{background:#fdf0e3;color:#7a5410}
+.eia620-est.resuelto{background:#d5f2e0;color:#0f5a32}
+.eia620-est.descartado{background:#f1e7e6;color:#7a5450}
+.eia620-card{background:#fff;border:1px solid #d9e2ee;border-radius:16px;padding:15px;margin:11px 0;color:#1b2736}
+.eia620-card,.eia620-card *{color:#1b2736}
+.eia620-card h3{margin:0 0 4px;font-size:16.5px;color:#0f1b2b}
+.eia620-card .sub{font-size:12.8px;color:#55687f;margin:0 0 12px;line-height:1.45}
+.eia620-f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:700;color:#41506a;margin-bottom:9px}
+.eia620-f input,.eia620-f select,.eia620-f textarea{font:inherit;font-weight:500;padding:10px;border:1px solid #ccd6e2;border-radius:9px;background:#fff;color:#16202e;width:100%;box-sizing:border-box}
+.eia620-btn{display:block;width:100%;margin-top:9px;padding:12px;border:0;border-radius:11px;background:#0b63c7;color:#fff;font-weight:800;font-size:14.5px;cursor:pointer}
+.eia620-card .eia620-btn{color:#fff}
+.eia620-btn.alt,.eia620-card .eia620-btn.alt{background:#eef3fa;border:1px solid #ccd9ea;color:#1c3252}
+.eia620-btn.ok,.eia620-card .eia620-btn.ok{background:#0c6b3d;color:#fff}
+.eia620-estrellas{display:flex;gap:5px;margin:8px 0 12px}
+.eia620-estrellas button{background:none;border:0;font-size:30px;cursor:pointer;padding:0;line-height:1;filter:grayscale(1);opacity:.4}
+.eia620-estrellas button.on{filter:none;opacity:1}
+.eia620-media{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #d9e2ee;border-radius:15px;padding:15px;margin:11px 0}
+.eia620-media .n{font-size:38px;font-weight:900;color:#0f1b2b;line-height:1}
+.eia620-media .d{flex:1}
+.eia620-media .est{font-size:18px;letter-spacing:2px}
+.eia620-media .c{font-size:12.5px;color:#55687f;margin-top:3px}
+.eia620-op{background:#fff;border:1px solid #e0e7f1;border-radius:13px;padding:13px;margin-bottom:8px}
+.eia620-op .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline;background:#fff}
+.eia620-op b{font-size:14px;color:#12203a}
+.eia620-op .fecha{font-size:11.5px;color:#5d6e84;white-space:nowrap}
+.eia620-op .est{font-size:14px;letter-spacing:1px;margin:4px 0 6px}
+.eia620-op p{margin:0;font-size:13.4px;color:#33455e;line-height:1.55}
+.eia620-op .perfil{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:99px;background:#eef2f7;color:#5a6e87;margin-top:7px}
+.eia620-resp{margin-top:9px;padding:10px;border-radius:10px;background:#f2f7fc;border-left:3px solid #1663c7}
+.eia620-resp b{display:block;font-size:11.5px;color:#12527f;margin-bottom:3px}
+.eia620-resp p{font-size:13px;color:#2b3f57}
+</style>
+
+<script id="electroia-v620-historial">
+(function(){
+  'use strict';
+  var W=window, D=document;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function shell(html){
+    var app=D.getElementById('app'); if(!app) return;
+    var cab=(typeof W.head==='function')?W.head(false):'';
+    app.innerHTML=cab+'<main class="wrap page">'+html+'</main>';
+    try{ W.scrollTo(0,0); }catch(_){ }
+  }
+  function token(){
+    var ks=['electroia_session_v1','electroia_user','eia_user','currentUser','electroia_session','eia_session'];
+    for(var i=0;i<ks.length;i++){
+      try{ var r=localStorage.getItem(ks[i]); if(r){ var v=JSON.parse(r); if(v&&v.token) return v.token; } }catch(_){ }
+    }
+    return '';
+  }
+  function fecha(x){ try{ return new Date(x).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'2-digit'}); }catch(_){ return ''; } }
+
+  /* ============================================================
+     HISTORIAL DEL ELECTRICISTA
+     ------------------------------------------------------------
+     Recibir avisos sin poder cerrarlos deja una lista que crece y
+     no sirve para nada. Al marcar el estado, esa lista se
+     convierte en un historial consultable y en un dato que importa:
+     qué porcentaje de avisos acaba en trabajo real.
+
+     Ese número es además el argumento para vender PRO RED a otros
+     profesionales, así que conviene medirlo desde el primer día.
+     ============================================================ */
+  var D620=null, TAB='avisos';
+
+  W.eia620Historial=function(tab){
+    if(tab) TAB=tab;
+    if(!token()){
+      return shell('<h1>🔌 Mi actividad</h1><div class="eia620-card"><h3>Necesitas iniciar sesión</h3>'+
+        '<p class="sub">Tu historial de avisos está asociado a tu cuenta profesional.</p>'+
+        '<button class="eia620-btn" type="button" onclick="eia600Entrar&&eia600Entrar()">Iniciar sesión</button></div>');
+    }
+    if(!D620){ pedir(); return shell('<h1>🔌 Mi actividad</h1><div class="eia620-card"><p class="sub">Cargando…</p></div>'); }
+    pintar();
+  };
+  function pedir(){
+    fetch('/api/red/mis-avisos',{headers:{Authorization:'Bearer '+token()}})
+      .then(function(r){ return r.ok? r.json():null; })
+      .then(function(j){ D620=j||{alta:false}; pintar(); })
+      .catch(function(){ D620={error:true}; pintar(); });
+  }
+  W.eia620Recargar=function(){ D620=null; W.eia620Historial(); };
+
+  function pintar(){
+    var d=D620||{};
+    if(d.error) return shell('<h1>🔌 Mi actividad</h1><div class="eia620-card"><h3>Sin conexión</h3>'+
+      '<p class="sub">No pudimos cargar tu historial.</p>'+
+      '<button class="eia620-btn" type="button" onclick="eia620Recargar()">Reintentar</button></div>');
+    if(!d.alta) return (typeof W.eia610Info==='function')? W.eia610Info() : shell('<p>No estás dado de alta.</p>');
+
+    var r=d.resumen||{total:0,resueltos:0,conversion:0,facturado:0};
+    var c=d.cupo||{};
+    var tabs='<div class="eia620-tabs">'+
+      '<button class="'+(TAB==='avisos'?'on':'')+'" type="button" onclick="eia620Historial(\'avisos\')">Avisos</button>'+
+      '<button class="'+(TAB==='hecho'?'on':'')+'" type="button" onclick="eia620Historial(\'hecho\')">Trabajos hechos</button>'+
+      '<button class="'+(TAB==='plan'?'on':'')+'" type="button" onclick="eia620Historial(\'plan\')">Mi plan</button>'+
+      '</div>';
+
+    var cuerpo='';
+    if(TAB==='plan'){
+      cuerpo='<div class="eia620-card"><h3>Tu plan</h3>'+
+        '<div class="eia620-kpis">'+
+        '<div class="eia620-k"><div class="v">'+(c.quedan!=null?c.quedan:'—')+'</div><div class="l">avisos disponibles</div></div>'+
+        '<div class="eia620-k"><div class="v">'+(c.usados||0)+'</div><div class="l">usados este mes</div></div>'+
+        '<div class="eia620-k"><div class="v">'+(c.total||0)+'</div><div class="l">incluidos</div></div>'+
+        '</div>'+
+        '<p class="sub">Los avisos se renuevan el día 1. Si los agotas, puedes ampliar.</p>'+
+        '<button class="eia620-btn alt" type="button" onclick="eia610Ampliar&&eia610Ampliar()">Ampliar avisos</button>'+
+        '<button class="eia620-btn alt" type="button" onclick="eia600MiCuenta&&eia600MiCuenta()">Datos de mi cuenta</button>'+
+        '</div>'+
+        '<div class="eia620-card"><h3>Informe de actividad</h3>'+
+        '<p class="sub">Un resumen de tus avisos y trabajos, listo para imprimir o guardar.</p>'+
+        '<button class="eia620-btn" type="button" onclick="eia620Informe()">📄 Generar informe</button></div>';
+    } else {
+      var lista=(d.avisos||[]).filter(function(a){
+        return TAB==='hecho' ? a.estado==='resuelto' : a.estado!=='resuelto' && a.estado!=='descartado';
+      });
+      cuerpo='<div class="eia620-kpis">'+
+        '<div class="eia620-k"><div class="v">'+r.total+'</div><div class="l">avisos recibidos</div></div>'+
+        '<div class="eia620-k"><div class="v">'+r.resueltos+'</div><div class="l">trabajos hechos</div></div>'+
+        '<div class="eia620-k"><div class="v">'+r.conversion+'%</div><div class="l">acaban en trabajo</div></div>'+
+        '</div>'+
+        '<div class="eia620-card"><h3>'+(TAB==='hecho'?'Trabajos realizados':'Avisos abiertos')+'</h3>'+
+        (lista.length? lista.map(item).join('')
+          : '<p class="sub">'+(TAB==='hecho'
+              ? 'Todavía no has marcado ningún aviso como resuelto.'
+              : 'No tienes avisos abiertos.')+'</p>')+
+        '</div>';
+    }
+
+    shell('<h1 style="font-size:20px;margin:6px 0 0">Mi actividad</h1>'+tabs+cuerpo+
+      '<button class="eia620-btn alt" type="button" onclick="eia620Recargar()">Actualizar</button>'+
+      '<button class="eia620-btn alt" type="button" onclick="eiaAtras&&eiaAtras()">← Volver</button>');
+  }
+
+  function item(a){
+    var est=a.estado||'enviado';
+    return '<div class="eia620-op" style="margin-bottom:9px">'+
+      '<div class="top"><b>'+esc(a.zona||'Sin zona')+'</b>'+
+      '<span class="fecha">'+esc(fecha(a.created_at))+'</span></div>'+
+      '<span class="eia620-est '+esc(est)+'">'+esc(est.toUpperCase())+'</span>'+
+      '<p style="margin-top:7px">'+esc((a.resumen||'').slice(0,200))+'</p>'+
+      (a.notas?'<p style="margin-top:6px;color:#55687f"><b>Tus notas:</b> '+esc(a.notas)+'</p>':'')+
+      (a.importe?'<p style="margin-top:4px;color:#0f5a32"><b>Importe: '+esc(a.importe)+' €</b></p>':'')+
+      '<button class="eia620-btn alt" style="margin-top:9px;padding:9px" type="button" '+
+      'onclick="eia620Abrir('+JSON.stringify(a.id).replace(/"/g,'&quot;')+')">Ver y actualizar</button>'+
+      '</div>';
+  }
+
+  W.eia620Abrir=function(id){
+    var a=((D620||{}).avisos||[]).filter(function(x){ return x.id===id; })[0];
+    if(!a) return;
+    var opciones=['enviado','contactado','agendado','resuelto','descartado'];
+    shell('<h1 style="font-size:19px;margin:6px 0 0">Aviso · '+esc(a.zona||'')+'</h1>'+
+      '<div class="eia620-card"><h3>Qué le pasa</h3>'+
+      '<p style="font-size:14.5px;line-height:1.6">'+esc(a.resumen||'Sin descripción')+'</p>'+
+      '<div style="margin-top:12px"><span class="eia620-est '+esc(a.estado||'enviado')+'">'+
+      esc((a.estado||'enviado').toUpperCase())+'</span></div>'+
+      (a.contacto?'<a class="eia620-btn ok" style="text-align:center;text-decoration:none;display:block" '+
+        'href="tel:'+esc(a.contacto)+'">📞 Llamar a '+esc(a.nombre||'el cliente')+'</a>':'')+
+      '</div>'+
+      '<div class="eia620-card"><h3>Actualizar el aviso</h3>'+
+      '<p class="sub">Marca en qué punto está. Así tu historial refleja tu trabajo real.</p>'+
+      '<label class="eia620-f">Estado<select id="e620Est">'+
+      opciones.map(function(o){
+        return '<option value="'+o+'"'+(o===(a.estado||'enviado')?' selected':'')+'>'+
+          ({enviado:'Recibido, sin contactar',contactado:'Ya he contactado',
+            agendado:'Visita concertada',resuelto:'Avería solucionada',
+            descartado:'No salió adelante'})[o]+'</option>';
+      }).join('')+'</select></label>'+
+      '<label class="eia620-f">Qué hiciste<textarea id="e620Notas" rows="3" '+
+      'placeholder="Ej.: diferencial averiado, sustituido por uno de 40A 30mA">'+esc(a.notas||'')+'</textarea></label>'+
+      '<label class="eia620-f">Importe cobrado (opcional)<input id="e620Imp" type="number" step="0.01" '+
+      'placeholder="€" value="'+(a.importe||'')+'"></label>'+
+      '<button class="eia620-btn ok" type="button" onclick="eia620Guardar('+JSON.stringify(a.id).replace(/"/g,'&quot;')+')">Guardar</button>'+
+      '<div id="e620Out" style="display:none;margin-top:10px;padding:11px;border-radius:10px;font-size:13.5px"></div>'+
+      '</div>'+
+      '<button class="eia620-btn alt" type="button" onclick="eia620Historial()">← Volver a mis avisos</button>');
+  };
+
+  W.eia620Guardar=function(id){
+    var o=D.getElementById('e620Out');
+    function msg(t,ok){ if(o){ o.style.display='block';
+      o.style.background=ok?'#eafaf0':'#fdeeec'; o.style.color=ok?'#14602f':'#8c1a12';
+      o.style.border='1px solid '+(ok?'#b6e5c8':'#f0c2bc'); o.textContent=t; } }
+    var est=(D.getElementById('e620Est')||{}).value||'';
+    var notas=(D.getElementById('e620Notas')||{}).value||'';
+    var imp=(D.getElementById('e620Imp')||{}).value||'';
+    msg('Guardando…',true);
+    fetch('/api/avisos/'+encodeURIComponent(id)+'/estado',{
+      method:'POST',
+      headers:{'Content-Type':'application/json',Authorization:'Bearer '+token()},
+      body:JSON.stringify({estado:est,notas:notas,importe:imp})
+    }).then(function(r){ return {ok:r.ok}; })
+      .then(function(x){
+        if(x.ok){
+          msg('✅ Guardado.',true);
+          D620=null;
+          setTimeout(function(){ W.eia620Historial(est==='resuelto'?'hecho':'avisos'); },700);
+        } else msg('No se pudo guardar. Prueba de nuevo.',false);
+      }).catch(function(){ msg('Sin conexión.',false); });
+  };
+
+  W.eia620Informe=function(){
+    var d=D620||{}, r=d.resumen||{}, c=d.cupo||{};
+    var v=W.open('','_blank');
+    if(!v) return alert('El navegador bloqueó la ventana. Permite las ventanas emergentes.');
+    var filas=(d.avisos||[]).map(function(a){
+      return '<tr><td>'+esc(fecha(a.created_at))+'</td><td>'+esc(a.zona||'')+'</td>'+
+        '<td>'+esc((a.resumen||'').slice(0,90))+'</td><td>'+esc(a.estado||'')+'</td>'+
+        '<td style="text-align:right">'+(a.importe?esc(a.importe)+' €':'—')+'</td></tr>';
+    }).join('');
+    v.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8">'+
+      '<title>Informe de actividad</title><style>'+
+      'body{font-family:system-ui,Segoe UI,Arial,sans-serif;margin:28px;color:#16202e;line-height:1.55}'+
+      'h1{font-size:20px;margin:0 0 4px}.meta{font-size:12px;color:#5b6b80;margin-bottom:16px}'+
+      'h2{font-size:14px;margin:18px 0 6px;border-bottom:1px solid #ccd6e2;padding-bottom:3px}'+
+      'table{width:100%;border-collapse:collapse;font-size:12.5px}'+
+      'th,td{border:1px solid #ccd6e2;padding:6px;text-align:left;vertical-align:top}th{background:#f1f5fa}'+
+      '.kpis{display:flex;gap:10px;margin:12px 0}.kpi{flex:1;border:1px solid #ccd6e2;border-radius:8px;padding:10px;text-align:center}'+
+      '.kpi b{display:block;font-size:20px}.kpi span{font-size:11px;color:#5b6b80}'+
+      '.pie{margin-top:22px;font-size:10.5px;color:#5b6b80;border-top:1px solid #ccd6e2;padding-top:9px}'+
+      '</style></head><body>'+
+      '<h1>Informe de actividad · PRO RED</h1>'+
+      '<div class="meta">Generado el '+esc(new Date().toLocaleString('es-ES'))+'</div>'+
+      '<div class="kpis">'+
+      '<div class="kpi"><b>'+(r.total||0)+'</b><span>avisos recibidos</span></div>'+
+      '<div class="kpi"><b>'+(r.resueltos||0)+'</b><span>trabajos hechos</span></div>'+
+      '<div class="kpi"><b>'+(r.conversion||0)+'%</b><span>acaban en trabajo</span></div>'+
+      '<div class="kpi"><b>'+(r.facturado||0)+' €</b><span>importe declarado</span></div>'+
+      '</div>'+
+      '<h2>Detalle</h2><table><tr><th>Fecha</th><th>Zona</th><th>Avería</th><th>Estado</th><th>Importe</th></tr>'+
+      filas+'</table>'+
+      '<div class="pie">Informe generado con ElectroIA a partir de los avisos recibidos y del estado que el propio '+
+      'profesional ha registrado. <b>No es un documento contable ni sustituye a la facturación.</b> '+
+      'Los importes son los que el profesional declaró de forma voluntaria.</div>'+
+      '</body></html>');
+    v.document.close();
+    setTimeout(function(){ try{ v.focus(); v.print(); }catch(_){ } },420);
+  };
+
+  /* ============================================================
+     OPINIONES Y VALORACIONES
+     ------------------------------------------------------------
+     Escribir exige cuenta; leer es libre. Se publican todas, sin
+     filtrar por nota: una sección donde solo salen las buenas no
+     se la cree nadie y deja de servir para lo que sirve.
+     ============================================================ */
+  var VAL=null, ESTRELLAS=0;
+
+  W.eia620Opiniones=function(){
+    if(!VAL){ pedirVal(); return shell('<h1>💬 Opiniones</h1><div class="eia620-card"><p class="sub">Cargando…</p></div>'); }
+    pintarVal();
+  };
+  function pedirVal(){
+    fetch('/api/valoraciones')
+      .then(function(r){ return r.ok? r.json():null; })
+      .then(function(j){ VAL=j||{valoraciones:[],total:0,media:0}; pintarVal(); })
+      .catch(function(){ VAL={error:true}; pintarVal(); });
+  }
+  function estrellasTxt(n){
+    n=Math.round(Number(n)||0);
+    return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n);
+  }
+
+  function pintarVal(){
+    var v=VAL||{};
+    if(v.error) return shell('<h1>💬 Opiniones</h1><div class="eia620-card"><h3>Sin conexión</h3>'+
+      '<p class="sub">No pudimos cargar las opiniones.</p>'+
+      '<button class="eia620-btn" type="button" onclick="eia620RecargarVal()">Reintentar</button></div>');
+
+    var lista=(v.valoraciones||[]).map(function(o){
+      var perfil={particular:'Usuario',electricista:'Electricista',administrador:'Administrador de fincas'}[o.perfil]||'';
+      return '<div class="eia620-op">'+
+        '<div class="top"><b>'+esc(o.nombre||'Usuario')+'</b>'+
+        '<span class="fecha">'+esc(fecha(o.created_at))+'</span></div>'+
+        '<div class="est" style="color:#8a5f00">'+estrellasTxt(o.estrellas)+'</div>'+
+        '<p>'+esc(o.texto||'')+'</p>'+
+        (perfil?'<span class="perfil">'+esc(perfil)+'</span>':'')+
+        (o.respuesta?'<div class="eia620-resp"><b>RESPUESTA DE ELECTROIA</b><p>'+esc(o.respuesta)+'</p></div>':'')+
+        '</div>';
+    }).join('');
+
+    shell('<h1 style="font-size:20px;margin:6px 0 0">Opiniones y sugerencias</h1>'+
+      '<p class="subtitle">Lo que dice quien la usa. Se publican todas, buenas y malas.</p>'+
+      (v.total
+        ? '<div class="eia620-media"><div class="n">'+(Number(v.media||0).toFixed(1))+'</div>'+
+          '<div class="d"><div class="est" style="color:#8a5f00">'+estrellasTxt(v.media)+'</div>'+
+          '<div class="c">'+v.total+' valoración'+(v.total===1?'':'es')+'</div></div></div>'
+        : '')+
+
+      (token()
+        ? '<div class="eia620-card"><h3>Cuéntanos qué tal</h3>'+
+          '<p class="sub">Tu opinión se publica con tu nombre. Sirve para saber qué mejorar.</p>'+
+          '<div class="eia620-estrellas" id="e620Est5">'+
+          [1,2,3,4,5].map(function(i){
+            return '<button type="button" aria-label="'+i+' estrellas" onclick="eia620Puntuar('+i+')">⭐</button>';
+          }).join('')+'</div>'+
+          '<label class="eia620-f">¿Qué eres?<select id="e620Perfil">'+
+          '<option value="particular">Usuario particular</option>'+
+          '<option value="electricista">Electricista</option>'+
+          '<option value="administrador">Administrador de fincas</option></select></label>'+
+          '<label class="eia620-f">Tipo<select id="e620Tipo">'+
+          '<option value="opinion">Una opinión</option>'+
+          '<option value="sugerencia">Una sugerencia</option>'+
+          '<option value="fallo">Algo que no funciona</option></select></label>'+
+          '<label class="eia620-f">Tu mensaje<textarea id="e620Txt" rows="4" '+
+          'placeholder="Qué te ha servido, qué te ha faltado, qué cambiarías"></textarea></label>'+
+          '<button class="eia620-btn" type="button" onclick="eia620Enviar()">Publicar</button>'+
+          '<div id="e620VOut" style="display:none;margin-top:10px;padding:11px;border-radius:10px;font-size:13.5px"></div>'+
+          '</div>'
+        : '<div class="eia620-card"><h3>¿Quieres dejar tu opinión?</h3>'+
+          '<p class="sub">Para escribir hace falta una cuenta, así evitamos el spam. Leer es libre para todo el mundo.</p>'+
+          '<button class="eia620-btn" type="button" onclick="eia600Entrar&&eia600Entrar()">Iniciar sesión o registrarme</button></div>')+
+
+      '<div class="eia620-card"><h3>Lo que dice la gente ('+(v.total||0)+')</h3>'+
+      (lista || '<p class="sub">Todavía no hay opiniones. Sé el primero.</p>')+'</div>'+
+      '<button class="eia620-btn alt" type="button" onclick="eiaAtras&&eiaAtras()">← Volver</button>');
+
+    pintarEstrellas();
+  }
+  W.eia620RecargarVal=function(){ VAL=null; W.eia620Opiniones(); };
+  W.eia620Puntuar=function(n){ ESTRELLAS=n; pintarEstrellas(); };
+  function pintarEstrellas(){
+    var c=D.getElementById('e620Est5'); if(!c) return;
+    var bs=c.querySelectorAll('button');
+    for(var i=0;i<bs.length;i++) bs[i].classList.toggle('on', i<ESTRELLAS);
+  }
+  W.eia620Enviar=function(){
+    var o=D.getElementById('e620VOut');
+    function msg(t,ok){ if(o){ o.style.display='block';
+      o.style.background=ok?'#eafaf0':'#fdeeec'; o.style.color=ok?'#14602f':'#8c1a12';
+      o.style.border='1px solid '+(ok?'#b6e5c8':'#f0c2bc'); o.textContent=t; } }
+    if(!ESTRELLAS) return msg('Elige cuántas estrellas.',false);
+    var txt=(D.getElementById('e620Txt')||{}).value||'';
+    if(!txt.trim()) return msg('Escribe tu mensaje.',false);
+    msg('Enviando…',true);
+    fetch('/api/valoraciones',{method:'POST',
+      headers:{'Content-Type':'application/json',Authorization:'Bearer '+token()},
+      body:JSON.stringify({estrellas:ESTRELLAS,texto:txt,
+        tipo:(D.getElementById('e620Tipo')||{}).value,
+        perfil:(D.getElementById('e620Perfil')||{}).value})})
+      .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
+      .then(function(x){
+        if(x.ok){ msg('✅ Publicado. Gracias.',true); ESTRELLAS=0; VAL=null;
+          setTimeout(function(){ W.eia620Opiniones(); },900); }
+        else if(x.j && x.j.error==='RATE_LIMIT') msg('Ya has publicado hoy. Vuelve mañana.',false);
+        else msg('No se pudo publicar. Prueba de nuevo.',false);
+      }).catch(function(){ msg('Sin conexión.',false); });
+  };
+
+  /* Accesos en el pie */
+  function inyectar(){
+    try{
+      var cont=D.getElementById('e470Trab');
+      if(cont && !D.getElementById('e620Link')){
+        var b=D.createElement('button');
+        b.id='e620Link'; b.type='button'; b.className='eia470-link';
+        b.setAttribute('onclick','eia620Historial()');
+        b.innerHTML='<span class="ic" aria-hidden="true">📊</span>'+
+          '<span class="tx"><b>Mi actividad</b><small>Historial de avisos, trabajos y plan</small></span>'+
           '<span class="ex" aria-hidden="true">›</span>';
         cont.appendChild(b);
       }

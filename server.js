@@ -892,11 +892,29 @@ app.get('/api/red/mis-avisos', authRequired, async (req, res) => {
     if (!e.rows.length) return res.json({ alta: false, cupo: null, avisos: [] });
     const id = e.rows[0].id;
     const cupo = await cupoDe(id);
+    // Se asegura que existan las columnas de cierre antes de leerlas.
+    await pool.query(`
+      ALTER TABLE avisos ADD COLUMN IF NOT EXISTS notas TEXT NOT NULL DEFAULT '';
+      ALTER TABLE avisos ADD COLUMN IF NOT EXISTS importe NUMERIC;
+      ALTER TABLE avisos ADD COLUMN IF NOT EXISTS cerrado_at TIMESTAMPTZ;
+    `);
     const r = await pool.query(`
-      SELECT a.id, a.estado, a.created_at, l.zona, l.resumen, l.urgencia, l.nombre, l.contacto
+      SELECT a.id, a.estado, a.notas, a.importe, a.cerrado_at, a.created_at,
+             l.zona, l.resumen, l.urgencia, l.nombre, l.contacto
       FROM avisos a LEFT JOIN leads l ON l.id = a.lead_id
-      WHERE a.electrician_id=$1 ORDER BY a.created_at DESC LIMIT 50`, [id]);
-    res.json({ alta: true, cupo, avisos: r.rows });
+      WHERE a.electrician_id=$1 ORDER BY a.created_at DESC LIMIT 100`, [id]);
+    // Resumen para la pantalla de historial del profesional.
+    const res_ = r.rows.filter(x => x.estado === 'resuelto');
+    const facturado = res_.reduce((s, x) => s + (Number(x.importe) || 0), 0);
+    res.json({
+      alta: true, cupo, avisos: r.rows,
+      resumen: {
+        total: r.rows.length,
+        resueltos: res_.length,
+        conversion: r.rows.length ? Math.round(res_.length / r.rows.length * 100) : 0,
+        facturado: Math.round(facturado * 100) / 100
+      }
+    });
   } catch (e) {
     console.error('red/mis-avisos', e.message);
     res.status(500).json({ error: 'FALLO' });
@@ -931,6 +949,139 @@ app.post('/api/red/plan', async (req, res) => {
     console.error('red/plan', e.message);
     res.status(500).json({ error: 'FALLO' });
   }
+});
+
+/* ============================================================
+   CIERRE DE AVISOS Y VALORACIONES
+   ------------------------------------------------------------
+   El electricista cierra cada aviso diciendo qué pasó. Esto no es
+   burocracia: es lo que convierte una lista de avisos sueltos en
+   un historial consultable, y lo que permite saber qué porcentaje
+   de avisos acaba en trabajo real. Ese dato es el argumento para
+   vender PRO RED a otros profesionales.
+   ============================================================ */
+app.post('/api/avisos/:id/estado', authRequired, async (req, res) => {
+  if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
+  const { estado, notas, importe } = req.body || {};
+  const VALIDOS = ['enviado', 'contactado', 'agendado', 'resuelto', 'descartado'];
+  if (!VALIDOS.includes(String(estado || ''))) return res.status(400).json({ error: 'ESTADO_INVALIDO' });
+  try {
+    await asegurarTablasRed();
+    await pool.query(`
+      ALTER TABLE avisos ADD COLUMN IF NOT EXISTS notas TEXT NOT NULL DEFAULT '';
+      ALTER TABLE avisos ADD COLUMN IF NOT EXISTS importe NUMERIC;
+      ALTER TABLE avisos ADD COLUMN IF NOT EXISTS cerrado_at TIMESTAMPTZ;
+    `);
+    // Solo el electricista dueño del aviso puede tocarlo.
+    const e = await pool.query('SELECT id FROM electricians WHERE user_id=$1 LIMIT 1', [req.user.sub]);
+    if (!e.rows.length) return res.status(403).json({ error: 'NO_AUTORIZADO' });
+    const cerrado = (estado === 'resuelto' || estado === 'descartado') ? new Date().toISOString() : null;
+    const r = await pool.query(
+      `UPDATE avisos SET estado=$1, notas=$2,
+              importe = COALESCE($3, importe),
+              cerrado_at = COALESCE($4::timestamptz, cerrado_at)
+       WHERE id=$5 AND electrician_id=$6 RETURNING id, estado`,
+      [estado, String(notas || '').slice(0, 2000),
+       Number.isFinite(Number(importe)) && importe !== '' ? Number(importe) : null,
+       cerrado, req.params.id, e.rows[0].id]
+    );
+    if (!r.rows.length) return res.status(404).json({ error: 'AVISO_NO_ENCONTRADO' });
+    res.json({ ok: true, aviso: r.rows[0] });
+  } catch (e) {
+    console.error('avisos/estado', e.message);
+    res.status(500).json({ error: 'FALLO' });
+  }
+});
+
+/* ============================================================
+   VALORACIONES Y SUGERENCIAS
+   ------------------------------------------------------------
+   Escribir exige cuenta (evita el spam y permite responder);
+   leer es libre, porque las opiniones solo sirven si las ve
+   cualquiera que llegue.
+
+   Se publican TAL CUAL, sin filtrar por nota. Una sección de
+   opiniones donde solo aparecen las buenas no la cree nadie y
+   deja de dar la información que la hace útil.
+   ============================================================ */
+async function asegurarValoraciones() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS valoraciones (
+      id UUID PRIMARY KEY,
+      user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+      nombre TEXT NOT NULL DEFAULT '',
+      estrellas INTEGER NOT NULL,
+      tipo TEXT NOT NULL DEFAULT 'opinion',
+      texto TEXT NOT NULL DEFAULT '',
+      perfil TEXT NOT NULL DEFAULT '',
+      visible BOOLEAN NOT NULL DEFAULT TRUE,
+      respuesta TEXT NOT NULL DEFAULT '',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS valoraciones_idx ON valoraciones(created_at DESC);
+  `);
+}
+
+app.get('/api/valoraciones', async (req, res) => {
+  if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
+  try {
+    await asegurarValoraciones();
+    const r = await pool.query(
+      `SELECT id, nombre, estrellas, tipo, texto, perfil, respuesta, created_at
+       FROM valoraciones WHERE visible = TRUE ORDER BY created_at DESC LIMIT 60`);
+    const m = await pool.query(
+      'SELECT COUNT(*)::int AS n, COALESCE(AVG(estrellas),0)::numeric(3,2) AS media FROM valoraciones WHERE visible = TRUE');
+    res.json({ valoraciones: r.rows, total: m.rows[0].n, media: Number(m.rows[0].media) });
+  } catch (e) {
+    console.error('valoraciones GET', e.message);
+    res.status(500).json({ error: 'FALLO' });
+  }
+});
+
+app.post('/api/valoraciones', rateLimit(3, 24 * 60 * 60 * 1000, 'valoraciones'), authRequired, async (req, res) => {
+  if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
+  const { estrellas, texto, tipo, perfil } = req.body || {};
+  const n = Number(estrellas);
+  if (!(n >= 1 && n <= 5)) return res.status(400).json({ error: 'ESTRELLAS_INVALIDAS' });
+  if (!String(texto || '').trim()) return res.status(400).json({ error: 'TEXTO_REQUERIDO' });
+  try {
+    await asegurarValoraciones();
+    const u = await pool.query('SELECT name FROM users WHERE id=$1', [req.user.sub]);
+    const nombre = (u.rows[0] && u.rows[0].name) ? u.rows[0].name : 'Usuario';
+    const id = crypto.randomUUID();
+    await pool.query(
+      'INSERT INTO valoraciones(id,user_id,nombre,estrellas,tipo,texto,perfil) VALUES($1,$2,$3,$4,$5,$6,$7)',
+      [id, req.user.sub, String(nombre).slice(0, 80), Math.round(n),
+       ['opinion', 'sugerencia', 'fallo'].includes(String(tipo)) ? String(tipo) : 'opinion',
+       String(texto).slice(0, 1500),
+       ['particular', 'electricista', 'administrador'].includes(String(perfil)) ? String(perfil) : '']
+    );
+    res.json({ ok: true, id });
+  } catch (e) {
+    console.error('valoraciones POST', e.message);
+    res.status(500).json({ error: 'FALLO' });
+  }
+});
+
+// Admin: ocultar una valoración o responderla públicamente.
+app.post('/api/valoraciones/:id/admin', async (req, res) => {
+  const token = req.get('x-admin-token') || '';
+  if (!process.env.ADMIN_TOKEN || token !== process.env.ADMIN_TOKEN) {
+    return res.status(404).json({ error: 'NOT_FOUND' });
+  }
+  if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
+  const { visible, respuesta } = req.body || {};
+  try {
+    await asegurarValoraciones();
+    const r = await pool.query(
+      `UPDATE valoraciones SET visible = COALESCE($1, visible),
+              respuesta = COALESCE($2, respuesta)
+       WHERE id=$3 RETURNING id, visible, respuesta`,
+      [typeof visible === 'boolean' ? visible : null,
+       typeof respuesta === 'string' ? respuesta.slice(0, 1000) : null, req.params.id]);
+    if (!r.rows.length) return res.status(404).json({ error: 'NO_ENCONTRADA' });
+    res.json({ ok: true, valoracion: r.rows[0] });
+  } catch (e) { res.status(500).json({ error: 'FALLO' }); }
 });
 
 /* ============================================================
