@@ -428,6 +428,9 @@
 .eia-first-safety-question + .eia-quick .eia-question-label{display:none!important}
 @media(max-width:520px){.eia-option{min-height:62px!important;grid-template-columns:34px minmax(0,1fr) 20px!important;column-gap:9px!important;padding:10px 12px 10px 10px!important}.eia-option .option-icon{width:32px;height:32px;font-size:16px}.eia-option .option-title{font-size:15px}.eia-option .option-hint{font-size:11.5px}.eia-first-safety-question .eia-bubble{font-size:18.5px!important;padding:16px 16px 17px 18px!important}}
 </style>
+<script>/* Versión única de la app. Antes había marcas de build sueltas de
+   V17.0.6, .7, .8 y .9 en distintos bloques, sin relación entre sí. */
+window.ELECTROIA_VERSION='2026.09';</script>
 </head>
 <body data-eia09-urgency-hash="e3628976edd07b32769fe6381ad0017869807964c3d282c7a9cb9c9502702215">
 <noscript>
@@ -4727,7 +4730,7 @@ sendText=async function(t,displayText=null){
 <script id="electroia-v17-fusion-controller">
 (function(){
   'use strict';
-  window.ELECTROIA_BUILD='V17.0.6-FUSION';
+  
   window.ELECTROIA_FUSION={
     base:'Index-BASE-16.5',
     brain:'V21-final-diagnostic-brain',
@@ -4823,7 +4826,7 @@ sendText=async function(t,displayText=null){
 (function(){
   'use strict';
   const W=window;
-  W.ELECTROIA_BUILD='V17.0.7-FUSION';
+  
   W.ELECTROIA_FUSION=W.ELECTROIA_FUSION||{};
   W.ELECTROIA_FUSION.reliability={
     noActionButtonsAsAnswers:true,
@@ -5085,8 +5088,8 @@ sendText=async function(t,displayText=null){
   /* Enriquecemos la vista de aprendizaje sin romper sus herramientas existentes. */
   try{const oldLearn=W.aprender;if(typeof oldLearn==='function'&&!oldLearn.__eiaSuper){const f=function(){oldLearn.apply(this,arguments);try{const main=document.querySelector('.wrap.page');if(main&&!main.querySelector('.eia-super-knowledge'))main.insertAdjacentHTML('beforeend',sourcesBlock())}catch(_){}};f.__eiaSuper=true;W.aprender=f}}catch(_){ }
   W.eiaSuperAudit=function(){const tree=T();let transitions=0,invalid=0,visuals=0,terminals=0;for(const [k,n] of Object.entries(tree)){if(n?.result)terminals++;if(n?.visual)visuals++;for(const pair of (n?.a||[])){transitions++;if(pair[1]&&!tree[pair[1]]&&!['danger','continueTarget','safetyClear','tech'].includes(pair[1]))invalid++}}return {ok:invalid===0,nodes:Object.keys(tree).length,transitions,invalidTransitions:invalid,terminals,visualNodes:visuals,build:'V17.0.8'}};
-  try{document.title='ElectroIA · Asistencia eléctrica inteligente · V17.0.9'}catch(_){}
-  W.ELECTROIA_BUILD='V17.0.8-SUPER';W.ELECTROIA_FUSION=W.ELECTROIA_FUSION||{};W.ELECTROIA_FUSION.version='V17.0.8';W.ELECTROIA_FUSION.auditScope='full-page-diagnostic-consolidation';
+  try{/* El título lo fija el <head>, optimizado para buscadores. Sobrescribirlo aquí hacía que Google indexara 'V17.0.9'. */ void 0}catch(_){}
+  W.ELECTROIA_FUSION=W.ELECTROIA_FUSION||{};W.ELECTROIA_FUSION.version=W.ELECTROIA_VERSION;W.ELECTROIA_FUSION.auditScope='full-page-diagnostic-consolidation';
 })();
 </script>
 
@@ -11824,7 +11827,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
     eia380Electricistas:'Alta electricistas', eia470Comercios:'Alta comercios',
     eia410Aislar:'Aislar circuito', eia410Contador:'Contador',
     eia410Apanar:'Apañarse', eia410Diferencial:'Diferencial',
-    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes', eia520Inicio:'Reclamar daños', eia580MenuPro:'Modo Profesional', eia550Iniciar:'Asistente paso a paso', eia530Administradores:'Administradores', eia530Vecino:'Avisar avería', eia530Triaje:'Comunidad'
+    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes', eia520Inicio:'Reclamar daños', eia600MiCuenta:'Mi cuenta', eia580MenuPro:'Modo Profesional', eia550Iniciar:'Asistente paso a paso', eia530Administradores:'Administradores', eia530Vecino:'Avisar avería', eia530Triaje:'Comunidad'
   };
 
   var actual=null;
@@ -13576,6 +13579,459 @@ body.eia570-consent-on #app main{padding-bottom:200px}
     }
   }catch(_){ }
   if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',inyectar); else inyectar();
+})();
+</script>
+
+<style id="eia590-css">
+/* El chip de sesión ocupa la derecha y su ancho varía con el nombre.
+   La lupa se coloca a la izquierda del todo para no solaparse nunca,
+   sea cual sea la longitud del nombre. */
+.eia590-lupa{position:fixed;top:10px;left:12px;z-index:35;width:36px;height:36px;border-radius:50%;
+  border:1px solid #2f3f52;background:#16202c;color:#dbe6f3;font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;padding:0}
+.eia590-lupa:hover{background:#1e2b3a}
+.eia590-modal{position:fixed;inset:0;z-index:9990;background:rgba(6,11,18,.82);display:none;padding:14px}
+.eia590-modal.on{display:block}
+.eia590-caja{max-width:560px;margin:0 auto;background:#0e1620;border:1px solid #2b3748;border-radius:17px;
+  padding:14px;max-height:88vh;overflow-y:auto}
+.eia590-top{display:flex;gap:9px;align-items:center;margin-bottom:6px}
+.eia590-top b{flex:1;color:#fff;font-size:15px}
+.eia590-top button{background:none;border:0;color:#9fb4cc;font-size:21px;cursor:pointer;padding:2px 6px}
+.eia590-err{background:#2b1412;border:1px solid #6b2a22;border-radius:13px;padding:15px;margin:11px 0;color:#f3cdc7}
+.eia590-err b{display:block;color:#ffb4a8;font-size:15px;margin-bottom:5px}
+.eia590-err p{margin:0 0 11px;font-size:13.5px;line-height:1.55;color:#e8c9c3}
+.eia590-err button{display:block;width:100%;padding:11px;border:0;border-radius:10px;background:#1663c7;color:#fff;font-weight:800;cursor:pointer}
+</style>
+
+<button class="eia590-lupa" type="button" aria-label="Buscar en ElectroIA" onclick="eia590Abrir()">🔍</button>
+
+<div class="eia590-modal" id="eia590Modal" role="dialog" aria-label="Buscar">
+  <div class="eia590-caja">
+    <div class="eia590-top"><b>Buscar</b>
+      <button type="button" aria-label="Cerrar" onclick="eia590Cerrar()">✕</button></div>
+    <div id="eia590Cont"></div>
+  </div>
+</div>
+
+<script id="electroia-v590-navegacion-segura">
+(function(){
+  'use strict';
+  var W=window, D=document;
+
+  /* ============================================================
+     1. BUSCADOR SIEMPRE A MANO
+     ------------------------------------------------------------
+     El buscador vivía dentro del Modo Profesional y de Mi hogar.
+     Con una lupa fija en la cabecera se llega desde cualquier
+     pantalla, que es lo que se espera de un buscador.
+     ============================================================ */
+  W.eia590Abrir=function(){
+    var m=D.getElementById('eia590Modal'), c=D.getElementById('eia590Cont');
+    if(!m||!c) return;
+    if(typeof W.eia580Bloque==='function'){
+      c.innerHTML=W.eia580Bloque();
+    } else {
+      c.innerHTML='<p style="color:#cfdcea;font-size:13.5px">El buscador no está disponible en esta pantalla.</p>';
+    }
+    m.classList.add('on');
+    setTimeout(function(){
+      var i=D.getElementById('e580Q');
+      if(i){ try{ i.focus(); }catch(_){ } }
+    },120);
+  };
+  W.eia590Cerrar=function(){
+    var m=D.getElementById('eia590Modal'); if(m) m.classList.remove('on');
+  };
+  // Cerrar tocando fuera o con Escape
+  var modal=D.getElementById('eia590Modal');
+  if(modal) modal.addEventListener('click', function(e){ if(e.target===modal) W.eia590Cerrar(); });
+  D.addEventListener('keydown', function(e){ if(e.key==='Escape') W.eia590Cerrar(); });
+
+  // Al elegir un resultado, se cierra el buscador
+  var irOriginal=W.eia580Ir;
+  if(typeof irOriginal==='function'){
+    W.eia580Ir=function(fn){ W.eia590Cerrar(); return irOriginal(fn); };
+  }
+
+  /* ============================================================
+     2. NAVEGACIÓN DEFENSIVA
+     ------------------------------------------------------------
+     Si un enlace apunta a una pantalla que no existe (porque un
+     bloque no cargó, o el navegador sirve una copia cacheada
+     antigua), el resultado era una pantalla en blanco o un error
+     sin salida.
+
+     Ahora se comprueba antes de navegar, y si algo falla se
+     muestra un aviso con salida en vez de dejar al usuario
+     atrapado. En una app de urgencias, una pantalla muerta es
+     peor que un error explicado.
+     ============================================================ */
+  W.eia590Fallo=function(que){
+    var app=D.getElementById('app'); if(!app) return;
+    var cab=(typeof W.head==='function')?W.head(false):'';
+    app.innerHTML=cab+'<main class="wrap page">'+
+      '<div class="eia590-err"><b>No se pudo abrir '+(que?String(que):'esa sección')+'</b>'+
+      '<p>Puede que tu navegador esté usando una copia antigua de la aplicación. '+
+      'Recargar suele solucionarlo.</p>'+
+      '<button type="button" data-eia590="1" onclick="location.reload(true)">Recargar la aplicación</button></div>'+
+      '<button class="eia590-err" style="background:#16202c;border-color:#2f3f52;color:#dbe6f3;width:100%;cursor:pointer" '+
+      'type="button" data-eia490="1" data-eia590="1" onclick="home&&home()">Volver a Inicio</button>'+
+      '</main>';
+  };
+
+  /* Envuelve los onclick del pie y de las tarjetas: si la función
+     destino no existe, se explica en vez de romper. */
+  function blindar(){
+    try{
+      D.querySelectorAll('#app button[onclick], .eia470-foot button[onclick]').forEach(function(b){
+        if(b.dataset.eia590) return;
+        var oc=b.getAttribute('onclick')||'';
+        var m=oc.match(/^\s*([A-Za-z_$][\w$]*)\s*\(/);
+        if(!m) return;
+        var fn=m[1];
+        if(typeof W[fn]==='function') return;     // existe: no se toca
+        b.dataset.eia590='1';
+        var etiqueta=(b.textContent||'').trim().split('\n')[0].slice(0,40);
+        b.setAttribute('onclick','eia590Fallo('+JSON.stringify(etiqueta)+')');
+      });
+    }catch(_){ }
+  }
+
+  W.eia590Blindar=blindar;   // expuesto para poder verificarlo
+
+  try{
+    if(W.MutationObserver){
+      var t=null;
+      new MutationObserver(function(){ clearTimeout(t); t=setTimeout(blindar,260); })
+        .observe(D.documentElement,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+  // Red de seguridad: si por lo que sea el observador no dispara, un repaso
+  // periódico y muy barato garantiza que ningún botón quede sin comprobar.
+  // Es justo el caso en el que esta función tiene que funcionar sí o sí.
+  try{ setInterval(blindar, 1500); }catch(_){ }
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',blindar); else blindar();
+})();
+</script>
+
+<style id="eia600-css">
+/* ============================================================
+   MI CUENTA
+   ============================================================ */
+.eia600-hero{border-radius:20px;padding:20px;margin:10px 0 14px;position:relative;overflow:hidden}
+.eia600-hero.free{background:linear-gradient(140deg,#1b2a3d,#2d4562 60%,#35597f)}
+.eia600-hero.pro{background:linear-gradient(140deg,#3b2a05,#7a5a11 55%,#a8801c)}
+.eia600-hero::after{content:'';position:absolute;right:-30px;top:-30px;width:140px;height:140px;
+  border-radius:50%;background:rgba(255,255,255,.07)}
+.eia600-hero .plan{display:inline-block;font-size:11px;font-weight:900;letter-spacing:.1em;
+  padding:4px 11px;border-radius:99px;background:rgba(255,255,255,.18);color:#fff;margin-bottom:9px}
+.eia600-hero h1{margin:0 0 4px;font-size:22px;color:#fff;position:relative}
+.eia600-hero p{margin:0;font-size:13.5px;line-height:1.5;color:#dbe8f6;position:relative}
+.eia600-hero.pro p{color:#f6ead0}
+.eia600-uso{background:rgba(255,255,255,.1);border-radius:13px;padding:12px;margin-top:13px;position:relative}
+.eia600-uso .fila{display:flex;justify-content:space-between;font-size:12.8px;color:#fff;margin-bottom:5px}
+.eia600-uso .fila b{font-weight:800}
+.eia600-bar{height:7px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden;margin-bottom:11px}
+.eia600-bar i{display:block;height:100%;background:#fff;border-radius:99px}
+.eia600-bar i.alto{background:#ffcf5c}
+.eia600-bar i.tope{background:#ff8f7a}
+.eia600-card{background:#fff;border:1px solid #d9e2ee;border-radius:16px;padding:15px;margin:11px 0;color:#1b2736}
+.eia600-card,.eia600-card *{color:#1b2736}
+.eia600-card h3{margin:0 0 4px;font-size:16.5px;color:#0f1b2b}
+.eia600-card .sub{font-size:12.8px;color:#55687f;margin:0 0 12px;line-height:1.45}
+.eia600-dato{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #eef2f7;font-size:14px}
+.eia600-dato:last-child{border-bottom:0}
+.eia600-dato span{color:#55687f}
+.eia600-dato b{color:#12203a;text-align:right;word-break:break-word}
+.eia600-btn{display:block;width:100%;margin-top:9px;padding:12px;border:0;border-radius:11px;background:#0b63c7;color:#fff;font-weight:800;font-size:14.5px;cursor:pointer}
+.eia600-card .eia600-btn{color:#fff}
+.eia600-btn.alt,.eia600-card .eia600-btn.alt{background:#eef3fa;border:1px solid #ccd9ea;color:#1c3252}
+/* Medido en 4,45 sobre el dorado: por debajo del mínimo. Se aclara el
+   degradado y se oscurece el texto hasta cumplir con holgura. */
+.eia600-btn.pro{background:linear-gradient(135deg,#f0c74e,#ffd96b);color:#231a02}
+.eia600-card .eia600-btn.pro{color:#231a02}
+.eia600-btn.peligro,.eia600-card .eia600-btn.peligro{background:#fff;border:1.5px solid #e8b6b0;color:#8c1a12}
+.eia600-bloq{border:1px dashed #b9c7da;border-radius:15px;padding:20px;text-align:center;background:#f7fafd;color:#1b2736}
+.eia600-bloq .ic{font-size:38px}
+.eia600-bloq b{display:block;font-size:16px;color:#0f1b2b;margin:8px 0 5px}
+.eia600-bloq p{font-size:13.5px;color:#55687f;margin:0 0 13px;line-height:1.55}
+
+/* ============================================================
+   MODO PROFESIONAL CON MÁS VIDA
+   ============================================================ */
+.eia600-phero{background:linear-gradient(135deg,#0d1b2f 0%,#16345c 45%,#1d4f86 100%);
+  border-radius:20px;padding:20px 18px;margin:10px 0 6px;position:relative;overflow:hidden}
+.eia600-phero::before{content:'';position:absolute;right:-40px;bottom:-50px;width:170px;height:170px;
+  border-radius:50%;background:radial-gradient(circle,rgba(93,171,255,.28),transparent 68%)}
+.eia600-phero .kick{display:inline-block;font-size:10.5px;font-weight:900;letter-spacing:.13em;
+  padding:4px 10px;border-radius:99px;background:rgba(255,255,255,.14);color:#cfe4ff;margin-bottom:9px}
+.eia600-phero h1{margin:0 0 5px;font-size:23px;color:#fff;letter-spacing:-.3px;position:relative}
+.eia600-phero p{margin:0;font-size:13.4px;line-height:1.5;color:#c3d8f0;position:relative}
+.eia600-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;position:relative}
+.eia600-stat{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:9px 7px;text-align:center}
+.eia600-stat .v{font-size:17px;font-weight:900;color:#fff;line-height:1.15}
+.eia600-stat .l{font-size:10.5px;color:#b3cbe6;margin-top:2px;line-height:1.3}
+.eia580-grupo{border:1px solid #d9e2ee;border-radius:15px;background:#fff;margin-bottom:9px;overflow:hidden;
+  transition:border-color .18s, box-shadow .18s}
+.eia580-grupo:hover{border-color:#a9c3e0;box-shadow:0 3px 14px rgba(16,43,77,.09)}
+.eia580-gh .ic{position:relative}
+.eia580-grupo.g0 .eia580-gh .ic{background:#e6f0fd;color:#14539e}
+.eia580-grupo.g1 .eia580-gh .ic{background:#e9f6ec;color:#15683a}
+.eia580-grupo.g2 .eia580-gh .ic{background:#fdf0e3;color:#8a5410}
+.eia580-grupo.g3 .eia580-gh .ic{background:#f0ebfb;color:#4c2f95}
+.eia580-grupo.g4 .eia580-gh .ic{background:#fdeaee;color:#93253f}
+.eia580-gh .cuenta{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:99px;
+  background:#eef2f7;color:#5a6e87;margin-left:7px;vertical-align:1px}
+</style>
+
+<script id="electroia-v600-cuenta">
+(function(){
+  'use strict';
+  var W=window, D=document;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function shell(html){
+    var app=D.getElementById('app'); if(!app) return;
+    var cab=(typeof W.head==='function')?W.head(false):'';
+    app.innerHTML=cab+'<main class="wrap page">'+html+'</main>';
+    try{ W.scrollTo(0,0); }catch(_){ }
+  }
+
+  /* ============================================================
+     MI CUENTA
+     ------------------------------------------------------------
+     Ajustes mezclaba dos cosas que no tienen nada que ver: los
+     datos de la vivienda (dónde está el cuadro, a quién llamar) y
+     la cuenta (plan, consumo, sesión). Siete tarjetas y 2.800 px
+     de scroll.
+
+     Ahora:
+     · Mi hogar  -> lo de la vivienda. No exige cuenta: se guarda
+                    en el dispositivo.
+     · Mi cuenta -> plan, uso, suscripción y sesión. Solo tiene
+                    sentido con sesión iniciada, así que sin ella
+                    se muestra una invitación a entrar, no una
+                    pantalla vacía de opciones que no hacen nada.
+     · Ajustes   -> preferencias de la app.
+     ============================================================ */
+
+  function sesion(){
+    var ks=['electroia_session_v1','electroia_user','eia_user','currentUser','electroia_session','eia_session'];
+    for(var i=0;i<ks.length;i++){
+      try{ var r=localStorage.getItem(ks[i]); if(r){ var v=JSON.parse(r); if(v&&(v.token||v.email)) return v; } }catch(_){ }
+    }
+    return null;
+  }
+  function plan(){
+    try{ return (typeof W.eia340Plan==='function')? W.eia340Plan() : null; }catch(_){ return null; }
+  }
+  function esPro(){ try{ return typeof W.eia340EsPro==='function' && W.eia340EsPro(); }catch(_){ return false; } }
+
+  function barra(usado, limite){
+    if(limite==null) return '<div class="eia600-uso"><div class="fila"><span>Consultas a la IA</span><b>Sin límite</b></div></div>';
+    var pct=Math.min(100, Math.round(usado/limite*100));
+    var cls = pct>=100?'tope':(pct>=80?'alto':'');
+    return '<div class="fila"><span>Consultas a la IA este mes</span><b>'+usado+' de '+limite+'</b></div>'+
+      '<div class="eia600-bar"><i class="'+cls+'" style="width:'+pct+'%"></i></div>';
+  }
+
+  /* El objeto local de plan no conserva el consumo (ia y proyectos vienen
+     a null): se consulta /api/plan, que es la fuente autorizada, y se
+     repinta cuando responde. Mientras tanto se muestra lo que ya se sabe,
+     para no dejar la pantalla en blanco si la red va lenta. */
+  function pedirUso(luego){
+    var h={}; var s=sesion();
+    if(s && s.token) h['Authorization']='Bearer '+s.token;
+    fetch('/api/plan',{headers:h})
+      .then(function(r){ return r.ok? r.json() : null; })
+      .then(function(j){ luego(j||null); })
+      .catch(function(){ luego(null); });
+  }
+
+  var USO=null, pidiendo=false;
+  W.eia600MiCuenta=function(){
+    // Siempre se refresca al abrir: el plan puede haber cambiado (alta PRO,
+    // consumo del mes). Se pinta con lo que hay y se repinta al responder.
+    if(!pidiendo){
+      pidiendo=true;
+      pedirUso(function(j){
+        pidiendo=false;
+        var nuevo=JSON.stringify(j||{});
+        if(nuevo!==JSON.stringify(USO||{})){ USO=j||{}; W.eia600MiCuenta(); }
+        else { USO=j||{}; }
+      });
+    }
+    var s=sesion();
+    if(!s){
+      // Sin sesión no hay nada real que mostrar: se invita a entrar.
+      return shell('<h1>👤 Mi cuenta</h1>'+
+        '<div class="eia600-bloq"><div class="ic">🔑</div>'+
+        '<b>Inicia sesión para ver tu cuenta</b>'+
+        '<p>Aquí verás tu plan, cuántas consultas llevas este mes y podrás gestionar tu suscripción. '+
+        'El diagnóstico de urgencias y las guías funcionan sin cuenta.</p>'+
+        '<button class="eia600-btn" type="button" onclick="eia600Entrar()">Iniciar sesión o crear cuenta</button>'+
+        '<button class="eia600-btn alt" type="button" onclick="home&&home()">Seguir sin cuenta</button>'+
+        '</div>');
+    }
+
+    var P=plan()||{}, pro=esPro();
+    var U=USO||{};
+    // Se prefiere lo que diga el servidor; si aún no respondió, lo local.
+    var ia=U.ia||P.ia||{}, pr=U.proyectos||P.proyectos||{};
+    if(U.plan==='pro') pro=true;
+    if(U.plan_until && !P.plan_until) P.plan_until=U.plan_until;
+    var hasta='';
+    if(P.plan_until){ try{ hasta=new Date(P.plan_until).toLocaleDateString('es-ES'); }catch(_){ } }
+
+    shell('<h1 style="font-size:20px;margin:6px 0 0">Mi cuenta</h1>'+
+      '<div class="eia600-hero '+(pro?'pro':'free')+'">'+
+      '<span class="plan">'+(pro?'PLAN PRO':'PLAN GRATUITO')+'</span>'+
+      '<h1>'+esc(s.name||s.email||'Tu cuenta')+'</h1>'+
+      '<p>'+(pro
+        ? ('Suscripción activa'+(hasta?' hasta el '+esc(hasta):'')+'.')
+        : 'Tienes acceso a todo lo esencial. El plan PRO añade presupuestos, partes y documentos.')+'</p>'+
+      (ia.limite!==undefined || pr.usado!==undefined
+        ? '<div class="eia600-uso">'+barra(ia.usado||0, ia.limite)+
+          '<div class="fila" style="margin-bottom:0"><span>Proyectos guardados</span><b>'+
+          (pr.usado||0)+(pr.limite==null?' (sin límite)':' de '+pr.limite)+'</b></div></div>'
+        : '<div class="eia600-uso"><div class="fila" style="margin-bottom:0">'+
+          '<span>Consultas de este mes</span><b>Cargando…</b></div></div>')+
+      '</div>'+
+
+      (pro
+        ? '<div class="eia600-card"><h3>Tu suscripción</h3>'+
+          '<p class="sub">Gestiona el pago o cancela cuando quieras.</p>'+
+          '<div class="eia600-dato"><span>Plan</span><b>PRO</b></div>'+
+          (hasta?'<div class="eia600-dato"><span>Renueva el</span><b>'+esc(hasta)+'</b></div>':'')+
+          '<button class="eia600-btn alt" type="button" onclick="eia600Facturacion()">Gestionar suscripción</button></div>'
+        : '<div class="eia600-card"><h3>⭐ Pasar a PRO</h3>'+
+          '<p class="sub">Presupuestos con PDF, partes de trabajo con firma, catálogo de partidas, '+
+          'proyectos sin límite y más consultas a la IA.</p>'+
+          '<button class="eia600-btn pro" type="button" onclick="eia340VerPlanes&&eia340VerPlanes()">Ver qué incluye PRO</button></div>')+
+
+      '<div class="eia600-card"><h3>Datos de la cuenta</h3>'+
+      '<div class="eia600-dato"><span>Nombre</span><b>'+esc(s.name||'—')+'</b></div>'+
+      '<div class="eia600-dato"><span>Correo</span><b>'+esc(s.email||'—')+'</b></div>'+
+      '<button class="eia600-btn alt" type="button" onclick="eia380MisDatos&&eia380MisDatos()">Descargar o eliminar mis datos</button>'+
+      '</div>'+
+
+      '<div class="eia600-card"><h3>Sesión</h3>'+
+      '<p class="sub">Al cerrar sesión, lo guardado en este dispositivo se mantiene.</p>'+
+      '<button class="eia600-btn peligro" type="button" onclick="eia600Salir()">Cerrar sesión</button></div>'+
+
+      '<button class="eia600-btn alt" type="button" onclick="eiaAtras&&eiaAtras()">← Volver</button>');
+  };
+
+  W.eia600Entrar=function(){
+    // Se reutiliza la pantalla de acceso que ya existe.
+    var fns=['auth','authScreen','login','eia330Cuenta','account'];
+    for(var i=0;i<fns.length;i++){
+      if(typeof W[fns[i]]==='function'){ try{ return W[fns[i]](); }catch(_){ } }
+    }
+    if(typeof W.settings==='function') return W.settings();
+  };
+  W.eia600Salir=function(){
+    if(!confirm('¿Cerrar sesión?')) return;
+    var fns=['logout','cerrarSesion','eia330Salir'];
+    for(var i=0;i<fns.length;i++){
+      if(typeof W[fns[i]]==='function'){ try{ W[fns[i]](); return; }catch(_){ } }
+    }
+    try{
+      ['electroia_session_v1','electroia_user','eia_user','currentUser','electroia_session','eia_session']
+        .forEach(function(k){ localStorage.removeItem(k); });
+    }catch(_){ }
+    location.reload();
+  };
+  W.eia600Facturacion=function(){
+    alert('La gestión de pagos todavía no está activa. Escríbenos y lo resolvemos a mano.');
+  };
+
+  /* ============================================================
+     ACCESO: sustituye la tarjeta "Cuenta" de Ajustes y añade
+     entrada propia en la barra inferior cuando hay sesión.
+     ============================================================ */
+  function inyectar(){
+    try{
+      // 1) En Ajustes: la tarjeta de cuenta lleva a Mi cuenta
+      var h1=D.querySelector('#app main h1');
+      if(h1 && /Ajustes/.test(h1.textContent||'') && !D.getElementById('e600Cta')){
+        var cards=D.querySelectorAll('.eia330-card');
+        cards.forEach(function(c){
+          var t=c.textContent||'';
+          if(/^\s*👤\s*Cuenta/.test(t.trim())){
+            c.id='e600Cta';
+            c.innerHTML='<h3>👤 Mi cuenta</h3>'+
+              '<p class="eia330-sub">Tu plan, el consumo del mes, la suscripción y la sesión.</p>'+
+              '<button class="eia330-btn" type="button" onclick="eia600MiCuenta()">Abrir Mi cuenta</button>';
+          }
+        });
+      }
+    }catch(_){ }
+  }
+  try{
+    if(W.MutationObserver){
+      var t=null;
+      new MutationObserver(function(){ clearTimeout(t); t=setTimeout(inyectar,230); })
+        .observe(D.documentElement,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',inyectar); else inyectar();
+
+  /* ============================================================
+     MODO PROFESIONAL CON MÁS VIDA
+     ------------------------------------------------------------
+     El menú agrupado quedó funcional pero plano: cinco tarjetas
+     blancas iguales. Se le da identidad de color por grupo, un
+     encabezado con contexto real (cuántos presupuestos, partes y
+     clientes tienes) y el número de herramientas de cada bloque.
+     El color no es decoración: sirve para reconocer el grupo de
+     un vistazo sin leer.
+     ============================================================ */
+  function contar(clave){
+    try{ var a=JSON.parse(localStorage.getItem(clave)||'[]'); return Array.isArray(a)?a.length:0; }
+    catch(_){ return 0; }
+  }
+  function decorar(){
+    try{
+      var g=D.querySelectorAll('.eia580-grupo');
+      if(!g.length) return;
+      g.forEach(function(el,i){
+        if(!el.classList.contains('g'+i)) el.classList.add('g'+i);
+        var gh=el.querySelector('.eia580-gh b');
+        var n=el.querySelectorAll('.eia580-gb button').length;
+        if(gh && n && !gh.querySelector('.cuenta')){
+          var s=D.createElement('span'); s.className='cuenta'; s.textContent=n;
+          gh.appendChild(s);
+        }
+      });
+      // Encabezado con contexto
+      var hero=D.querySelector('.eia370-hero');
+      if(hero && !D.getElementById('e600PHero')){
+        var partes=contar('eia430-partes'), clientes=contar('eia440-clientes');
+        var proy=0;
+        try{ proy=(JSON.parse(localStorage.getItem('electroia_projects')||'[]')||[]).length; }catch(_){ }
+        var d=D.createElement('div');
+        d.id='e600PHero'; d.className='eia600-phero';
+        d.innerHTML='<span class="kick">HERRAMIENTAS PROFESIONALES</span>'+
+          '<h1>Modo Profesional</h1>'+
+          '<p>Cálculo, presupuesto y documentación. Los resultados son orientativos: la validación final es tuya.</p>'+
+          '<div class="eia600-stats">'+
+          '<div class="eia600-stat"><div class="v">'+partes+'</div><div class="l">partes</div></div>'+
+          '<div class="eia600-stat"><div class="v">'+clientes+'</div><div class="l">clientes</div></div>'+
+          '<div class="eia600-stat"><div class="v">'+proy+'</div><div class="l">proyectos</div></div>'+
+          '</div>';
+        hero.parentNode.replaceChild(d, hero);
+      }
+    }catch(_){ }
+  }
+  try{
+    if(W.MutationObserver){
+      var t2=null;
+      new MutationObserver(function(){ clearTimeout(t2); t2=setTimeout(decorar,200); })
+        .observe(D.documentElement,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+  setTimeout(decorar, 500);
 })();
 </script>
 
