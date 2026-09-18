@@ -13979,15 +13979,28 @@ body.eia570-consent-on #app main{padding-bottom:200px}
 
   /* Alta en PRO: lleva al pago de Stripe. El plan NO se activa aquí;
      lo activa el webhook cuando el cobro se confirma. */
-  W.eia600Suscribir=function(){
+  W.eia600Suscribir=function(cual){
     var s=sesion();
     if(!s || !s.token){ return W.eia600Entrar(); }
-    fetch('/api/billing/checkout',{method:'POST',headers:{Authorization:'Bearer '+s.token}})
+    fetch('/api/billing/checkout',{method:'POST',
+      headers:{Authorization:'Bearer '+s.token,'Content-Type':'application/json'},
+      body:JSON.stringify({plan: cual==='red'?'red':'pro'})})
       .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
       .then(function(x){
         if(x.ok && x.j && x.j.url){ location.href=x.j.url; return; }
-        if(x.j && x.j.error==='PAGOS_NO_CONFIGURADOS'){
+        var e=(x.j||{}).error;
+        if(e==='PAGOS_NO_CONFIGURADOS'){
           alert('El pago con tarjeta todavía no está activo. Escríbenos y lo gestionamos por transferencia.');
+          return;
+        }
+        if(e==='SIN_FICHA'){
+          alert('Antes de contratar PRO RED necesitamos tu ficha profesional.');
+          if(typeof W.eia380Electricistas==='function') W.eia380Electricistas();
+          return;
+        }
+        if(e==='NO_VERIFICADO'){
+          alert('Tu cuenta profesional está pendiente de verificación. Te avisamos por correo en cuanto la revisemos; '+
+                'no tiene sentido cobrarte por avisos que todavía no puedes recibir.');
           return;
         }
         alert('No se pudo iniciar el pago. Prueba de nuevo en un momento.');
@@ -14252,7 +14265,8 @@ body.eia570-consent-on #app main{padding-bottom:200px}
       'profesional acapare la zona y hace que cada aviso se atienda de verdad.</p>'+
       '<div class="eia610-paso"><span class="n">·</span><span>Cada aviso va a <b>los 3 profesionales</b> de la zona que menos han recibido este mes.</span></div>'+
       '<div class="eia610-paso"><span class="n">·</span><span>Sin permanencia: se cancela cuando quieras.</span></div>'+
-      '<button class="eia610-btn" type="button" onclick="eia610Solicitar()">Quiero entrar en PRO RED</button>'+
+      '<button class="eia610-btn" type="button" onclick="eia600Suscribir&&eia600Suscribir(\'red\')">Contratar PRO RED</button>'+
+      '<button class="eia610-btn alt" type="button" onclick="eia610Solicitar()">Prefiero que me escribáis</button>'+
       '</div>'+
 
       (yaAlta

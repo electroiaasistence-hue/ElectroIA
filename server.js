@@ -1099,6 +1099,7 @@ async function asegurarTablasRed() {
     ALTER TABLE electricians ADD COLUMN IF NOT EXISTS plan TEXT NOT NULL DEFAULT 'free';
     ALTER TABLE electricians ADD COLUMN IF NOT EXISTS plan_until TIMESTAMPTZ;
     ALTER TABLE electricians ADD COLUMN IF NOT EXISTS avisos_extra INTEGER NOT NULL DEFAULT 0;
+    ALTER TABLE electricians ADD COLUMN IF NOT EXISTS provider_subscription_id TEXT;
     CREATE TABLE IF NOT EXISTS avisos (
       id UUID PRIMARY KEY,
       lead_id UUID,
@@ -1614,6 +1615,12 @@ app.get('/api/plan', authRequired, async (req, res) => {
 app.get('/api/plan/precio', (req, res) => {
   res.setHeader('Cache-Control', 'public, max-age=300');
   res.json({
+    red: {
+      etiqueta: process.env.RED_PRECIO_ETIQUETA || 'Consultar',
+      importe: process.env.RED_IMPORTE ? Number(process.env.RED_IMPORTE) : null,
+      disponible: !!process.env.STRIPE_PRICE_RED
+    },
+    pro_disponible: !!process.env.STRIPE_PRICE_PRO,
     etiqueta: process.env.PRO_PRECIO_ETIQUETA || 'Consultar',
     moneda: process.env.PRO_MONEDA || '',
     importe: process.env.PRO_IMPORTE ? Number(process.env.PRO_IMPORTE) : null
@@ -1630,8 +1637,7 @@ app.get('/api/plan/precio', (req, res) => {
 // vuelta del navegador se puede falsificar y el webhook no.
 app.post('/api/billing/checkout', authRequired, async (req, res) => {
   const clave = process.env.STRIPE_SECRET_KEY || process.env.PAYMENT_API_KEY;
-  const precio = process.env.STRIPE_PRICE_PRO;
-  if (!clave || !precio) {
+  if (!clave) {
     return res.status(503).json({
       error: 'PAGOS_NO_CONFIGURADOS',
       mensaje: 'Todavía no hay una pasarela de pago conectada.'
@@ -1644,10 +1650,38 @@ app.post('/api/billing/checkout', authRequired, async (req, res) => {
     const usuario = u.rows[0];
     const base = process.env.PUBLIC_URL || `https://${req.get('host')}`;
 
+    /* Dos tarifas distintas y dos destinos distintos:
+       · 'pro'  -> plan del USUARIO (tabla users): documentos, presupuestos.
+       · 'red'  -> plan del ELECTRICISTA (tabla electricians): recibir avisos.
+       Se lleva en metadata para que el webhook sepa qué activar. Sin esto,
+       un pago de PRO RED activaría el plan equivocado. */
+    const queCompra = String(req.body?.plan || 'pro') === 'red' ? 'red' : 'pro';
+    const precioElegido = queCompra === 'red'
+      ? process.env.STRIPE_PRICE_RED
+      : process.env.STRIPE_PRICE_PRO;
+    if (!precioElegido) {
+      return res.status(503).json({ error: 'PAGOS_NO_CONFIGURADOS', mensaje: 'Esa tarifa no está configurada todavía.' });
+    }
+    // PRO RED exige tener ficha profesional verificada: pagar sin estar
+    // verificado dejaría al electricista pagando por avisos que no recibiría.
+    if (queCompra === 'red') {
+      const e = await pool.query(
+        'SELECT verificado FROM electricians WHERE user_id=$1 LIMIT 1', [usuario.id]);
+      if (!e.rows.length) {
+        return res.status(400).json({ error: 'SIN_FICHA', mensaje: 'Regístrate primero como electricista.' });
+      }
+      if (!e.rows[0].verificado) {
+        return res.status(400).json({ error: 'NO_VERIFICADO', mensaje: 'Tu cuenta profesional aún está pendiente de verificación.' });
+      }
+    }
+
     // Stripe acepta form-urlencoded; así se evita añadir una dependencia.
     const cuerpo = new URLSearchParams();
     cuerpo.set('mode', 'subscription');
-    cuerpo.set('line_items[0][price]', precio);
+    cuerpo.set('line_items[0][price]', precioElegido);
+    cuerpo.set('metadata[plan]', queCompra);
+    cuerpo.set('subscription_data[metadata][plan]', queCompra);
+    cuerpo.set('subscription_data[metadata][user_id]', usuario.id);
     cuerpo.set('line_items[0][quantity]', '1');
     cuerpo.set('success_url', `${base}/?pago=ok`);
     cuerpo.set('cancel_url', `${base}/?pago=cancelado`);
@@ -1764,15 +1798,34 @@ app.post('/api/billing/webhook',
           // client_reference_id es el id de usuario que pusimos al crear la sesión.
           const userId = obj.client_reference_id;
           if (!userId) { console.warn('sesión sin client_reference_id'); break; }
+          const queCompro = (obj.metadata && obj.metadata.plan) === 'red' ? 'red' : 'pro';
           const hasta = new Date(Date.now() + 31 * 86400000).toISOString();
+
+          // El customer de Stripe se guarda siempre en users: es quien paga,
+          // sea cual sea la tarifa. Así el portal de cliente funciona para ambas.
           await pool.query(
-            `UPDATE users SET plan='pro', plan_until=$1,
-                    provider_customer_id = COALESCE($2, provider_customer_id),
-                    provider_subscription_id = COALESCE($3, provider_subscription_id),
-                    updated_at = NOW()
-             WHERE id=$4`,
-            [hasta, obj.customer || null, obj.subscription || null, userId]);
-          console.info('PRO activado para', userId);
+            `UPDATE users SET provider_customer_id = COALESCE($1, provider_customer_id),
+                    updated_at = NOW() WHERE id=$2`,
+            [obj.customer || null, userId]);
+
+          if (queCompro === 'red') {
+            await asegurarTablasRed();
+            await pool.query(
+              `UPDATE electricians
+                  SET plan='red', plan_until=$1,
+                      provider_subscription_id = COALESCE($2, provider_subscription_id)
+                WHERE user_id=$3`,
+              [hasta, obj.subscription || null, userId]);
+            console.info('PRO RED activado para', userId);
+          } else {
+            await pool.query(
+              `UPDATE users SET plan='pro', plan_until=$1,
+                      provider_subscription_id = COALESCE($2, provider_subscription_id),
+                      updated_at = NOW()
+               WHERE id=$3`,
+              [hasta, obj.subscription || null, userId]);
+            console.info('PRO activado para', userId);
+          }
           break;
         }
         case 'invoice.paid': {
@@ -1783,8 +1836,13 @@ app.post('/api/billing/webhook',
           const hasta = fin ? new Date(fin * 1000).toISOString()
                             : new Date(Date.now() + 31 * 86400000).toISOString();
           if (sub) {
+            // Se intenta en ambas tablas: la suscripción pertenece a una de las dos.
             await pool.query(
               "UPDATE users SET plan='pro', plan_until=$1, updated_at=NOW() WHERE provider_subscription_id=$2",
+              [hasta, sub]);
+            await asegurarTablasRed();
+            await pool.query(
+              "UPDATE electricians SET plan='red', plan_until=$1 WHERE provider_subscription_id=$2",
               [hasta, sub]);
           }
           break;
@@ -1799,6 +1857,10 @@ app.post('/api/billing/webhook',
               `UPDATE users SET plan = CASE WHEN plan_until > NOW() THEN plan ELSE 'free' END,
                       updated_at = NOW()
                WHERE provider_subscription_id=$1`, [sub]);
+            await asegurarTablasRed();
+            await pool.query(
+              `UPDATE electricians SET plan = CASE WHEN plan_until > NOW() THEN plan ELSE 'free' END
+                WHERE provider_subscription_id=$1`, [sub]);
           }
           break;
         }
