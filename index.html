@@ -9091,8 +9091,8 @@ ${W.sourcesBlock?W.sourcesBlock():''}
   var W=window,D=document;
   var EMPRESA={
     nombre:'ElectroIA',
-    titular:'[COMPLETAR: nombre o razón social del titular]',
-    id:'[COMPLETAR: NIF]',
+    titular:'Facundo Luciano Noval',
+    id:'Z4675633Z',
     domicilio:'[COMPLETAR: domicilio fiscal]',
     email:'electroiaasistence@gmail.com',
     web:'https://electro-ia.com'
@@ -13909,7 +13909,8 @@ body.eia570-consent-on #app main{padding-bottom:200px}
         : '<div class="eia600-card"><h3>⭐ Pasar a PRO</h3>'+
           '<p class="sub">Presupuestos con PDF, partes de trabajo con firma, catálogo de partidas, '+
           'proyectos sin límite y más consultas a la IA.</p>'+
-          '<button class="eia600-btn pro" type="button" onclick="eia340VerPlanes&&eia340VerPlanes()">Ver qué incluye PRO</button></div>')+
+          '<button class="eia600-btn pro" type="button" onclick="eia340VerPlanes&&eia340VerPlanes()">Ver qué incluye PRO</button>'+
+          '<button class="eia600-btn alt" type="button" onclick="eia600Suscribir()">Suscribirme ahora</button></div>')+
 
       '<div class="eia600-card"><h3>Datos de la cuenta</h3>'+
       '<div class="eia600-dato"><span>Nombre</span><b>'+esc(s.name||'—')+'</b></div>'+
@@ -13923,6 +13924,21 @@ body.eia570-consent-on #app main{padding-bottom:200px}
 
       '<button class="eia600-btn alt" type="button" onclick="eiaAtras&&eiaAtras()">← Volver</button>');
   };
+
+  /* Al volver de Stripe hay que avisar, pero SIN dar el plan por activo:
+     el webhook puede tardar unos segundos. Prometer aquí lo que aún no ha
+     pasado genera exactamente el soporte que queremos evitar. */
+  try{
+    if(/[?&]pago=ok/.test(location.search)){
+      setTimeout(function(){
+        alert('Pago recibido. Tu plan PRO se activa en unos segundos; si no lo ves, recarga la página.');
+        history.replaceState(null,'',location.pathname);
+        if(typeof W.eia600MiCuenta==='function') W.eia600MiCuenta();
+      },900);
+    } else if(/[?&]pago=cancelado/.test(location.search)){
+      history.replaceState(null,'',location.pathname);
+    }
+  }catch(_){ }
 
   W.eia600Entrar=function(){
     // Se reutiliza la pantalla de acceso que ya existe.
@@ -13944,8 +13960,39 @@ body.eia570-consent-on #app main{padding-bottom:200px}
     }catch(_){ }
     location.reload();
   };
+  /* Portal de Stripe: el cliente cambia la tarjeta o cancela sin escribirte.
+     Tener esto desde el primer día evita la mayoría de los correos de soporte
+     y es un requisito si no quieres gestionar bajas a mano. */
   W.eia600Facturacion=function(){
-    alert('La gestión de pagos todavía no está activa. Escríbenos y lo resolvemos a mano.');
+    fetch('/api/billing/portal',{method:'POST',headers:{Authorization:'Bearer '+(sesion()||{}).token}})
+      .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
+      .then(function(x){
+        if(x.ok && x.j && x.j.url){ location.href=x.j.url; return; }
+        if(x.j && x.j.error==='SIN_SUSCRIPCION'){
+          alert('No encontramos una suscripción activa en la pasarela. Si pagaste por transferencia, escríbenos.');
+          return;
+        }
+        alert('La gestión de pagos todavía no está disponible. Escríbenos y lo resolvemos.');
+      })
+      .catch(function(){ alert('Sin conexión. Prueba de nuevo en un momento.'); });
+  };
+
+  /* Alta en PRO: lleva al pago de Stripe. El plan NO se activa aquí;
+     lo activa el webhook cuando el cobro se confirma. */
+  W.eia600Suscribir=function(){
+    var s=sesion();
+    if(!s || !s.token){ return W.eia600Entrar(); }
+    fetch('/api/billing/checkout',{method:'POST',headers:{Authorization:'Bearer '+s.token}})
+      .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
+      .then(function(x){
+        if(x.ok && x.j && x.j.url){ location.href=x.j.url; return; }
+        if(x.j && x.j.error==='PAGOS_NO_CONFIGURADOS'){
+          alert('El pago con tarjeta todavía no está activo. Escríbenos y lo gestionamos por transferencia.');
+          return;
+        }
+        alert('No se pudo iniciar el pago. Prueba de nuevo en un momento.');
+      })
+      .catch(function(){ alert('Sin conexión. Prueba de nuevo en un momento.'); });
   };
 
   /* ============================================================
