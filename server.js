@@ -770,6 +770,170 @@ app.get('/api/electricistas', async (req, res) => {
 });
 
 /* ============================================================
+   PRO RED — reparto de avisos a electricistas
+   ------------------------------------------------------------
+   Cuando el diagnóstico concluye que hace falta un profesional y
+   el usuario lo pide, el aviso se reparte entre los electricistas
+   dados de alta en esa zona.
+
+   CUOTA: 8 avisos al mes incluidos en PRO RED. Agotados, el
+   electricista puede comprar más. El tope existe por dos razones:
+   evita que un solo profesional acapare los avisos de la zona, y
+   convierte cada aviso en algo que se valora en lugar de ruido.
+
+   ORDEN DE REPARTO: el que menos avisos ha recibido este mes va
+   primero. Es lo más justo y lo que mantiene a los profesionales
+   dentro del sistema; repartir por antigüedad o al azar hace que
+   los últimos en llegar no reciban nunca nada y se den de baja.
+   ============================================================ */
+const PRORED_CUOTA = 8;
+
+async function asegurarTablasRed() {
+  await pool.query(`
+    ALTER TABLE electricians ADD COLUMN IF NOT EXISTS plan TEXT NOT NULL DEFAULT 'free';
+    ALTER TABLE electricians ADD COLUMN IF NOT EXISTS plan_until TIMESTAMPTZ;
+    ALTER TABLE electricians ADD COLUMN IF NOT EXISTS avisos_extra INTEGER NOT NULL DEFAULT 0;
+    CREATE TABLE IF NOT EXISTS avisos (
+      id UUID PRIMARY KEY,
+      lead_id UUID,
+      electrician_id UUID REFERENCES electricians(id) ON DELETE CASCADE,
+      periodo TEXT NOT NULL,
+      estado TEXT NOT NULL DEFAULT 'enviado',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS avisos_elec_idx ON avisos(electrician_id, periodo);
+  `);
+}
+function periodoActual() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+// Cuántos avisos le quedan a un electricista este mes.
+async function cupoDe(id) {
+  const periodo = periodoActual();
+  const e = await pool.query('SELECT plan, avisos_extra FROM electricians WHERE id=$1', [id]);
+  if (!e.rows.length) return { total: 0, usados: 0, quedan: 0, plan: 'free' };
+  const fila = e.rows[0];
+  const total = fila.plan === 'red' ? PRORED_CUOTA + (fila.avisos_extra || 0) : 0;
+  const u = await pool.query(
+    'SELECT COUNT(*)::int AS n FROM avisos WHERE electrician_id=$1 AND periodo=$2', [id, periodo]);
+  const usados = u.rows[0].n;
+  return { total, usados, quedan: Math.max(0, total - usados), plan: fila.plan };
+}
+
+// El usuario pide electricista: el aviso se reparte en su zona.
+app.post('/api/avisos/repartir', rateLimit(10, 60 * 60 * 1000, 'avisos'), authOpcional, async (req, res) => {
+  if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
+  const { zona, resumen, urgencia, nombre, contacto } = req.body || {};
+  if (!String(contacto || '').trim()) return res.status(400).json({ error: 'CONTACTO_REQUERIDO' });
+  try {
+    await asegurarTablasRed();
+    const periodo = periodoActual();
+
+    // Se guarda el lead siempre, aunque no haya nadie disponible:
+    // es información de demanda real que sirve para captar profesionales.
+    const leadId = crypto.randomUUID();
+    await pool.query(
+      'INSERT INTO leads(id,user_id,nombre,contacto,zona,resumen,urgencia,estado) VALUES($1,$2,$3,$4,$5,$6,$7,$8)',
+      [leadId, req.user?.sub || null, String(nombre || '').slice(0, 120),
+       String(contacto).slice(0, 120), String(zona || '').slice(0, 160),
+       String(resumen || '').slice(0, 2000), String(urgencia || '').slice(0, 40), 'nuevo']
+    );
+
+    // Candidatos: activos, en PRO RED, de esa zona, ordenados por quien
+    // menos avisos lleva este mes.
+    const cand = await pool.query(`
+      SELECT e.id, e.nombre, e.telefono, e.email, e.avisos_extra,
+             COALESCE(a.n, 0) AS recibidos
+      FROM electricians e
+      LEFT JOIN (
+        SELECT electrician_id, COUNT(*)::int AS n
+        FROM avisos WHERE periodo = $1 GROUP BY electrician_id
+      ) a ON a.electrician_id = e.id
+      WHERE e.activo = TRUE AND e.verificado = TRUE
+        AND e.plan = 'red'
+        AND (e.plan_until IS NULL OR e.plan_until > NOW())
+        AND ($2 = '' OR e.zona = $2)
+      ORDER BY COALESCE(a.n, 0) ASC, e.created_at ASC
+      LIMIT 20`, [periodo, String(zona || '')]);
+
+    // Se envía a los 3 primeros que aún tengan cupo.
+    const enviados = [];
+    for (const e of cand.rows) {
+      if (enviados.length >= 3) break;
+      const tope = PRORED_CUOTA + (e.avisos_extra || 0);
+      if (e.recibidos >= tope) continue;
+      const id = crypto.randomUUID();
+      await pool.query(
+        'INSERT INTO avisos(id,lead_id,electrician_id,periodo) VALUES($1,$2,$3,$4)',
+        [id, leadId, e.id, periodo]);
+      enviados.push({ id: e.id, nombre: e.nombre });
+    }
+
+    if (enviados.length) {
+      await pool.query("UPDATE leads SET estado='repartido' WHERE id=$1", [leadId]);
+    }
+    // Nunca se devuelven los datos de los electricistas al usuario:
+    // el contacto lo inicia el profesional, no al revés.
+    res.json({ ok: true, avisados: enviados.length });
+  } catch (e) {
+    console.error('avisos/repartir', e.message);
+    res.status(500).json({ error: 'FALLO' });
+  }
+});
+
+// El electricista consulta su cupo y sus avisos.
+app.get('/api/red/mis-avisos', authRequired, async (req, res) => {
+  if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
+  try {
+    await asegurarTablasRed();
+    const e = await pool.query('SELECT id FROM electricians WHERE user_id=$1 LIMIT 1', [req.user.sub]);
+    if (!e.rows.length) return res.json({ alta: false, cupo: null, avisos: [] });
+    const id = e.rows[0].id;
+    const cupo = await cupoDe(id);
+    const r = await pool.query(`
+      SELECT a.id, a.estado, a.created_at, l.zona, l.resumen, l.urgencia, l.nombre, l.contacto
+      FROM avisos a LEFT JOIN leads l ON l.id = a.lead_id
+      WHERE a.electrician_id=$1 ORDER BY a.created_at DESC LIMIT 50`, [id]);
+    res.json({ alta: true, cupo, avisos: r.rows });
+  } catch (e) {
+    console.error('red/mis-avisos', e.message);
+    res.status(500).json({ error: 'FALLO' });
+  }
+});
+
+// Admin: activar PRO RED o añadir avisos extra a un electricista.
+app.post('/api/red/plan', async (req, res) => {
+  const token = req.get('x-admin-token') || '';
+  if (!process.env.ADMIN_TOKEN || token !== process.env.ADMIN_TOKEN) {
+    return res.status(404).json({ error: 'NOT_FOUND' });
+  }
+  if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
+  const { email, plan, meses, avisos_extra } = req.body || {};
+  if (!String(email || '').trim()) return res.status(400).json({ error: 'EMAIL_REQUERIDO' });
+  try {
+    await asegurarTablasRed();
+    const hasta = Number(meses) > 0
+      ? new Date(Date.now() + Number(meses) * 30 * 86400000).toISOString() : null;
+    const r = await pool.query(
+      `UPDATE electricians
+         SET plan = COALESCE($2, plan),
+             plan_until = COALESCE($3::timestamptz, plan_until),
+             avisos_extra = COALESCE($4, avisos_extra),
+             verificado = TRUE, activo = TRUE
+       WHERE lower(email) = lower($1) RETURNING id, nombre, email, plan, plan_until, avisos_extra`,
+      [String(email).trim(), plan || null, hasta, Number.isFinite(Number(avisos_extra)) ? Number(avisos_extra) : null]
+    );
+    if (!r.rows.length) return res.status(404).json({ error: 'ELECTRICISTA_NO_ENCONTRADO' });
+    res.json({ ok: true, electricista: r.rows[0] });
+  } catch (e) {
+    console.error('red/plan', e.message);
+    res.status(500).json({ error: 'FALLO' });
+  }
+});
+
+/* ============================================================
    PORTAL DE COMUNIDAD (administradores de fincas)
    ------------------------------------------------------------
    El 80 % de la población española vive en propiedad horizontal.
