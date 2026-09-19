@@ -46,6 +46,86 @@ function tokenAdminValido(token) {
   return crypto.timingSafeEqual(a, b);
 }
 
+/* ============================================================
+   CREACIÓN DE TABLAS AL ARRANCAR
+   ------------------------------------------------------------
+   Antes cada tabla se creaba dentro del endpoint que la usaba
+   primero. Eso provocó un fallo real: el checkout de PLUS RED
+   consultaba `electricians` para comprobar si el usuario tenía
+   ficha profesional, pero esa tabla solo se creaba al registrar
+   al primer electricista. Si nadie se había registrado todavía,
+   la consulta fallaba con "relation does not exist" y el pago
+   no arrancaba nunca.
+
+   Creándolas al arrancar, cualquier endpoint puede contar con
+   que existen. Es idempotente: CREATE TABLE IF NOT EXISTS no
+   toca nada si ya están.
+   ============================================================ */
+async function prepararEsquema() {
+  if (!pool) return;
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS electricians (
+        id UUID PRIMARY KEY,
+        user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+        nombre TEXT NOT NULL DEFAULT '',
+        email TEXT NOT NULL DEFAULT '',
+        telefono TEXT NOT NULL DEFAULT '',
+        matricula TEXT NOT NULL DEFAULT '',
+        zona TEXT NOT NULL DEFAULT '',
+        pais TEXT NOT NULL DEFAULT '',
+        notas TEXT NOT NULL DEFAULT '',
+        verificado BOOLEAN NOT NULL DEFAULT FALSE,
+        activo BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      );
+      CREATE TABLE IF NOT EXISTS leads (
+        id UUID PRIMARY KEY,
+        user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+        nombre TEXT NOT NULL DEFAULT '',
+        contacto TEXT NOT NULL DEFAULT '',
+        zona TEXT NOT NULL DEFAULT '',
+        resumen TEXT NOT NULL DEFAULT '',
+        urgencia TEXT NOT NULL DEFAULT '',
+        estado TEXT NOT NULL DEFAULT 'nuevo',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      ALTER TABLE electricians ADD COLUMN IF NOT EXISTS plan TEXT NOT NULL DEFAULT 'free';
+      ALTER TABLE electricians ADD COLUMN IF NOT EXISTS plan_until TIMESTAMPTZ;
+      ALTER TABLE electricians ADD COLUMN IF NOT EXISTS avisos_extra INTEGER NOT NULL DEFAULT 0;
+      ALTER TABLE electricians ADD COLUMN IF NOT EXISTS provider_subscription_id TEXT;
+      ALTER TABLE electricians ADD COLUMN IF NOT EXISTS num_instalador TEXT NOT NULL DEFAULT '';
+      ALTER TABLE electricians ADD COLUMN IF NOT EXISTS comunidad TEXT NOT NULL DEFAULT '';
+      ALTER TABLE electricians ADD COLUMN IF NOT EXISTS empresa TEXT NOT NULL DEFAULT '';
+      ALTER TABLE electricians ADD COLUMN IF NOT EXISTS cif TEXT NOT NULL DEFAULT '';
+      ALTER TABLE electricians ADD COLUMN IF NOT EXISTS documento_url TEXT NOT NULL DEFAULT '';
+      ALTER TABLE electricians ADD COLUMN IF NOT EXISTS estado_verificacion TEXT NOT NULL DEFAULT 'pendiente';
+      ALTER TABLE electricians ADD COLUMN IF NOT EXISTS motivo_rechazo TEXT NOT NULL DEFAULT '';
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS email_verificado BOOLEAN NOT NULL DEFAULT FALSE;
+      CREATE TABLE IF NOT EXISTS avisos (
+        id UUID PRIMARY KEY,
+        lead_id UUID,
+        electrician_id UUID REFERENCES electricians(id) ON DELETE CASCADE,
+        periodo TEXT NOT NULL,
+        estado TEXT NOT NULL DEFAULT 'enviado',
+        notas TEXT NOT NULL DEFAULT '',
+        importe NUMERIC,
+        cerrado_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS avisos_elec_idx ON avisos(electrician_id, periodo);
+      CREATE INDEX IF NOT EXISTS leads_created_idx ON leads(created_at DESC);
+    `);
+    console.info('esquema preparado');
+  } catch (e) {
+    // No se detiene el arranque: la app debe seguir sirviendo el
+    // diagnóstico de urgencias aunque la base de datos falle.
+    console.error('prepararEsquema', e.message);
+  }
+}
+prepararEsquema();
+
 app.set('trust proxy', 1);
 /* El webhook de Stripe necesita el cuerpo SIN parsear para poder verificar
    la firma HMAC. Si express.json lo consume primero, la firma nunca cuadra
@@ -1195,7 +1275,13 @@ app.get('/api/red/mis-avisos', authRequired, async (req, res) => {
   if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
   try {
     await asegurarTablasRed();
-    const e = await pool.query('SELECT id FROM electricians WHERE user_id=$1 LIMIT 1', [req.user.sub]);
+    let e;
+    try {
+      e = await pool.query('SELECT id FROM electricians WHERE user_id=$1 LIMIT 1', [req.user.sub]);
+    } catch (err) {
+      await prepararEsquema();
+      e = await pool.query('SELECT id FROM electricians WHERE user_id=$1 LIMIT 1', [req.user.sub]);
+    }
     if (!e.rows.length) return res.json({ alta: false, cupo: null, avisos: [] });
     const id = e.rows[0].id;
     const cupo = await cupoDe(id);
@@ -1665,12 +1751,30 @@ app.post('/api/billing/checkout', authRequired, async (req, res) => {
     // PLUS RED exige tener ficha profesional verificada: pagar sin estar
     // verificado dejaría al electricista pagando por avisos que no recibiría.
     if (queCompra === 'red') {
-      const e = await pool.query(
-        'SELECT verificado FROM electricians WHERE user_id=$1 LIMIT 1', [usuario.id]);
-      if (!e.rows.length) {
+      let ficha = null;
+      try {
+        const e = await pool.query(
+          'SELECT verificado FROM electricians WHERE user_id=$1 LIMIT 1', [usuario.id]);
+        ficha = e.rows[0] || null;
+      } catch (err) {
+        // Si la tabla aún no existe, se crea y se reintenta una vez. Antes
+        // este fallo se tragaba el checkout entero y el mensaje que veía el
+        // usuario no tenía nada que ver con la causa.
+        console.warn('electricians no disponible, preparando esquema:', err.message);
+        await prepararEsquema();
+        try {
+          const e2 = await pool.query(
+            'SELECT verificado FROM electricians WHERE user_id=$1 LIMIT 1', [usuario.id]);
+          ficha = e2.rows[0] || null;
+        } catch (err2) {
+          console.error('electricians sigue fallando', err2.message);
+          return res.status(500).json({ error: 'FALLO', mensaje: 'No se pudo comprobar tu ficha profesional.' });
+        }
+      }
+      if (!ficha) {
         return res.status(400).json({ error: 'SIN_FICHA', mensaje: 'Regístrate primero como electricista.' });
       }
-      if (!e.rows[0].verificado) {
+      if (!ficha.verificado) {
         return res.status(400).json({ error: 'NO_VERIFICADO', mensaje: 'Tu cuenta profesional aún está pendiente de verificación.' });
       }
     }
