@@ -14003,7 +14003,9 @@ body.eia570-consent-on #app main{padding-bottom:200px}
                 'no tiene sentido cobrarte por avisos que todavía no puedes recibir.');
           return;
         }
-        alert('No se pudo iniciar el pago. Prueba de nuevo en un momento.');
+        // Se muestra el motivo real: un "prueba más tarde" genérico no permite
+        // corregir nada ni a quien usa la app ni a quien la configura.
+        alert('No se pudo iniciar el pago.' + ((x.j && x.j.mensaje) ? '\n\nMotivo: ' + x.j.mensaje : ''));
       })
       .catch(function(){ alert('Sin conexión. Prueba de nuevo en un momento.'); });
   };

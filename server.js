@@ -1702,8 +1702,12 @@ app.post('/api/billing/checkout', authRequired, async (req, res) => {
     });
     const j = await r.json();
     if (!r.ok) {
-      console.error('stripe checkout', j && j.error && j.error.message);
-      return res.status(502).json({ error: 'PROVEEDOR', mensaje: 'No se pudo iniciar el pago.' });
+      // El mensaje de Stripe se devuelve tal cual: sin él es imposible saber
+      // si falla la clave, el precio o los permisos, y el usuario (o quien
+      // configura) se queda adivinando.
+      const detalle = (j && j.error && j.error.message) || 'Error desconocido del proveedor';
+      console.error('stripe checkout', r.status, detalle);
+      return res.status(502).json({ error: 'PROVEEDOR', mensaje: detalle });
     }
     res.json({ ok: true, url: j.url });
   } catch (e) {
