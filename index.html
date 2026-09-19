@@ -6986,7 +6986,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
     var cab=(typeof W.head==='function')?W.head(true):'';
 
     app.innerHTML=cab+'<main class="wrap page">'+
-      '<h1>⚙️ Ajustes</h1>'+
+      '<h1>🏡 Datos de mi vivienda</h1>'+
       '<p class="subtitle">Todo lo que guardes aquí queda en este dispositivo y te sirve justo cuando lo necesitas.</p>'+
 
       /* El recordatorio del test del diferencial se movió: pertenece a
@@ -11834,7 +11834,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
     eia380Electricistas:'Alta electricistas', eia470Comercios:'Alta comercios',
     eia410Aislar:'Aislar circuito', eia410Contador:'Contador',
     eia410Apanar:'Apañarse', eia410Diferencial:'Diferencial',
-    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes', eia520Inicio:'Reclamar daños', eia600MiCuenta:'Mi cuenta', eia610Red:'PLUS RED', eia610Info:'PLUS RED', eia620Historial:'Mi actividad', eia620Opiniones:'Opiniones', eia580MenuPro:'Modo Profesional', eia550Iniciar:'Asistente paso a paso', eia530Administradores:'Administradores', eia530Vecino:'Avisar avería', eia530Triaje:'Comunidad'
+    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes', eia520Inicio:'Reclamar daños', eia600MiCuenta:'Mi cuenta', eia640Ajustes:'Ajustes', eia610Red:'PLUS RED', eia610Info:'PLUS RED', eia620Historial:'Mi actividad', eia620Opiniones:'Opiniones', eia580MenuPro:'Modo Profesional', eia550Iniciar:'Asistente paso a paso', eia530Administradores:'Administradores', eia530Vecino:'Avisar avería', eia530Triaje:'Comunidad'
   };
 
   var actual=null;
@@ -12032,11 +12032,11 @@ ${W.sourcesBlock?W.sourcesBlock():''}
       '<p>Todo lo de tu vivienda que conviene tener anotado. Se guarda en este teléfono, '+
       'no hace falta cuenta y aparece solo cuando lo necesitas.</p></div>'+
 
-      t('eia330Ajustes&&eia330Ajustes()','🏠','Mi instalación',
+      t('eia640DatosVivienda&&eia640DatosVivienda()','🏠','Mi instalación',
         'Dónde está el cuadro, qué protege cada térmico, tu distribuidora',
         tieneInst?'Completada':'Sin rellenar', tieneInst)+
 
-      t('eia330Ajustes&&eia330Ajustes()','📞','Contactos de emergencia',
+      t('eia640DatosVivienda&&eia640DatosVivienda()','📞','Contactos de emergencia',
         'Tu electricista y la distribuidora, a un toque',
         cs.length? (cs.length+' guardado'+(cs.length===1?'':'s')) : 'Ninguno', cs.length>0)+
 
@@ -12045,7 +12045,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
         dias===null?'Nunca probado':('Hace '+dias+' día'+(dias===1?'':'s')),
         dias!==null && dias<30)+
 
-      t('eia330Ajustes&&eia330Ajustes()','📒','Historial de averías',
+      t('eia640DatosVivienda&&eia640DatosVivienda()','📒','Historial de averías',
         'Lo que ya pasó y cómo se resolvió',
         av.length? (av.length+' registrada'+(av.length===1?'':'s')) : 'Vacío', av.length>0)+
 
@@ -14860,6 +14860,204 @@ nav.bottom .nav.active span{font-weight:800}
     }
   }catch(_){ }
   if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',inyectar); else inyectar();
+})();
+</script>
+
+<style id="eia640-css">
+.eia640-hero{border-radius:18px;padding:17px;margin:10px 0 14px;position:relative;overflow:hidden}
+.eia640-hero.free{background:linear-gradient(140deg,#1b2a3d,#2d4562 60%,#35597f)}
+.eia640-hero.pro{background:linear-gradient(140deg,#3b2a05,#7a5a11 55%,#a8801c)}
+.eia640-hero.anon{background:linear-gradient(140deg,#232b36,#3a4653)}
+.eia640-hero::after{content:'';position:absolute;right:-32px;top:-32px;width:130px;height:130px;
+  border-radius:50%;background:rgba(255,255,255,.07)}
+.eia640-hero .plan{display:inline-block;font-size:10.5px;font-weight:900;letter-spacing:.1em;
+  padding:3px 10px;border-radius:99px;background:rgba(255,255,255,.18);color:#fff;margin-bottom:8px}
+.eia640-hero h1{margin:0 0 3px;font-size:21px;color:#fff;position:relative}
+.eia640-hero p{margin:0;font-size:13.2px;line-height:1.5;color:#dbe8f6;position:relative}
+.eia640-hero.pro p{color:#f6ead0}
+.eia640-sec{font-size:11.5px;font-weight:800;letter-spacing:.08em;color:#8fa8c4;margin:20px 0 8px}
+.eia640-t{display:grid;grid-template-columns:40px 1fr 20px;gap:11px;align-items:center;width:100%;text-align:left;
+  background:#fff;border:1px solid #d9e2ee;border-radius:14px;padding:13px;margin-bottom:8px;cursor:pointer}
+.eia640-t .ic{width:40px;height:40px;border-radius:11px;background:#eef3fb;display:flex;align-items:center;justify-content:center;font-size:19px}
+.eia640-t b{display:block;font-size:14.8px;color:#12203a}
+.eia640-t small{display:block;font-size:12.2px;color:#55687f;line-height:1.4;margin-top:1px}
+.eia640-t .fl{color:#546b88;font-size:17px}
+.eia640-t .val{font-size:12.5px;color:#0b63c7;font-weight:700}
+.eia640-uso{background:rgba(255,255,255,.12);border-radius:12px;padding:11px;margin-top:12px;position:relative}
+.eia640-uso .fila{display:flex;justify-content:space-between;font-size:12.5px;color:#fff;margin-bottom:4px}
+.eia640-bar{height:6px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden}
+.eia640-bar i{display:block;height:100%;background:#fff;border-radius:99px}
+.eia640-bar i.alto{background:#ffcf5c}
+.eia640-bar i.tope{background:#ff8f7a}
+.eia640-btn{display:block;width:100%;margin-top:9px;padding:12px;border:0;border-radius:11px;background:#0b63c7;color:#fff;font-weight:800;font-size:14.5px;cursor:pointer}
+.eia640-btn.alt{background:#eef3fa;border:1px solid #ccd9ea;color:#1c3252}
+.eia640-btn.pro{background:linear-gradient(135deg,#f0c74e,#ffd96b);color:#231a02}
+.eia640-nota{font-size:12.3px;color:#8fa8c4;line-height:1.5;margin:14px 2px 0}
+.eia640-nota a,.eia640-nota button{color:#7cc4ff;background:none;border:0;padding:0;font:inherit;text-decoration:underline;cursor:pointer}
+</style>
+
+<script id="electroia-v640-ajustes">
+(function(){
+  'use strict';
+  var W=window, D=document;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function shell(html){
+    var app=D.getElementById('app'); if(!app) return;
+    if(typeof W.nav==='function'){ try{ W.nav('nSettings'); }catch(_){ } }
+    var cab=(typeof W.head==='function')?W.head(false):'';
+    app.innerHTML=cab+'<main class="wrap page">'+html+'</main>';
+    try{ W.scrollTo(0,0); }catch(_){ }
+  }
+  function sesion(){
+    var ks=['electroia_session_v1','electroia_user','eia_user','currentUser','electroia_session','eia_session'];
+    for(var i=0;i<ks.length;i++){
+      try{ var r=localStorage.getItem(ks[i]); if(r){ var v=JSON.parse(r); if(v&&(v.token||v.email)) return v; } }catch(_){ }
+    }
+    return null;
+  }
+  function esPro(){ try{ return typeof W.eia340EsPro==='function' && W.eia340EsPro(); }catch(_){ return false; } }
+
+  /* ============================================================
+     AJUSTES = CUENTA Y CONFIGURACIÓN
+     ------------------------------------------------------------
+     Ajustes tenía siete tarjetas y CINCO estaban duplicadas en
+     Mi hogar: consumo, contactos de emergencia, instalación,
+     historial y copia de seguridad. Dos sitios para lo mismo
+     significa que el usuario nunca sabe dónde mirar, y que un
+     cambio hay que hacerlo dos veces.
+
+     El criterio ahora es de quién es el dato:
+     · Mi hogar  -> datos de la VIVIENDA. Viven en el dispositivo,
+                    no hacen falta cuenta.
+     · Ajustes   -> datos de la CUENTA: plan, suscripción, perfil,
+                    privacidad y preferencias de la app.
+
+     Lo que se movió no se borra: Mi hogar ya tenía todas esas
+     tarjetas, así que nadie pierde acceso a nada.
+     ============================================================ */
+
+  var USO=null, pidiendo=false;
+  function pedirUso(luego){
+    var h={}; var s=sesion();
+    if(s && s.token) h['Authorization']='Bearer '+s.token;
+    fetch('/api/plan',{headers:h})
+      .then(function(r){ return r.ok? r.json():null; })
+      .then(function(j){ luego(j||{}); })
+      .catch(function(){ luego({}); });
+  }
+
+  function barra(usado,limite){
+    if(limite==null) return '<div class="fila"><span>Consultas a la IA</span><b>Sin límite</b></div>';
+    var pct=Math.min(100,Math.round(usado/limite*100));
+    var cls=pct>=100?'tope':(pct>=80?'alto':'');
+    return '<div class="fila"><span>Consultas a la IA este mes</span><b>'+usado+' / '+limite+'</b></div>'+
+      '<div class="eia640-bar"><i class="'+cls+'" style="width:'+pct+'%"></i></div>';
+  }
+
+  function t(fn,ic,tit,sub,val){
+    return '<button class="eia640-t" type="button" onclick="'+fn+'">'+
+      '<span class="ic">'+ic+'</span>'+
+      '<span><b>'+esc(tit)+'</b><small>'+esc(sub)+'</small>'+
+      (val?'<span class="val">'+esc(val)+'</span>':'')+'</span>'+
+      '<span class="fl" aria-hidden="true">›</span></button>';
+  }
+
+  W.eia640Ajustes=function(){
+    if(!pidiendo){
+      pidiendo=true;
+      pedirUso(function(j){
+        pidiendo=false;
+        if(JSON.stringify(j)!==JSON.stringify(USO)){ USO=j; W.eia640Ajustes(); } else USO=j;
+      });
+    }
+    var s=sesion(), pro=esPro(), U=USO||{};
+    if(U.plan==='pro') pro=true;
+    var ia=U.ia||{}, pr=U.proyectos||{};
+    var hasta='';
+    if(U.plan_until){ try{ hasta=new Date(U.plan_until).toLocaleDateString('es-ES'); }catch(_){ } }
+
+    var hero = s
+      ? '<div class="eia640-hero '+(pro?'pro':'free')+'">'+
+        '<span class="plan">'+(pro?'PLAN PRO':'PLAN GRATUITO')+'</span>'+
+        '<h1>'+esc(s.name||s.email||'Tu cuenta')+'</h1>'+
+        '<p>'+esc(s.email||'')+'</p>'+
+        (ia.limite!==undefined
+          ? '<div class="eia640-uso">'+barra(ia.usado||0, ia.limite)+
+            '<div class="fila" style="margin:6px 0 0"><span>Proyectos</span><b>'+
+            (pr.usado||0)+(pr.limite==null?' (sin límite)':' / '+pr.limite)+'</b></div></div>'
+          : '')+
+        '</div>'
+      : '<div class="eia640-hero anon">'+
+        '<span class="plan">SIN CUENTA</span>'+
+        '<h1>No has iniciado sesión</h1>'+
+        '<p>El diagnóstico de urgencias y las guías funcionan sin cuenta. '+
+        'Entra para guardar proyectos y contratar un plan.</p></div>';
+
+    shell('<h1 style="font-size:20px;margin:6px 0 0">Ajustes</h1>'+hero+
+
+      (s
+        ? '<div class="eia640-sec">MI CUENTA</div>'+
+          t('eia600MiCuenta&&eia600MiCuenta()','👤','Datos de la cuenta',
+            'Nombre y correo', esc(s.name||s.email||''))+
+          t(pro?'eia600Facturacion&&eia600Facturacion()':'eia340VerPlanes&&eia340VerPlanes()',
+            pro?'💳':'⭐', pro?'Mi suscripción':'Pasar a PRO',
+            pro?('Gestionar pago o cancelar'+(hasta?' · renueva el '+hasta:'')):'Presupuestos, partes y documentos',
+            pro?'PRO':'GRATUITO')+
+          t('eia610Red&&eia610Red()','🔌','PLUS RED',
+            'Para electricistas: recibir avisos de tu zona')+
+          t('eia620Historial&&eia620Historial()','📊','Mi actividad profesional',
+            'Historial de avisos y trabajos')
+
+        : '<div class="eia640-sec">CUENTA</div>'+
+          t('eia600Entrar&&eia600Entrar()','🔑','Iniciar sesión o registrarme',
+            'Para guardar proyectos y contratar un plan')+
+          t('eia340VerPlanes&&eia340VerPlanes()','⭐','Ver los planes',
+            'Qué incluye cada uno'))+
+
+      '<div class="eia640-sec">PRIVACIDAD Y DATOS</div>'+
+      t('eia380MisDatos&&eia380MisDatos()','🔐','Mis datos y privacidad',
+        'Descargar o eliminar tu información')+
+      t('eia570Revisar&&eia570Revisar()','📈','Medición de uso',
+        'Decidir si nos dejas medir el uso de la app')+
+      t("eia380Ver&&eia380Ver('privacidad')",'📄','Política de privacidad',
+        'Qué datos tratamos y para qué')+
+
+      '<div class="eia640-sec">LA APLICACIÓN</div>'+
+      t('eia620Opiniones&&eia620Opiniones()','💬','Opiniones y sugerencias',
+        'Cuéntanos qué mejorar · lee lo que dicen otros')+
+      t("eia380Ver&&eia380Ver('aviso')",'⚖️','Aviso legal y términos',
+        'Titular, condiciones y responsabilidades')+
+
+      '<p class="eia640-nota">Los datos de tu vivienda (instalación, contactos de emergencia, '+
+      'historial de averías y consumo) están en '+
+      '<button type="button" onclick="eia500MiHogar&&eia500MiHogar()">Mi hogar</button>. '+
+      'Se guardan en este dispositivo y no necesitan cuenta.</p>'+
+
+      (s? '<button class="eia640-btn alt" type="button" onclick="eia600Salir&&eia600Salir()">Cerrar sesión</button>':'')
+    );
+  };
+
+  /* Sustituye la pantalla de Ajustes anterior. */
+  function fijar(nombre,fn){
+    try{ Object.defineProperty(W,nombre,{configurable:true,get:function(){return fn;},set:function(){}}); }
+    catch(_){ W[nombre]=fn; }
+  }
+  /* La pantalla antigua contenía las tarjetas de la vivienda (instalación,
+     contactos, historial, copia de seguridad). Se conserva bajo otro nombre
+     para que Mi hogar siga llegando a ellas: sustituirla sin más dejaba esas
+     tres tarjetas sin destino. */
+  W.eia640DatosVivienda = function(){
+    if(typeof W.eia330Ajustes==='function') return W.eia330Ajustes();
+    if(typeof W.eia500MiHogar==='function') return W.eia500MiHogar();
+  };
+
+  /* Solo se sustituye `settings`, que es lo que llama el botón del menú.
+     `eia330Ajustes` se deja intacta: es la pantalla de datos de la vivienda
+     y sus propios formularios la vuelven a llamar al guardar. Sustituirla
+     hacía que, tras guardar un contacto, apareciera el Ajustes de cuenta
+     y el contacto pareciera no haberse guardado. */
+  fijar('settings', W.eia640Ajustes);
 })();
 </script>
 
