@@ -14713,4 +14713,154 @@ body.eia570-consent-on #app main{padding-bottom:200px}
 })();
 </script>
 
+<style id="eia630-css">
+/* ============================================================
+   BARRA INFERIOR MÁS LEGIBLE
+   ------------------------------------------------------------
+   El área táctil ya era suficiente (98x77 px, muy por encima de
+   los 44x44 que recomienda la WCAG). El problema era la LETRA:
+   11 px es demasiado pequeño para leer de un vistazo, y en una
+   urgencia se lee con prisa y mala luz.
+
+   Se sube el texto a 13 px y el icono a 26. La barra crece unos
+   pocos píxeles, pero sigue siendo compacta.
+   ============================================================ */
+nav.bottom{min-height:86px}
+nav.bottom button.nav,
+nav.bottom button{font-size:13px;padding:6px 4px;line-height:1.25}
+nav.bottom button.nav span,
+nav.bottom button span{font-size:13px;font-weight:700;display:block;margin-top:3px}
+nav.bottom .i,
+nav.bottom svg{font-size:26px;width:26px;height:26px}
+.eia490-casa{width:26px;height:26px}
+/* Activo más marcado: en la barra antigua apenas se distinguía. */
+nav.bottom .nav.active{color:#4aa3ff}
+nav.bottom .nav.active span{font-weight:800}
+/* El contenido necesita hueco extra para que la barra no tape lo último. */
+#app main.wrap.page{padding-bottom:104px}
+
+/* ============================================================
+   PETICIÓN DE OPINIÓN
+   ============================================================ */
+.eia630-pide{background:linear-gradient(140deg,#13233a,#1d3b5e);border:1px solid #2f5580;
+  border-radius:16px;padding:17px;margin:14px 0;color:#dbe8f6}
+.eia630-pide b{display:block;font-size:16px;color:#fff;margin-bottom:5px}
+.eia630-pide p{margin:0 0 13px;font-size:13.6px;line-height:1.55;color:#c3d8ee}
+.eia630-estrellas{display:flex;gap:8px;justify-content:center;margin-bottom:12px}
+/* Las estrellas son emojis, pero heredaban color negro sobre el fondo
+   oscuro de la tarjeta. Se les da color propio para que se lean también
+   cuando el sistema las dibuja como glifo y no como imagen a color. */
+.eia630-estrellas button{background:none;border:0;font-size:34px;cursor:pointer;padding:2px;
+  line-height:1;color:#ffd35c;filter:grayscale(1);opacity:.5;transition:opacity .12s,filter .12s}
+.eia630-estrellas button.on{color:#ffd35c}
+.eia630-estrellas button.on{filter:none;opacity:1}
+.eia630-pide .no{display:block;width:100%;background:none;border:0;color:#9fb8d4;
+  font-size:12.8px;text-decoration:underline;cursor:pointer;padding:7px}
+</style>
+
+<script id="electroia-v630-opinion">
+(function(){
+  'use strict';
+  var W=window, D=document;
+
+  /* ============================================================
+     PEDIR OPINIÓN EN EL BUEN MOMENTO
+     ------------------------------------------------------------
+     El apartado de opiniones estaba solo en el pie: dos toques y
+     hay que saber que existe. Casi nadie llega.
+
+     Se pide justo después de resolver algo, que es cuando la
+     persona acaba de tener una experiencia que valorar y está
+     más dispuesta a contarla.
+
+     Límites deliberados:
+     · Una sola vez cada 30 días. Preguntar en cada avería
+       convierte una petición en una molestia.
+     · Si ya la dejó, no se vuelve a pedir.
+     · Se puede rechazar con un toque, y ese "no" se respeta 30
+       días también.
+     ============================================================ */
+  var CLAVE='eia630-pedido';
+  function leer(){ try{ return JSON.parse(localStorage.getItem(CLAVE)||'{}')||{}; }catch(_){ return {}; } }
+  function guardar(d){ try{ localStorage.setItem(CLAVE,JSON.stringify(d)); }catch(_){ } }
+
+  function tocaPedir(){
+    var d=leer();
+    if(d.dejada) return false;                       // ya opinó: nunca más
+    if(!d.ultimo) return true;
+    return (Date.now()-d.ultimo) > 30*86400000;      // un mes desde el último "no"
+  }
+  W.eia630Marcar=function(dejada){
+    var d=leer(); d.ultimo=Date.now();
+    if(dejada) d.dejada=true;
+    guardar(d);
+  };
+
+  var PUNTOS=0;
+  W.eia630Puntuar=function(n){
+    PUNTOS=n;
+    var c=D.getElementById('e630Est'); if(!c) return;
+    var bs=c.querySelectorAll('button');
+    for(var i=0;i<bs.length;i++) bs[i].classList.toggle('on', i<n);
+    // Con la puntuación elegida se abre el formulario completo, ya marcado.
+    setTimeout(function(){
+      W.eia630Marcar(false);
+      if(typeof W.eia620Opiniones==='function'){
+        W.eia620Opiniones();
+        setTimeout(function(){
+          try{
+            if(typeof W.eia620Puntuar==='function') W.eia620Puntuar(n);
+            var t=D.getElementById('e620Txt'); if(t) t.focus();
+          }catch(_){ }
+        },600);
+      }
+    },320);
+  };
+  W.eia630No=function(){
+    W.eia630Marcar(false);
+    var e=D.getElementById('e630Pide'); if(e) e.remove();
+  };
+
+  function bloque(){
+    return '<div class="eia630-pide" id="e630Pide">'+
+      '<b>¿Te ha servido?</b>'+
+      '<p>Cuéntanoslo en un toque. Nos sirve para saber qué mejorar, y a otros para saber si esto vale la pena.</p>'+
+      '<div class="eia630-estrellas" id="e630Est">'+
+      [1,2,3,4,5].map(function(i){
+        return '<button type="button" aria-label="'+i+' de 5 estrellas" onclick="eia630Puntuar('+i+')">⭐</button>';
+      }).join('')+'</div>'+
+      '<button class="no" type="button" onclick="eia630No()">Ahora no</button>'+
+      '</div>';
+  }
+
+  /* Se inserta en los dos momentos en que alguien acaba de resolver algo:
+     al cerrar una avería y al terminar el asistente paso a paso. */
+  function inyectar(){
+    try{
+      if(D.getElementById('e630Pide')) return;
+      if(!tocaPedir()) return;
+      var main=D.querySelector('#app main'); if(!main) return;
+      var txt=main.textContent||'';
+      var resuelto = /Avería cerrada|Todo volvió a la normalidad|Resuelto sin aviso/.test(txt)
+                  || (/Resuelto/.test(txt) && D.querySelector('.eia550-fin'));
+      if(!resuelto) return;
+      var d=D.createElement('div');
+      d.innerHTML=bloque();
+      // Justo después del mensaje de éxito, antes de los botones de salida.
+      var ancla=main.querySelector('.eia550-fin, .eia440-card, .eia530-card');
+      if(ancla && ancla.parentNode) ancla.parentNode.insertBefore(d.firstChild, ancla.nextSibling);
+      else main.appendChild(d.firstChild);
+    }catch(_){ }
+  }
+  try{
+    if(W.MutationObserver){
+      var t=null;
+      new MutationObserver(function(){ clearTimeout(t); t=setTimeout(inyectar,280); })
+        .observe(D.documentElement,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',inyectar); else inyectar();
+})();
+</script>
+
 </body></html>
