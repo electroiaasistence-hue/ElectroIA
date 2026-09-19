@@ -1076,13 +1076,13 @@ app.post('/api/auth/verificar', authRateLimit, authRequired, async (req, res) =>
 });
 
 /* ============================================================
-   PRO RED — reparto de avisos a electricistas
+   PLUS RED — reparto de avisos a electricistas
    ------------------------------------------------------------
    Cuando el diagnóstico concluye que hace falta un profesional y
    el usuario lo pide, el aviso se reparte entre los electricistas
    dados de alta en esa zona.
 
-   CUOTA: 8 avisos al mes incluidos en PRO RED. Agotados, el
+   CUOTA: 8 avisos al mes incluidos en PLUS RED. Agotados, el
    electricista puede comprar más. El tope existe por dos razones:
    evita que un solo profesional acapare los avisos de la zona, y
    convierte cada aviso en algo que se valora en lugar de ruido.
@@ -1092,7 +1092,7 @@ app.post('/api/auth/verificar', authRateLimit, authRequired, async (req, res) =>
    dentro del sistema; repartir por antigüedad o al azar hace que
    los últimos en llegar no reciban nunca nada y se den de baja.
    ============================================================ */
-const PRORED_CUOTA = 8;
+const PLUSRED_CUOTA = 8;
 
 async function asegurarTablasRed() {
   await pool.query(`
@@ -1122,7 +1122,7 @@ async function cupoDe(id) {
   const e = await pool.query('SELECT plan, avisos_extra FROM electricians WHERE id=$1', [id]);
   if (!e.rows.length) return { total: 0, usados: 0, quedan: 0, plan: 'free' };
   const fila = e.rows[0];
-  const total = fila.plan === 'red' ? PRORED_CUOTA + (fila.avisos_extra || 0) : 0;
+  const total = fila.plan === 'red' ? PLUSRED_CUOTA + (fila.avisos_extra || 0) : 0;
   const u = await pool.query(
     'SELECT COUNT(*)::int AS n FROM avisos WHERE electrician_id=$1 AND periodo=$2', [id, periodo]);
   const usados = u.rows[0].n;
@@ -1148,7 +1148,7 @@ app.post('/api/avisos/repartir', rateLimit(10, 60 * 60 * 1000, 'avisos'), authOp
        String(resumen || '').slice(0, 2000), String(urgencia || '').slice(0, 40), 'nuevo']
     );
 
-    // Candidatos: activos, en PRO RED, de esa zona, ordenados por quien
+    // Candidatos: activos, en PLUS RED, de esa zona, ordenados por quien
     // menos avisos lleva este mes.
     const cand = await pool.query(`
       SELECT e.id, e.nombre, e.telefono, e.email, e.avisos_extra,
@@ -1169,7 +1169,7 @@ app.post('/api/avisos/repartir', rateLimit(10, 60 * 60 * 1000, 'avisos'), authOp
     const enviados = [];
     for (const e of cand.rows) {
       if (enviados.length >= 3) break;
-      const tope = PRORED_CUOTA + (e.avisos_extra || 0);
+      const tope = PLUSRED_CUOTA + (e.avisos_extra || 0);
       if (e.recibidos >= tope) continue;
       const id = crypto.randomUUID();
       await pool.query(
@@ -1228,7 +1228,7 @@ app.get('/api/red/mis-avisos', authRequired, async (req, res) => {
   }
 });
 
-// Admin: activar PRO RED o añadir avisos extra a un electricista.
+// Admin: activar PLUS RED o añadir avisos extra a un electricista.
 app.post('/api/red/plan', async (req, res) => {
   const token = req.get('x-admin-token') || '';
   if (!tokenAdminValido(token)) {
@@ -1265,7 +1265,7 @@ app.post('/api/red/plan', async (req, res) => {
    burocracia: es lo que convierte una lista de avisos sueltos en
    un historial consultable, y lo que permite saber qué porcentaje
    de avisos acaba en trabajo real. Ese dato es el argumento para
-   vender PRO RED a otros profesionales.
+   vender PLUS RED a otros profesionales.
    ============================================================ */
 app.post('/api/avisos/:id/estado', authRequired, async (req, res) => {
   if (!pool) return res.status(503).json({ error: 'DB_NOT_CONFIGURED' });
@@ -1654,7 +1654,7 @@ app.post('/api/billing/checkout', authRequired, async (req, res) => {
        · 'pro'  -> plan del USUARIO (tabla users): documentos, presupuestos.
        · 'red'  -> plan del ELECTRICISTA (tabla electricians): recibir avisos.
        Se lleva en metadata para que el webhook sepa qué activar. Sin esto,
-       un pago de PRO RED activaría el plan equivocado. */
+       un pago de PLUS RED activaría el plan equivocado. */
     const queCompra = String(req.body?.plan || 'pro') === 'red' ? 'red' : 'pro';
     const precioElegido = queCompra === 'red'
       ? process.env.STRIPE_PRICE_RED
@@ -1662,7 +1662,7 @@ app.post('/api/billing/checkout', authRequired, async (req, res) => {
     if (!precioElegido) {
       return res.status(503).json({ error: 'PAGOS_NO_CONFIGURADOS', mensaje: 'Esa tarifa no está configurada todavía.' });
     }
-    // PRO RED exige tener ficha profesional verificada: pagar sin estar
+    // PLUS RED exige tener ficha profesional verificada: pagar sin estar
     // verificado dejaría al electricista pagando por avisos que no recibiría.
     if (queCompra === 'red') {
       const e = await pool.query(
@@ -1820,7 +1820,7 @@ app.post('/api/billing/webhook',
                       provider_subscription_id = COALESCE($2, provider_subscription_id)
                 WHERE user_id=$3`,
               [hasta, obj.subscription || null, userId]);
-            console.info('PRO RED activado para', userId);
+            console.info('PLUS RED activado para', userId);
           } else {
             await pool.query(
               `UPDATE users SET plan='pro', plan_until=$1,

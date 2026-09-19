@@ -11651,7 +11651,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
           link('🏪','¿Tienes una tienda de material?','Llegá a los profesionales de tu zona','eia470Comercios()')+
           link('🏢','¿Administras fincas?','Filtra los avisos antes de mandar un gremio','eia530Administradores&&eia530Administradores()')+
           link('🔑','Soy vecino, tengo un código','Avisar de una avería de mi comunidad','eia530Vecino&&eia530Vecino()')+
-          link('🔌','PRO RED · recibir avisos','Avisos de tu zona, ya diagnosticados','eia610Red&&eia610Red()');
+          link('🔌','PLUS RED · recibir avisos','Avisos de tu zona, ya diagnosticados','eia610Red&&eia610Red()');
 
     // --- Ayuda ---
     var a=link('📖','Guías por avería','Las averías más frecuentes, explicadas','/urgencias/index.html',true)+
@@ -11829,7 +11829,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
     eia380Electricistas:'Alta electricistas', eia470Comercios:'Alta comercios',
     eia410Aislar:'Aislar circuito', eia410Contador:'Contador',
     eia410Apanar:'Apañarse', eia410Diferencial:'Diferencial',
-    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes', eia520Inicio:'Reclamar daños', eia600MiCuenta:'Mi cuenta', eia610Red:'PRO RED', eia610Info:'PRO RED', eia620Historial:'Mi actividad', eia620Opiniones:'Opiniones', eia580MenuPro:'Modo Profesional', eia550Iniciar:'Asistente paso a paso', eia530Administradores:'Administradores', eia530Vecino:'Avisar avería', eia530Triaje:'Comunidad'
+    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes', eia520Inicio:'Reclamar daños', eia600MiCuenta:'Mi cuenta', eia610Red:'PLUS RED', eia610Info:'PLUS RED', eia620Historial:'Mi actividad', eia620Opiniones:'Opiniones', eia580MenuPro:'Modo Profesional', eia550Iniciar:'Asistente paso a paso', eia530Administradores:'Administradores', eia530Vecino:'Avisar avería', eia530Triaje:'Comunidad'
   };
 
   var actual=null;
@@ -13994,7 +13994,7 @@ body.eia570-consent-on #app main{padding-bottom:200px}
           return;
         }
         if(e==='SIN_FICHA'){
-          alert('Antes de contratar PRO RED necesitamos tu ficha profesional.');
+          alert('Antes de contratar PLUS RED necesitamos tu ficha profesional.');
           if(typeof W.eia380Electricistas==='function') W.eia380Electricistas();
           return;
         }
@@ -14158,7 +14158,7 @@ body.eia570-consent-on #app main{padding-bottom:200px}
   }
 
   /* ============================================================
-     PRO RED
+     PLUS RED
      ------------------------------------------------------------
      El electricista paga por recibir avisos reales de su zona,
      ya diagnosticados. La cuota de 8 al mes no es una limitación
@@ -14173,9 +14173,9 @@ body.eia570-consent-on #app main{padding-bottom:200px}
 
   W.eia610Red=function(){
     if(!token()){
-      return shell('<h1>🔌 PRO RED</h1>'+
+      return shell('<h1>🔌 PLUS RED</h1>'+
         '<div class="eia610-card"><h3>Necesitas una cuenta</h3>'+
-        '<p class="sub">PRO RED envía avisos a tu móvil, así que hace falta identificarte.</p>'+
+        '<p class="sub">PLUS RED envía avisos a tu móvil, así que hace falta identificarte.</p>'+
         '<button class="eia610-btn" type="button" onclick="eia600Entrar&&eia600Entrar()">Iniciar sesión o registrarme</button>'+
         '<button class="eia610-btn alt" type="button" onclick="eia610Info()">Ver cómo funciona</button></div>');
     }
@@ -14184,7 +14184,7 @@ body.eia570-consent-on #app main{padding-bottom:200px}
   };
 
   function pintarCargando(){
-    shell('<h1>🔌 PRO RED</h1><div class="eia610-card"><p class="sub">Cargando tus avisos…</p></div>');
+    shell('<h1>🔌 PLUS RED</h1><div class="eia610-card"><p class="sub">Cargando tus avisos…</p></div>');
   }
 
   function pedir(){
@@ -14197,7 +14197,7 @@ body.eia570-consent-on #app main{padding-bottom:200px}
   function pintar(){
     var d=DATOS||{};
     if(d.error){
-      return shell('<h1>🔌 PRO RED</h1><div class="eia610-card"><h3>Sin conexión</h3>'+
+      return shell('<h1>🔌 PLUS RED</h1><div class="eia610-card"><h3>Sin conexión</h3>'+
         '<p class="sub">No pudimos cargar tus avisos. Prueba de nuevo en un momento.</p>'+
         '<button class="eia610-btn" type="button" onclick="eia610Recargar()">Reintentar</button></div>');
     }
@@ -14224,7 +14224,7 @@ body.eia570-consent-on #app main{padding-bottom:200px}
       : '<p class="sub">Todavía no has recibido avisos. Llegarán cuando alguien de tu zona los pida.</p>';
 
     shell('<div class="eia610-hero">'+
-      '<span class="kick">PRO RED · ACTIVO</span>'+
+      '<span class="kick">PLUS RED · ACTIVO</span>'+
       '<h1>Tus avisos</h1>'+
       '<p>Avisos reales de tu zona, con el diagnóstico ya hecho.</p>'+
       '<div class="eia610-cupo"><div class="n">'+c.quedan+'</div>'+
@@ -14250,7 +14250,7 @@ body.eia570-consent-on #app main{padding-bottom:200px}
     var yaAlta = cupo && cupo.plan && cupo.plan!=='red';
     shell('<div class="eia610-hero">'+
       '<span class="kick">PARA ELECTRICISTAS</span>'+
-      '<h1>PRO RED</h1>'+
+      '<h1>PLUS RED</h1>'+
       '<p>Recibe avisos de gente de tu zona que ya ha probado lo básico y necesita un profesional.</p></div>'+
 
       '<div class="eia610-card"><h3>Qué recibes exactamente</h3>'+
@@ -14267,13 +14267,13 @@ body.eia570-consent-on #app main{padding-bottom:200px}
       'profesional acapare la zona y hace que cada aviso se atienda de verdad.</p>'+
       '<div class="eia610-paso"><span class="n">·</span><span>Cada aviso va a <b>los 3 profesionales</b> de la zona que menos han recibido este mes.</span></div>'+
       '<div class="eia610-paso"><span class="n">·</span><span>Sin permanencia: se cancela cuando quieras.</span></div>'+
-      '<button class="eia610-btn" type="button" onclick="eia600Suscribir&&eia600Suscribir(\'red\')">Contratar PRO RED</button>'+
+      '<button class="eia610-btn" type="button" onclick="eia600Suscribir&&eia600Suscribir(\'red\')">Contratar PLUS RED</button>'+
       '<button class="eia610-btn alt" type="button" onclick="eia610Solicitar()">Prefiero que me escribáis</button>'+
       '</div>'+
 
       (yaAlta
         ? '<div class="eia610-card"><h3>Ya estás dado de alta</h3>'+
-          '<p class="sub">Tu ficha está registrada pero PRO RED no está activo todavía. Escríbenos y lo activamos.</p></div>'
+          '<p class="sub">Tu ficha está registrada pero PLUS RED no está activo todavía. Escríbenos y lo activamos.</p></div>'
         : '<div class="eia610-card"><h3>¿Aún no te has registrado?</h3>'+
           '<p class="sub">Primero necesitamos tu ficha profesional: zona, nº de instalador y contacto.</p>'+
           '<button class="eia610-btn alt" type="button" onclick="eia380Electricistas&&eia380Electricistas()">Registrarme como electricista</button></div>')+
@@ -14288,11 +14288,11 @@ body.eia570-consent-on #app main{padding-bottom:200px}
   W.eia610Solicitar=function(){
     var c=(W.ELECTROIA_CONTACTO&&W.ELECTROIA_CONTACTO.email)||'';
     if(c){
-      var asunto=encodeURIComponent('Alta en PRO RED');
-      var cuerpo=encodeURIComponent('Hola, quiero activar PRO RED.\n\nNombre:\nZona:\nNº de instalador:\nTeléfono:\n');
+      var asunto=encodeURIComponent('Alta en PLUS RED');
+      var cuerpo=encodeURIComponent('Hola, quiero activar PLUS RED.\n\nNombre:\nZona:\nNº de instalador:\nTeléfono:\n');
       location.href='mailto:'+c+'?subject='+asunto+'&body='+cuerpo;
     } else {
-      alert('Escríbenos para activar PRO RED en tu zona.');
+      alert('Escríbenos para activar PLUS RED en tu zona.');
     }
   };
   W.eia610Ampliar=function(){
@@ -14308,7 +14308,7 @@ body.eia570-consent-on #app main{padding-bottom:200px}
         b.id='e610Link'; b.type='button'; b.className='eia470-link';
         b.setAttribute('onclick','eia610Red()');
         b.innerHTML='<span class="ic" aria-hidden="true">🔌</span>'+
-          '<span class="tx"><b>PRO RED · recibir avisos</b>'+
+          '<span class="tx"><b>PLUS RED · recibir avisos</b>'+
           '<small>Avisos de tu zona, ya diagnosticados</small></span>'+
           '<span class="ex" aria-hidden="true">›</span>';
         cont.appendChild(b);
@@ -14400,7 +14400,7 @@ body.eia570-consent-on #app main{padding-bottom:200px}
      convierte en un historial consultable y en un dato que importa:
      qué porcentaje de avisos acaba en trabajo real.
 
-     Ese número es además el argumento para vender PRO RED a otros
+     Ese número es además el argumento para vender PLUS RED a otros
      profesionales, así que conviene medirlo desde el primer día.
      ============================================================ */
   var D620=null, TAB='avisos';
@@ -14563,7 +14563,7 @@ body.eia570-consent-on #app main{padding-bottom:200px}
       '.kpi b{display:block;font-size:20px}.kpi span{font-size:11px;color:#5b6b80}'+
       '.pie{margin-top:22px;font-size:10.5px;color:#5b6b80;border-top:1px solid #ccd6e2;padding-top:9px}'+
       '</style></head><body>'+
-      '<h1>Informe de actividad · PRO RED</h1>'+
+      '<h1>Informe de actividad · PLUS RED</h1>'+
       '<div class="meta">Generado el '+esc(new Date().toLocaleString('es-ES'))+'</div>'+
       '<div class="kpis">'+
       '<div class="kpi"><b>'+(r.total||0)+'</b><span>avisos recibidos</span></div>'+
