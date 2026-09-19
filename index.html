@@ -11834,7 +11834,7 @@ ${W.sourcesBlock?W.sourcesBlock():''}
     eia380Electricistas:'Alta electricistas', eia470Comercios:'Alta comercios',
     eia410Aislar:'Aislar circuito', eia410Contador:'Contador',
     eia410Apanar:'Apañarse', eia410Diferencial:'Diferencial',
-    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes', eia520Inicio:'Reclamar daños', eia600MiCuenta:'Mi cuenta', eia640Ajustes:'Ajustes', eia610Red:'PLUS RED', eia610Info:'PLUS RED', eia620Historial:'Mi actividad', eia620Opiniones:'Opiniones', eia580MenuPro:'Modo Profesional', eia550Iniciar:'Asistente paso a paso', eia530Administradores:'Administradores', eia530Vecino:'Avisar avería', eia530Triaje:'Comunidad'
+    eia350Inicio:'Aprender', eia500MiHogar:'Mi hogar', eia330Ajustes:'Ajustes', eia520Inicio:'Reclamar daños', eia600MiCuenta:'Mi cuenta', eia640Ajustes:'Ajustes', eia650Planes:'Planes', eia610Red:'PLUS RED', eia610Info:'PLUS RED', eia620Historial:'Mi actividad', eia620Opiniones:'Opiniones', eia580MenuPro:'Modo Profesional', eia550Iniciar:'Asistente paso a paso', eia530Administradores:'Administradores', eia530Vecino:'Avisar avería', eia530Triaje:'Comunidad'
   };
 
   var actual=null;
@@ -15058,6 +15058,377 @@ nav.bottom .nav.active span{font-weight:800}
      hacía que, tras guardar un contacto, apareciera el Ajustes de cuenta
      y el contacto pareciera no haberse guardado. */
   fijar('settings', W.eia640Ajustes);
+})();
+</script>
+
+<style id="eia650-css">
+/* ============================================================
+   PLANES
+   ============================================================ */
+.eia650-plan{border:1px solid #d9e2ee;border-radius:18px;background:#fff;padding:18px;margin-bottom:12px;color:#1b2736}
+.eia650-plan,.eia650-plan *{color:#1b2736}
+.eia650-plan.destacado{border:2px solid #d4a52a;box-shadow:0 4px 18px rgba(168,128,28,.14)}
+.eia650-plan .etq{display:inline-block;font-size:10.5px;font-weight:900;letter-spacing:.09em;
+  padding:3px 10px;border-radius:99px;background:#eef2f7;color:#41506a;margin-bottom:9px}
+.eia650-plan.destacado .etq{background:#fdf0d2;color:#7a5400}
+.eia650-plan.red .etq{background:#e2eefb;color:#12527f}
+.eia650-plan h3{margin:0 0 3px;font-size:19px;color:#0f1b2b}
+.eia650-plan .para{font-size:12.6px;color:#55687f;margin:0 0 10px}
+.eia650-precio{display:flex;align-items:baseline;gap:7px;margin:4px 0 12px}
+.eia650-precio .p{font-size:29px;font-weight:900;color:#0f1b2b;line-height:1}
+.eia650-precio .u{font-size:13px;color:#55687f}
+.eia650-lista{list-style:none;padding:0;margin:0 0 14px}
+.eia650-lista li{position:relative;padding:0 0 0 25px;margin-bottom:8px;font-size:13.8px;line-height:1.5;color:#243449}
+.eia650-lista li::before{content:'✓';position:absolute;left:0;top:0;color:#0f7a44;font-weight:900}
+/* 3,03 sobre blanco: no cumple. Debe leerse aunque sea lo NO incluido. */
+.eia650-lista li.no{color:#5d6e84}
+.eia650-lista li.no::before{content:'—';color:#b4c1d0}
+.eia650-btn{display:block;width:100%;padding:13px;border:0;border-radius:11px;background:#0b63c7;color:#fff;font-weight:800;font-size:14.5px;cursor:pointer}
+.eia650-plan .eia650-btn{color:#fff}
+.eia650-btn.oro{background:linear-gradient(135deg,#f0c74e,#ffd96b);color:#231a02}
+.eia650-plan .eia650-btn.oro{color:#231a02}
+.eia650-btn.alt{background:#eef3fa;border:1px solid #ccd9ea;color:#1c3252}
+.eia650-plan .eia650-btn.alt{color:#1c3252}
+.eia650-nota{background:#f2f7fc;border-left:4px solid #1663c7;border-radius:0 11px 11px 0;padding:13px;margin:14px 0;color:#22364f;font-size:13.3px;line-height:1.6}
+
+/* ============================================================
+   MURO DE SESIÓN
+   ============================================================ */
+.eia650-muro{background:#131d2a;border:1px solid #2b3a4d;border-radius:16px;padding:18px;margin:12px 0;text-align:center}
+.eia650-muro .ic{font-size:34px}
+.eia650-muro b{display:block;font-size:16px;color:#fff;margin:8px 0 5px}
+.eia650-muro p{margin:0 0 14px;font-size:13.4px;color:#b7c9dd;line-height:1.55}
+
+/* ============================================================
+   OPINIONES EN EL PIE
+   ============================================================ */
+.eia650-op{border-top:1px solid #24344a;margin-top:22px;padding-top:20px}
+.eia650-op h2{margin:0 0 4px;font-size:17px;color:#eaf1fa}
+.eia650-op .sub{font-size:12.8px;color:#93a6bd;margin:0 0 14px;line-height:1.5}
+.eia650-media{display:flex;align-items:center;gap:13px;background:#101a26;border:1px solid #26333f;
+  border-radius:14px;padding:14px;margin-bottom:12px}
+.eia650-media .n{font-size:33px;font-weight:900;color:#fff;line-height:1}
+.eia650-media .est{font-size:17px;letter-spacing:2px;color:#ffd35c}
+.eia650-media .c{font-size:12.3px;color:#93a6bd;margin-top:2px}
+.eia650-card{background:#101a26;border:1px solid #26333f;border-radius:13px;padding:13px;margin-bottom:9px}
+.eia650-card .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.eia650-card b{font-size:13.8px;color:#eaf1fa}
+.eia650-card .f{font-size:11.5px;color:#93a6bd;white-space:nowrap}
+.eia650-card .e{font-size:13.5px;letter-spacing:1px;color:#ffd35c;margin:4px 0 6px}
+.eia650-card p{margin:0;font-size:13.2px;color:#c5d5e6;line-height:1.55}
+.eia650-invita{background:linear-gradient(140deg,#13233a,#1d3b5e);border:1px solid #2f5580;
+  border-radius:14px;padding:16px;margin-top:12px;text-align:center}
+.eia650-invita b{display:block;font-size:15.5px;color:#fff;margin-bottom:5px}
+.eia650-invita p{margin:0 0 12px;font-size:13.2px;color:#c3d8ee;line-height:1.5}
+.eia650-estrellas{display:flex;gap:7px;justify-content:center;margin-bottom:11px}
+.eia650-estrellas button{background:none;border:0;font-size:31px;cursor:pointer;padding:2px;line-height:1;
+  color:#ffd35c;filter:grayscale(1);opacity:.5}
+.eia650-estrellas button.on{filter:none;opacity:1}
+</style>
+
+<script id="electroia-v650-planes">
+(function(){
+  'use strict';
+  var W=window, D=document;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function shell(html){
+    var app=D.getElementById('app'); if(!app) return;
+    var cab=(typeof W.head==='function')?W.head(false):'';
+    app.innerHTML=cab+'<main class="wrap page">'+html+'</main>';
+    try{ W.scrollTo(0,0); }catch(_){ }
+  }
+  function sesion(){
+    var ks=['electroia_session_v1','electroia_user','eia_user','currentUser','electroia_session','eia_session'];
+    for(var i=0;i<ks.length;i++){
+      try{ var r=localStorage.getItem(ks[i]); if(r){ var v=JSON.parse(r); if(v&&(v.token||v.email)&&!v.guest) return v; } }catch(_){ }
+    }
+    return null;
+  }
+
+  /* ============================================================
+     1. ABRIR LA PANTALLA DE ACCESO
+     ------------------------------------------------------------
+     El formulario de registro ya existía, pero dentro de un modal
+     que solo se abría desde el chip de la cabecera. Mi versión
+     anterior buscaba funciones con otros nombres, no encontraba
+     ninguna y acababa llamando a settings(): por eso el botón
+     "Iniciar sesión" parecía no hacer nada.
+     ============================================================ */
+  W.eia650Entrar=function(modo){
+    var ov=D.getElementById('eiaAccountOverlay');
+    if(!ov){
+      alert('No se pudo abrir el formulario de acceso. Recarga la página.');
+      return;
+    }
+    try{ if(typeof W.eiaAccountMode==='function') W.eiaAccountMode(modo==='login'?'login':'register'); }catch(_){ }
+    ov.classList.add('show');
+    setTimeout(function(){
+      var c=D.getElementById(modo==='login'?'eiaEmail':'eiaName') || D.getElementById('eiaEmail');
+      if(c){ try{ c.focus(); }catch(_){ } }
+    },90);
+  };
+  // Se reemplaza la versión rota
+  try{
+    Object.defineProperty(W,'eia600Entrar',{configurable:true,
+      get:function(){ return W.eia650Entrar; }, set:function(){}});
+  }catch(_){ W.eia600Entrar=W.eia650Entrar; }
+
+  /* ============================================================
+     2. PLANES CON LO QUE INCLUYE CADA UNO
+     ============================================================ */
+  var PRECIOS=null;
+  W.eia650Planes=function(){
+    if(!PRECIOS){
+      fetch('/api/plan/precio').then(function(r){ return r.ok?r.json():{}; })
+        .then(function(j){ PRECIOS=j||{}; W.eia650Planes(); })
+        .catch(function(){ PRECIOS={}; W.eia650Planes(); });
+      return shell('<h1>⚡ Planes</h1><p class="subtitle">Cargando…</p>');
+    }
+    var P=PRECIOS||{};
+    var pPro = P.etiqueta && P.etiqueta!=='Consultar' ? P.etiqueta : null;
+    var pRed = (P.red && P.red.etiqueta && P.red.etiqueta!=='Consultar') ? P.red.etiqueta : null;
+    var hayPro = P.pro_disponible!==false;
+    var hayRed = !!(P.red && P.red.disponible);
+
+    shell('<h1 style="font-size:21px;margin:6px 0 4px">Planes de ElectroIA</h1>'+
+      '<p class="subtitle">La seguridad no se cobra. El diagnóstico de urgencias, las guías y las '+
+      'advertencias de peligro son gratuitas para siempre.</p>'+
+
+      // --- GRATIS ---
+      '<div class="eia650-plan">'+
+      '<span class="etq">GRATUITO</span>'+
+      '<h3>Gratis</h3>'+
+      '<p class="para">Para cualquiera que tenga un problema en casa.</p>'+
+      '<div class="eia650-precio"><span class="p">0 €</span><span class="u">siempre</span></div>'+
+      '<ul class="eia650-lista">'+
+      '<li>Diagnóstico de urgencias paso a paso</li>'+
+      '<li>Procedimientos: aislar circuito, contador, diferencial</li>'+
+      '<li>Guías de las averías más frecuentes</li>'+
+      '<li>Curso de 8 niveles con examen y certificado</li>'+
+      '<li>Calculadoras y tablas de referencia</li>'+
+      '<li>Analizar tu consumo real</li>'+
+      '<li>40 consultas a la IA al mes</li>'+
+      '<li>Hasta 3 proyectos guardados</li>'+
+      '<li class="no">Presupuestos y partes de trabajo</li>'+
+      '<li class="no">Documentos en PDF</li>'+
+      '</ul></div>'+
+
+      // --- PRO ---
+      '<div class="eia650-plan destacado">'+
+      '<span class="etq">EL MÁS COMPLETO</span>'+
+      '<h3>PRO</h3>'+
+      '<p class="para">Para el electricista que factura su trabajo.</p>'+
+      '<div class="eia650-precio"><span class="p">'+esc(pPro||'Consultar')+'</span>'+
+      (pPro?'<span class="u">por mes</span>':'')+'</div>'+
+      '<ul class="eia650-lista">'+
+      '<li><b>Todo lo del plan gratuito</b></li>'+
+      '<li>Presupuestos con materiales y mano de obra</li>'+
+      '<li>Catálogo de 73 partidas con tu tarifa</li>'+
+      '<li>Dictado por voz para presupuestar en obra</li>'+
+      '<li>Partes de trabajo con firma del cliente</li>'+
+      '<li>Fichas de cliente e historial</li>'+
+      '<li>Documentos en PDF listos para enviar</li>'+
+      '<li>Registro de mediciones e informes</li>'+
+      '<li>Proyectos sin límite</li>'+
+      '<li>1.500 consultas a la IA al mes</li>'+
+      '<li>2 llamadas de asistencia telefónica al mes</li>'+
+      '</ul>'+
+      (hayPro
+        ? '<button class="eia650-btn oro" type="button" onclick="eia650Contratar(\'pro\')">Contratar PRO</button>'
+        : '<button class="eia650-btn alt" type="button" onclick="eia650Escribir()">Consultar disponibilidad</button>')+
+      '</div>'+
+
+      // --- PLUS RED ---
+      '<div class="eia650-plan red">'+
+      '<span class="etq">SOLO ELECTRICISTAS</span>'+
+      '<h3>PLUS RED</h3>'+
+      '<p class="para">Para recibir clientes, no solo para trabajar mejor.</p>'+
+      '<div class="eia650-precio"><span class="p">'+esc(pRed||'Consultar')+'</span>'+
+      (pRed?'<span class="u">por mes</span>':'')+'</div>'+
+      '<ul class="eia650-lista">'+
+      '<li><b>8 avisos al mes</b> de gente de tu zona</li>'+
+      '<li>Cada aviso llega <b>ya diagnosticado</b>: qué pasa y qué probó</li>'+
+      '<li>Llamas tú: el cliente no tiene tus datos hasta entonces</li>'+
+      '<li>Historial de avisos y trabajos cerrados</li>'+
+      '<li>Informe de actividad imprimible</li>'+
+      '<li>Puedes ampliar avisos si los agotas</li>'+
+      '<li>Sin permanencia</li>'+
+      '</ul>'+
+      '<div class="eia650-nota" style="margin:0 0 13px"><b>Se contrata aparte de PRO.</b> '+
+      'Requiere ficha profesional verificada: no cobramos por avisos que todavía no puedes recibir.</div>'+
+      (hayRed
+        ? '<button class="eia650-btn" type="button" onclick="eia650Contratar(\'red\')">Contratar PLUS RED</button>'
+        : '<button class="eia650-btn alt" type="button" onclick="eia650Escribir()">Consultar disponibilidad</button>')+
+      '</div>'+
+
+      '<div class="eia650-nota"><b>Lo que no hacemos.</b> No cobramos comisión por trabajo cerrado, '+
+      'no vendemos tus datos y no hay publicidad dentro del diagnóstico. '+
+      'Puedes cancelar cuando quieras desde Ajustes.</div>'+
+
+      '<button class="eia650-btn alt" type="button" onclick="eiaAtras&&eiaAtras()">← Volver</button>');
+  };
+
+  W.eia650Contratar=function(cual){
+    if(!sesion()){
+      alert('Primero necesitas una cuenta para asociar la suscripción.');
+      return W.eia650Entrar('register');
+    }
+    if(typeof W.eia600Suscribir==='function') return W.eia600Suscribir(cual);
+  };
+  W.eia650Escribir=function(){
+    var c=(W.ELECTROIA_CONTACTO&&W.ELECTROIA_CONTACTO.email)||'';
+    if(c) location.href='mailto:'+c+'?subject='+encodeURIComponent('Consulta sobre los planes');
+    else alert('Escríbenos para conocer la disponibilidad.');
+  };
+  // Sustituye la pantalla de planes anterior
+  try{
+    Object.defineProperty(W,'eia340VerPlanes',{configurable:true,
+      get:function(){ return W.eia650Planes; }, set:function(){}});
+  }catch(_){ W.eia340VerPlanes=W.eia650Planes; }
+
+  /* ============================================================
+     3. MI HOGAR: VER SÍ, GUARDAR CON CUENTA
+     ------------------------------------------------------------
+     Se puede mirar sin cuenta —así se entiende para qué sirve—
+     pero al intentar guardar se pide iniciar sesión. Bloquear la
+     vista entera haría que nadie supiera qué se está perdiendo.
+     ============================================================ */
+  function muro(){
+    return '<div class="eia650-muro"><div class="ic">🔒</div>'+
+      '<b>Inicia sesión para guardar tus datos</b>'+
+      '<p>Así no los pierdes si cambias de móvil o borras el navegador. '+
+      'El diagnóstico de urgencias sigue funcionando sin cuenta.</p>'+
+      '<button class="eia650-btn" type="button" onclick="eia650Entrar(\'register\')">Crear cuenta</button>'+
+      '<button class="eia650-btn alt" style="margin-top:8px" type="button" onclick="eia650Entrar(\'login\')">Ya tengo cuenta</button>'+
+      '</div>';
+  }
+
+  function protegerHogar(){
+    try{
+      if(sesion()) return;
+      var h1=D.querySelector('#app main h1');
+      if(!h1) return;
+      var t=h1.textContent||'';
+      if(!/Mi hogar|Datos de mi vivienda/.test(t)) return;
+      if(D.getElementById('e650Muro')) return;
+
+      // Se muestra el aviso y se desactivan los campos, sin ocultar la pantalla.
+      var main=D.querySelector('#app main');
+      var d=D.createElement('div'); d.innerHTML=muro();
+      // El id va en el elemento que REALMENTE se inserta, no en el contenedor
+      // temporal: si no, la comprobación de "ya está puesto" nunca lo encuentra
+      // y el aviso se duplica o no se localiza.
+      if(d.firstChild && d.firstChild.nodeType===1) d.firstChild.id='e650Muro';
+      // Se inserta tras el encabezado sea cual sea su forma; si no hay ninguno
+      // reconocible, al principio del contenido. Antes fallaba en Mi hogar,
+      // donde el h1 vive dentro del propio hero.
+      var ancla=main.querySelector('.eia500-hero') || main.querySelector('h1');
+      if(ancla && ancla.parentNode) ancla.parentNode.insertBefore(d.firstChild, ancla.nextSibling);
+      else main.insertBefore(d.firstChild, main.firstChild);
+
+      main.querySelectorAll('input,textarea,select').forEach(function(c){
+        if(c.dataset.eia650) return;
+        c.dataset.eia650='1';
+        c.disabled=true;
+        c.style.opacity='.55';
+      });
+      main.querySelectorAll('button').forEach(function(b){
+        if(b.dataset.eia650) return;
+        var t2=(b.textContent||'').trim();
+        if(!/Guardar|Añadir|Agregar|Eliminar|Borrar|Descargar una copia/i.test(t2)) return;
+        b.dataset.eia650='1';
+        b.setAttribute('onclick','eia650Entrar(\'register\')');
+      });
+    }catch(_){ }
+  }
+
+  /* ============================================================
+     4. OPINIONES DESPLEGADAS AL PIE
+     ------------------------------------------------------------
+     Estaban escondidas tras dos toques y casi nadie llegaba. Al
+     verlas al final de la página, con la media y las últimas
+     opiniones a la vista, la invitación se entiende sola.
+     ============================================================ */
+  var VAL=null, PUNT=0;
+  function estrellas(n){
+    n=Math.round(Number(n)||0);
+    return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n);
+  }
+  W.eia650Puntuar=function(n){
+    PUNT=n;
+    var c=D.getElementById('e650Est'); if(c){
+      var bs=c.querySelectorAll('button');
+      for(var i=0;i<bs.length;i++) bs[i].classList.toggle('on', i<n);
+    }
+    setTimeout(function(){
+      if(typeof W.eia620Opiniones==='function'){
+        W.eia620Opiniones();
+        setTimeout(function(){
+          try{ if(typeof W.eia620Puntuar==='function') W.eia620Puntuar(n);
+               var t=D.getElementById('e620Txt'); if(t) t.focus(); }catch(_){ }
+        },600);
+      }
+    },300);
+  };
+
+  function pintarOpiniones(){
+    var cont=D.getElementById('e650Op'); if(!cont) return;
+    var v=VAL||{};
+    var lista=(v.valoraciones||[]).slice(0,3).map(function(o){
+      var f=''; try{ f=new Date(o.created_at).toLocaleDateString('es-ES',{day:'2-digit',month:'short'}); }catch(_){ }
+      return '<div class="eia650-card"><div class="top"><b>'+esc(o.nombre||'Usuario')+'</b>'+
+        '<span class="f">'+esc(f)+'</span></div>'+
+        '<div class="e">'+estrellas(o.estrellas)+'</div>'+
+        '<p>'+esc((o.texto||'').slice(0,190))+'</p></div>';
+    }).join('');
+
+    cont.innerHTML='<h2>Lo que dice quien la usa</h2>'+
+      '<p class="sub">Publicamos todas las opiniones, buenas y malas.</p>'+
+      (v.total
+        ? '<div class="eia650-media"><div class="n">'+Number(v.media||0).toFixed(1)+'</div>'+
+          '<div><div class="est">'+estrellas(v.media)+'</div>'+
+          '<div class="c">'+v.total+' valoración'+(v.total===1?'':'es')+'</div></div></div>'+lista
+        : '<div class="eia650-card"><p>Todavía no hay opiniones. Puedes ser el primero.</p></div>')+
+      '<div class="eia650-invita"><b>¿Te ha servido ElectroIA?</b>'+
+      '<p>Cuéntalo en un toque. Nos sirve para saber qué mejorar.</p>'+
+      '<div class="eia650-estrellas" id="e650Est">'+
+      [1,2,3,4,5].map(function(i){
+        return '<button type="button" aria-label="'+i+' de 5" onclick="eia650Puntuar('+i+')">⭐</button>';
+      }).join('')+'</div>'+
+      '<button class="eia650-btn alt" type="button" onclick="eia620Opiniones&&eia620Opiniones()">Ver todas las opiniones</button>'+
+      '</div>';
+  }
+
+  function ponerOpiniones(){
+    try{
+      var pie=D.querySelector('.eia470-foot');
+      if(!pie || D.getElementById('e650Op')) return;
+      var d=D.createElement('div'); d.id='e650Op'; d.className='eia650-op';
+      // Antes del aviso legal: es lo último que se lee, no lo primero.
+      var disc=pie.querySelector('.eia470-disc');
+      if(disc) pie.insertBefore(d, disc); else pie.appendChild(d);
+      pintarOpiniones();
+      if(VAL===null){
+        VAL={};
+        fetch('/api/valoraciones').then(function(r){ return r.ok?r.json():null; })
+          .then(function(j){ VAL=j||{valoraciones:[],total:0,media:0}; pintarOpiniones(); })
+          .catch(function(){ });
+      }
+    }catch(_){ }
+  }
+
+  try{
+    if(W.MutationObserver){
+      var t=null;
+      new MutationObserver(function(){
+        clearTimeout(t);
+        t=setTimeout(function(){ protegerHogar(); ponerOpiniones(); },240);
+      }).observe(D.documentElement,{childList:true,subtree:true});
+    }
+  }catch(_){ }
+  function iniciar(){ protegerHogar(); ponerOpiniones(); }
+  if(D.readyState==='loading') D.addEventListener('DOMContentLoaded',iniciar); else iniciar();
 })();
 </script>
 
