@@ -9287,7 +9287,12 @@ ${W.sourcesBlock?W.sourcesBlock():''}
   function ponerPie(){
     try{
       var main=D.querySelector('#app main');
-      if(!main || main.querySelector('.eia380-foot')) return;
+      /* El pie de v380 fue sustituido por el de v470, organizado por
+         secciones. Se deja de insertar aquí: mientras ambos convivieron,
+         uno lo añadía y el otro lo borraba unas dos veces por segundo,
+         lo que reescribía el DOM sin parar y provocaba saltos al hacer
+         scroll. Ver el bloque v470 para el pie actual. */
+      return;
       var f=D.createElement('div'); f.innerHTML=pie();
       main.appendChild(f.firstChild);
     }catch(_){ }
@@ -11759,8 +11764,8 @@ ${W.sourcesBlock?W.sourcesBlock():''}
   function ponerPie(){
     try{
       var main=D.querySelector('#app main'); if(!main) return;
-      var viejo=main.querySelector('.eia380-foot');
-      if(viejo) viejo.remove();
+      /* Ya no hace falta borrar el pie antiguo: dejó de insertarse.
+         Quitar este borrado evita la otra mitad del bucle. */
       if(main.querySelector('.eia470-foot')) return;
       var f=D.createElement('div'); f.innerHTML=pie();
       main.appendChild(f.firstChild);
@@ -14302,17 +14307,8 @@ body.eia570-consent-on #app main{padding-bottom:200px}
   /* Acceso desde el pie, junto al resto de opciones profesionales */
   function inyectar(){
     try{
-      var cont=D.getElementById('e470Trab');
-      if(cont && !D.getElementById('e610Link')){
-        var b=D.createElement('button');
-        b.id='e610Link'; b.type='button'; b.className='eia470-link';
-        b.setAttribute('onclick','eia610Red()');
-        b.innerHTML='<span class="ic" aria-hidden="true">🔌</span>'+
-          '<span class="tx"><b>PLUS RED · recibir avisos</b>'+
-          '<small>Avisos de tu zona, ya diagnosticados</small></span>'+
-          '<span class="ex" aria-hidden="true">›</span>';
-        cont.appendChild(b);
-      }
+      /* El enlace de PLUS RED ya lo genera el propio pie (bloque v470).
+         Añadirlo también aquí lo duplicaba en la lista. */
     }catch(_){ }
   }
   try{
